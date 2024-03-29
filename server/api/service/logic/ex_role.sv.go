@@ -6,31 +6,46 @@ import (
 )
 
 // 分页获取Role记录
-func (s *RoleService) FindRoleDetailsList(reqCtx *request.Context, page *request.PageQuery) (list []*response.RoleInfo, total int64, err error) {
+func (s *RoleService) FindRoleDetailsList(reqCtx *request.Context, page *request.PageQuery) (list []*response.RoleDetailsDTO, total int64, err error) {
 
-	roles, total, err := s.svcCtx.RoleRepository.FindRoleList(reqCtx, page)
-
+	// 查找角色列表
+	roles, total, err := s.FindRoleList(reqCtx, page)
+	if err != nil {
+		return nil, 0, err
+	}
+	var roleIds []int
+	var menuMap = make(map[int][]int)
+	var apiMap = make(map[int][]int)
 	for _, role := range roles {
-		var menuIds []int
-		menus, err := s.svcCtx.RoleRepository.FindRoleMenus(reqCtx, role.ID)
-		if err != nil {
-			return nil, 0, err
-		}
+		roleIds = append(roleIds, role.ID)
+	}
 
-		var apiIds []int
-		apis, err := s.svcCtx.RoleRepository.FindRoleApis(reqCtx, role.ID)
-		if err != nil {
-			return nil, 0, err
-		}
+	// 查找角色菜单
+	menus, err := s.svcCtx.RoleMenuRepository.FindALL(reqCtx, "role_id in (?)", roleIds)
+	if err != nil {
+		return nil, 0, err
+	}
 
-		for _, menu := range menus {
-			menuIds = append(menuIds, menu.ID)
-		}
-		for _, api := range apis {
-			apiIds = append(apiIds, api.ID)
-		}
+	for _, menu := range menus {
+		menuMap[menu.RoleID] = append(menuMap[menu.RoleID], menu.MenuID)
+	}
 
-		r := response.RoleInfo{
+	// 查找角色资源
+	apis, err := s.svcCtx.RoleApiRepository.FindALL(reqCtx, "role_id in (?)", roleIds)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for _, api := range apis {
+		apiMap[api.RoleID] = append(apiMap[api.RoleID], api.ApiID)
+	}
+
+	// 拼装数据
+	for _, role := range roles {
+		menuIds := menuMap[role.ID]
+		apiIds := apiMap[role.ID]
+
+		r := response.RoleDetailsDTO{
 			Role:           *role,
 			MenuIdList:     menuIds,
 			ResourceIdList: apiIds,
@@ -42,43 +57,33 @@ func (s *RoleService) FindRoleDetailsList(reqCtx *request.Context, page *request
 }
 
 // 设置角色菜单
-func (s *RoleService) UpdateRoleMenus(reqCtx *request.Context, req *request.UpdateRoleMenus) (data interface{}, err error) {
+func (s *RoleService) UpdateRoleMenus(reqCtx *request.Context, req *request.UpdateRoleMenusReq) (data interface{}, err error) {
 	// 重置角色菜单权限
-	_, _, err = s.svcCtx.RoleRepository.UpdateRoleResources(reqCtx, req.RoleId, req.MenuIds)
+	menu, _, err := s.svcCtx.RoleRepository.UpdateRoleMenus(reqCtx, req.RoleId, req.MenuIds)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, err
+	return menu, err
 }
 
 // 设置角色菜单
-func (s *RoleService) UpdateRoleResources(reqCtx *request.Context, req *request.UpdateRoleResources) (data interface{}, err error) {
+func (s *RoleService) UpdateRoleResources(reqCtx *request.Context, req *request.UpdateRoleApisReq) (data interface{}, err error) {
 	// 重置角色接口权限
 	role, _, err := s.svcCtx.RoleRepository.UpdateRoleResources(reqCtx, req.RoleId, req.ResourceIds)
 	if err != nil {
 		return nil, err
 	}
 
-	// 查询资源列表
-	page := &request.PageQuery{Conditions: []*request.Condition{
-		{
-			Flag:  "and",
-			Field: "api_id",
-			Rule:  "in",
-			Value: req.ResourceIds,
-		},
-	},
-	}
+	//// 查询资源列表
+	//resources, err := s.svcCtx.ApiRepository.FindALL(reqCtx, "api_id in (?)", req.ResourceIds)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//// 添加角色规则
+	//rbac := s.svcCtx.RBAC
+	//rbac.DeleteRolePolicy(role.RoleName, role.RoleDomain)
+	//rbac.AddRolePolicy(role.RoleName, role.RoleDomain, resources)
 
-	resources, _, err := s.svcCtx.ApiRepository.FindApiList(reqCtx, page)
-	if err != nil {
-		return nil, err
-	}
-	// 添加角色规则
-	rbac := s.svcCtx.RBAC
-	rbac.DeleteRolePolicy(role.RoleName, role.RoleDomain)
-	rbac.AddRolePolicy(role.RoleName, role.RoleDomain, resources)
-
-	return nil, err
+	return role, err
 }

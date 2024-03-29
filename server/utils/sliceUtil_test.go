@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -118,5 +119,19 @@ func TestIsExistJsonSlice(t *testing.T) {
 	result = IsExistJsonSlice(jsonArr, key)
 	if result != expected {
 		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+}
+func TestPrintCharactersWithInterval(t *testing.T) {
+	data := "hello, \n你好"
+
+	fmt.Println(len(data))
+	for _, c := range data {
+		fmt.Print(string(c))
+	}
+
+	fmt.Println()
+
+	for i := 0; i < len(data); i++ {
+		fmt.Print(string(data[i]))
 	}
 }

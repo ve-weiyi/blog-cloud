@@ -18,30 +18,41 @@ func NewUserAccountService(svcCtx *svc.ServiceContext) *UserAccountService {
 
 // 创建UserAccount记录
 func (s *UserAccountService) CreateUserAccount(reqCtx *request.Context, userAccount *entity.UserAccount) (data *entity.UserAccount, err error) {
-	return s.svcCtx.UserAccountRepository.CreateUserAccount(reqCtx, userAccount)
+	return s.svcCtx.UserAccountRepository.Create(reqCtx, userAccount)
 }
 
 // 更新UserAccount记录
 func (s *UserAccountService) UpdateUserAccount(reqCtx *request.Context, userAccount *entity.UserAccount) (data *entity.UserAccount, err error) {
-	return s.svcCtx.UserAccountRepository.UpdateUserAccount(reqCtx, userAccount)
+	return s.svcCtx.UserAccountRepository.Update(reqCtx, userAccount)
 }
 
 // 删除UserAccount记录
-func (s *UserAccountService) DeleteUserAccount(reqCtx *request.Context, id int) (rows int, err error) {
-	return s.svcCtx.UserAccountRepository.DeleteUserAccount(reqCtx, id)
+func (s *UserAccountService) DeleteUserAccount(reqCtx *request.Context, id int) (rows int64, err error) {
+	return s.svcCtx.UserAccountRepository.Delete(reqCtx, "id = ?", id)
 }
 
 // 查询UserAccount记录
 func (s *UserAccountService) FindUserAccount(reqCtx *request.Context, id int) (data *entity.UserAccount, err error) {
-	return s.svcCtx.UserAccountRepository.FindUserAccount(reqCtx, id)
+	return s.svcCtx.UserAccountRepository.First(reqCtx, "id = ?", id)
 }
 
 // 批量删除UserAccount记录
-func (s *UserAccountService) DeleteUserAccountByIds(reqCtx *request.Context, ids []int) (rows int, err error) {
-	return s.svcCtx.UserAccountRepository.DeleteUserAccountByIds(reqCtx, ids)
+func (s *UserAccountService) DeleteUserAccountByIds(reqCtx *request.Context, ids []int) (rows int64, err error) {
+	return s.svcCtx.UserAccountRepository.Delete(reqCtx, "id in (?)", ids)
 }
 
 // 分页获取UserAccount记录
 func (s *UserAccountService) FindUserAccountList(reqCtx *request.Context, page *request.PageQuery) (list []*entity.UserAccount, total int64, err error) {
-	return s.svcCtx.UserAccountRepository.FindUserAccountList(reqCtx, page)
+	cond, args := page.ConditionClause()
+	order := page.OrderClause()
+
+	list, err = s.svcCtx.UserAccountRepository.FindList(reqCtx, page.Page, page.PageSize, order, cond, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	total, err = s.svcCtx.UserAccountRepository.Count(reqCtx, cond, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	return list, total, nil
 }

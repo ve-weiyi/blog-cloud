@@ -21,6 +21,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/server/cmd"
 )
 
+//go:generate go env -w GOPATH=./
 //go:generate go env -w GO111MODULE=on
 //go:generate go env -w GOPROXY=https://goproxy.cn,direct
 //go:generate go mod tidy
@@ -32,7 +33,7 @@ func init() {
 
 // @title						Swagger Example API
 // @version					1.0
-// @description				This is a sample server celler server.
+// @description				APP接口鉴权方式：token采用自加密token的方式，自加密token规则：sha256(${x-timestamp}${base_secret}) 生成的加密token，x-timestamp 时间戳需要保持10分钟内
 // @termsOfService				http://swagger.io/terms/
 // @contact.name				API Support
 // @contact.url				http://www.swagger.io/support
@@ -48,5 +49,5 @@ func init() {
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	cmd.Execute()
+	cmd.NewRootCmd().Execute()
 }

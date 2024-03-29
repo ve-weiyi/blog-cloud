@@ -31,5 +31,8 @@ config.yaml
 *.sum
 
 /rm_file
-/server/runtime/
-/server/quickstart/api/
+tem
+cache
+runtime
+test.*
+*.ts

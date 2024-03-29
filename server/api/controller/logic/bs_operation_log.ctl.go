@@ -94,7 +94,7 @@ func (s *OperationLogController) UpdateOperationLog(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"OperationLog id"
+// @Param 	 	id		path		int							true	"OperationLog.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/operation_log/{id} [delete]
 func (s *OperationLogController) DeleteOperationLog(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *OperationLogController) DeleteOperationLog(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"OperationLog id"
+// @Param 	 	id		path		int							true	"OperationLog.id"
 // @Success		200		{object}	response.Response{data=entity.OperationLog}	"返回信息"
 // @Router 		/operation_log/{id} [get]
 func (s *OperationLogController) FindOperationLog(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *OperationLogController) DeleteOperationLogByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *OperationLogController) FindOperationLogList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

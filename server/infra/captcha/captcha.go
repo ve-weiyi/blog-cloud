@@ -90,7 +90,7 @@ func (rs *CaptchaRepository) GetImageCaptcha(CaptchaType string, height int, wid
 	}
 
 	c := base64Captcha.NewCaptcha(driver, rs.store)
-	id, b64s, err := c.Generate()
+	id, b64s, _, err := c.Generate()
 
 	return id, b64s, err
 }

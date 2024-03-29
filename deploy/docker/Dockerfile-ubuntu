@@ -1,0 +1,38 @@
+# 使用 ubuntu:20.04 作为基础镜像
+FROM ubuntu:22.04
+
+# 创建 /home 目录，如果它不存在
+# RUN mkdir -p /home
+
+# 设置工作目录为 /opt
+#WORKDIR /home/app
+
+# 设置语言环境为en_US.utf8
+ENV LANG=en_US.utf8
+# 设置时区环境变量
+ENV TZ=Asia/Shanghai
+
+# 使用 sed 命令替换默认的软件源为阿里云镜像源
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# 更新软件源的列表并安装所需的软件包
+RUN apt install software-properties-common -y && \
+ add-apt-repository ppa:longsleep/golang-backports && \
+ apt update
+
+# 安装必要的依赖
+RUN apt install -y git golang && go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct
+
+# 暴露应用程序的端口
+EXPOSE 9999
+
+# 复制 entrypoint.sh 脚本到容器中
+COPY entrypoint.sh .
+
+# 赋予 entrypoint.sh 脚本可执行权限
+RUN chmod +x entrypoint.sh
+
+# 设置入口点命令
+ENTRYPOINT ["./entrypoint.sh"]
+
+# 在目录下运行 sudo docker build -t ve-blog-server . 构建镜像

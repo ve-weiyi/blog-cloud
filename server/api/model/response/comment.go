@@ -8,7 +8,7 @@ type CommentDTO struct {
 	UserID         int         `json:"user_id"`         // 用户id
 	Nickname       string      `json:"nickname"`        // 用户昵称
 	Avatar         string      `json:"avatar"`          // 用户头像
-	WebSite        string      `json:"webSite"`         // 个人网站
+	Website        string      `json:"website"`         // 个人网站
 	CommentContent string      `json:"comment_content"` // 评论内容
 	LikeCount      int         `json:"like_count"`      // 点赞数
 	CreatedAt      time.Time   `json:"created_at"`      // 评论时间
@@ -23,10 +23,10 @@ type ReplyDTO struct {
 	UserID         int       `json:"user_id"`         // 用户id
 	Nickname       string    `json:"nickname"`        // 用户昵称
 	Avatar         string    `json:"avatar"`          // 用户头像
-	WebSite        string    `json:"web_site"`        // 个人网站
+	Website        string    `json:"website"`         // 个人网站
 	ReplyUserID    int       `json:"reply_user_id"`   // 被回复用户id
 	ReplyNickname  string    `json:"reply_nickname"`  // 被回复用户昵称
-	ReplyWebSite   string    `json:"reply_web_site"`  // 被回复个人网站
+	ReplyWebsite   string    `json:"reply_website"`   // 被回复个人网站
 	CommentContent string    `json:"comment_content"` // 评论内容
 	LikeCount      int       `json:"like_count"`      // 点赞数
 	CreatedAt      time.Time `json:"created_at"`      // 评论时间
@@ -40,6 +40,6 @@ type CommentBackDTO struct {
 	ArticleTitle   string    `json:"article_title"`
 	CommentContent string    `json:"comment_content"`
 	Type           int       `json:"type"`
-	IsReview       bool      `json:"is_review"`
+	IsReview       int       `json:"is_review"`
 	CreatedAt      time.Time `json:"created_at"`
 }

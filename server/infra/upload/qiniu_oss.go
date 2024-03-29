@@ -5,29 +5,25 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path"
-	"strings"
-	"time"
 
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/config/properties"
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/crypto"
 )
 
 // https://developer.qiniu.com/kodo/1238/go
 type Qiniu struct {
-	cfg           *properties.Aliyun
+	cfg           *UploadConfig
 	storageConfig *storage.Config
 }
 
 func (s *Qiniu) UploadFile(prefix string, file *multipart.FileHeader) (url string, err error) {
-	// 读取文件后缀
-	ext := path.Ext(file.Filename)
-	// 读取文件名并加密
-	name := strings.TrimSuffix(file.Filename, ext)
-	// 拼接新文件名
-	filename := fmt.Sprintf("%s_%s%s", crypto.MD5V([]byte(name)), time.Now().Format("20060102150405"), ext)
+	var filename string
+	// 读取文件名
+	if s.cfg.FileNameAsKey != nil {
+		filename = s.cfg.FileNameAsKey(file)
+	} else {
+		filename = file.Filename
+	}
 
 	// 本地文件目录
 	dir := path.Join(s.cfg.BasePath, prefix)
@@ -67,7 +63,7 @@ func (s *Qiniu) DeleteFile(key string) error {
 	return nil
 }
 
-func NewQiniu(conf *properties.Aliyun) *Qiniu {
+func NewQiniu(conf *UploadConfig) *Qiniu {
 
 	var region *storage.Region
 	switch conf.Zone { // 根据配置文件进行初始化空间对应的机房

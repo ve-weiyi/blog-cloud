@@ -29,12 +29,14 @@ type AppRepository struct {
 	PhotoAlbumRepository       *logic.PhotoAlbumRepository       //相册
 	TalkRepository             *logic.TalkRepository             //说说
 	ArticleTagRepository       *logic.ArticleTagRepository       //文章标签映射
-	UploadRepository           *logic.UploadRepository           //文件上传
 	ChatRecordRepository       *logic.ChatRecordRepository       //聊天记录
 	UniqueViewRepository       *logic.UniqueViewRepository       //页面访问数量
 	OperationLogRepository     *logic.OperationLogRepository     //操作记录
 	RemarkRepository           *logic.RemarkRepository           //留言
 	WebsiteConfigRepository    *logic.WebsiteConfigRepository    //网站设置
+	UploadRecordRepository     *logic.UploadRecordRepository     //文件上传
+	ChatSessionRepository      *logic.ChatSessionRepository      //聊天会话
+	ChatMessageRepository      *logic.ChatMessageRepository      //聊天消息
 }
 
 func NewRepository(svcCtx *svc.RepositoryContext) *AppRepository {
@@ -61,11 +63,13 @@ func NewRepository(svcCtx *svc.RepositoryContext) *AppRepository {
 		PhotoAlbumRepository:       logic.NewPhotoAlbumRepository(svcCtx),
 		TalkRepository:             logic.NewTalkRepository(svcCtx),
 		ArticleTagRepository:       logic.NewArticleTagRepository(svcCtx),
-		UploadRepository:           logic.NewUploadRepository(svcCtx),
 		ChatRecordRepository:       logic.NewChatRecordRepository(svcCtx),
 		UniqueViewRepository:       logic.NewUniqueViewRepository(svcCtx),
 		OperationLogRepository:     logic.NewOperationLogRepository(svcCtx),
 		RemarkRepository:           logic.NewRemarkRepository(svcCtx),
 		WebsiteConfigRepository:    logic.NewWebsiteConfigRepository(svcCtx),
+		UploadRecordRepository:     logic.NewUploadRecordRepository(svcCtx),
+		ChatSessionRepository:      logic.NewChatSessionRepository(svcCtx),
+		ChatMessageRepository:      logic.NewChatMessageRepository(svcCtx),
 	}
 }

@@ -94,7 +94,7 @@ func (s *TalkController) UpdateTalk(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Talk id"
+// @Param 	 	id		path		int							true	"Talk.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/talk/{id} [delete]
 func (s *TalkController) DeleteTalk(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *TalkController) DeleteTalk(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Talk id"
+// @Param 	 	id		path		int							true	"Talk.id"
 // @Success		200		{object}	response.Response{data=entity.Talk}	"返回信息"
 // @Router 		/talk/{id} [get]
 func (s *TalkController) FindTalk(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *TalkController) DeleteTalkByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *TalkController) FindTalkList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

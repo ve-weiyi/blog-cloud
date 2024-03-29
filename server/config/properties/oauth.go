@@ -9,5 +9,5 @@ type Oauth struct {
 type AuthConfig struct {
 	ClientID     string `json:"client-id" yaml:"client-id" mapstructure:"client-id"`
 	ClientSecret string `json:"client-secret" yaml:"client-secret" mapstructure:"client-secret"`
-	RedirectUrl  string `json:"redirect-url" yaml:"redirect-url" mapstructure:"redirect-url"`
+	RedirectUri  string `json:"redirect-uri" yaml:"redirect-uri" mapstructure:"redirect-uri"`
 }

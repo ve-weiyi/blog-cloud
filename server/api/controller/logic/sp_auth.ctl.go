@@ -26,7 +26,7 @@ func NewAuthController(svcCtx *svc.ControllerContext) *AuthController {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param		data	body		request.User				true	"创建权限认证"
+// @Param		data	body		request.UserReq				true	"创建权限认证"
 // @Success		200		{object}	response.Response{data=response.Login}	"返回信息"
 // @Router		/login [post]
 func (s *AuthController) Login(c *gin.Context) {
@@ -36,7 +36,7 @@ func (s *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	var user request.User
+	var user request.UserReq
 	err = s.ShouldBind(c, &user)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -107,7 +107,7 @@ func (s *AuthController) Logoff(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param		data	body		request.User				true	"请求body"
+// @Param		data	body		request.UserReq				true	"请求body"
 // @Success		200		{object}	response.Response{data=any}	"返回信息"
 // @Router		/register [post]
 func (s *AuthController) Register(c *gin.Context) {
@@ -117,7 +117,7 @@ func (s *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	var user request.User
+	var user request.UserReq
 	err = s.ShouldBind(c, &user)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -236,7 +236,7 @@ func (s *UserController) ResetPassword(c *gin.Context) {
 // @Param		token	header		string											false	"token"
 // @Param		uid		header		string											false	"uid"
 // @Param		data	body		request.OauthLoginReq							true	"请求body"
-// @Success		200		{object}	response.Response{data=response.OauthLoginUrl}	"返回信息"
+// @Success		200		{object}	response.Response{data=response.Login}	"返回信息"
 // @Router		/oauth/login [post]
 func (s *AuthController) OauthLogin(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)

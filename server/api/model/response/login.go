@@ -1,16 +1,10 @@
 package response
 
-import (
-	"time"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/api/model/entity"
-)
-
 // 用户登录信息
 type Login struct {
-	*Token
-	UserInfo  *UserInfo     `json:"user_info"`
-	LoginInfo *LoginHistory `json:"login_info"`
+	Token        *Token        `json:"token"`
+	UserInfo     *UserInfo     `json:"user_info"`
+	LoginHistory *LoginHistory `json:"login_history"`
 }
 
 type Token struct {
@@ -19,20 +13,24 @@ type Token struct {
 	ExpiresIn        int64  `json:"expires_in"`         // 访问token过期时间
 	RefreshToken     string `json:"refresh_token"`      // 刷新token,过期时间较长。30d
 	RefreshExpiresIn int64  `json:"refresh_expires_in"` // 刷新token过期时间
+	Scope            string `json:"scope"`              // 作用域
 	UID              int    `json:"uid"`                // 用户id
 }
 
 type UserInfo struct {
-	ID        int       `json:"id"`
-	Username  string    `json:"username"`
-	Status    int       `json:"status"`
-	Nickname  string    `json:"nickname"`
-	Avatar    string    `json:"avatar"`
-	Intro     string    `json:"intro"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Intro    string `json:"intro"`
+	Website  string `json:"website"`
+	Email    string `json:"email"`
 
-	Roles []*entity.Role `json:"roles"`
+	ArticleLikeSet []string `json:"article_like_set"` // 文章点赞集合
+	CommentLikeSet []string `json:"comment_like_set"` // 评论点赞集合
+	TalkLikeSet    []string `json:"talk_like_set"`    // 说说点赞集合
+
+	Roles []*RoleDTO `json:"roles"`
 }
 
 type LoginHistory struct {

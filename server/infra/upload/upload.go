@@ -2,40 +2,21 @@ package upload
 
 import (
 	"mime/multipart"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/config/properties"
 )
 
+type UploadConfig struct {
+	Zone            string `json:"zone"`
+	Endpoint        string `json:"endpoint"`
+	AccessKeyId     string `json:"access-key-id"`
+	AccessKeySecret string `json:"access-key-secret"`
+	BucketName      string `json:"bucket-name"`
+	BucketUrl       string `json:"bucket-url"`
+	BasePath        string `json:"base-path"`
+	FileNameAsKey   func(file *multipart.FileHeader) string
+}
+
 // Uploader 对象存储接口
-// Author [SliverHorn](https://github.com/SliverHorn)
-// Author [ccfish86](https://github.com/ccfish86)
 type Uploader interface {
 	UploadFile(prefix string, file *multipart.FileHeader) (string, error)
 	DeleteFile(key string) error
-}
-
-// NewOss OSS的实例化方法
-// Author [SliverHorn](https://github.com/SliverHorn)
-// Author [ccfish86](https://github.com/ccfish86)
-func NewOss(cfg *properties.Upload) Uploader {
-
-	switch cfg.Mode {
-	case "local":
-		return NewLocal(&cfg.Local)
-	case "aliyun":
-		o, _ := NewAliyunOSS(&cfg.Aliyun)
-		return o
-	case "qiniu":
-		o := NewQiniu(&cfg.Qiniu)
-		return o
-	default:
-		return NewLocal(&cfg.Local)
-	}
-}
-
-func NewLocal(cfg *properties.Local) *Local {
-	return &Local{
-		Host:      cfg.Url,
-		LocalPath: cfg.Path,
-	}
 }

@@ -7,16 +7,17 @@ import (
 )
 
 type Zap struct {
-	Level         string `mapstructure:"level" json:"level" yaml:"level"`                            // 级别
-	Prefix        string `mapstructure:"prefix" json:"prefix" yaml:"prefix"`                         // 日志前缀
-	Format        string `mapstructure:"format" json:"format" yaml:"format"`                         // 输出
-	Director      string `mapstructure:"director" json:"director"  yaml:"director"`                  // 日志文件夹
-	EncodeLevel   string `mapstructure:"encode-level" json:"encode-level" yaml:"encode-level"`       // 编码级
-	StacktraceKey string `mapstructure:"stacktrace-key" json:"stacktrace-key" yaml:"stacktrace-key"` // 栈名
+	ServerName     string `mapstructure:"server-name" json:"server-name" yaml:"server-name"`             // 服务名称
+	Mode           string `mapstructure:"mode" json:"mode" yaml:"mode"`                                  // 模式
+	Format         string `mapstructure:"format" json:"format" yaml:"format"`                            // 输出
+	Level          string `mapstructure:"level" json:"level" yaml:"level"`                               // 级别
+	Prefix         string `mapstructure:"prefix" json:"prefix" yaml:"prefix"`                            // 日志前缀
+	EncodeLevel    string `mapstructure:"encode-level" json:"encode-level" yaml:"encode-level"`          // 编码级
+	EncodeCaller   string `mapstructure:"encode-caller" json:"encode-caller" yaml:"encode-caller"`       // 编码调用者
+	EncodeColorful bool   `mapstructure:"encode-colorful" json:"encode-colorful" yaml:"encode-colorful"` // 编码调用者
 
-	MaxAge       int  `mapstructure:"max-age" json:"max-age" yaml:"max-age"`                      // 日志留存时间
-	ShowLine     bool `mapstructure:"show-line" json:"show-line" yaml:"show-line"`                // 显示行
-	LogInConsole bool `mapstructure:"log-in-console" json:"log-in-console" yaml:"log-in-console"` // 输出控制台
+	CacheDir string `mapstructure:"cache-dir" json:"cache-dir" yaml:"cache-dir"` // 日志文件夹
+	MaxAge   int    `mapstructure:"max-age" json:"max-age" yaml:"max-age"`       // 日志留存时间
 }
 
 // ZapEncodeLevel 根据 EncodeLevel 返回 zapcore.LevelEncoder

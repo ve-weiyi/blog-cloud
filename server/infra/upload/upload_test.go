@@ -5,11 +5,11 @@ import (
 	"mime/multipart"
 	"testing"
 
-	"github.com/ve-weiyi/ve-blog-golang/server/infra/testinit"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/initest"
 )
 
 func TestUpload(t *testing.T) {
-	testinit.Init()
+	initest.Init()
 
 	// 创建一个虚拟的 multipart.FileHeader
 	fileHeader := &multipart.FileHeader{

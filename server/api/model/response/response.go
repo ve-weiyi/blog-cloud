@@ -8,9 +8,7 @@ import (
 
 // 批量操作结果
 type BatchResult struct {
-	TotalCount   int `json:"total_count"`   // 总数量
-	SuccessCount int `json:"success_count"` // 成功数量
-	FailCount    int `json:"fail_count"`    // 失败数量
+	SuccessCount int64 `json:"success_count"` // 成功数量
 }
 
 // 分页查询结果

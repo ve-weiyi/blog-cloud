@@ -68,7 +68,7 @@ func TestInject(t *testing.T) {
 func TestNewAst(t *testing.T) {
 	//NewImportMete(`jsoniter "github.com/json-iterator/go"`)
 	//NewStructMete("ApiGroup", `Alias   ast.Visitor //元素别名`)
-	NewFuncMete(`json := jsoniter.ConfigCompatibleWithStandardLibrary()`)
+	NewFuncMete("main", `json := jsoniter.ConfigCompatibleWithStandardLibrary()`)
 }
 
 func TestParse(t *testing.T) {

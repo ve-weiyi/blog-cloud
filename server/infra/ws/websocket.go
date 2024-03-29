@@ -52,3 +52,14 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request, onReceive func(msg 
 		}
 	}
 }
+
+func Broadcast(msg []byte) {
+	for client := range clients {
+		err := client.WriteMessage(websocket.TextMessage, msg)
+		if err != nil {
+			log.Println("Failed to send message:", err)
+			client.Close()
+			delete(clients, client)
+		}
+	}
+}

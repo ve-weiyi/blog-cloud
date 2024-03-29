@@ -94,7 +94,7 @@ func (s *RemarkController) UpdateRemark(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Remark id"
+// @Param 	 	id		path		int							true	"Remark.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/remark/{id} [delete]
 func (s *RemarkController) DeleteRemark(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *RemarkController) DeleteRemark(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Remark id"
+// @Param 	 	id		path		int							true	"Remark.id"
 // @Success		200		{object}	response.Response{data=entity.Remark}	"返回信息"
 // @Router 		/remark/{id} [get]
 func (s *RemarkController) FindRemark(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *RemarkController) DeleteRemarkByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *RemarkController) FindRemarkList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

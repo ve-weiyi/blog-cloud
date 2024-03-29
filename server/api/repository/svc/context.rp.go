@@ -6,8 +6,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/server/config"
 	"github.com/ve-weiyi/ve-blog-golang/server/global"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/glog"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/glog"
 )
 
 // 注册需要用到的gorm、redis、model

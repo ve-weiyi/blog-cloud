@@ -1,9 +1,7 @@
 package crypto
 
 import (
-	"crypto/md5"
-	"crypto/rand"
-	"crypto/rsa"
+	"crypto/aes"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -11,113 +9,77 @@ import (
 	"testing"
 )
 
-func Test_B_1(t *testing.T) {
-	plaintext := []byte("791422171@qq.co23422sadamaaa11") // 待加密的数据
-	key := []byte("9876787656785679")                     // 加密的密钥
-	log.Println("原文：", string(plaintext))
+// 对于使用 AES（Advanced Encryption Standard）算法的 CBC 模式，密钥的长度可以是 128 比特（16 字节）、192 比特（24 字节）或 256 比特（32 字节）。
+func Test_AES(t *testing.T) {
+	var plaintext []byte // 加密的密钥
+	var key []byte       // 加密的密钥
+	var iv []byte        // 加密的向量
 
+	plaintext = []byte("791422171@qq.comasdsda")
+	key = []byte("1234567.1234567.1234567.1234567.")
+	copy(iv, key[:aes.BlockSize])
+
+	crypt := AesCBC
+
+	fmt.Println("秘钥", key)
+	fmt.Println("秘钥(hex)", hex.EncodeToString(key))
+	fmt.Println("iv(hex)", hex.EncodeToString(iv))
+	log.Println("原文：", string(plaintext))
 	log.Println("------------------ CBC模式 --------------------")
-	encrypted := AESEncryptCBC(plaintext, key)
-	//e08ace47cf7ddddfa3cc968874dfd5c81ffff653883522219dcdcdf44b3fe7d6
+	encrypted, err := crypt.AESEncrypt(plaintext, key, iv...)
+	log.Println(err)
+	log.Println("密文：", string(encrypted))
 	log.Println("密文(hex)：", hex.EncodeToString(encrypted))
-	//4IrOR8993d+jzJaIdN/VyB//9lOINSIhnc3N9Es/59Y=
-	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(encrypted))
-	decrypted := AESDecryptCBC(encrypted, key)
+	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(append(iv, encrypted...)))
+	decrypted, err := crypt.AESDecrypt(encrypted, key, iv...)
+	log.Println(err)
 	log.Println("解密结果：", string(decrypted))
 }
 
-func Test_B_2(t *testing.T) {
-	plaintext := []byte("791422171@qq.co23422sadamaaa1") // 待加密的数据
-	key := []byte("1234567.1234567.1234567.")            // 加密的密钥
+func TestAesCFBImpl_AESEncrypt(t *testing.T) {
+	var plaintext []byte // 加密的密钥
+	var key []byte       // 加密的密钥
+	var iv []byte        // 加密的向量
+
+	plaintext = []byte("791422171@qq.comasdsda")
+	key, _ = hex.DecodeString("313233343536372e313233343536372e313233343536372e313233343536372e")
+	//key = []byte("1234567.1234567.1234567.1234567.")
+	copy(iv, key[:aes.BlockSize])
+
+	//iv := slices.Clone(key[:aes.BlockSize])
+	//iv := key[:aes.BlockSize] //会导致key被改变
+	crypt := AesCBC
+
+	fmt.Println("秘钥", key)
+	fmt.Println("秘钥(hex)", hex.EncodeToString(key))
+	fmt.Println("iv(hex)", hex.EncodeToString(iv))
 	log.Println("原文：", string(plaintext))
-	//ypxEb/wBULTW+FkKkrhGBA==
-	log.Println("------------------ ECB模式 --------------------")
-	encrypted := AesEncryptECB(plaintext, key)
+	log.Println("------------------ CBC模式 --------------------")
+	encrypted, err := crypt.AESEncrypt(plaintext, key, iv...)
+	log.Println(err)
+	log.Println("密文：", string(encrypted))
 	log.Println("密文(hex)：", hex.EncodeToString(encrypted))
-	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(encrypted))
-	decrypted := AesDecryptECB(encrypted, key)
+	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(append(iv, encrypted...)))
+	decrypted, err := crypt.AESDecrypt(encrypted, key, iv...)
+	log.Println(err)
 	log.Println("解密结果：", string(decrypted))
-
 }
 
-func Test_B_3(t *testing.T) {
-	plaintext := []byte("791422171@qq.comasdsda") // 待加密的数据
-	key := []byte("9876787656785679")             // 加密的密钥
-	log.Println("原文：", string(plaintext))
+func TestAesCFBImpl_AESDecrypt(t *testing.T) {
+	ciphertext := `ZjbAUn1Zy2+1hOa62fW4Z7zrDEqaGRptajqapB1hl2neTykHhqPTb3sMATM10h0nQ2jAH5NRbOW8uFb3NFu7wpxV8mXuCHtS+3UH0Ec3/Pw=`
+	key, _ := hex.DecodeString("6636C0527D59CB6FB584E6BAD9F5B867BA24CB5006973D97D451ECD27C3C9E30")
 
-	log.Println("------------------ CFB模式 --------------------")
-	encrypted := AESEncryptCFB(plaintext, key)
+	ie, _ := base64.StdEncoding.DecodeString(ciphertext)
+	encrypted := ie[aes.BlockSize:]
+	iv := key[:aes.BlockSize] // 初始化向量
+
+	log.Println("秘钥(hex)", hex.EncodeToString(key))
+	log.Println("iv(hex)", hex.EncodeToString(iv))
+
+	log.Println("密文：", string(encrypted))
 	log.Println("密文(hex)：", hex.EncodeToString(encrypted))
-	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(encrypted))
-	decrypted := AESDecryptCFB(encrypted, key)
-	log.Println("解密结果：", string(decrypted))
-}
-
-func TestAESGCM(t *testing.T) {
-	log.Println("原文：", string(plaintext))
-
-	log.Println("------------------ CFB模式 --------------------")
-	encrypted, mac := AESEncryptGCM(plaintext, string(key))
-	log.Println("密文(hex)：", hex.EncodeToString([]byte(encrypted)))
-	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString([]byte(encrypted)))
-	decrypted := AESDecryptGCM(encrypted, string(key), mac)
-	log.Println("解密结果：", decrypted)
-}
-
-var key = []byte("1234567.1234567.1234567.") // 加密的密钥
-
-func BenchmarkAES(b *testing.B) {
-
-	plaintext = BitsX10(BitsX10(BitsX10(BitsX10(Bit1024))))
-	for i := 0; i < b.N; i++ {
-		// 24bits		1024	  1024*10*10	1024*10*10*10*10
-		// 	cbc		:808.4 ns/op   24871 ns/op   2354281 ns/op
-		//  gcm		:1642 ns/op    40181 ns/op   4575092 ns/op
-		//encrypted := AESEncryptCBC([]byte(plaintext), key)
-		//AESDecryptCBC(encrypted, key)
-
-		encrypted, mac := AESEncryptGCM(plaintext, string(key))
-		AESDecryptGCM(encrypted, string(key), mac)
-	}
-}
-
-func BenchmarkRSA(b *testing.B) {
-
-	key, _ := rsa.GenerateKey(rand.Reader, RSA_KEY_SIZE)
-	pub := &key.PublicKey
-	priv := key
-
-	//明文
-	plaintext := []byte(Bit512)
-
-	for i := 0; i < b.N; i++ {
-		//key-1024bits data-512bits  time-222050 ns/op
-		ciphertext, _ := rsa.EncryptOAEP(md5.New(), rand.Reader, pub, plaintext, nil)
-		plaintext, _ = rsa.DecryptOAEP(md5.New(), rand.Reader, priv, ciphertext, nil)
-	}
-}
-func TestRSA(t *testing.T) {
-
-	key, _ := rsa.GenerateKey(rand.Reader, RSA_KEY_SIZE)
-	pub := &key.PublicKey
-	priv := key
-
-	//明文
-	plaintext := []byte(Bit512)
-
-	//加密生成密文
-	fmt.Printf("%q\n加密:\n", plaintext)
-	ciphertext, e := rsa.EncryptOAEP(md5.New(), rand.Reader, pub, plaintext, nil)
-	if e != nil {
-		fmt.Println(e)
-	}
-	fmt.Printf("\t%x\n", ciphertext)
-
-	//解密得到明文
-	fmt.Printf("解密:\n")
-	plaintext, e = rsa.DecryptOAEP(md5.New(), rand.Reader, priv, ciphertext, nil)
-	if e != nil {
-		fmt.Println(e)
-	}
-	fmt.Printf("\t%q\n", plaintext)
+	log.Println("密文(base64)：", base64.StdEncoding.EncodeToString(append(iv, encrypted...)))
+	crypt := AesCBC
+	decrypted, err := crypt.AESDecrypt(encrypted, key, []byte(iv)...)
+	log.Println("解密结果：", string(decrypted), err)
 }

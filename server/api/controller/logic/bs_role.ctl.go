@@ -94,7 +94,7 @@ func (s *RoleController) UpdateRole(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Role id"
+// @Param 	 	id		path		int							true	"Role.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/role/{id} [delete]
 func (s *RoleController) DeleteRole(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *RoleController) DeleteRole(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Role id"
+// @Param 	 	id		path		int							true	"Role.id"
 // @Success		200		{object}	response.Response{data=entity.Role}	"返回信息"
 // @Router 		/role/{id} [get]
 func (s *RoleController) FindRole(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *RoleController) DeleteRoleByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *RoleController) FindRoleList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

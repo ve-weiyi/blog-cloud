@@ -83,7 +83,7 @@ func (s *RoleRepository) UpdateUserRoles(ctx context.Context, uid int, roleIds [
 	// 创建db
 	db := s.DbEngin.WithContext(ctx)
 	var account entity.UserAccount
-	err = db.Where("user_id = ?", uid).First(&account).Error
+	err = db.Where("id = ?", uid).First(&account).Error
 	if err != nil {
 		return nil, err
 	}
@@ -120,14 +120,26 @@ func (s *RoleRepository) UpdateUserRoles(ctx context.Context, uid int, roleIds [
 }
 
 // 设置角色菜单
-func (s *RoleRepository) UpdateRoleMenus(ctx context.Context, roleId int, menuIds []int) (role *entity.Role, roleMenus []*entity.RoleMenu, err error) {
+func (s *RoleRepository) UpdateRoleMenus(ctx context.Context, roleId int, menuIds []int) (role *entity.Role, count int64, err error) {
 	// 创建db
 	db := s.DbEngin.WithContext(ctx)
 	err = db.Where("id = ?", roleId).First(&role).Error
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 
+	// 开启事务
+	tx := db.Begin()
+
+	//先删除所有菜单，再添加
+	err = tx.Delete(&entity.RoleMenu{}, "role_id = ?", role.ID).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, 0, err
+	}
+
+	var roleMenus []*entity.RoleMenu
+	//再添加
 	for _, id := range menuIds {
 		rm := &entity.RoleMenu{
 			RoleID: role.ID,
@@ -136,40 +148,41 @@ func (s *RoleRepository) UpdateRoleMenus(ctx context.Context, roleId int, menuId
 		roleMenus = append(roleMenus, rm)
 	}
 
-	// 开启事务
-	tx := db.Begin()
-
-	//先删除所有菜单，再添加
-	err = tx.Delete(&roleMenus, "role_id = ?", role.ID).Error
+	err = tx.CreateInBatches(&roleMenus, len(roleMenus)).Error
 	if err != nil {
 		tx.Rollback()
-		return nil, nil, err
+		return nil, 0, err
 	}
-
-	//再添加
-	err = tx.Create(&roleMenus).Error
-	if err != nil {
-		tx.Rollback()
-		return nil, nil, err
-	}
+	count++
 	//提交事务
 	tx.Commit()
 
-	return role, roleMenus, err
+	return role, count, err
 }
 
 // 设置角色菜单
-func (s *RoleRepository) UpdateRoleResources(ctx context.Context, roleId int, apiIds []int) (role *entity.Role, roleApis []*entity.RoleApi, err error) {
+func (s *RoleRepository) UpdateRoleResources(ctx context.Context, roleId int, apiIds []int) (role *entity.Role, count int64, err error) {
 	// 创建db
 	db := s.DbEngin.WithContext(ctx)
 
 	// 查询角色信息
 	err = db.Where("id = ?", roleId).First(&role).Error
 	if err != nil {
-		return role, nil, err
+		return nil, 0, err
 	}
 
-	// 查询角色资源
+	// 开启事务
+	tx := db.Begin()
+
+	//先删除所有菜单，再添加
+	err = tx.Delete(&entity.RoleApi{}, "role_id = ?", role.ID).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, 0, err
+	}
+
+	//再添加
+	var roleApis []*entity.RoleApi
 	for _, id := range apiIds {
 		ra := &entity.RoleApi{
 			RoleID: role.ID,
@@ -178,25 +191,13 @@ func (s *RoleRepository) UpdateRoleResources(ctx context.Context, roleId int, ap
 		roleApis = append(roleApis, ra)
 	}
 
-	// 开启事务
-	tx := db.Begin()
-
-	//先删除所有菜单，再添加
-	err = tx.Delete(&roleApis, "role_id = ?", role.ID).Error
+	err = tx.CreateInBatches(&roleApis, len(roleApis)).Error
 	if err != nil {
 		tx.Rollback()
-		return nil, nil, err
+		return nil, 0, err
 	}
-
-	//再添加
-	err = tx.Create(&roleApis).Error
-	if err != nil {
-		tx.Rollback()
-		return nil, nil, err
-	}
-
 	//提交事务
 	tx.Commit()
 
-	return role, roleApis, err
+	return role, count, err
 }

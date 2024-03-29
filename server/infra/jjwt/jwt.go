@@ -9,12 +9,6 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type JwtToken struct {
-	SigningKey  []byte
-	TokenPrefix string
-	Issuer      string
-}
-
 //1. `Audience`（`aud`）：接收 JWT 的一方。这是一个字符串或字符串数组，表示 JWT 预期的接收者。当应用程序希望指定特定的接收方时，可以使用该字段。
 //2. `ExpiresAt`（`exp`）：过期时间。这是一个 Unix 时间戳（以秒为单位），表示 JWT 什么时候会过期。在过期时间之后，JWT 将不再被接受或使用。
 //3. `Id`（`jti`）：JWT ID。这是一个用于标识 JWT 的唯一标识符。通常用于防止 JWT 被重复使用。
@@ -44,6 +38,13 @@ var (
 	TokenMalformed   = errors.New("token 格式错误")
 	TokenInvalid     = errors.New("token 不可用")
 )
+
+type JwtToken struct {
+	SigningKey  []byte        //签名
+	Issuer      string        //签发者
+	ExpiresTime time.Duration //过期时间
+	TokenPrefix string        //token前缀
+}
 
 // createToken 生成token
 func (j *JwtToken) createToken(claims TokenClaims) (string, error) {
@@ -91,7 +92,7 @@ func (j *JwtToken) CreateClaims(userId int, username string, loginType string) (
 	claims := TokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
-			ExpiresAt: time.Now().Add(7 * 24 * time.Hour).Unix(),
+			ExpiresAt: time.Now().Add(j.ExpiresTime).Unix(),
 			Issuer:    j.Issuer,
 		},
 	}

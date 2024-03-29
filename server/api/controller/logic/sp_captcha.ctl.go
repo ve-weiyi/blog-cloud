@@ -26,7 +26,7 @@ func NewCaptchaController(svcCtx *svc.ControllerContext) *CaptchaController {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param		data	body		request.CaptchaEmail		true	"请求body"
+// @Param		data	body		request.CaptchaEmailReq		true	"请求body"
 // @Success		200		{object}	response.Response{data=any}	"返回信息"
 // @Router		/captcha/email [post]
 func (s *CaptchaController) SendCaptchaEmail(c *gin.Context) {
@@ -36,7 +36,7 @@ func (s *CaptchaController) SendCaptchaEmail(c *gin.Context) {
 		return
 	}
 
-	var req request.CaptchaEmail
+	var req request.CaptchaEmailReq
 	err = s.ShouldBind(c, &req)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -58,8 +58,8 @@ func (s *CaptchaController) SendCaptchaEmail(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param		data	body		request.Captcha				true	"请求body"
-// @Success		200		{object}	response.Response{data=response.CaptchaResp}	"生成验证码,返回包括随机数id,base64,验证码长度,是否开启验证码"
+// @Param		data	body		request.CaptchaReq				true	"请求body"
+// @Success		200		{object}	response.Response{data=response.CaptchaDTO}	"生成验证码,返回包括随机数id,base64,验证码长度,是否开启验证码"
 // @Router		/captcha/image [post]
 func (s *CaptchaController) GetCaptchaImage(c *gin.Context) {
 	err := s.LimitLock(c)
@@ -74,7 +74,7 @@ func (s *CaptchaController) GetCaptchaImage(c *gin.Context) {
 		return
 	}
 
-	var req request.Captcha
+	var req request.CaptchaReq
 	err = s.ShouldBind(c, &req)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -96,7 +96,7 @@ func (s *CaptchaController) GetCaptchaImage(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param		data	body		request.CaptchaVerify		true	"请求body"
+// @Param		data	body		request.CaptchaVerifyReq		true	"请求body"
 // @Success		200		{object}	response.Response{data=any}	"生成验证码,返回包括随机数id,base64,验证码长度,是否开启验证码"
 // @Router		/captcha/verify [post]
 func (s *CaptchaController) VerifyCaptcha(c *gin.Context) {
@@ -112,7 +112,7 @@ func (s *CaptchaController) VerifyCaptcha(c *gin.Context) {
 		return
 	}
 
-	var req request.CaptchaVerify
+	var req request.CaptchaVerifyReq
 	err = s.ShouldBind(c, &req)
 	if err != nil {
 		s.ResponseError(c, err)

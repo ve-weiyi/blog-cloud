@@ -1,31 +1,34 @@
 package initialize
 
 import (
-	"fmt"
-	"os"
+	"log"
 
 	"github.com/ve-weiyi/ve-blog-golang/server/global"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/glog"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/glog/zaplog"
 
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/copy"
 	"github.com/ve-weiyi/ve-blog-golang/server/utils/files"
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/glog"
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/glog/zaplog"
 )
 
 // Zap 获取 zap.Logger
 func Zap() {
-	if ok, _ := files.PathExists(global.CONFIG.Zap.Director); !ok { // 判断是否有Director文件夹
-		fmt.Printf("create %v directory\n", global.CONFIG.Zap.Director)
-		_ = os.Mkdir(global.CONFIG.Zap.Director, os.ModePerm)
+	err := files.MkDir(global.CONFIG.Zap.CacheDir)
+	if err != nil {
+		log.Println(err)
 	}
 
-	cfg := zaplog.ZapConfig{}
+	var cfg zaplog.ZapConfig
+	cfg = zaplog.NewFileConfig()
+	cfg.Mode = global.CONFIG.Zap.Mode
+	cfg.Encoding = global.CONFIG.Zap.Format
+	cfg.Path = global.CONFIG.Zap.CacheDir
+	cfg.FileName = global.CONFIG.Zap.ServerName + ".log"
+	cfg.Prefix = global.CONFIG.Zap.Prefix
+	cfg.Level = global.CONFIG.Zap.Level
+	cfg.ShowLine = global.CONFIG.Zap.EncodeCaller == "long"
+	cfg.ShowColor = global.CONFIG.Zap.EncodeColorful
 
-	copy.DeepCopyByJson(global.CONFIG.Zap, &cfg)
-
-	glog.ReplaceZapGlobals(cfg)
 	global.LOG = glog.NewGlogger(1, cfg)
-
-	global.LOG.Printf("日志组件初始化成功！")
+	global.LOG.Println("日志组件初始化成功！")
 	return
 }

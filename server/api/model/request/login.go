@@ -1,28 +1,29 @@
 package request
 
 import (
-	"github.com/ve-weiyi/ve-blog-golang/server/infra/codes"
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/fmtplus"
+	"fmt"
+
+	"github.com/ve-weiyi/ve-blog-golang/server/utils/valid"
 )
 
-type User struct {
+type UserReq struct {
 	Username string `json:"username" from:"username" example:"admin@qq.com"`
 	Password string `json:"password" from:"password" example:"123456"`
 	Code     string `json:"code" from:"code" example:""`
 }
 
-func (m User) IsValid() error {
+func (m UserReq) IsValid() error {
 	if m.Username == "" || m.Password == "" {
-		return codes.NewApiError(codes.CodeInvalidParameter, "用户名和密码不能为null")
+		return fmt.Errorf("用户名或密码不能为空")
 	}
 
 	//验证邮箱格式是否正确
-	if !fmtplus.IsEmailValid(m.Username) {
-		return codes.NewApiError(codes.CodeInvalidParameter, "邮箱格式不正确")
+	if !valid.IsEmailValid(m.Username) {
+		return fmt.Errorf("邮箱格式不正确")
 	}
 
 	if len(m.Password) < 6 {
-		return codes.NewApiError(codes.CodeInvalidParameter, "密码长度不能小于6")
+		return fmt.Errorf("密码长度不能小于6位")
 	}
 
 	return nil
@@ -35,8 +36,8 @@ type UserEmail struct {
 
 func (m UserEmail) IsValid() error {
 	//验证邮箱格式是否正确
-	if !fmtplus.IsEmailValid(m.Username) {
-		return codes.NewApiError(codes.CodeInvalidParameter, "邮箱格式不正确")
+	if !valid.IsEmailValid(m.Username) {
+		return fmt.Errorf("邮箱格式不正确")
 	}
 
 	return nil

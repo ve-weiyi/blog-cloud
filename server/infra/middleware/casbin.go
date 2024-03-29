@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/server/api/model/response"
 	"github.com/ve-weiyi/ve-blog-golang/server/global"
-	"github.com/ve-weiyi/ve-blog-golang/server/infra/codes"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/apierr"
 	"github.com/ve-weiyi/ve-blog-golang/server/infra/rbac"
 )
 
@@ -42,7 +42,7 @@ func CasbinHandler() gin.HandlerFunc {
 				}
 				sub := role
 				success, _ := enforcer.Enforce(sub, domain, obj, act)
-				global.LOG.Printf("sub:%v domain:%v obj:%v act:%v", sub, domain, obj, act)
+				global.LOG.Infof("sub:%v domain:%v obj:%v act:%v", sub, domain, obj, act)
 				global.LOG.Println("success ", success)
 				if success {
 					c.Next()
@@ -52,9 +52,9 @@ func CasbinHandler() gin.HandlerFunc {
 				enforcer.LoadPolicy()
 			}
 
-			c.JSON(http.StatusForbidden,
+			c.JSON(http.StatusOK,
 				response.Response{
-					Code:    codes.CodeRoleNoPerPermission,
+					Code:    apierr.ErrorUserNotPermission.Code(),
 					Message: "角色权限不足",
 					Data:    nil,
 				})

@@ -1,0 +1,18 @@
+version: "3.9"
+
+# 设置mysql，redis持久化保存
+#volumes:
+#  mysql:
+#  redis:
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-server # 容器名
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=redis7914 # redis只有密码，没有账号设置
+    volumes:
+      - /home/docker/redis:/data

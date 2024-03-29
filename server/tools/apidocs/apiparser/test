@@ -1,0 +1,3151 @@
+GOROOT=/Users/weiyi/go/go1.20.1 #gosetup
+GOPATH=/Users/weiyi/go #gosetup
+/Users/weiyi/go/go1.20.1/bin/go test -c -o /Users/weiyi/Library/Caches/JetBrains/GoLand2023.3/tmp/GoLand/___TestAstParser_in_github_com_ve_weiyi_ve_blog_golang_server_tools_apidocs_apiparser.test github.com/ve-weiyi/ve-blog-golang/server/tools/apidocs/apiparser #gosetup
+/Users/weiyi/go/go1.20.1/bin/go tool test2json -t /Users/weiyi/Library/Caches/JetBrains/GoLand2023.3/tmp/GoLand/___TestAstParser_in_github_com_ve_weiyi_ve_blog_golang_server_tools_apidocs_apiparser.test -test.v -test.paniconexit0 -test.run ^\QTestAstParser\E$
+=== RUN   TestAstParser
+    swagger_test.go:44: [
+         {
+          "Type": "entity.Api",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": "api名称"
+           },
+           {
+            "Name": "Path",
+            "Type": "string",
+            "Comment": "api路径"
+           },
+           {
+            "Name": "Method",
+            "Type": "string",
+            "Comment": "api请求方法"
+           },
+           {
+            "Name": "ParentID",
+            "Type": "int",
+            "Comment": "分组id"
+           },
+           {
+            "Name": "Traceable",
+            "Type": "int",
+            "Comment": "是否追溯操作记录 0需要，1是"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态 1开，2关"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Article",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "作者"
+           },
+           {
+            "Name": "CategoryID",
+            "Type": "int",
+            "Comment": "文章分类"
+           },
+           {
+            "Name": "ArticleCover",
+            "Type": "string",
+            "Comment": "文章缩略图"
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": "标题"
+           },
+           {
+            "Name": "ArticleContent",
+            "Type": "string",
+            "Comment": "内容"
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "文章类型 1原创 2转载 3翻译"
+           },
+           {
+            "Name": "OriginalURL",
+            "Type": "string",
+            "Comment": "原文链接"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶 0否 1是"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除  0否 1是"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态值 1公开 2私密 3评论可见"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "发表时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.ArticleTag",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "ArticleID",
+            "Type": "int",
+            "Comment": "文章id"
+           },
+           {
+            "Name": "TagID",
+            "Type": "int",
+            "Comment": "标签id"
+           }
+          ]
+         },
+         {
+          "Type": "entity.CasbinRule",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Ptype",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V0",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V1",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V2",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V3",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V4",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "V5",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "entity.Category",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "CategoryName",
+            "Type": "string",
+            "Comment": "分类名"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.ChatRecord",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "头像"
+           },
+           {
+            "Name": "Content",
+            "Type": "string",
+            "Comment": "聊天内容"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "ip地址"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "ip来源"
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "类型"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Comment",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "评论用户Id"
+           },
+           {
+            "Name": "TopicID",
+            "Type": "int",
+            "Comment": "评论主题id"
+           },
+           {
+            "Name": "CommentContent",
+            "Type": "string",
+            "Comment": "评论内容"
+           },
+           {
+            "Name": "ReplyUserID",
+            "Type": "int",
+            "Comment": "回复用户id"
+           },
+           {
+            "Name": "ParentID",
+            "Type": "int",
+            "Comment": "父评论id"
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "评论类型 1.文章 2.友链 3.说说"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除  0否 1是"
+           },
+           {
+            "Name": "IsReview",
+            "Type": "int",
+            "Comment": "是否审核"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "评论时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.FriendLink",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "LinkName",
+            "Type": "string",
+            "Comment": "链接名"
+           },
+           {
+            "Name": "LinkAvatar",
+            "Type": "string",
+            "Comment": "链接头像"
+           },
+           {
+            "Name": "LinkAddress",
+            "Type": "string",
+            "Comment": "链接地址"
+           },
+           {
+            "Name": "LinkIntro",
+            "Type": "string",
+            "Comment": "链接介绍"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Menu",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键"
+           },
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": "菜单名"
+           },
+           {
+            "Name": "Path",
+            "Type": "string",
+            "Comment": "菜单路径"
+           },
+           {
+            "Name": "Title",
+            "Type": "string",
+            "Comment": "菜单标题"
+           },
+           {
+            "Name": "Component",
+            "Type": "string",
+            "Comment": "组件"
+           },
+           {
+            "Name": "Icon",
+            "Type": "string",
+            "Comment": "菜单icon"
+           },
+           {
+            "Name": "Rank",
+            "Type": "int",
+            "Comment": "排序"
+           },
+           {
+            "Name": "ParentID",
+            "Type": "int",
+            "Comment": "父id"
+           },
+           {
+            "Name": "IsHidden",
+            "Type": "int",
+            "Comment": "是否隐藏  0否1是"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.OperationLog",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "用户昵称"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "操作ip"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "操作地址"
+           },
+           {
+            "Name": "OptModule",
+            "Type": "string",
+            "Comment": "操作模块"
+           },
+           {
+            "Name": "OptDesc",
+            "Type": "string",
+            "Comment": "操作描述"
+           },
+           {
+            "Name": "RequestURL",
+            "Type": "string",
+            "Comment": "请求地址"
+           },
+           {
+            "Name": "RequestMethod",
+            "Type": "string",
+            "Comment": "请求方式"
+           },
+           {
+            "Name": "RequestHeader",
+            "Type": "string",
+            "Comment": "请求头参数"
+           },
+           {
+            "Name": "RequestData",
+            "Type": "string",
+            "Comment": "请求参数"
+           },
+           {
+            "Name": "ResponseData",
+            "Type": "string",
+            "Comment": "返回数据"
+           },
+           {
+            "Name": "ResponseStatus",
+            "Type": "int",
+            "Comment": "响应状态码"
+           },
+           {
+            "Name": "Cost",
+            "Type": "string",
+            "Comment": "耗时（ms）"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Page",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "页面id"
+           },
+           {
+            "Name": "PageName",
+            "Type": "string",
+            "Comment": "页面名"
+           },
+           {
+            "Name": "PageLabel",
+            "Type": "string",
+            "Comment": "页面标签"
+           },
+           {
+            "Name": "PageCover",
+            "Type": "string",
+            "Comment": "页面封面"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Photo",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键"
+           },
+           {
+            "Name": "AlbumID",
+            "Type": "int",
+            "Comment": "相册id"
+           },
+           {
+            "Name": "PhotoName",
+            "Type": "string",
+            "Comment": "照片名"
+           },
+           {
+            "Name": "PhotoDesc",
+            "Type": "string",
+            "Comment": "照片描述"
+           },
+           {
+            "Name": "PhotoSrc",
+            "Type": "string",
+            "Comment": "照片地址"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.PhotoAlbum",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键"
+           },
+           {
+            "Name": "AlbumName",
+            "Type": "string",
+            "Comment": "相册名"
+           },
+           {
+            "Name": "AlbumDesc",
+            "Type": "string",
+            "Comment": "相册描述"
+           },
+           {
+            "Name": "AlbumCover",
+            "Type": "string",
+            "Comment": "相册封面"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态值 1公开 2私密"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Remark",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "头像"
+           },
+           {
+            "Name": "MessageContent",
+            "Type": "string",
+            "Comment": "留言内容"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "用户ip"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "用户地址"
+           },
+           {
+            "Name": "Time",
+            "Type": "int",
+            "Comment": "弹幕速度"
+           },
+           {
+            "Name": "IsReview",
+            "Type": "int",
+            "Comment": "是否审核"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "发布时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Role",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "RolePID",
+            "Type": "int",
+            "Comment": "父角色id"
+           },
+           {
+            "Name": "RoleDomain",
+            "Type": "string",
+            "Comment": "角色域"
+           },
+           {
+            "Name": "RoleName",
+            "Type": "string",
+            "Comment": "角色名"
+           },
+           {
+            "Name": "RoleComment",
+            "Type": "string",
+            "Comment": "角色备注"
+           },
+           {
+            "Name": "IsDisable",
+            "Type": "int",
+            "Comment": "是否禁用  0否 1是"
+           },
+           {
+            "Name": "IsDefault",
+            "Type": "int",
+            "Comment": "是否默认角色 0否 1是"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.RoleApi",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "RoleID",
+            "Type": "int",
+            "Comment": "角色id"
+           },
+           {
+            "Name": "ApiID",
+            "Type": "int",
+            "Comment": "接口id"
+           }
+          ]
+         },
+         {
+          "Type": "entity.RoleMenu",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "RoleID",
+            "Type": "int",
+            "Comment": "角色id"
+           },
+           {
+            "Name": "MenuID",
+            "Type": "int",
+            "Comment": "菜单id"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Tag",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "TagName",
+            "Type": "string",
+            "Comment": "标签名"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.Talk",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "说说id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Content",
+            "Type": "string",
+            "Comment": "说说内容"
+           },
+           {
+            "Name": "Images",
+            "Type": "string",
+            "Comment": "图片"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态 1.公开 2.私密"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UniqueView",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "ViewsCount",
+            "Type": "int",
+            "Comment": "访问量"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UploadRecord",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Label",
+            "Type": "string",
+            "Comment": "标签"
+           },
+           {
+            "Name": "FileName",
+            "Type": "string",
+            "Comment": "文件名称"
+           },
+           {
+            "Name": "FileSize",
+            "Type": "int",
+            "Comment": "文件大小"
+           },
+           {
+            "Name": "FileMd5",
+            "Type": "string",
+            "Comment": "文件md5值"
+           },
+           {
+            "Name": "FileURL",
+            "Type": "string",
+            "Comment": "上传路径"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UserAccount",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": "用户名"
+           },
+           {
+            "Name": "Password",
+            "Type": "string",
+            "Comment": "密码"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态: -1删除 0正常 1禁用"
+           },
+           {
+            "Name": "RegisterType",
+            "Type": "string",
+            "Comment": "注册方式"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "注册ip"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "注册ip 源"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UserInformation",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Email",
+            "Type": "string",
+            "Comment": "用户邮箱"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "用户昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "用户头像"
+           },
+           {
+            "Name": "Phone",
+            "Type": "string",
+            "Comment": "用户手机号"
+           },
+           {
+            "Name": "Intro",
+            "Type": "string",
+            "Comment": "个人简介"
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": "个人网站"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UserLoginHistory",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "LoginType",
+            "Type": "string",
+            "Comment": "登录类型"
+           },
+           {
+            "Name": "Agent",
+            "Type": "string",
+            "Comment": "代理"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "ip host"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "ip 源"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UserOauth",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "OpenID",
+            "Type": "string",
+            "Comment": "开发平台id，标识唯一用户"
+           },
+           {
+            "Name": "Platform",
+            "Type": "string",
+            "Comment": "平台:手机号、邮箱、微信、飞书"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "entity.UserRole",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "主键id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "RoleID",
+            "Type": "int",
+            "Comment": "角色id"
+           }
+          ]
+         },
+         {
+          "Type": "entity.WebsiteConfig",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "id"
+           },
+           {
+            "Name": "Key",
+            "Type": "string",
+            "Comment": "关键词"
+           },
+           {
+            "Name": "Config",
+            "Type": "string",
+            "Comment": "配置信息"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "request.ArticleConditionReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "TagID",
+            "Type": "int",
+            "Comment": "文章标签ID"
+           },
+           {
+            "Name": "CategoryID",
+            "Type": "int",
+            "Comment": "文章分类ID"
+           }
+          ]
+         },
+         {
+          "Type": "request.ArticleDeleteReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除"
+           }
+          ]
+         },
+         {
+          "Type": "request.ArticleDetailsDTOReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "ArticleCover",
+            "Type": "string",
+            "Comment": "文章缩略图"
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": "标题"
+           },
+           {
+            "Name": "ArticleContent",
+            "Type": "string",
+            "Comment": "内容"
+           },
+           {
+            "Name": "LikeCount",
+            "Type": "int",
+            "Comment": "点赞量"
+           },
+           {
+            "Name": "ViewsCount",
+            "Type": "int",
+            "Comment": "浏览量"
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "文章类型"
+           },
+           {
+            "Name": "OriginalURL",
+            "Type": "string",
+            "Comment": "原文链接"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态值 1 公开 2 私密 3 评论可见"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "发表时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           },
+           {
+            "Name": "CategoryName",
+            "Type": "string",
+            "Comment": "文章分类名"
+           },
+           {
+            "Name": "TagNameList",
+            "Type": "[]string",
+            "Comment": "文章标签列表"
+           }
+          ]
+         },
+         {
+          "Type": "request.ArticleTopReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶"
+           }
+          ]
+         },
+         {
+          "Type": "request.CaptchaEmailReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Email",
+            "Type": "string",
+            "Comment": "目标邮箱"
+           },
+           {
+            "Name": "Service",
+            "Type": "string",
+            "Comment": "服务"
+           },
+           {
+            "Name": "Check",
+            "Type": "bool",
+            "Comment": "是否检查邮箱是否存在"
+           }
+          ]
+         },
+         {
+          "Type": "request.CaptchaReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "CaptchaType",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Height",
+            "Type": "int",
+            "Comment": "Height png height in pixel."
+           },
+           {
+            "Name": "Width",
+            "Type": "int",
+            "Comment": "Width CaptchaReq png width in pixel."
+           },
+           {
+            "Name": "Length",
+            "Type": "int",
+            "Comment": "DefaultLen Default number of digits in captcha solution."
+           }
+          ]
+         },
+         {
+          "Type": "request.CaptchaVerifyReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Code",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.ChangePasswordReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "从 JWT 中提取 user id，避免越权"
+           },
+           {
+            "Name": "Password",
+            "Type": "string",
+            "Comment": "旧密码"
+           },
+           {
+            "Name": "NewPassword",
+            "Type": "string",
+            "Comment": "新密码"
+           }
+          ]
+         },
+         {
+          "Type": "request.Context",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "context.Context",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "Token",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "UID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Agent",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.CustomizeRouteMeta",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Title",
+            "Type": "string",
+            "Comment": "菜单名称"
+           },
+           {
+            "Name": "Icon",
+            "Type": "string",
+            "Comment": "菜单图标"
+           },
+           {
+            "Name": "ExtraIcon",
+            "Type": "interface{}",
+            "Comment": "菜单名称右侧的额外图标"
+           },
+           {
+            "Name": "ShowLink",
+            "Type": "bool",
+            "Comment": "是否在菜单中显示"
+           },
+           {
+            "Name": "ShowParent",
+            "Type": "bool",
+            "Comment": "是否显示父级菜单"
+           },
+           {
+            "Name": "Roles",
+            "Type": "[]string",
+            "Comment": "页面级别权限设置"
+           },
+           {
+            "Name": "Auths",
+            "Type": "[]string",
+            "Comment": "按钮级别权限设置"
+           },
+           {
+            "Name": "KeepAlive",
+            "Type": "bool",
+            "Comment": "路由组件缓存"
+           },
+           {
+            "Name": "FrameSrc",
+            "Type": "string",
+            "Comment": "内嵌的iframe链接"
+           },
+           {
+            "Name": "FrameLoading",
+            "Type": "bool",
+            "Comment": "iframe页是否开启首次加载动画"
+           },
+           {
+            "Name": "Transition",
+            "Type": "Transition",
+            "Comment": "页面加载动画"
+           },
+           {
+            "Name": "HiddenTag",
+            "Type": "bool",
+            "Comment": "是否不添加信息到标签页"
+           },
+           {
+            "Name": "DynamicLevel",
+            "Type": "int",
+            "Comment": "动态路由可打开的最大数量"
+           },
+           {
+            "Name": "ActivePath",
+            "Type": "string",
+            "Comment": "将某个菜单激活"
+           }
+          ]
+         },
+         {
+          "Type": "request.Meta",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Title",
+            "Type": "string",
+            "Comment": "菜单名称"
+           },
+           {
+            "Name": "Icon",
+            "Type": "string",
+            "Comment": "菜单图标"
+           },
+           {
+            "Name": "ShowLink",
+            "Type": "bool",
+            "Comment": "是否在菜单中显示"
+           },
+           {
+            "Name": "Rank",
+            "Type": "int",
+            "Comment": "菜单升序排序"
+           }
+          ]
+         },
+         {
+          "Type": "request.OauthLoginReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Platform",
+            "Type": "string",
+            "Comment": "平台"
+           },
+           {
+            "Name": "Code",
+            "Type": "string",
+            "Comment": "授权码"
+           },
+           {
+            "Name": "State",
+            "Type": "string",
+            "Comment": "状态"
+           }
+          ]
+         },
+         {
+          "Type": "request.PageQuery",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "sqlx.PageLimit",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "Sorts",
+            "Type": "[]*sqlx.Sort",
+            "Comment": "排序"
+           },
+           {
+            "Name": "Conditions",
+            "Type": "[]*sqlx.Condition",
+            "Comment": "使用条件语句查询"
+           }
+          ]
+         },
+         {
+          "Type": "request.ResetPasswordReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Password",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Code",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.RouteChildrenConfigsTable",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Path",
+            "Type": "string",
+            "Comment": "子路由地址"
+           },
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": "路由名字"
+           },
+           {
+            "Name": "Redirect",
+            "Type": "string",
+            "Comment": "路由重定向"
+           },
+           {
+            "Name": "Component",
+            "Type": "interface{}",
+            "Comment": "按需加载组件"
+           },
+           {
+            "Name": "Meta",
+            "Type": "CustomizeRouteMeta",
+            "Comment": "meta配置"
+           },
+           {
+            "Name": "Children",
+            "Type": "[]RouteChildrenConfigsTable",
+            "Comment": "子路由配置项"
+           }
+          ]
+         },
+         {
+          "Type": "request.RouteConfigsTable",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Path",
+            "Type": "string",
+            "Comment": "路由地址"
+           },
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": "路由名字"
+           },
+           {
+            "Name": "Component",
+            "Type": "interface{}",
+            "Comment": "Layout组件"
+           },
+           {
+            "Name": "Redirect",
+            "Type": "string",
+            "Comment": "路由重定向"
+           },
+           {
+            "Name": "Meta",
+            "Type": "Meta",
+            "Comment": "meta配置"
+           },
+           {
+            "Name": "Children",
+            "Type": "[]RouteChildrenConfigsTable",
+            "Comment": "子路由配置项"
+           }
+          ]
+         },
+         {
+          "Type": "request.SyncMenuRequest",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Menus",
+            "Type": "[]RouteConfigsTable",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.Transition",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": "当前路由动画效果"
+           },
+           {
+            "Name": "EnterTransition",
+            "Type": "string",
+            "Comment": "进场动画"
+           },
+           {
+            "Name": "LeaveTransition",
+            "Type": "string",
+            "Comment": "离场动画"
+           }
+          ]
+         },
+         {
+          "Type": "request.UpdateRoleApisReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "RoleId",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "ResourceIds",
+            "Type": "[]int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.UpdateRoleMenusReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "RoleId",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "MenuIds",
+            "Type": "[]int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.UpdateUserRolesReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "UserId",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "RoleIds",
+            "Type": "[]int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.UserEmail",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.UserInfoReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "昵称"
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": "网站"
+           },
+           {
+            "Name": "Intro",
+            "Type": "string",
+            "Comment": "简介"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "头像"
+           }
+          ]
+         },
+         {
+          "Type": "request.UserReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Password",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Code",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "request.VoiceVO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "消息类型"
+           },
+           {
+            "Name": "File",
+            "Type": "*multipart.FileHeader",
+            "Comment": "文件"
+           },
+           {
+            "Name": "Content",
+            "Type": "string",
+            "Comment": "聊天内容"
+           }
+          ]
+         },
+         {
+          "Type": "request.WebsiteConfigReq",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Key",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Value",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.AdminHomeInfo",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ViewsCount",
+            "Type": "int64",
+            "Comment": "访问量"
+           },
+           {
+            "Name": "MessageCount",
+            "Type": "int64",
+            "Comment": "留言量"
+           },
+           {
+            "Name": "UserCount",
+            "Type": "int64",
+            "Comment": "用户量"
+           },
+           {
+            "Name": "ArticleCount",
+            "Type": "int64",
+            "Comment": "文章量"
+           },
+           {
+            "Name": "CategoryDTOList",
+            "Type": "[]*CategoryDTO",
+            "Comment": "分类统计"
+           },
+           {
+            "Name": "TagDTOList",
+            "Type": "[]*TagDTO",
+            "Comment": "标签列表"
+           },
+           {
+            "Name": "ArticleStatisticsList",
+            "Type": "[]*ArticleStatisticsDTO",
+            "Comment": "文章统计列表"
+           },
+           {
+            "Name": "UniqueViewDTOList",
+            "Type": "[]*UniqueViewDTO",
+            "Comment": "一周用户量集合"
+           },
+           {
+            "Name": "ArticleRankDTOList",
+            "Type": "[]*ArticleRankDTO",
+            "Comment": "文章浏览量排行"
+           }
+          ]
+         },
+         {
+          "Type": "response.ApiDetailsDTO",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "entity.Api",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "Children",
+            "Type": "[]*ApiDetailsDTO",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleBack",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "ArticleDTO",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "CategoryName",
+            "Type": "string",
+            "Comment": "文章分类名"
+           },
+           {
+            "Name": "TagNameList",
+            "Type": "[]string",
+            "Comment": "文章标签列表"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleConditionDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ArticleDTOList",
+            "Type": "[]*ArticleHome",
+            "Comment": "文章列表"
+           },
+           {
+            "Name": "ConditionName",
+            "Type": "string",
+            "Comment": "条件名"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "ArticleCover",
+            "Type": "string",
+            "Comment": "文章缩略图"
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": "标题"
+           },
+           {
+            "Name": "ArticleContent",
+            "Type": "string",
+            "Comment": "内容"
+           },
+           {
+            "Name": "LikeCount",
+            "Type": "int",
+            "Comment": "点赞量"
+           },
+           {
+            "Name": "ViewsCount",
+            "Type": "int",
+            "Comment": "浏览量"
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": "文章类型"
+           },
+           {
+            "Name": "OriginalURL",
+            "Type": "string",
+            "Comment": "原文链接"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶"
+           },
+           {
+            "Name": "IsDelete",
+            "Type": "int",
+            "Comment": "是否删除"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态值 1 公开 2 私密 3 评论可见"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "发表时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleHome",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "ArticleDTO",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "ArticleCategory",
+            "Type": "*CategoryDTO",
+            "Comment": "文章分类"
+           },
+           {
+            "Name": "ArticleTagList",
+            "Type": "[]*TagDTO",
+            "Comment": "文章标签列表"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticlePageDetailsDTO",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "ArticleHome",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "LastArticle",
+            "Type": "*ArticlePreviewDTO",
+            "Comment": "上一篇文章"
+           },
+           {
+            "Name": "NextArticle",
+            "Type": "*ArticlePreviewDTO",
+            "Comment": "下一篇文章"
+           },
+           {
+            "Name": "RecommendArticleList",
+            "Type": "[]*ArticlePreviewDTO",
+            "Comment": "推荐文章列表"
+           },
+           {
+            "Name": "NewestArticleList",
+            "Type": "[]*ArticlePreviewDTO",
+            "Comment": "最新文章列表"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticlePreviewDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "ArticleCover",
+            "Type": "string",
+            "Comment": "文章缩略图"
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": "标题"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleRankDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "文章ID"
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": "文章标题"
+           },
+           {
+            "Name": "Count",
+            "Type": "int64",
+            "Comment": "数量"
+           }
+          ]
+         },
+         {
+          "Type": "response.ArticleStatisticsDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Day",
+            "Type": "string",
+            "Comment": "日期"
+           },
+           {
+            "Name": "Count",
+            "Type": "int64",
+            "Comment": "数量"
+           }
+          ]
+         },
+         {
+          "Type": "response.BatchResult",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "SuccessCount",
+            "Type": "int64",
+            "Comment": "成功数量"
+           }
+          ]
+         },
+         {
+          "Type": "response.BlogHomeInfo",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ArticleCount",
+            "Type": "int64",
+            "Comment": "文章数量"
+           },
+           {
+            "Name": "CategoryCount",
+            "Type": "int64",
+            "Comment": "分类数量"
+           },
+           {
+            "Name": "TagCount",
+            "Type": "int64",
+            "Comment": "标签数量"
+           },
+           {
+            "Name": "ViewsCount",
+            "Type": "string",
+            "Comment": "访问量"
+           },
+           {
+            "Name": "WebsiteConfig",
+            "Type": "WebsiteConfigDTO",
+            "Comment": "网站配置"
+           },
+           {
+            "Name": "PageList",
+            "Type": "[]*PageDTO",
+            "Comment": "页面列表"
+           }
+          ]
+         },
+         {
+          "Type": "response.CaptchaDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "EncodeData",
+            "Type": "string",
+            "Comment": "验证码内容，base64编码"
+           },
+           {
+            "Name": "Length",
+            "Type": "int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.CategoryDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "CategoryName",
+            "Type": "string",
+            "Comment": "分类名"
+           }
+          ]
+         },
+         {
+          "Type": "response.CategoryDetailsDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "CategoryName",
+            "Type": "string",
+            "Comment": "分类名"
+           },
+           {
+            "Name": "ArticleCount",
+            "Type": "int64",
+            "Comment": ""
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.CommentBackDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "ReplyNickname",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "ArticleTitle",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "CommentContent",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Type",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "IsReview",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.CommentDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "评论id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "用户昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "用户头像"
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": "个人网站"
+           },
+           {
+            "Name": "CommentContent",
+            "Type": "string",
+            "Comment": "评论内容"
+           },
+           {
+            "Name": "LikeCount",
+            "Type": "int",
+            "Comment": "点赞数"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "评论时间"
+           },
+           {
+            "Name": "ReplyCount",
+            "Type": "int64",
+            "Comment": "回复量"
+           },
+           {
+            "Name": "ReplyDTOList",
+            "Type": "[]*ReplyDTO",
+            "Comment": "回复列表"
+           }
+          ]
+         },
+         {
+          "Type": "response.Login",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Token",
+            "Type": "*Token",
+            "Comment": ""
+           },
+           {
+            "Name": "UserInfo",
+            "Type": "*UserInfo",
+            "Comment": ""
+           },
+           {
+            "Name": "LoginHistory",
+            "Type": "*LoginHistory",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.LoginHistory",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "LoginType",
+            "Type": "string",
+            "Comment": "登录类型"
+           },
+           {
+            "Name": "Agent",
+            "Type": "string",
+            "Comment": "代理"
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "ip host"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "ip 源"
+           },
+           {
+            "Name": "LoginTime",
+            "Type": "string",
+            "Comment": "创建时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.MenuDetailsDTO",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "entity.Menu",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "Children",
+            "Type": "[]*MenuDetailsDTO",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.OauthLoginUrl",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Url",
+            "Type": "string",
+            "Comment": "授权地址"
+           }
+          ]
+         },
+         {
+          "Type": "response.PageDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "页面ID"
+           },
+           {
+            "Name": "PageName",
+            "Type": "string",
+            "Comment": "页面名称"
+           },
+           {
+            "Name": "PageLabel",
+            "Type": "string",
+            "Comment": "页面标签"
+           },
+           {
+            "Name": "PageCover",
+            "Type": "string",
+            "Comment": "页面封面"
+           }
+          ]
+         },
+         {
+          "Type": "response.PageResult",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "List",
+            "Type": "interface{}",
+            "Comment": ""
+           },
+           {
+            "Name": "Page",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "PageSize",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Total",
+            "Type": "int64",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.PhotoAlbumDetailsDTO",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "entity.PhotoAlbum",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "PhotoCount",
+            "Type": "int64",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.ReplyDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "评论id"
+           },
+           {
+            "Name": "ParentID",
+            "Type": "int",
+            "Comment": "父评论id"
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户id"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "用户昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "用户头像"
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": "个人网站"
+           },
+           {
+            "Name": "ReplyUserID",
+            "Type": "int",
+            "Comment": "被回复用户id"
+           },
+           {
+            "Name": "ReplyNickname",
+            "Type": "string",
+            "Comment": "被回复用户昵称"
+           },
+           {
+            "Name": "ReplyWebsite",
+            "Type": "string",
+            "Comment": "被回复个人网站"
+           },
+           {
+            "Name": "CommentContent",
+            "Type": "string",
+            "Comment": "评论内容"
+           },
+           {
+            "Name": "LikeCount",
+            "Type": "int",
+            "Comment": "点赞数"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "评论时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.Response",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Code",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Message",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Data",
+            "Type": "interface{}",
+            "Comment": ""
+           },
+           {
+            "Name": "TraceID",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.RoleDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "RoleName",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "RoleComment",
+            "Type": "string",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.RoleDetailsDTO",
+          "Extend": [
+           {
+            "Name": "",
+            "Type": "entity.Role",
+            "Comment": ""
+           }
+          ],
+          "Fields": [
+           {
+            "Name": "MenuIdList",
+            "Type": "[]int",
+            "Comment": ""
+           },
+           {
+            "Name": "ResourceIdList",
+            "Type": "[]int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.TagDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "标签ID"
+           },
+           {
+            "Name": "TagName",
+            "Type": "string",
+            "Comment": "标签名"
+           }
+          ]
+         },
+         {
+          "Type": "response.TagDetailsDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": "标签ID"
+           },
+           {
+            "Name": "TagName",
+            "Type": "string",
+            "Comment": "标签名"
+           },
+           {
+            "Name": "ArticleCount",
+            "Type": "int64",
+            "Comment": "文章数量"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.TalkDetailsDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "UserID",
+            "Type": "int",
+            "Comment": "用户ID"
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": "用户昵称"
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": "用户头像"
+           },
+           {
+            "Name": "Content",
+            "Type": "string",
+            "Comment": "评论内容"
+           },
+           {
+            "Name": "ImgList",
+            "Type": "[]string",
+            "Comment": "图片URL列表"
+           },
+           {
+            "Name": "IsTop",
+            "Type": "int",
+            "Comment": "是否置顶"
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": "状态"
+           },
+           {
+            "Name": "LikeCount",
+            "Type": "int",
+            "Comment": "点赞量"
+           },
+           {
+            "Name": "CommentCount",
+            "Type": "int",
+            "Comment": "评论量"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": "创建时间"
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": "更新时间"
+           }
+          ]
+         },
+         {
+          "Type": "response.Token",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "TokenType",
+            "Type": "string",
+            "Comment": "token类型,Bearer"
+           },
+           {
+            "Name": "AccessToken",
+            "Type": "string",
+            "Comment": "访问token,过期时间较短。2h"
+           },
+           {
+            "Name": "ExpiresIn",
+            "Type": "int64",
+            "Comment": "访问token过期时间"
+           },
+           {
+            "Name": "RefreshToken",
+            "Type": "string",
+            "Comment": "刷新token,过期时间较长。30d"
+           },
+           {
+            "Name": "RefreshExpiresIn",
+            "Type": "int64",
+            "Comment": "刷新token过期时间"
+           },
+           {
+            "Name": "Scope",
+            "Type": "string",
+            "Comment": "作用域"
+           },
+           {
+            "Name": "UID",
+            "Type": "int",
+            "Comment": "用户id"
+           }
+          ]
+         },
+         {
+          "Type": "response.UniqueViewDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Day",
+            "Type": "string",
+            "Comment": "日期"
+           },
+           {
+            "Name": "Count",
+            "Type": "int64",
+            "Comment": "数量"
+           }
+          ]
+         },
+         {
+          "Type": "response.UserAreaDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Value",
+            "Type": "int",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.UserDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Intro",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Email",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Status",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "RegisterType",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "IpAddress",
+            "Type": "string",
+            "Comment": "ip host"
+           },
+           {
+            "Name": "IpSource",
+            "Type": "string",
+            "Comment": "ip 源"
+           },
+           {
+            "Name": "CreatedAt",
+            "Type": "time.Time",
+            "Comment": ""
+           },
+           {
+            "Name": "UpdatedAt",
+            "Type": "time.Time",
+            "Comment": ""
+           },
+           {
+            "Name": "Roles",
+            "Type": "[]*RoleDTO",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.UserInfo",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "ID",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Username",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Nickname",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Avatar",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Intro",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Website",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Email",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "ArticleLikeSet",
+            "Type": "[]string",
+            "Comment": "文章点赞集合"
+           },
+           {
+            "Name": "CommentLikeSet",
+            "Type": "[]string",
+            "Comment": "评论点赞集合"
+           },
+           {
+            "Name": "TalkLikeSet",
+            "Type": "[]string",
+            "Comment": "说说点赞集合"
+           },
+           {
+            "Name": "Roles",
+            "Type": "[]*RoleDTO",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.UserMenuDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "Id",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Name",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Path",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Component",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Icon",
+            "Type": "string",
+            "Comment": ""
+           },
+           {
+            "Name": "Rank",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "IsHidden",
+            "Type": "int",
+            "Comment": ""
+           },
+           {
+            "Name": "Children",
+            "Type": "[]UserMenuDTO",
+            "Comment": ""
+           }
+          ]
+         },
+         {
+          "Type": "response.WebsiteConfigDTO",
+          "Extend": null,
+          "Fields": [
+           {
+            "Name": "AdminUrl",
+            "Type": "string",
+            "Comment": "后台地址"
+           },
+           {
+            "Name": "AlipayQrCode",
+            "Type": "string",
+            "Comment": "支付宝二维码"
+           },
+           {
+            "Name": "Gitee",
+            "Type": "string",
+            "Comment": "Gitee"
+           },
+           {
+            "Name": "Github",
+            "Type": "string",
+            "Comment": "Github"
+           },
+           {
+            "Name": "IsChatRoom",
+            "Type": "int",
+            "Comment": "是否开启聊天室"
+           },
+           {
+            "Name": "IsCommentReview",
+            "Type": "int",
+            "Comment": "是否开启评论审核"
+           },
+           {
+            "Name": "IsEmailNotice",
+            "Type": "int",
+            "Comment": "是否开启邮件通知"
+           },
+           {
+            "Name": "IsMessageReview",
+            "Type": "int",
+            "Comment": "是否开启留言审核"
+           },
+           {
+            "Name": "IsMusicPlayer",
+            "Type": "int",
+            "Comment": "是否开启音乐播放器"
+           },
+           {
+            "Name": "IsReward",
+            "Type": "int",
+            "Comment": "是否开启打赏"
+           },
+           {
+            "Name": "Qq",
+            "Type": "string",
+            "Comment": "QQ"
+           },
+           {
+            "Name": "SocialLoginList",
+            "Type": "[]string",
+            "Comment": "社交登录列表"
+           },
+           {
+            "Name": "SocialUrlList",
+            "Type": "[]string",
+            "Comment": "社交地址列表"
+           },
+           {
+            "Name": "TouristAvatar",
+            "Type": "string",
+            "Comment": "游客头像"
+           },
+           {
+            "Name": "UserAvatar",
+            "Type": "string",
+            "Comment": "用户头像"
+           },
+           {
+            "Name": "WebsiteAuthor",
+            "Type": "string",
+            "Comment": "网站作者"
+           },
+           {
+            "Name": "WebsiteAvatar",
+            "Type": "interface{}",
+            "Comment": "网站头像"
+           },
+           {
+            "Name": "WebsiteCreateTime",
+            "Type": "string",
+            "Comment": "网站创建时间"
+           },
+           {
+            "Name": "WebsiteIntro",
+            "Type": "string",
+            "Comment": "网站介绍"
+           },
+           {
+            "Name": "WebsiteName",
+            "Type": "string",
+            "Comment": "网站名称"
+           },
+           {
+            "Name": "WebsiteNotice",
+            "Type": "string",
+            "Comment": "网站公告"
+           },
+           {
+            "Name": "WebsiteRecordNo",
+            "Type": "string",
+            "Comment": "网站备案号"
+           },
+           {
+            "Name": "WebsocketUrl",
+            "Type": "string",
+            "Comment": "websocket地址"
+           },
+           {
+            "Name": "WeixinQrCode",
+            "Type": "string",
+            "Comment": "微信二维码"
+           }
+          ]
+         }
+        ]
+--- PASS: TestAstParser (0.01s)
+PASS
+
+Process finished with the exit code 0

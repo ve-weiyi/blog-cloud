@@ -16,43 +16,46 @@ limitations under the License.
 package cmd
 
 import (
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/global"
-	"github.com/ve-weiyi/ve-blog-golang/server/initialize"
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
+type RootCmd struct {
+	cmd *cobra.Command
+}
+
+func NewRootCmd() *RootCmd {
+	var rootCmd = &cobra.Command{
+		Use:   "",
+		Short: "A brief description of your application",
+		Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		//实现功能逻辑的函数。
-		OnInitialize()
-	},
-}
-
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
+		// Uncomment the following line if your bare application
+		// has an action associated with it:
+		Run: func(cmd *cobra.Command, args []string) {
+			//实现功能逻辑的函数。
+			_ = cmd.Help()
+			return
+		},
 	}
+
+	root := &RootCmd{
+		cmd: rootCmd,
+	}
+
+	root.cmd.AddCommand(NewServerCmd().cmd)
+	root.cmd.AddCommand(NewMigrateCmd().cmd)
+	root.cmd.AddCommand(NewRabbitmqCmd().cmd)
+	root.init()
+	return root
 }
 
-func init() {
+func (s *RootCmd) init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
@@ -61,34 +64,12 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
 }
 
-func OnInitialize() {
-	log.Println("let's go")
-	// 初始化Viper
-	initialize.Viper()
-	// 初始化zap日志库
-	initialize.Zap()
-	// 初始化gorm数据库
-	initialize.Gorm()
-	// 初始化redis服务
-	initialize.Redis()
-	// 初始化jwt
-	initialize.JwtToken()
-	// 初始化rbac角色访问控制
-	//initialize.RBAC()
-
-	initialize.OtherInit()
-
-	// 创建协程运行rabbitmq订阅消息
-	//go initialize.RabbitMq()
-	// 程序结束前关闭数据库链接
-	if global.DB != nil {
-		initialize.RegisterTables(global.DB) // 初始化表
-		db, _ := global.DB.DB()
-		defer db.Close()
+func (s *RootCmd) Execute() {
+	err := s.cmd.Execute()
+	if err != nil {
+		os.Exit(1)
 	}
-
-	initialize.RunWindowsServer()
 }

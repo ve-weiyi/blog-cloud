@@ -18,30 +18,41 @@ func NewApiService(svcCtx *svc.ServiceContext) *ApiService {
 
 // 创建Api记录
 func (s *ApiService) CreateApi(reqCtx *request.Context, api *entity.Api) (data *entity.Api, err error) {
-	return s.svcCtx.ApiRepository.CreateApi(reqCtx, api)
+	return s.svcCtx.ApiRepository.Create(reqCtx, api)
 }
 
 // 更新Api记录
 func (s *ApiService) UpdateApi(reqCtx *request.Context, api *entity.Api) (data *entity.Api, err error) {
-	return s.svcCtx.ApiRepository.UpdateApi(reqCtx, api)
+	return s.svcCtx.ApiRepository.Update(reqCtx, api)
 }
 
 // 删除Api记录
-func (s *ApiService) DeleteApi(reqCtx *request.Context, id int) (rows int, err error) {
-	return s.svcCtx.ApiRepository.DeleteApi(reqCtx, id)
+func (s *ApiService) DeleteApi(reqCtx *request.Context, id int) (rows int64, err error) {
+	return s.svcCtx.ApiRepository.Delete(reqCtx, "id = ?", id)
 }
 
 // 查询Api记录
 func (s *ApiService) FindApi(reqCtx *request.Context, id int) (data *entity.Api, err error) {
-	return s.svcCtx.ApiRepository.FindApi(reqCtx, id)
+	return s.svcCtx.ApiRepository.First(reqCtx, "id = ?", id)
 }
 
 // 批量删除Api记录
-func (s *ApiService) DeleteApiByIds(reqCtx *request.Context, ids []int) (rows int, err error) {
-	return s.svcCtx.ApiRepository.DeleteApiByIds(reqCtx, ids)
+func (s *ApiService) DeleteApiByIds(reqCtx *request.Context, ids []int) (rows int64, err error) {
+	return s.svcCtx.ApiRepository.Delete(reqCtx, "id in (?)", ids)
 }
 
 // 分页获取Api记录
 func (s *ApiService) FindApiList(reqCtx *request.Context, page *request.PageQuery) (list []*entity.Api, total int64, err error) {
-	return s.svcCtx.ApiRepository.FindApiList(reqCtx, page)
+	cond, args := page.ConditionClause()
+	order := page.OrderClause()
+
+	list, err = s.svcCtx.ApiRepository.FindList(reqCtx, page.Page, page.PageSize, order, cond, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	total, err = s.svcCtx.ApiRepository.Count(reqCtx, cond, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	return list, total, nil
 }

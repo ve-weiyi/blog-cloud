@@ -19,15 +19,14 @@ func NewAuthRouter(ctx *svc.RouterContext) *AuthRouter {
 // InitAuthRouter 初始化 Auth 路由信息
 func (s *AuthRouter) InitAuthRouter(publicRouter *gin.RouterGroup, loginRouter *gin.RouterGroup) {
 	authPublicRouter := publicRouter.Group("")
-	//authOperationRouter := loginRouter.Group("")
 
-	var self = s.svcCtx.AppController.AuthController
+	var handler = s.svcCtx.AuthController
 	{
-		authPublicRouter.POST("login", self.Login)                  // 登录
-		authPublicRouter.GET("logout", self.Logout)                 // 登出
-		authPublicRouter.POST("register", self.Register)            // 注册
-		authPublicRouter.POST("register/email", self.RegisterEmail) // 注册邮件
-		authPublicRouter.POST("oauth/login", self.OauthLogin)       // 使用第三方登录
-		authPublicRouter.POST("oauth/url", self.GetAuthorizeUrl)    // 获取授权地址
+		authPublicRouter.POST("login", handler.Login)                  // 登录
+		authPublicRouter.GET("logout", handler.Logout)                 // 登出
+		authPublicRouter.POST("register", handler.Register)            // 注册
+		authPublicRouter.POST("register/email", handler.RegisterEmail) // 注册邮件
+		authPublicRouter.POST("oauth/login", handler.OauthLogin)       // 使用第三方登录
+		authPublicRouter.POST("oauth/url", handler.GetAuthorizeUrl)    // 获取授权地址
 	}
 }

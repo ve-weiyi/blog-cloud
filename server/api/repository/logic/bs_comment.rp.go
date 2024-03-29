@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/ve-blog-golang/server/api/model/entity"
-	"github.com/ve-weiyi/ve-blog-golang/server/api/model/request"
 	"github.com/ve-weiyi/ve-blog-golang/server/api/repository/svc"
 )
 
@@ -24,128 +23,116 @@ func NewCommentRepository(svcCtx *svc.RepositoryContext) *CommentRepository {
 }
 
 // 创建Comment记录
-func (s *CommentRepository) CreateComment(ctx context.Context, comment *entity.Comment, conditions ...*request.Condition) (out *entity.Comment, err error) {
+func (s *CommentRepository) Create(ctx context.Context, item *entity.Comment) (out *entity.Comment, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
-	err = db.Create(&comment).Error
+	err = db.Create(&item).Error
 	if err != nil {
 		return nil, err
 	}
-	return comment, err
+	return item, err
 }
 
 // 更新Comment记录
-func (s *CommentRepository) UpdateComment(ctx context.Context, comment *entity.Comment, conditions ...*request.Condition) (out *entity.Comment, err error) {
+func (s *CommentRepository) Update(ctx context.Context, item *entity.Comment) (out *entity.Comment, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
-	err = db.Save(&comment).Error
+	err = db.Save(&item).Error
 	if err != nil {
 		return nil, err
 	}
-	return comment, err
+	return item, err
 }
 
 // 删除Comment记录
-func (s *CommentRepository) DeleteComment(ctx context.Context, id int, conditions ...*request.Condition) (rows int, err error) {
+func (s *CommentRepository) Delete(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	query := db.Delete(&entity.Comment{}, "id = ?", id)
+	query := db.Delete(&entity.Comment{})
 	err = query.Error
-	rows = int(query.RowsAffected)
+	rows = query.RowsAffected
 	return rows, err
 }
 
 // 查询Comment记录
-func (s *CommentRepository) FindComment(ctx context.Context, id int, conditions ...*request.Condition) (out *entity.Comment, err error) {
+func (s *CommentRepository) First(ctx context.Context, conditions string, args ...interface{}) (out *entity.Comment, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	err = db.Where("id = ?", id).First(&out).Error
+	err = db.First(&out).Error
 	if err != nil {
 		return nil, err
 	}
 	return out, err
 }
 
-// 批量删除Comment记录
-func (s *CommentRepository) DeleteCommentByIds(ctx context.Context, ids []int, conditions ...*request.Condition) (rows int, err error) {
+func (s *CommentRepository) FindALL(ctx context.Context, conditions string, args ...interface{}) (out []*entity.Comment, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	query := db.Delete(&entity.Comment{}, "id in ?", ids)
-	err = query.Error
-	rows = int(query.RowsAffected)
-	return rows, err
+	err = db.Find(&out).Error
+	if err != nil {
+		return nil, err
+	}
+	return out, err
 }
 
 // 分页查询Comment记录
-func (s *CommentRepository) FindCommentList(ctx context.Context, page *request.PageQuery, conditions ...*request.Condition) (list []*entity.Comment, total int64, err error) {
+func (s *CommentRepository) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*entity.Comment, err error) {
 	// 创建db
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
 	// 如果有搜索条件
-	if len(page.Conditions) != 0 {
-		query, args := page.WhereClause()
-		db = db.Where(query, args...)
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
 	}
 
 	// 如果有排序参数
-	if len(page.Sorts) != 0 {
-		db = db.Order(page.OrderClause())
-	}
-
-	// 查询总数,要在使用limit之前
-	err = db.Model(&list).Count(&total).Error
-	if err != nil {
-		return nil, 0, err
+	if len(sorts) != 0 {
+		db = db.Order(sorts)
 	}
 
 	// 如果有分页参数
-	if page.Page != 0 || page.PageSize != 0 {
-		limit := page.Limit()
-		offset := page.Offset()
+	if page > 0 && size > 0 {
+		limit := size
+		offset := (page - 1) * limit
 		db = db.Limit(limit).Offset(offset)
 	}
 
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return list, total, nil
+	return list, nil
+}
+
+// 查询总数
+func (s *CommentRepository) Count(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := s.DbEngin.WithContext(ctx)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Model(&entity.Comment{}).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

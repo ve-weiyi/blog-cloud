@@ -21,7 +21,7 @@ func NewUploadRouter(svcCtx *svc.RouterContext) *UploadRouter {
 // loginRouter  登录路由，登录后才可以访问
 func (s *UploadRouter) InitUploadRouter(publicRouter *gin.RouterGroup, loginRouter *gin.RouterGroup) {
 
-	var handler = s.svcCtx.AppController.UploadController
+	var handler = s.svcCtx.UploadController
 	{
 		publicRouter.POST("upload/*label", handler.UploadFile) // 上传文件
 	}

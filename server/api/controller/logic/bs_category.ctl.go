@@ -94,7 +94,7 @@ func (s *CategoryController) UpdateCategory(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Category id"
+// @Param 	 	id		path		int							true	"Category.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/category/{id} [delete]
 func (s *CategoryController) DeleteCategory(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *CategoryController) DeleteCategory(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Category id"
+// @Param 	 	id		path		int							true	"Category.id"
 // @Success		200		{object}	response.Response{data=entity.Category}	"返回信息"
 // @Router 		/category/{id} [get]
 func (s *CategoryController) FindCategory(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *CategoryController) DeleteCategoryByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *CategoryController) FindCategoryList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

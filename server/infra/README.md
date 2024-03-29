@@ -3,9 +3,6 @@
 [captcha](captcha)
 验证码仓库，用于生成验证码
 
-[database](database)
-数据库链接服务
-
 [easycode](../quickstart)
 代码生成器，快速生成api代码
 

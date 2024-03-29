@@ -94,7 +94,7 @@ func (s *FriendLinkController) UpdateFriendLink(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"FriendLink id"
+// @Param 	 	id		path		int							true	"FriendLink.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/friend_link/{id} [delete]
 func (s *FriendLinkController) DeleteFriendLink(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *FriendLinkController) DeleteFriendLink(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"FriendLink id"
+// @Param 	 	id		path		int							true	"FriendLink.id"
 // @Success		200		{object}	response.Response{data=entity.FriendLink}	"返回信息"
 // @Router 		/friend_link/{id} [get]
 func (s *FriendLinkController) FindFriendLink(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *FriendLinkController) DeleteFriendLinkByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *FriendLinkController) FindFriendLinkList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

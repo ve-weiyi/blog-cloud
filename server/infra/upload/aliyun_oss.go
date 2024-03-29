@@ -4,28 +4,23 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path"
-	"strings"
-	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/config/properties"
-
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/crypto"
 )
 
 type AliyunOSS struct {
-	cfg    *properties.Aliyun
+	cfg    *UploadConfig
 	bucket *oss.Bucket
 }
 
 func (s *AliyunOSS) UploadFile(prefix string, file *multipart.FileHeader) (url string, err error) {
-	// 读取文件后缀
-	ext := path.Ext(file.Filename)
-	// 读取文件名并加密
-	name := strings.TrimSuffix(file.Filename, ext)
-	// 拼接新文件名
-	filename := fmt.Sprintf("%s_%s%s", crypto.MD5V([]byte(name)), time.Now().Format("20060102150405"), ext)
+	var filename string
+	// 读取文件名
+	if s.cfg.FileNameAsKey != nil {
+		filename = s.cfg.FileNameAsKey(file)
+	} else {
+		filename = file.Filename
+	}
 
 	// 本地文件目录
 	dir := path.Join(s.cfg.BasePath, prefix)
@@ -64,22 +59,22 @@ func (s *AliyunOSS) DeleteFile(key string) (err error) {
 	return nil
 }
 
-func NewAliyunOSS(cfg *properties.Aliyun) (*AliyunOSS, error) {
+func NewAliyunOSS(cfg *UploadConfig) *AliyunOSS {
 
 	// 创建OSSClient实例。
 	client, err := oss.New(cfg.Endpoint, cfg.AccessKeyId, cfg.AccessKeySecret)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	// 获取存储空间。
 	bucket, err := client.Bucket(cfg.BucketName)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	return &AliyunOSS{
 		cfg:    cfg,
 		bucket: bucket,
-	}, nil
+	}
 }

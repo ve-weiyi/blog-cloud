@@ -94,7 +94,7 @@ func (s *PhotoController) UpdatePhoto(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Photo id"
+// @Param 	 	id		path		int							true	"Photo.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/photo/{id} [delete]
 func (s *PhotoController) DeletePhoto(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *PhotoController) DeletePhoto(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Photo id"
+// @Param 	 	id		path		int							true	"Photo.id"
 // @Success		200		{object}	response.Response{data=entity.Photo}	"返回信息"
 // @Router 		/photo/{id} [get]
 func (s *PhotoController) FindPhoto(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *PhotoController) DeletePhotoByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *PhotoController) FindPhotoList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

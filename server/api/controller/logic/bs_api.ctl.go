@@ -94,7 +94,7 @@ func (s *ApiController) UpdateApi(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Api id"
+// @Param 	 	id		path		int							true	"Api.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/api/{id} [delete]
 func (s *ApiController) DeleteApi(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *ApiController) DeleteApi(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Api id"
+// @Param 	 	id		path		int							true	"Api.id"
 // @Success		200		{object}	response.Response{data=entity.Api}	"返回信息"
 // @Router 		/api/{id} [get]
 func (s *ApiController) FindApi(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *ApiController) DeleteApiByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *ApiController) FindApiList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

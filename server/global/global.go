@@ -11,11 +11,11 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/ve-blog-golang/server/config"
+	"github.com/ve-weiyi/ve-blog-golang/server/infra/glog"
 	"github.com/ve-weiyi/ve-blog-golang/server/infra/jjwt"
 	"github.com/ve-weiyi/ve-blog-golang/server/infra/rabbitmq"
 	"github.com/ve-weiyi/ve-blog-golang/server/infra/rbac"
 	"github.com/ve-weiyi/ve-blog-golang/server/infra/upload"
-	"github.com/ve-weiyi/ve-blog-golang/server/utils/glog"
 	"github.com/ve-weiyi/ve-blog-golang/server/utils/timer"
 )
 
@@ -27,7 +27,7 @@ var (
 	CONFIG   config.Config
 	JWT      *jjwt.JwtToken
 	LOG      *glog.Glogger
-	EmailMQ  *rabbitmq.RabbitMQ
+	EmailMQ  *rabbitmq.RabbitmqConn
 	Uploader upload.Uploader
 	Timer    timer.Timer = timer.NewTimerTask()
 	//Concurrency_Control             = &singleflight.Group{}
@@ -36,7 +36,7 @@ var (
 	lock       sync.RWMutex
 
 	//RBAC角色访问控制器
-	Permission *rbac.ResourceEnforcer
+	Permission rbac.RbacHolder
 )
 
 // GetGlobalDBByDBName 通过名称获取db list中的db

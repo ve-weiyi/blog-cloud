@@ -7,7 +7,8 @@ import (
 
 type AppController struct {
 	svcCtx                 *svc.ControllerContext        //持有的service层引用
-	BlogController         *logic.BlogController         //博客
+	WebsiteController      *logic.WebsiteController      //博客
+	WebsocketController    *logic.WebsocketController    //websocket
 	AuthController         *logic.AuthController         //登录权限认证
 	UserController         *logic.UserController         //用户
 	ApiController          *logic.ApiController          //路由
@@ -32,7 +33,8 @@ type AppController struct {
 func NewController(svcCtx *svc.ControllerContext) *AppController {
 	return &AppController{
 		svcCtx:                 svcCtx,
-		BlogController:         logic.NewBlogController(svcCtx),
+		WebsiteController:      logic.NewWebsiteController(svcCtx),
+		WebsocketController:    logic.NewWebsocketController(svcCtx),
 		AuthController:         logic.NewAuthController(svcCtx),
 		UserController:         logic.NewUserController(svcCtx),
 		ApiController:          logic.NewApiController(svcCtx),

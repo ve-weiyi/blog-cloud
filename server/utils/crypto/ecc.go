@@ -2,34 +2,40 @@ package crypto
 
 import (
 	"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/rand"
-	//以太坊加密库，要求go版本升级到1.15
-	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"math/big"
 )
 
-func genPrivateKey() (*ecies.PrivateKey, error) {
-	pubkeyCurve := elliptic.P256() //初始化椭圆曲线
-	//随机挑选基点，生成私钥
-	p, err := ecdsa.GenerateKey(pubkeyCurve, rand.Reader) //用golang标准库生成公私钥
+// 使用公钥加密消息
+func ecdsaEncrypt(publicKey *ecdsa.PublicKey, message []byte) ([]byte, error) {
+	// 生成临时密钥对
+	tempPrivateKey, err := ecdsa.GenerateKey(publicKey.Curve, rand.Reader)
 	if err != nil {
 		return nil, err
-	} else {
-		return ecies.ImportECDSA(p), nil //转换成以太坊的公私钥对
 	}
+
+	// 使用公钥加密消息
+	ciphertextX, ciphertextY := publicKey.Curve.ScalarMult(publicKey.X, publicKey.Y, tempPrivateKey.D.Bytes())
+	ciphertext := append(ciphertextX.Bytes(), ciphertextY.Bytes()...)
+
+	// 添加加密后的消息
+	ciphertext = append(ciphertext, message...)
+
+	return ciphertext, nil
 }
 
-// ECCEncrypt 椭圆曲线加密
-func ECCEncrypt(plain string, pubKey *ecies.PublicKey) ([]byte, error) {
-	src := []byte(plain)
-	return ecies.Encrypt(rand.Reader, pubKey, src, nil, nil)
-}
+// 使用私钥解密消息
+func ecdsaDecrypt(privateKey *ecdsa.PrivateKey, ciphertext []byte) ([]byte, error) {
+	curve := privateKey.Curve
+	keySize := curve.Params().BitSize / 8
 
-// ECCDecrypt 椭圆曲线解密
-func ECCDecrypt(cipher []byte, prvKey *ecies.PrivateKey) (string, error) {
-	if src, err := prvKey.Decrypt(cipher, nil, nil); err != nil {
-		return "", err
-	} else {
-		return string(src), nil
-	}
+	// 解密消息
+	ciphertextX, ciphertextY := new(big.Int), new(big.Int)
+	ciphertextX.SetBytes(ciphertext[:keySize])
+	ciphertextY.SetBytes(ciphertext[keySize : 2*keySize])
+
+	plaintext := make([]byte, len(ciphertext)-2*keySize)
+	copy(plaintext, ciphertext[2*keySize:])
+
+	return plaintext, nil
 }

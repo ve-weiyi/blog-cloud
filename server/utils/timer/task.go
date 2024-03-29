@@ -19,7 +19,6 @@ type Task struct {
 	callback    func()        //运行回调
 }
 
-// 循环队列，查询耳机险是否兑换
 type TaskQueue struct {
 	tasks  []*Task
 	stopCh chan struct{}

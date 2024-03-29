@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -11,16 +12,14 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/server/global"
 )
 
-// Viper //
-// 优先级: 命令行 > 环境变量 > 默认值
-// Author [SliverHorn](https://github.com/SliverHorn)
-func Viper(path ...string) {
+// InitConfigByFile 读取配置文件
+func InitConfigByFile(path ...string) {
 	var config string
 
 	if len(path) != 0 {
 		// 函数传递的可变参数的第一个值赋值于config
 		config = path[0]
-		log.Printf("您正在使用func Viper()传递的值,config的路径为%s\n", config)
+		log.Printf("您正在使用func InitConfigByFile()传递的值,config的路径为%s\n", config)
 	} else {
 		flag.StringVar(&config, "c", "", "choose config file.")
 		flag.Parse()
@@ -40,19 +39,44 @@ func Viper(path ...string) {
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	v.WatchConfig()
 
+	if err = v.Unmarshal(&global.CONFIG); err != nil {
+		log.Println(err)
+	}
+	v.WatchConfig()
 	v.OnConfigChange(func(e fsnotify.Event) {
 		log.Println("config file changed:", e.Name)
 		if err = v.Unmarshal(&global.CONFIG); err != nil {
 			log.Println(err)
 		}
 	})
-	if err = v.Unmarshal(&global.CONFIG); err != nil {
-		log.Println(err)
-	}
 	log.Printf("配置文件读取成功！")
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
 
 	global.VP = v
+}
+
+// InitConfigByFile 读取配置文件
+func InitConfigByContent(content string) error {
+	v := viper.New()
+	v.SetConfigType("yaml")
+	err := v.ReadConfig(bytes.NewBufferString(content))
+	if err != nil {
+		return err
+	}
+	if err = v.Unmarshal(&global.CONFIG); err != nil {
+		log.Println(err)
+	}
+	v.WatchConfig()
+	v.OnConfigChange(func(e fsnotify.Event) {
+		log.Println("config file changed:", e.Name)
+		if err = v.Unmarshal(&global.CONFIG); err != nil {
+			log.Println(err)
+		}
+	})
+	log.Printf("配置文件读取成功！")
+	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
+	global.VP = v
+
+	return nil
 }

@@ -35,6 +35,12 @@ type BaiduLocation struct {
 
 // GetIpSource 获取ip对应的城市地区
 func GetIpInfoByBaidu(ip string) (*BaiduLocation, error) {
+	if ip == "localhost" || ip == "127.0.0.1" {
+		return &BaiduLocation{
+			Location: "本机地址",
+		}, nil
+	}
+
 	resp, err := http.Get(fmt.Sprintf("http://opendata.baidu.com/api.php?query=" + ip + "&co=&resource_id=6006&oe=utf8"))
 	if err != nil {
 		return nil, err

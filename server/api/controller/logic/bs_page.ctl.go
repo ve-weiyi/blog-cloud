@@ -94,7 +94,7 @@ func (s *PageController) UpdatePage(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Page id"
+// @Param 	 	id		path		int							true	"Page.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/page/{id} [delete]
 func (s *PageController) DeletePage(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *PageController) DeletePage(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Page id"
+// @Param 	 	id		path		int							true	"Page.id"
 // @Success		200		{object}	response.Response{data=entity.Page}	"返回信息"
 // @Router 		/page/{id} [get]
 func (s *PageController) FindPage(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *PageController) DeletePageByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *PageController) FindPageList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

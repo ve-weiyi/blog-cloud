@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/ve-blog-golang/server/api/model/entity"
-	"github.com/ve-weiyi/ve-blog-golang/server/api/model/request"
 	"github.com/ve-weiyi/ve-blog-golang/server/api/repository/svc"
 )
 
@@ -24,128 +23,116 @@ func NewRoleMenuRepository(svcCtx *svc.RepositoryContext) *RoleMenuRepository {
 }
 
 // 创建RoleMenu记录
-func (s *RoleMenuRepository) CreateRoleMenu(ctx context.Context, roleMenu *entity.RoleMenu, conditions ...*request.Condition) (out *entity.RoleMenu, err error) {
+func (s *RoleMenuRepository) Create(ctx context.Context, item *entity.RoleMenu) (out *entity.RoleMenu, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
-	err = db.Create(&roleMenu).Error
+	err = db.Create(&item).Error
 	if err != nil {
 		return nil, err
 	}
-	return roleMenu, err
+	return item, err
 }
 
 // 更新RoleMenu记录
-func (s *RoleMenuRepository) UpdateRoleMenu(ctx context.Context, roleMenu *entity.RoleMenu, conditions ...*request.Condition) (out *entity.RoleMenu, err error) {
+func (s *RoleMenuRepository) Update(ctx context.Context, item *entity.RoleMenu) (out *entity.RoleMenu, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
-	err = db.Save(&roleMenu).Error
+	err = db.Save(&item).Error
 	if err != nil {
 		return nil, err
 	}
-	return roleMenu, err
+	return item, err
 }
 
 // 删除RoleMenu记录
-func (s *RoleMenuRepository) DeleteRoleMenu(ctx context.Context, id int, conditions ...*request.Condition) (rows int, err error) {
+func (s *RoleMenuRepository) Delete(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	query := db.Delete(&entity.RoleMenu{}, "id = ?", id)
+	query := db.Delete(&entity.RoleMenu{})
 	err = query.Error
-	rows = int(query.RowsAffected)
+	rows = query.RowsAffected
 	return rows, err
 }
 
 // 查询RoleMenu记录
-func (s *RoleMenuRepository) FindRoleMenu(ctx context.Context, id int, conditions ...*request.Condition) (out *entity.RoleMenu, err error) {
+func (s *RoleMenuRepository) First(ctx context.Context, conditions string, args ...interface{}) (out *entity.RoleMenu, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	err = db.Where("id = ?", id).First(&out).Error
+	err = db.First(&out).Error
 	if err != nil {
 		return nil, err
 	}
 	return out, err
 }
 
-// 批量删除RoleMenu记录
-func (s *RoleMenuRepository) DeleteRoleMenuByIds(ctx context.Context, ids []int, conditions ...*request.Condition) (rows int, err error) {
+func (s *RoleMenuRepository) FindALL(ctx context.Context, conditions string, args ...interface{}) (out []*entity.RoleMenu, err error) {
 	db := s.DbEngin.WithContext(ctx)
 
 	// 如果有条件语句
 	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
+		db = db.Where(conditions, args...)
 	}
 
-	query := db.Delete(&entity.RoleMenu{}, "id in ?", ids)
-	err = query.Error
-	rows = int(query.RowsAffected)
-	return rows, err
+	err = db.Find(&out).Error
+	if err != nil {
+		return nil, err
+	}
+	return out, err
 }
 
 // 分页查询RoleMenu记录
-func (s *RoleMenuRepository) FindRoleMenuList(ctx context.Context, page *request.PageQuery, conditions ...*request.Condition) (list []*entity.RoleMenu, total int64, err error) {
+func (s *RoleMenuRepository) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*entity.RoleMenu, err error) {
 	// 创建db
 	db := s.DbEngin.WithContext(ctx)
 
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		query, args := request.WhereConditions(conditions)
-		db = db.Where(query, args...)
-	}
-
 	// 如果有搜索条件
-	if len(page.Conditions) != 0 {
-		query, args := page.WhereClause()
-		db = db.Where(query, args...)
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
 	}
 
 	// 如果有排序参数
-	if len(page.Sorts) != 0 {
-		db = db.Order(page.OrderClause())
-	}
-
-	// 查询总数,要在使用limit之前
-	err = db.Model(&list).Count(&total).Error
-	if err != nil {
-		return nil, 0, err
+	if len(sorts) != 0 {
+		db = db.Order(sorts)
 	}
 
 	// 如果有分页参数
-	if page.Page != 0 || page.PageSize != 0 {
-		limit := page.Limit()
-		offset := page.Offset()
+	if page > 0 && size > 0 {
+		limit := size
+		offset := (page - 1) * limit
 		db = db.Limit(limit).Offset(offset)
 	}
 
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return list, total, nil
+	return list, nil
+}
+
+// 查询总数
+func (s *RoleMenuRepository) Count(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := s.DbEngin.WithContext(ctx)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Model(&entity.RoleMenu{}).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

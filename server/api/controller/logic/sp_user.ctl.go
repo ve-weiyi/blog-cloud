@@ -22,14 +22,14 @@ func NewUserController(svcCtx *svc.ControllerContext) *UserController {
 	}
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		获取用户列表
 // @Accept		application/json
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
 // @Param		page	body		request.PageQuery			true	"分页参数"
-// @Success		200		{object}	response.Response{data=any}	"返回信息"
+// @Success		200		{object}	response.Response{data=response.PageResult{list=[]response.UserDTO}}	"返回信息"
 // @Router		/user/list [post]
 func (s *UserController) FindUserList(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
@@ -55,20 +55,20 @@ func (s *UserController) FindUserList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }
 
-// @Tags		User
-// @Summary		获取用户地区
+// @Tags		Account
+// @Summary		获取在线用户列表
 // @Accept		application/json
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
 // @Param		page	body		request.PageQuery			true	"分页参数"
-// @Success		200		{object}	response.Response{data=any}	"返回信息"
-// @Router		/user/list/areas [post]
-func (s *UserController) FindUserListAreas(c *gin.Context) {
+// @Success		200		{object}	response.Response{data=response.PageResult{list=[]response.UserDTO}}	"返回信息"
+// @Router		/user/online_list [post]
+func (s *UserController) FindOnlineUserList(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *UserController) FindUserListAreas(c *gin.Context) {
 		return
 	}
 
-	list, total, err := s.svcCtx.UserService.FindUserListAreas(reqCtx, &page)
+	list, total, err := s.svcCtx.UserService.FindOnlineUserList(reqCtx, &page)
 	if err != nil {
 		s.ResponseError(c, err)
 		return
@@ -92,11 +92,48 @@ func (s *UserController) FindUserListAreas(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }
 
-// @Tags		User
+// @Tags		Account
+// @Summary		获取用户地区列表
+// @Accept		application/json
+// @Produce		application/json
+// @Param		token	header		string						false	"token"
+// @Param		uid		header		string						false	"uid"
+// @Param		page	body		request.PageQuery			true	"分页参数"
+// @Success		200		{object}	response.Response{data=response.PageResult{list=[]response.UserAreaDTO}}	"返回信息"
+// @Router		/user/area_list [post]
+func (s *UserController) FindUserAreaList(c *gin.Context) {
+	reqCtx, err := s.GetRequestContext(c)
+	if err != nil {
+		s.ResponseError(c, err)
+		return
+	}
+
+	var page request.PageQuery
+	err = s.ShouldBind(c, &page)
+	if err != nil {
+		s.ResponseError(c, err)
+		return
+	}
+
+	list, total, err := s.svcCtx.UserService.FindUserAreaList(reqCtx, &page)
+	if err != nil {
+		s.ResponseError(c, err)
+		return
+	}
+
+	s.ResponseOk(c, response.PageResult{
+		List:     list,
+		Total:    total,
+		Page:     page.Page,
+		PageSize: page.PageSize,
+	})
+}
+
+// @Tags		Account
 // @Summary		获取用户登录历史
 // @Accept		application/json
 // @Produce		application/json
@@ -129,11 +166,11 @@ func (s *UserController) FindUserLoginHistoryList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		批量删除登录历史
 // @Accept		application/json
 // @Produce		application/json
@@ -163,19 +200,17 @@ func (s *UserController) DeleteUserLoginHistoryByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		获取用户菜单权限
 // @Accept		application/json
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Success		200		{object}	response.Response{data=[]response.MenuDetails}	"返回信息"
+// @Success		200		{object}	response.Response{data=[]response.MenuDetailsDTO}	"返回信息"
 // @Router		/user/menus [get]
 func (s *UserController) GetUserMenus(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
@@ -184,7 +219,7 @@ func (s *UserController) GetUserMenus(c *gin.Context) {
 		return
 	}
 
-	data, err := s.svcCtx.MenuService.GetUserMenus(reqCtx, nil)
+	data, err := s.svcCtx.UserService.GetUserMenus(reqCtx, nil)
 	if err != nil {
 		s.ResponseError(c, err)
 		return
@@ -193,13 +228,13 @@ func (s *UserController) GetUserMenus(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		获取用户接口权限
 // @Accept		application/json
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Success		200		{object}	response.Response{data=[]response.ApiDetails}	"返回信息"
+// @Success		200		{object}	response.Response{data=[]response.ApiDetailsDTO}	"返回信息"
 // @Router		/user/apis [get]
 func (s *UserController) GetUserApis(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
@@ -208,7 +243,7 @@ func (s *UserController) GetUserApis(c *gin.Context) {
 		return
 	}
 
-	data, err := s.svcCtx.ApiService.GetUserApis(reqCtx, nil)
+	data, err := s.svcCtx.UserService.GetUserApis(reqCtx, nil)
 	if err != nil {
 		s.ResponseError(c, err)
 		return
@@ -217,7 +252,7 @@ func (s *UserController) GetUserApis(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		获取用户信息
 // @Accept		application/json
 // @Produce		application/json
@@ -241,15 +276,15 @@ func (s *UserController) GetUserInfo(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		修改用户信息
 // @Security	ApiKeyAuth
 // @Accept		multipart/form-data
 // @Produce		application/json
 // @Param		token	header		string									false	"token"
 // @Param		uid		header		string									false	"uid"
-// @Param		data	body		entity.UserInformation					true	"请求body"
-// @Success		200		{object}	response.Response{data=entity.Upload}	"返回信息"
+// @Param		data	body		request.UserInfoReq					true	"请求body"
+// @Success		200		{object}	response.Response{data=entity.UserInformation}	"返回信息"
 // @Router		/user/info [post]
 func (s *UserController) UpdateUserInfo(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
@@ -258,7 +293,7 @@ func (s *UserController) UpdateUserInfo(c *gin.Context) {
 		return
 	}
 
-	var req entity.UserInformation
+	var req request.UserInfoReq
 	err = s.ShouldBind(c, &req)
 	if err != nil {
 		s.ResponseError(c, err)
@@ -274,15 +309,15 @@ func (s *UserController) UpdateUserInfo(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		更换用户头像
 // @Security	ApiKeyAuth
 // @Accept		multipart/form-data
 // @Produce		application/json
 // @Param		token	header		string									false	"token"
 // @Param		uid		header		string									false	"uid"
-// @Param		data	body		entity.Upload							true	"请求body"
-// @Success		200		{object}	response.Response{data=entity.Upload}	"返回信息"
+// @Param		file	formData	file									true	"文件"
+// @Success		200		{object}	response.Response{data=entity.UserInformation}	"返回信息"
 // @Router		/user/avatar [post]
 func (s *UserController) UpdateUserAvatar(c *gin.Context) {
 	reqCtx, err := s.GetRequestContext(c)
@@ -307,7 +342,7 @@ func (s *UserController) UpdateUserAvatar(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		修改用户状态
 // @Accept		application/json
 // @Produce		application/json
@@ -339,13 +374,13 @@ func (s *UserController) UpdateUserStatus(c *gin.Context) {
 	s.ResponseOk(c, data)
 }
 
-// @Tags		User
+// @Tags		Account
 // @Summary		修改用户角色
 // @Accept		application/json
 // @Produce		application/json
 // @Param		token	header		string								false	"token"
 // @Param		uid		header		string								false	"uid"
-// @Param		data	body		request.UpdateUserRoles				true	"请求数据"
+// @Param		data	body		request.UpdateUserRolesReq				true	"请求数据"
 // @Success		200		{object}	response.Response{data=entity.Role}	"返回信息"
 // @Router		/user/update_roles [post]
 func (s *UserController) UpdateUserRoles(c *gin.Context) {
@@ -355,7 +390,7 @@ func (s *UserController) UpdateUserRoles(c *gin.Context) {
 		return
 	}
 
-	var req request.UpdateUserRoles
+	var req request.UpdateUserRolesReq
 	err = s.ShouldBindJSON(c, &req)
 	if err != nil {
 		s.ResponseError(c, err)

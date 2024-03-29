@@ -94,7 +94,7 @@ func (s *TagController) UpdateTag(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Tag id"
+// @Param 	 	id		path		int							true	"Tag.id"
 // @Success		200		{object}	response.Response{data=any}			"返回信息"
 // @Router		/tag/{id} [delete]
 func (s *TagController) DeleteTag(c *gin.Context) {
@@ -126,7 +126,7 @@ func (s *TagController) DeleteTag(c *gin.Context) {
 // @Produce		application/json
 // @Param		token	header		string						false	"token"
 // @Param		uid		header		string						false	"uid"
-// @Param 	 	id		path		int							true	"Tag id"
+// @Param 	 	id		path		int							true	"Tag.id"
 // @Success		200		{object}	response.Response{data=entity.Tag}	"返回信息"
 // @Router 		/tag/{id} [get]
 func (s *TagController) FindTag(c *gin.Context) {
@@ -182,9 +182,7 @@ func (s *TagController) DeleteTagByIds(c *gin.Context) {
 	}
 
 	s.ResponseOk(c, response.BatchResult{
-		TotalCount:   len(ids),
 		SuccessCount: data,
-		FailCount:    len(ids) - data,
 	})
 }
 
@@ -221,6 +219,6 @@ func (s *TagController) FindTagList(c *gin.Context) {
 		List:     list,
 		Total:    total,
 		Page:     page.Page,
-		PageSize: page.Limit(),
+		PageSize: page.PageSize,
 	})
 }

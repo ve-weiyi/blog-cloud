@@ -20,7 +20,7 @@ func NewCaptchaRouter(ctx *svc.RouterContext) *CaptchaRouter {
 func (s *CaptchaRouter) InitCaptchaRouter(publicRouter *gin.RouterGroup, loginRouter *gin.RouterGroup) {
 	emailPublicRouter := publicRouter.Group("")
 
-	var self = s.svcCtx.AppController.CaptchaController
+	var self = s.svcCtx.CaptchaController
 	{
 		emailPublicRouter.POST("captcha/email", self.SendCaptchaEmail) // 发送验证码邮件
 		emailPublicRouter.POST("captcha/image", self.GetCaptchaImage)  // 获取验证码图片

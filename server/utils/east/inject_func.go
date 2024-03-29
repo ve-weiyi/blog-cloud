@@ -19,7 +19,7 @@ type FuncMeta struct {
 	FuncName   string //插入的方法
 	FuncPos    int    //插入的位置
 
-	//ValueName string //声明
+	//LowerStartCamelName string //声明
 	//IdentName string //引用名
 	//SelName   string //元素struct名
 

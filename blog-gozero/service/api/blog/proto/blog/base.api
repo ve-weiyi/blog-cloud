@@ -1,0 +1,69 @@
+type RestHeader {
+    HeaderCountry string `header:"Country,optional"`
+    HeaderLanguage string `header:"Language,optional"`
+    HeaderTimezone string `header:"Timezone,optional"`
+    HeaderAppName string `header:"App-name,optional"`
+
+    HeaderXUserId string `header:"X-User-Id,optional"`
+    HeaderXAuthToken string `header:"X-Auth-Token,optional"`
+    HeaderTerminalId string `header:"X-Terminal-Id,optional"`
+}
+
+
+type (
+    EmptyReq {
+    }
+
+    IdReq {
+        Id int64 `json:"id"`
+    }
+
+    IdsReq {
+        Ids []int64 `json:"ids"`
+    }
+
+    PageQuery {
+        Page int64 `json:"page,optional"`
+        PageSize int64 `json:"page_size,optional"`
+        Sorts []string `json:"sorts,optional"`
+    }
+    //
+    //    PageLimit {
+    //        Page int64 `json:"page,optional"`
+    //        PageSize int64 `json:"page_size,optional"`
+    //    }
+    //
+    //    PageSort {
+    //        Field string `json:"field,optional"`
+    //        Order string `json:"order,optional"` // asc | desc
+    //    }
+    //
+    //    PageCondition {
+    //        Field string `json:"field,optional"`            // 字段
+    //        Value string `json:"value,optional"`            // 值
+    //        Logic string `json:"logic,optional"`            // and | or
+    //        Operator string `json:"operator,optional"`      // = | >= | < | in | not in |....
+    //    }
+)
+type (
+    EmptyResp {
+    }
+
+    BatchResp {
+        SuccessCount int64 `json:"success_count"`
+    }
+
+    PageResp {
+        Page int64 `json:"page,omitempty"`
+        PageSize int64 `json:"page_size,omitempty"`
+        Total int64 `json:"total,omitempty"`
+        List interface{} `json:"list,omitempty"`
+    }
+
+    Response {
+        Code int `json:"code"`
+        Message string `json:"message"`
+        Data interface{} `json:"data"`
+        TraceId string `json:"trace_id"`
+    }
+)

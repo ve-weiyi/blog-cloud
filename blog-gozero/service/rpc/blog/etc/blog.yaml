@@ -1,0 +1,67 @@
+Name: blog.rpc
+ListenOn: 0.0.0.0:9999
+Mode: dev
+Timeout: 5000
+Health: true
+# 服务注册，直连模式不需要
+# 检查服务是否注册 etcdctl get --prefix blog.rpc
+#Etcd:
+#  Hosts:
+#    - 0.0.0.0:2379
+#  Key: blog.rpc
+#  User: blog.rpc
+#  Pass: @blog.rpc
+Log:
+  Mode: console
+  Encoding: plain
+  Path: runtime/rpc/logs
+MysqlConf:
+  host: veweiyi.cn
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  dbname: blog-veweiyi
+  username: root
+  password: mysql7914
+
+RedisConf:
+  db: 0
+  host: veweiyi.cn
+  port: "6379"
+  password: redis7914
+
+# mq配置
+RabbitMQConf:
+  host: veweiyi.cn
+  port: "5672"
+  username: veweiyi
+  password: rabbitmq7914
+
+EmailConf:
+  host: smtp.qq.com
+  port: 465
+  # 邮箱 647166282@qq.com
+  username: xx@qq.com
+  # 16位授权码 不是邮箱密码
+  password: xxx
+  # 发送者昵称
+  nickname: 与梦
+  # 抄送邮箱,逗号隔开
+  deliver:
+    - 791422171@qq.com
+  is_ssl: true
+
+OauthConf:
+  qq:
+    client_id: "xxx"
+    client_secret: xxx
+    redirect_uri: xxx
+
+  weibo:
+    client_id: "xxx"
+    client_secret: xxx
+    redirect_uri: xxx
+
+  feishu:
+    client_id: "xxx"
+    client_secret: xxx
+    redirect_uri: xxx

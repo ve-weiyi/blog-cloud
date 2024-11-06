@@ -1,0 +1,243 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package permissionrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./permissionrpc";
+
+message EmptyReq {
+}
+
+message EmptyResp {
+}
+
+message IdReq {
+  int64 id = 1;
+}
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+message BatchResp {
+  int64 success_count = 1;
+}
+
+message CountResp {
+  int64 count = 1;
+}
+
+message UserIdReq {
+  string user_id = 1;
+}
+
+/************** rbac 权限相关 **************/
+message ApiNewReq {
+  int64 id = 1;// 主键id
+  int64 parent_id = 2;// 分组id
+  string path = 3;// api路径
+  string name = 4;// api名称
+  string method = 5;// api请求方法
+  int64 traceable = 6;// 是否追溯操作记录 0需要，1是
+  int64 is_disable = 7;// 是否禁用  0否 1是
+  repeated ApiNewReq children = 10;
+}
+
+message ApiDetails {
+  int64 id = 1;// 主键id
+  int64 parent_id = 2;// 分组id
+  string path = 3;// api路径
+  string name = 4;// api名称
+  string method = 5;// api请求方法
+  int64 traceable = 6;// 是否追溯操作记录 0需要，1是
+  int64 is_disable = 7;// 是否禁用  0否 1是
+  int64 created_at = 8;// 创建时间
+  int64 updated_at = 9;// 更新时间
+  repeated ApiDetails children = 10;
+}
+
+message FindApiListResp {
+  repeated ApiDetails list = 1;
+}
+
+message MenuNewReq {
+  int64 id = 1;// 主键
+  int64 parent_id = 2;// 父id
+  string path = 3;// 路由路径
+  string name = 4;// 路由名称
+  string component = 5;// 路由组件
+  string redirect = 6;// 路由重定向
+  repeated MenuNewReq children = 10;
+  MenuMeta meta = 11;
+}
+
+message MenuMeta{
+  int64 type = 11;// 菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）
+  string title = 12;// 菜单标题
+  string icon = 13;// 菜单标题
+  int64 rank = 14;// 菜单排序
+  string perm = 15;// 权限标识
+  string params = 16;// 路由参数(json)
+  int64 keep_alive = 17;// 是否缓存
+  int64 always_show = 18;// 是否一直显示菜单
+  int64 is_hidden = 19;// 是否隐藏
+  int64 is_disable = 20;// 是否禁用  0否 1是
+}
+
+message MenuDetails {
+  int64 id = 1;// 主键
+  int64 parent_id = 2;// 父id
+  string path = 3;// 路由路径
+  string name = 4;// 路由名称
+  string component = 5;// 路由组件
+  string redirect = 6;// 路由重定向
+  int64 created_at = 7;// 创建时间
+  int64 updated_at = 8;// 更新时间
+  repeated MenuDetails children = 10;
+  MenuMeta meta = 11;
+}
+
+message FindMenuListResp {
+  repeated MenuDetails list = 1;
+}
+
+message SyncMenuReq {
+  repeated MenuNewReq menus = 1;
+}
+
+message SyncApiReq {
+  repeated ApiNewReq apis = 1;
+}
+
+message RoleNewReq {
+  int64 id = 1;// 主键id
+  int64 parent_id = 2;// 父角色id
+  string role_name = 3;// 角色名
+  string role_label = 4;// 角色标签
+  string role_comment = 5;// 角色备注
+  int64 is_disable = 6;// 是否禁用  0否 1是
+  int64 is_default = 7;// 是否默认角色 0否 1是
+  //  int64 created_at = 8;// 创建时间
+  //  int64 updated_at = 9;// 更新时间
+}
+
+message RoleDetails {
+  int64 id = 1;// 主键id
+  int64 parent_id = 2;// 父角色id
+  string role_name = 3;// 角色名
+  string role_label = 4;// 角色标签
+  string role_comment = 5;// 角色备注
+  int64 is_disable = 6;// 是否禁用  0否 1是
+  int64 is_default = 7;// 是否默认角色 0否 1是
+  int64 created_at = 8;// 创建时间
+  int64 updated_at = 9;// 更新时间
+  repeated RoleDetails children = 10;
+}
+
+message FindRoleListResp {
+  repeated RoleDetails list = 1;
+  int64 total = 2;
+}
+
+message RoleResourcesResp {
+  int64 role_id = 1;
+  repeated int64 api_ids = 2;
+  repeated int64 menu_ids = 3;
+}
+
+message UpdateRoleApisReq {
+  int64 role_id = 1;
+  repeated int64 api_ids = 2;
+}
+
+message UpdateRoleMenusReq {
+  int64 role_id = 1;
+  repeated int64 menu_ids = 2;
+}
+
+message UpdateUserRoleReq {
+  string user_id = 1; // 用户id
+  repeated int64 role_ids = 2;
+}
+
+message FindApiListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  string name = 4;// api名称
+  string path = 5;// api路径
+  string method = 6;// api请求方法
+}
+
+message FindMenuListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  string title = 4;// 菜单标题
+  string name = 6;// 路由名字
+}
+
+message FindRoleListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  string role_name = 4;// 角色名
+  string role_label = 5;// 角色标签
+  int64 is_disable = 6;// 是否禁用  0否 1是
+}
+
+service PermissionRpc {
+  // 创建接口
+  rpc AddApi(ApiNewReq) returns(ApiDetails);
+  // 更新接口
+  rpc UpdateApi(ApiNewReq) returns(ApiDetails);
+  // 删除接口
+  rpc DeleteApi(IdsReq) returns(BatchResp);
+  // 查询接口列表
+  rpc FindApiList(FindApiListReq) returns(FindApiListResp);
+  // 同步接口列表
+  rpc SyncApiList(SyncApiReq) returns(BatchResp);
+  // 清空接口列表
+  rpc CleanApiList(EmptyReq) returns(BatchResp);
+
+
+  // 创建菜单
+  rpc AddMenu(MenuNewReq) returns(MenuDetails);
+  // 更新菜单
+  rpc UpdateMenu(MenuNewReq) returns(MenuDetails);
+  // 删除菜单
+  rpc DeleteMenu(IdsReq) returns(BatchResp);
+  // 查询菜单列表
+  rpc FindMenuList(FindMenuListReq) returns(FindMenuListResp);
+  // 同步菜单列表
+  rpc SyncMenuList(SyncMenuReq) returns(BatchResp);
+  // 清空菜单列表
+  rpc CleanMenuList(EmptyReq) returns(BatchResp);
+
+
+  // 创建角色
+  rpc AddRole(RoleNewReq) returns(RoleDetails);
+  // 更新角色
+  rpc UpdateRole(RoleNewReq) returns(RoleDetails);
+  // 删除角色
+  rpc DeleteRole(IdsReq) returns(BatchResp);
+  // 查询角色列表
+  rpc FindRoleList(FindRoleListReq) returns(FindRoleListResp);
+
+  // 更新角色菜单
+  rpc UpdateRoleMenus(UpdateRoleMenusReq) returns(EmptyResp);
+  // 更新角色资源
+  rpc UpdateRoleApis(UpdateRoleApisReq) returns(EmptyResp);
+  // 查询角色资源权限
+  rpc FindRoleResources(IdReq) returns(RoleResourcesResp);
+
+  // 修改用户角色
+  rpc UpdateUserRole(UpdateUserRoleReq) returns(EmptyResp);
+  // 获取用户接口权限
+  rpc FindUserApis(UserIdReq) returns(FindApiListResp);
+  // 获取用户菜单权限
+  rpc FindUserMenus(UserIdReq) returns(FindMenuListResp);
+  // 获取用户角色信息
+  rpc FindUserRoles(UserIdReq) returns(FindRoleListResp);
+}

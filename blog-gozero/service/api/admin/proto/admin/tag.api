@@ -1,0 +1,61 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    TagNewReq {
+        Id int64 `json:"id,optional"`
+        TagName string `json:"tag_name"`    // 标签名
+    }
+
+    TagBackDTO {
+        Id int64 `json:"id,optional"`                      // 标签ID
+        TagName string `json:"tag_name"`          // 标签名
+        ArticleCount int64 `json:"article_count"` // 文章数量
+        CreatedAt int64 `json:"created_at"`       // 创建时间
+        UpdatedAt int64 `json:"updated_at"`       // 更新时间
+    }
+
+
+    TagQuery {
+        PageQuery
+        TagName string `json:"tag_name,optional"`          // 标签名
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: tag
+    middleware: SignToken
+)
+
+service admin-api {
+    @doc "分页获取标签列表"
+    @handler FindTagList
+    post /tag/find_tag_list (TagQuery) returns (PageResp)
+}
+
+@server(
+    prefix: /admin_api/v1
+    group: tag
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "创建标签"
+    @handler AddTag
+    post /tag/add_tag (TagNewReq) returns (TagBackDTO)
+
+    @doc "更新标签"
+    @handler UpdateTag
+    put /tag/update_tag (TagNewReq) returns (TagBackDTO)
+
+    @doc "删除标签"
+    @handler DeleteTag
+    delete /tag/delete_tag (IdReq) returns (BatchResp)
+
+    @doc "批量删除标签"
+    @handler BatchDeleteTag
+    delete /tag/batch_delete_tag (IdsReq) returns (BatchResp)
+
+}

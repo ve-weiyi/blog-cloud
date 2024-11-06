@@ -1,0 +1,45 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    UploadFileReq {
+        File interface{} `form:"file,optional"`   // 文件
+        FilePath string `form:"file_path,optional"`        // 文件路径
+    }
+
+    MultiUploadFileReq {
+        Files []interface{} `form:"files,optional"`   // 文件列表
+        FilePath string `form:"file_path,optional"`        // 文件路径
+    }
+
+    FileBackDTO {
+        Id int64 `json:"id,optional"`             // 文件目录ID
+        UserId string `json:"user_id"`             // 用户id
+        FilePath string `json:"file_path"`        // 文件路径
+        FileName string `json:"file_name"`        // 文件名称
+        FileType string `json:"file_type"`        // 文件类型
+        FileSize int64 `json:"file_size"`         // 文件大小
+        FileMd5 string `json:"file_md5"`          // 文件md5值
+        FileUrl string `json:"file_url"`          // 上传路径
+        CreatedAt int64 `json:"created_at"`       // 创建时间
+        UpdatedAt int64 `json:"updated_at"`       // 更新时间
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: file
+    middleware: SignToken
+)
+
+service blog-api {
+
+    @doc "上传文件"
+    @handler UploadFile
+    post /file/upload_file (UploadFileReq) returns (FileBackDTO)
+
+    @doc "上传文件列表"
+    @handler MultiUploadFile
+    post /file/multi_upload_file (MultiUploadFileReq) returns ([]*FileBackDTO)
+}

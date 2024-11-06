@@ -1,0 +1,42 @@
+syntax = "v1"
+
+type (
+    WebSocketMsg {
+        ClientId string `json:"client_id,optional"`        // 客户端id
+        ClientIp string `json:"client_ip,optional"`        // 客户端ip
+        Timestamp int64 `json:"timestamp,optional"`        // 时间戳
+
+        Cmd int64 `json:"cmd"`                   // 消息命令
+        Data string `json:"data"`                 // 消息内容
+    }
+
+    ChatMsgReq {
+        Type string `json:"type"`                // 消息类型 1: 文本消息 2: 图片消息 3: 文件消息 4: 语音消息 5: 视频消息
+        ChatContent string `json:"chat_content"`  // 消息内容
+    }
+
+    ChatMsgResp {
+        Id int64 `json:"id"`                    // 主键
+        UserId string `json:"user_id"`          // 用户id
+        DeviceId string `json:"device_id"`      // 设备id
+        Nickname string `json:"nickname"`       // 昵称
+        Avatar string `json:"avatar"`           // 头像
+        ChatContent string `json:"chat_content"` // 消息内容
+        IpAddress string `json:"ip_address"`    // ip地址
+        IpSource string `json:"ip_source"`      // ip来源
+        Type string `json:"type"`               // 类型
+        CreatedAt int64 `json:"created_at"`     // 创建时间
+        UpdatedAt int64 `json:"updated_at"`     // 更新时间
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: websocket
+)
+
+service blog-api {
+    @doc "WebSocket消息"
+    @handler WebSocket
+    get /websocket () returns ()
+}

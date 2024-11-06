@@ -1,0 +1,118 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package resourcerpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./resourcerpc";
+
+message EmptyReq {
+}
+
+message EmptyResp {
+}
+
+message IdReq {
+  int64 id = 1;
+}
+
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+message UserIdReq {
+  string user_id = 1;
+}
+
+message BatchResp {
+  int64 success_count = 1;
+}
+
+/************** blog 资源管理 **************/
+message FileFolderNewReq {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 路径
+  string folder_name = 4;// 文件夹名称
+  string folder_desc = 5;// 文件夹描述
+}
+
+message FileFolderDetails {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 路径
+  string folder_name = 4;// 文件夹名称
+  string folder_desc = 5;// 文件夹描述
+  int64 created_at = 8;// 创建时间
+  int64 updated_at = 9;// 更新时间
+}
+
+message FindFileFolderListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  string file_path = 4;// 路径
+}
+
+message FindFileFolderListResp {
+  repeated FileFolderDetails list = 1;
+  int64 total = 2;
+}
+
+message FileUploadNewReq {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 文件路径
+  string file_name = 4;// 文件名称
+  string file_type = 5;// 文件类型
+  int64 file_size = 6;// 文件大小
+  string file_md5 = 7;// 文件md5值
+  string file_url = 8;// 上传路径
+}
+
+message FileUploadDetails {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 文件路径
+  string file_name = 4;// 文件名称
+  string file_type = 5;// 文件类型
+  int64 file_size = 6;// 文件大小
+  string file_md5 = 7;// 文件md5值
+  string file_url = 8;// 上传路径
+  int64 created_at = 9;// 创建时间
+  int64 updated_at = 10;// 更新时间
+}
+
+message FindFileUploadListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  string file_path = 4;// 文件路径
+  string file_type = 5;// 文件类型
+}
+
+message FindFileUploadListResp {
+  repeated FileUploadDetails list = 1;
+  int64 total = 2;
+}
+
+service ResourceRpc {
+  // 创建文件夹
+  rpc AddFileFolder(FileFolderNewReq) returns(FileFolderDetails);
+  // 更新文件夹
+  rpc UpdateFileFolder(FileFolderNewReq) returns(FileFolderDetails);
+  // 删除文件夹
+  rpc DeleteFileFolder(IdsReq) returns(BatchResp);
+  // 查询文件夹列表
+  rpc FindFileFolderList(FindFileFolderListReq) returns(FindFileFolderListResp);
+
+  // 创建文件上传
+  rpc AddFileUpload(FileUploadNewReq) returns(FileUploadDetails);
+  // 更新文件上传
+  rpc UpdateFileUpload(FileUploadNewReq) returns(FileUploadDetails);
+  // 删除文件上传
+  rpc DeleteFileUpload(IdsReq) returns(BatchResp);
+  // 查询文件上传列表
+  rpc FindFileUploadList(FindFileUploadListReq) returns(FindFileUploadListResp);
+}

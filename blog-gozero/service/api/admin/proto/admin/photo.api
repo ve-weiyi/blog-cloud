@@ -1,0 +1,67 @@
+syntax = "v1"
+
+import "base.api"
+
+
+type (
+    PhotoNewReq {
+        Id int64 `json:"id,optional"`                 // 主键
+        AlbumId int64 `json:"album_id"`      // 相册id
+        PhotoName string `json:"photo_name"` // 照片名
+        PhotoDesc string `json:"photo_desc"` // 照片描述
+        PhotoSrc string `json:"photo_src"`   // 照片地址
+        IsDelete int64 `json:"is_delete"`    // 是否删除
+    }
+
+    PhotoBackDTO {
+        Id int64 `json:"id,optional"`                 // 主键
+        AlbumId int64 `json:"album_id"`      // 相册id
+        PhotoName string `json:"photo_name"` // 照片名
+        PhotoDesc string `json:"photo_desc"` // 照片描述
+        PhotoSrc string `json:"photo_src"`   // 照片地址
+        IsDelete int64 `json:"is_delete"`    // 是否删除
+        CreatedAt int64 `json:"created_at"`  // 创建时间
+        UpdatedAt int64 `json:"updated_at"`  // 更新时间
+    }
+
+    PhotoQuery {
+        PageQuery
+        AlbumId int64 `json:"album_id,optional"`             // 相册id
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: photo
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "分页获取照片列表"
+    @handler FindPhotoList
+    post /photo/find_photo_list (PhotoQuery) returns (PageResp)
+}
+
+@server(
+    prefix: /admin_api/v1
+    group: photo
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "创建照片"
+    @handler AddPhoto
+    post /photo/add_photo (PhotoNewReq) returns (PhotoBackDTO)
+
+    @doc "更新照片"
+    @handler UpdatePhoto
+    put /photo/update_photo (PhotoNewReq) returns (PhotoBackDTO)
+
+    @doc "删除照片"
+    @handler DeletePhoto
+    delete /photo/delete_photo (IdReq) returns (BatchResp)
+
+    @doc "批量删除照片"
+    @handler BatchDeletePhoto
+    delete /album/batch_delete_photo (IdsReq) returns (BatchResp)
+}

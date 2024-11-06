@@ -1,0 +1,93 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    MenuMeta {
+        Type int64 `json:"type,optional"`                         // 菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）
+        Title string `json:"title,optional"`                      // 菜单标题
+        Icon string `json:"icon,optional"`                        // 菜单图标
+        Rank int64 `json:"rank,optional"`                         // 排序
+        Perm string `json:"perm,optional"`                        // 权限标识
+        Params []*MenuMetaParams `json:"params,optional"`          // 参数
+        KeepAlive int64 `json:"keep_alive,optional"`              // 是否缓存
+        AlwaysShow int64 `json:"always_show,optional"`            // 是否一直显示菜单
+        IsHidden int64 `json:"is_hidden,optional"`                // 是否隐藏
+        IsDisable int64 `json:"is_disable,optional"`              // 是否禁用
+    }
+
+    MenuMetaParams{
+        Key string `json:"key,optional"`
+        Value string `json:"value,optional"`
+    }
+
+    MenuNewReq {
+        Id int64 `json:"id,optional"`                             // 主键
+        ParentId int64 `json:"parent_id,optional"`                // 父id
+        Path string `json:"path,optional"`                        // 路由地址
+        Name string `json:"name,optional"`                        // 路由名字
+        Component string `json:"component,optional"`              // Layout组件
+        Redirect string `json:"redirect,optional"`                // 路由重定向
+        MenuMeta
+        Children []*MenuNewReq `json:"children,optional"`
+    }
+
+    MenuBackDTO {
+        Id int64 `json:"id,optional"`                             // 主键
+        ParentId int64 `json:"parent_id,optional"`                // 父id
+        Path string `json:"path,optional"`                        // 路由地址
+        Name string `json:"name,optional"`                        // 路由名字
+        Component string `json:"component,optional"`              // Layout组件
+        Redirect string `json:"redirect,optional"`                // 路由重定向
+        MenuMeta
+        Children []*MenuBackDTO `json:"children,optional"`
+        CreatedAt int64 `json:"created_at"`                       // 创建时间
+        UpdatedAt int64 `json:"updated_at"`                       // 更新时间
+    }
+
+    SyncMenuReq {
+        Menus []*MenuNewReq `json:"menus"`
+    }
+
+    MenuQuery {
+        PageQuery
+        Name string `json:"name,optional"`                        // 路由名字
+        Title string `json:"title,optional"`                      // 菜单标题
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: menu
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "创建菜单"
+    @handler AddMenu
+    post /menu/add_menu (MenuNewReq) returns (MenuBackDTO)
+
+    @doc "更新菜单"
+    @handler UpdateMenu
+    put /menu/update_menu (MenuNewReq) returns (MenuBackDTO)
+
+    @doc "删除菜单"
+    @handler DeleteMenu
+    delete /menu/delete_menu (IdReq) returns (BatchResp)
+
+    @doc "批量删除菜单"
+    @handler BatchDeleteMenu
+    delete /menu/batch_delete_menu (IdsReq) returns (BatchResp)
+
+    @doc "分页获取菜单列表"
+    @handler FindMenuList
+    post /menu/find_menu_list (MenuQuery) returns (PageResp)
+
+    @doc "同步菜单列表"
+    @handler SyncMenuList
+    post /menu/sync_menu_list (SyncMenuReq) returns (BatchResp)
+
+    @doc "清空菜单列表"
+    @handler CleanMenuList
+    post /menu/clean_menu_list (EmptyReq) returns (BatchResp)
+}

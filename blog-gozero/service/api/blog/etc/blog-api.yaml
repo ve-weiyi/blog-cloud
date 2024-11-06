@@ -1,0 +1,41 @@
+Name: blog-api
+Host: 0.0.0.0
+Port: 9090
+Timeout: 5000
+# 健康检查
+DevServer:
+  Enabled: true
+  Port: 6060
+  HealthPath: "/ping"
+  MetricsPath: "/metrics"
+  EnableMetrics: true
+# 日志配置
+Log:
+  Mode: console
+  Encoding: plain
+  Path: runtime/log/blog
+# 文件上传配置
+UploadConfig:
+  zone: ZoneHuanan
+  endpoint: s3.cn-south-1.qiniucs.com
+  access-key-id: gyoAZPHHZrwXt4HhG7SNRaxRShJPhEKvxJJKhDUV
+  access-key-secret: OqbepkdXNm0pKfZMy1ziPqdYjZMCtdzRIrz1Hlhi
+  bucket-name: veweiyi
+  bucket-url: https://static.veweiyi.cn
+  base-path: blog
+
+RedisConf:
+  db: 0
+  host: 127.0.0.1
+  port: "6379"
+  password: redis7914
+
+# 共同etcd配置
+#Etcd:
+#  Hosts:
+#    - veweiyi.cn:2379
+#  Key: blog.api
+
+BlogRpcConf:
+  Endpoints:
+    - 0.0.0.0:9999

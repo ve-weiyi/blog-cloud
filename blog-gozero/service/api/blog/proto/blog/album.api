@@ -1,0 +1,47 @@
+syntax = "v1"
+
+import "base.api"
+
+
+type (
+    Album {
+        Id int64 `json:"id"`                   // 主键
+        AlbumName string `json:"album_name"`   // 相册名
+        AlbumDesc string `json:"album_desc"`   // 相册描述
+        AlbumCover string `json:"album_cover"` // 相册封面
+    }
+
+    Photo {
+        Id int64 `json:"id"`                 // 主键
+        PhotoUrl string `json:"photo_url"`   // 照片地址
+    }
+
+
+    PhotoQueryReq {
+        AlbumId int64 `json:"album_id"` // 相册ID
+    }
+
+    AlbumQueryReq {
+        PageQuery
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: album
+    middleware: SignToken
+)
+
+service blog-api {
+    @doc "获取相册"
+    @handler GetAlbum
+    post /album/get_album (IdReq) returns (Album)
+
+    @doc "获取相册列表"
+    @handler FindAlbumList
+    post /album/find_album_list (AlbumQueryReq) returns (PageResp)
+
+    @doc "获取相册下的照片列表"
+    @handler FindPhotoList
+    post /album/find_photo_list (PhotoQueryReq) returns (PageResp)
+}

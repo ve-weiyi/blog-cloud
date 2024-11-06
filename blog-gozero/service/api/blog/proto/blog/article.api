@@ -1,0 +1,99 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+
+    // 首页文章
+    ArticleHome {
+        Id int64 `json:"id"`                                                 // 文章ID
+        ArticleCover string `json:"article_cover"`                           // 文章缩略图
+        ArticleTitle string `json:"article_title"`                           // 标题
+        ArticleContent string `json:"article_content"`                       // 内容
+        ArticleType int64 `json:"article_type"`                              // 文章类型
+        OriginalUrl string `json:"original_url"`                             // 原文链接
+        IsTop int64 `json:"is_top"`                                          // 是否置顶
+        Status int64 `json:"status"`                                         // 状态值 1 公开 2 私密 3 草稿 4 已删除
+        CreatedAt int64 `json:"created_at"`                                  // 发表时间
+        UpdatedAt int64 `json:"updated_at"`                                  // 更新时间
+        CategoryName string `json:"category_name"`                           // 文章分类名
+        TagNameList []string `json:"tag_name_list"`                          // 文章标签列表
+        LikeCount int64 `json:"like_count"`                                  // 点赞量
+        ViewsCount int64 `json:"views_count"`                                // 浏览量
+    }
+
+        // 文章预览
+    ArticlePreview {
+        Id int64 `json:"id"`                       // 文章ID
+        ArticleCover string `json:"article_cover"` // 文章缩略图
+        ArticleTitle string `json:"article_title"` // 标题
+        CreatedAt int64 `json:"created_at"`        // 创建时间
+    }
+
+        // 文章推荐详情
+    ArticleDeatils {
+        ArticleHome
+        LastArticle *ArticlePreview `json:"last_article"`                      // 上一篇文章
+        NextArticle *ArticlePreview `json:"next_article"`                      // 下一篇文章
+        RecommendArticleList []*ArticlePreview `json:"recommend_article_list"` // 推荐文章列表
+        NewestArticleList []*ArticlePreview `json:"newest_article_list"`       // 最新文章列表
+    }
+
+    ArticleClassifyQueryReq {
+        PageQuery
+        ClassifyName string `json:"classify_name,optional"` // 分类名
+    }
+
+    ArticleHomeQueryReq {
+        PageQuery
+        ArticleTitle string `json:"article_title,optional"`                           // 标题
+    }
+
+    ArticleArchivesQueryReq {
+        PageQuery
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: article
+    middleware: SignToken
+)
+
+service blog-api {
+    @doc "获取首页推荐文章列表"
+    @handler FindArticleRecommend
+    post /article/get_article_recommend (EmptyReq) returns (PageResp)
+
+    @doc "获取首页文章列表"
+    @handler FindArticleHomeList
+    post /article/get_article_home_list (ArticleHomeQueryReq) returns (PageResp)
+
+    @doc "文章归档(时间轴)"
+    @handler FindArticleArchives
+    post /article/get_article_archives (ArticleArchivesQueryReq) returns (PageResp)
+
+    @doc "通过分类获取文章列表"
+    @handler FindArticleClassifyCategory
+    post /article/get_article_classify_category (ArticleClassifyQueryReq) returns (PageResp)
+
+    @doc "通过标签获取文章列表"
+    @handler FindArticleClassifyTag
+    post /article/get_article_classify_tag (ArticleClassifyQueryReq) returns (PageResp)
+
+    @doc "获取文章详情"
+    @handler GetArticleDetails
+    post /article/get_article_details (IdReq) returns (ArticleDeatils)
+}
+
+@server(
+    prefix: /api/v1
+    group: article
+    middleware: SignToken,JwtToken
+)
+
+service blog-api {
+    @doc "点赞文章"
+    @handler LikeArticle
+    post /article/like_article (IdReq) returns (EmptyResp)
+}

@@ -1,0 +1,62 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    RemarkNewReq {
+        Id int64 `json:"id,optional"`                           // 主键id
+        IsReview int64 `json:"is_review"`              // 是否审核
+    }
+
+    RemarkBackDTO {
+        Id int64 `json:"id,optional"`                           // 主键id
+        Nickname string `json:"nickname"`              // 昵称
+        Avatar string `json:"avatar"`                  // 头像
+        MessageContent string `json:"message_content"` // 留言内容
+        IpAddress string `json:"ip_address"`           // 用户ip
+        IpSource string `json:"ip_source"`             // 用户地址
+        Time int64 `json:"time"`                       // 弹幕速度
+        IsReview int64 `json:"is_review"`              // 是否审核
+        CreatedAt int64 `json:"created_at"`            // 发布时间
+        UpdatedAt int64 `json:"updated_at"`            // 更新时间
+    }
+
+    RemarkQuery {
+        PageQuery
+        Nickname string `json:"nickname,optional"`              // 昵称
+        IsReview int64 `json:"is_review,optional"`              // 是否审核
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: remark
+    middleware: SignToken
+)
+
+service admin-api {
+    @doc "分页获取留言列表"
+    @handler FindRemarkList
+    post /remark/find_remark_list (RemarkQuery) returns (PageResp)
+}
+
+
+@server(
+    prefix: /admin_api/v1
+    group: remark
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "更新留言"
+    @handler UpdateRemark
+    put /remark/update_remark (RemarkNewReq) returns (RemarkBackDTO)
+
+    @doc "删除留言"
+    @handler DeleteRemark
+    delete /remark/delete_remark (IdReq) returns (BatchResp)
+
+    @doc "批量删除留言"
+    @handler BatchDeleteRemark
+    delete /remark/batch_delete_remark (IdsReq) returns (BatchResp)
+}

@@ -1,0 +1,49 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    OperationLogBackDTO {
+        Id int64 `json:"id,optional"`                          // 主键id
+        UserId string `json:"user_id"`                 // 用户id
+        Nickname string `json:"nickname"`             // 用户昵称
+        IpAddress string `json:"ip_address"`          // 操作ip
+        IpSource string `json:"ip_source"`            // 操作地址
+        OptModule string `json:"opt_module"`          // 操作模块
+        OptDesc string `json:"opt_desc"`              // 操作描述
+        RequestUrl string `json:"request_url"`        // 请求地址
+        RequestMethod string `json:"request_method"`  // 请求方式
+        RequestHeader string `json:"request_header"`  // 请求头参数
+        RequestData string `json:"request_data"`      // 请求参数
+        ResponseData string `json:"response_data"`    // 返回数据
+        ResponseStatus int64 `json:"response_status"` // 响应状态码
+        Cost string `json:"cost"`                     // 耗时（ms）
+        CreatedAt int64 `json:"created_at"`           // 创建时间
+        UpdatedAt int64 `json:"updated_at"`           // 更新时间
+    }
+
+    OperationLogQuery {
+        PageQuery
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: operation_log
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "删除操作记录"
+    @handler DeleteOperationLog
+    delete /operation_log/delete_operation_log (IdReq) returns (BatchResp)
+
+    @doc "批量删除操作记录"
+    @handler BatchDeleteOperationLog
+    delete /operation_log/batch_delete_operation_log (IdsReq) returns (BatchResp)
+
+
+    @doc "分页获取操作记录列表"
+    @handler FindOperationLogList
+    post /operation_log/find_operation_log_list (OperationLogQuery) returns (PageResp)
+}

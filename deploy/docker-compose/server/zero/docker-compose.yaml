@@ -1,0 +1,40 @@
+version: "3"
+
+# 设置mysql，redis持久化保存
+#volumes:
+#  mysql:
+#  redis:
+
+services:
+  ve-blog-golang-rpc:
+    build:
+      context: ./
+      dockerfile: Dockerfile-rpc
+    image: ve-blog-golang-rpc:latest  # 设置新的镜像名称和标签
+    container_name: ve-blog-golang-rpc
+    restart: always
+    ports:
+      - "9998:9998"
+    volumes:
+      - ./runtime/rpc:/app/rpc/blog/runtime
+
+  ve-blog-golang-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile-api
+    image: ve-blog-golang-api:latest  # 设置新的镜像名称和标签
+    container_name: ve-blog-golang-api
+    restart: always
+    ports:
+      - "6060:6060"
+      - "9999:9999"
+    volumes:
+      - ./runtime/api:/app/api/blog/runtime
+    depends_on:
+      - ve-blog-golang-rpc
+
+
+#docker network create blog-network
+#networks:
+#  blog-network:
+#    external: true

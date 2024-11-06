@@ -1,0 +1,31 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    Friend {
+        Id int64 `json:"id"`                     // id
+        LinkName string `json:"link_name"`       // 链接名
+        LinkAvatar string `json:"link_avatar"`   // 链接头像
+        LinkAddress string `json:"link_address"` // 链接地址
+        LinkIntro string `json:"link_intro"`     // 链接介绍
+        CreatedAt int64 `json:"created_at"`      // 创建时间
+        UpdatedAt int64 `json:"updated_at"`      // 更新时间
+    }
+
+    FriendQueryReq {
+        PageQuery
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: friend
+    middleware: SignToken
+)
+
+service blog-api {
+    @doc "分页获取友链列表"
+    @handler FindFriendList
+    post /friend_link/find_friend_list (FriendQueryReq) returns (PageResp)
+}

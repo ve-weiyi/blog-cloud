@@ -1,0 +1,161 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package commentrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./commentrpc";
+
+message EmptyReq {
+}
+
+message EmptyResp {
+}
+
+message IdReq {
+  int64 id = 1;
+}
+
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+message UserIdReq {
+  string user_id = 1;
+}
+
+message BatchResp {
+  int64 success_count = 1;
+}
+
+message CountResp {
+  int64 count = 1;
+}
+
+/************** blog 消息管理 **************/
+message CommentNewReq {
+  string user_id = 2;// 评论用户id
+  int64 topic_id = 3;// 主题id
+  int64 parent_id = 4;// 父评论id
+  int64 reply_msg_id = 5; // 会话id
+  string reply_user_id = 6; // 评论回复用户id
+  string comment_content = 7;// 评论内容
+  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
+  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
+  int64 is_review = 10;// 是否审核
+}
+
+message CommentDetails {
+  int64 id = 1;// 主键
+  string user_id = 2;// 评论用户id
+  int64 topic_id = 3;// 主题id
+  int64 parent_id = 4;// 父评论id
+  int64 reply_msg_id = 5; // 会话id
+  string reply_user_id = 6; // 评论回复用户id
+  string comment_content = 7;// 评论内容
+  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
+  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
+  int64 is_review = 10;// 是否审核
+  int64 created_at = 11;// 评论时间
+  int64 updated_at = 12;// 更新时间
+  int64 like_count = 13;// 点赞数
+  string ip_address = 14;// ip地址 127.0.0.1
+  string ip_source = 15;// ip来源
+  //  CommentUserInfo user = 14;
+  //  CommentUserInfo reply_user = 15;
+}
+
+//message CommentUserInfo {
+//  string user_id = 1; // 用户id
+//  string username = 2;// 用户名
+//  string nickname = 3;// 用户昵称
+//  string avatar = 4;// 用户头像
+//  string info = 5;// 用户信息
+//}
+
+message UpdateCommentReviewReq{
+  repeated int64 ids = 1;// 主键
+  int64 is_review = 2;// 是否审核
+}
+
+message UpdateCommentContentReq {
+  int64 id = 1;// 主键
+  string user_id = 2;// 评论用户id
+  int64 topic_id = 3;// 主题id
+  int64 parent_id = 4;// 父评论id
+  int64 reply_msg_id = 5; // 会话id
+  string reply_user_id = 6; // 评论回复用户id
+  string comment_content = 7;// 评论内容
+  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
+  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
+  int64 is_review = 10;// 是否审核
+}
+
+message FindCommentListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  int64 topic_id = 4;// 主题id
+  int64 parent_id = 5;// 父评论id
+  int64 reply_msg_id = 6; // 会话id
+  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
+}
+
+message FindCommentListResp {
+  repeated CommentDetails list = 1;
+  int64 total = 2;
+}
+
+message FindCommentReplyListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3; // 排序
+  int64 topic_id = 4;// 主题id
+  int64 parent_id = 5;// 父评论id
+  int64 reply_msg_id = 6; // 会话id
+  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
+}
+
+message FindCommentReplyListResp {
+  repeated CommentDetails list = 1;
+  int64 total = 2;
+}
+
+message FindLikeCommentResp{
+  repeated int64 like_comment_list = 1;
+}
+
+message FindTopicCommentCountsReq{
+  repeated int64 topic_ids = 1;
+}
+
+message FindTopicCommentCountsResp{
+  map<int64, int64> topic_comment_counts = 1;
+}
+
+service CommentRpc {
+  // 创建评论
+  rpc AddComment(CommentNewReq) returns(CommentDetails);
+  // 删除评论
+  rpc DeleteComment(IdsReq) returns(BatchResp);
+  // 查询评论
+  rpc GetComment(IdReq) returns(CommentDetails);
+  // 查询评论列表
+  rpc FindCommentList(FindCommentListReq) returns(FindCommentListResp);
+  // 查询评论回复列表
+  rpc FindCommentReplyList(FindCommentReplyListReq) returns(FindCommentReplyListResp);
+  // 查询评论回复数量
+  rpc FindTopicCommentCounts(IdsReq) returns(FindTopicCommentCountsResp);
+
+  // 更新评论审核状态
+  rpc UpdateCommentReview(UpdateCommentReviewReq) returns(BatchResp);
+  // 更新评论
+  rpc UpdateCommentContent(UpdateCommentContentReq) returns(CommentDetails);
+
+  // 点赞评论
+  rpc LikeComment(IdReq) returns(EmptyResp);
+  // 用户点赞的评论
+  rpc FindUserLikeComment(UserIdReq) returns(FindLikeCommentResp);
+
+}

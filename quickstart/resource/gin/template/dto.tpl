@@ -1,0 +1,7 @@
+package dto
+
+import (
+
+)
+
+{{.Types}}

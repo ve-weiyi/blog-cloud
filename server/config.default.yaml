@@ -3,76 +3,49 @@ system:
   version: 1.0.0
   env: develop
   port: 9999
-  router-prefix: "api/v1"
-  use-redis: false
-  use-multipoint: false
   runtime-path: runtime/
 
 # jwt token configuration
 jwt:
-  signing-key: blog
+  signing-key: veweiyi.cn
   expires-time: 7d
   issuer: blog
   type: Bearer
 
 # zap logger configuration
 zap:
-  server-name: blog
   mode: console # 模式 console or file
   format: console # 格式化 json or console
   level: info # 等级 debug info warn error dpanic panic fatal
   prefix: '' # 前缀 logger prefix
-  encode-level: LowercaseLevelEncoder
   encode-caller: long # 显示调用信息 short or long
   encode-colorful: true # 彩色显示
+  filename: blog.log
   cache-dir: runtime/logs # 缓存目录 log file dir
   max-age: 0
-
-# redis configuration
-redis:
-  db: 3
-  host: 127.0.0.1
-  port: 6379
-  password: ""
 
 # mysql connect configuration
 mysql:
   host: 127.0.0.1
   port: "3306"
-  config: charset=utf8mb4&parseTime=True&loc=Local
-  db-name: blog-plus
   username: root
   password: mysql7914
-  prefix: ""
-  singular: false
-  engine: ""
-  max-idle-conns: 10
-  max-open-conns: 100
-  log-mode: error
-  log-zap: false
+  dbname: blog-veweiyi
+  config: charset=utf8mb4&parseTime=True&loc=Local
 
-db-list:
-  - disable: true # 是否禁用
-    type: "" # 数据库的类型,目前支持mysql、pgsql、mssql、oracle
-    alias-name: "" # 数据库的名称,注意: alias-name 需要在db-list中唯一
-    host: ""
-    port: ""
-    config: ""
-    db-name: ""
-    username: ""
-    password: ""
-    max-idle-conns: 10
-    max-open-conns: 100
-    log-mode: ""
-    log-zap: false
+# redis configuration
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: ""
+  db: 0
 
-# captcha configuration
-captcha:
-  key-long: 6
-  img-width: 240
-  img-height: 80
-  open-captcha: 0 # 0代表一直开启，大于0代表限制次数
-  open-captcha-timeout: 3600 # open-captcha大于0时才生效
+# mq配置
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
 
 # email configuration
 email:
@@ -83,6 +56,31 @@ email:
   is-ssl: true
   secret: xxx
   nickname: test
+
+# captcha configuration
+captcha:
+  key-long: 6
+  img-width: 240
+  img-height: 80
+  open-captcha: 0 # 0代表一直开启，大于0代表限制次数
+  open-captcha-timeout: 3600 # open-captcha大于0时才生效
+
+# 第三方登录
+oauth:
+  qq:
+    client-id: xxx
+    client-secret: xxx
+    redirect-uri: xxx
+
+  feishu:
+    client-id: xxx
+    client-secret: xxx
+    redirect-uri: xxx
+
+  weibo:
+    client-id: xxx
+    client-secret: xxx
+    redirect-uri: xxx
 
 # 文件上传
 upload:

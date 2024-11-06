@@ -1,0 +1,118 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    LoginReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+        VerifyCode string `json:"verify_code,optional"`     // 验证码
+    }
+
+    LoginResp {
+        Token *Token `json:"token"`
+    }
+
+    Token {
+        UserId string `json:"user_id"`                      // 用户id
+        TokenType string `json:"token_type"`               // token类型,Bearer
+        AccessToken string `json:"access_token"`           // 访问token,过期时间较短。2h
+        ExpiresIn int64 `json:"expires_in"`                // 访问token过期时间
+        RefreshToken string `json:"refresh_token"`         // 刷新token,过期时间较长。30d
+        RefreshExpiresIn int64 `json:"refresh_expires_in"` // 刷新token过期时间
+        Scope string `json:"scope"`                        // 作用域
+    }
+
+    OauthLoginReq {
+        Platform string `json:"platform"`          // 平台
+        Code string `json:"code,optional"`         // 授权码
+        State string `json:"state,optional"`       // 状态
+    }
+
+    OauthLoginUrlResp {
+        Url string `json:"url"` // 授权地址
+    }
+
+    UserEmailReq {
+        Username string `json:"username"`
+    }
+
+    RegisterReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+        VerifyCode string `json:"verify_code"`     // 验证码
+    }
+
+    ResetPasswordReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+        VerifyCode string `json:"verify_code"`     // 验证码
+    }
+
+    BindUserEmailReq {
+        Email string `json:"email"`                         // 邮箱
+        VerifyCode string `json:"verify_code"`              // 验证码
+    }
+)
+
+
+@server(
+    prefix: /api/v1
+    group: auth
+)
+
+service blog-api {
+    @doc "登录"
+    @handler Login
+    post /login (LoginReq) returns (LoginResp)
+
+    @doc "注册"
+    @handler Register
+    post /register (RegisterReq) returns (EmptyResp)
+
+    @doc "重置密码"
+    @handler ResetPassword
+    post /user/reset_password (ResetPasswordReq) returns (EmptyResp)
+
+
+    @doc "发送注册账号邮件"
+    @handler SendRegisterEmail
+    post /send_register_email (UserEmailReq) returns (EmptyResp)
+
+    @doc "发送重置密码邮件"
+    @handler SendResetEmail
+    post /user/send_reset_email (UserEmailReq) returns (EmptyResp)
+
+
+    @doc "第三方登录"
+    @handler OauthLogin
+    post /oauth_login (OauthLoginReq) returns (LoginResp)
+
+    @doc "第三方登录授权地址"
+    @handler OauthAuthorizeUrl
+    post /oauth_authorize_url (OauthLoginReq) returns (OauthLoginUrlResp)
+}
+
+@server(
+    prefix: /api/v1
+    group: auth
+    middleware: JwtToken
+)
+
+service blog-api {
+    @doc "登出"
+    @handler Logout
+    post /logout (EmptyReq) returns (EmptyResp)
+
+    @doc "注销"
+    @handler Logoff
+    post /logoff (EmptyReq) returns (EmptyResp)
+
+    @doc "绑定邮箱"
+    @handler BindUserEmail
+    post /bind_user_email (BindUserEmailReq) returns (EmptyResp)
+
+    @doc "发送绑定邮箱验证码"
+    @handler SendBindEmail
+    post /send_bind_email (UserEmailReq) returns (EmptyResp)
+}

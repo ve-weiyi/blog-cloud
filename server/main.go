@@ -32,16 +32,16 @@ func init() {
 }
 
 // @title						Swagger Example API
-// @version					1.0
-// @description				APP接口鉴权方式：token采用自加密token的方式，自加密token规则：sha256(${x-timestamp}${base_secret}) 生成的加密token，x-timestamp 时间戳需要保持10分钟内
-// @termsOfService				http://swagger.io/terms/
+// @version						1.0.0
+// @description					APP接口鉴权方式：token采用自加密token的方式，自加密token规则：sha256(${x-timestamp}${base_secret}) 生成的加密token，x-timestamp 时间戳需要保持10分钟内
+// @termsOfService				https://swagger.io/terms/
 // @contact.name				API Support
-// @contact.url				http://www.swagger.io/support
+// @contact.url					https://www.swagger.io/support/
 // @contact.email				support@swagger.io
 // @license.name				Apache 2.0
-// @license.url				http://www.apache.org/licenses/LICENSE-2.0.html
-// @host						localhost:9999/
-// @BasePath					/api/v1
+// @license.url					https://www.apache.org/licenses/LICENSE-2.0.html
+// @host						localhost:9090
+// @BasePath
 // @securityDefinitions.basic	BasicAuth
 // @securityDefinitions.apikey	ApiKeyAuth
 // @in							header

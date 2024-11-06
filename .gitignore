@@ -27,12 +27,15 @@ yarn-error.log*
 *.log
 web/.pnpm-debug.log
 web/pnpm-lock.yaml
-config.yaml
+server/config.yaml
 *.sum
 
 /rm_file
-tem
-cache
-runtime
-test.*
 *.ts
+**/test.sql
+**/runtime/*
+**/test/*
+**/tmp/*
+**/default.etcd/*
+/deploy/docker/
+blog-rpc.yaml

@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  harbor:
+    image: bitnami/harbor-core:latest
+    container_name: harbor
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/harbor:/data
+    environment:
+      - HARBOR_HTTP_PORT=80
+      - HARBOR_HTTPS_PORT=443
+      - HARBOR_ADMIN_PASSWORD=Harbor12345
+      - DATABASE_URL=postgresql://harbor:Harbor12345@postgres:5432/harbor
+      - SMTP_HOST=smtp.example.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=user
+      - SMTP_PASSWORD=password
+      - SMTP_FROM=noreply@example.com
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=harbor
+      - POSTGRES_PASSWORD=Harbor12345
+      - POSTGRES_DB=harbor

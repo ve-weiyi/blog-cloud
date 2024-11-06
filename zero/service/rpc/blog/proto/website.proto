@@ -1,0 +1,38 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package websiterpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./websiterpc";
+
+message EmptyReq {
+}
+
+message EmptyResp {
+}
+
+message IdReq {
+  int64 id = 1;
+}
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+/************** blog 网站管理 **************/
+
+message UserVisit {
+  string date = 1;
+  int64 view_count = 2;
+}
+
+message UserDailyVisitRsp{
+  repeated UserVisit list = 1;
+}
+
+service WebsiteRpc {
+  // 用户日浏览量
+  rpc GetUserDailyVisit(EmptyReq) returns(UserDailyVisitRsp);
+}
+

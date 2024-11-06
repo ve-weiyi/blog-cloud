@@ -16,7 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -44,13 +46,13 @@ to quickly create a Cobra application.`,
 		},
 	}
 
+	rootCmd.Version = fmt.Sprintf("%s %s/%s", "v1.0.0", runtime.GOOS, runtime.GOARCH)
+	rootCmd.AddCommand(NewApiCmd().cmd)
+	rootCmd.AddCommand(NewMigrateCmd().cmd)
+
 	root := &RootCmd{
 		cmd: rootCmd,
 	}
-
-	root.cmd.AddCommand(NewServerCmd().cmd)
-	root.cmd.AddCommand(NewMigrateCmd().cmd)
-	root.cmd.AddCommand(NewRabbitmqCmd().cmd)
 	root.init()
 	return root
 }
@@ -60,7 +62,7 @@ func (s *RootCmd) init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.server.yaml)")
+	// rootCmd.Flags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.server.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

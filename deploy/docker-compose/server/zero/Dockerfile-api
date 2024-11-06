@@ -1,0 +1,53 @@
+FROM golang:alpine AS builder
+
+LABEL stage=gobuilder
+
+ENV CGO_ENABLED 0
+ENV GOPROXY https://goproxy.cn,direct
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+# 安装必要的依赖
+RUN apk update --no-cache
+RUN apk add --no-cache git
+RUN apk add --no-cache tzdata
+
+WORKDIR /
+
+# 下载项目
+RUN git init
+RUN git clone https://github.com/ve-weiyi/ve-blog-golang.git
+
+# 切换到项目目录
+WORKDIR /ve-blog-golang/zero
+
+# 切换到目标分支并拉取最新代码
+RUN git checkout feature/blog
+RUN go mod tidy
+
+RUN go build -ldflags="-s -w" -o /app/api/blog/blog service/api/blog/blog.go
+
+# 使用golang:alpine作为构建镜像,上面安装了git,go等运行环境，方便编译项目。直接在golang:alpine上运行时，image的体积约为2.5g
+# 使用scratch作为基础镜像,scratch用于构建轻量级的、无操作系统依赖的容器镜像。使用scratch镜像运行，image的体积约为50m
+
+FROM scratch
+
+#维护者信息
+LABEL maintainer="791422171@qq.com"
+
+# 设置语言环境为en_US.utf8
+ENV LANG=en_US.utf8
+# 设置时区环境变量
+ENV TZ Asia/Shanghai
+
+# 设置新新容器的工作目录
+WORKDIR /app/api/blog
+
+# 复制启动文件到新容器中
+COPY --from=builder /app/api/blog/blog /app/api/blog/blog
+
+# 暴露应用程序的端口
+EXPOSE 9999
+EXPOSE 6060
+
+# 启动命令，只能有一个生效
+CMD ["./blog"]

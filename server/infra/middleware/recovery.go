@@ -11,8 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"github.com/ve-weiyi/ve-blog-golang/server/api/model/response"
-	"github.com/ve-weiyi/ve-blog-golang/server/global"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/apierr"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/apierr/codex"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/glog"
 )
 
 // GinRecovery recover掉项目可能出现的panic，并使用zap记录相关日志
@@ -35,7 +36,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 				// DumpRequest 以 HTTP/1.x 连线形式返回给定的请求
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				if brokenPipe {
-					global.LOG.Error(c.Request.URL.Path,
+					glog.Error(c.Request.URL.Path,
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
@@ -46,23 +47,19 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 				}
 
 				if stack {
-					global.LOG.Error("[Recovery from panic]",
+					glog.Error("[Recovery from panic]",
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 						zap.String("stack", string(debug.Stack())), // 返回调用它的goroutine的格式化堆栈跟踪。
 					)
 				} else {
-					global.LOG.Error("[Recovery from panic]",
+					glog.Error("[Recovery from panic]",
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
 				}
-				c.AbortWithStatusJSON(http.StatusInternalServerError,
-					response.Response{
-						Code:    504,
-						Message: "系统错误",
-						Data:    nil,
-					})
+
+				c.AbortWithStatusJSON(http.StatusInternalServerError, apierr.NewApiError(codex.CodeInternalServerError, "系统错误"))
 				return
 			}
 		}()

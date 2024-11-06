@@ -1,0 +1,59 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    CategoryNewReq {
+        Id int64 `json:"id,optional"`
+        CategoryName string `json:"category_name"` // 分类名
+    }
+
+    CategoryBackDTO {
+        Id int64 `json:"id,optional"`
+        CategoryName string `json:"category_name"` // 分类名
+        ArticleCount int64 `json:"article_count"`
+        CreatedAt int64 `json:"created_at"`        // 创建时间
+        UpdatedAt int64 `json:"updated_at"`        // 更新时间
+    }
+
+    CategoryQuery {
+        PageQuery
+        CategoryName string `json:"category_name,optional"` // 分类名
+    }
+)
+
+@server(
+    prefix: /admin_api/v1
+    group: category
+    middleware: SignToken
+)
+
+service admin-api {
+    @doc "分页获取文章分类列表"
+    @handler FindCategoryList
+    post /category/find_category_list (CategoryQuery) returns (PageResp)
+}
+
+@server(
+    prefix: /admin_api/v1
+    group: category
+    middleware: SignToken,JwtToken,Operation
+)
+
+service admin-api {
+    @doc "创建文章分类"
+    @handler AddCategory
+    post /category/add_category (CategoryNewReq) returns (CategoryBackDTO)
+
+    @doc "更新文章分类"
+    @handler UpdateCategory
+    put /category/update_category (CategoryNewReq) returns (CategoryBackDTO)
+
+    @doc "删除文章分类"
+    @handler DeleteCategory
+    delete /category/delete_category (IdReq) returns (BatchResp)
+
+    @doc "批量删除文章分类"
+    @handler BatchDeleteCategory
+    delete /category/batch_delete_category (IdsReq) returns (BatchResp)
+}

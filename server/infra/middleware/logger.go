@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"github.com/ve-weiyi/ve-blog-golang/server/global"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/glog"
 )
 
 // 接收gin框架默认的日志
@@ -20,7 +20,7 @@ func GinLogger() gin.HandlerFunc {
 		// 视图函数执行完成，统计时间，记录日志
 		cost := time.Since(start)
 
-		global.LOG.Info(path,
+		glog.Info(path,
 			zap.Int("status", c.Writer.Status()),                                 // 状态码 eg: 200
 			zap.String("method", c.Request.Method),                               // 请求方法类型 eg: GET
 			zap.String("path", path),                                             // 请求路径 eg: /test

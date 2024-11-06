@@ -1,0 +1,30 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    Banner {
+        Id int64 `json:"id"`                 // 页面id
+        BannerName string `json:"banner_name"`   // 页面名
+        BannerLabel string `json:"banner_label"` // 页面标签
+        BannerCover string `json:"banner_cover"` // 页面封面
+        CreatedAt int64 `json:"created_at"`  // 创建时间
+        UpdatedAt int64 `json:"updated_at"`  // 更新时间
+    }
+
+    BannerQueryReq {
+        PageQuery
+    }
+)
+
+@server(
+    prefix: /api/v1
+    group: banner
+    middleware: SignToken
+)
+
+service blog-api {
+    @doc "分页获取页面列表"
+    @handler FindBannerList
+    post /banner/find_banner_list (BannerQueryReq) returns (PageResp)
+}

@@ -37,19 +37,19 @@ type Span struct {
 func TraceMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 尝试从请求头中获取 Trace ID
-		traceID := c.GetHeader(TraceIDKey)
+		traceId := c.GetHeader(TraceIDKey)
 
-		if traceID == "" {
+		if traceId == "" {
 			// 如果请求头中不存在 Trace ID，则生成一个新的 Trace ID
-			traceID = GenerateTraceID()
+			traceId = GenerateTraceID()
 		}
 		// 将 Trace ID 存入 context
-		ctx := ContextWithFields(c.Request.Context(), zap.String(TraceIDKey, traceID))
-		ctx = context.WithValue(ctx, TraceIDKey, traceID)
+		ctx := ContextWithFields(c.Request.Context(), zap.String(TraceIDKey, traceId))
+		ctx = context.WithValue(ctx, TraceIDKey, traceId)
 		c.Request = c.Request.WithContext(ctx)
 
 		// 将 Trace ID 设置到响应头中，以便后续服务使用
-		c.Header(TraceIDKey, traceID)
+		c.Header(TraceIDKey, traceId)
 
 		c.Next()
 	}

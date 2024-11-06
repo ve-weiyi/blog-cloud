@@ -1,33 +1,8 @@
 # 使用docker部署服务
 
-## 1. 安装docker
 
-启动docker
-docker-compose -f docker-compose.yaml up -d
-
-
-
-## b部署nacos、prometheus、grafana
-
-1. 启动nacos
-```shell
-docker-compose -f nacos/docker-compose.yaml up -d
-```
-
-nacos服务开启prometheus监控
-首先进入nacos容器添加一行配置,配置文件路径在/home/nacos/conf/application.properties
-vim /home/nacos/conf/application.properties
-
-找个位置添加这行配置  暴露metrics数据
-management.endpoints.web.exposure.include=*
-
-访问nacos的prometheus数据
-http://120.79.136.81:8848/nacos/actuator/prometheus
-
-2. 启动prometheus
-```shell
-docker-compose -f prometheus/docker-compose.yaml up -d
-```
-
-查看看板
-http://120.79.136.81:9090/targets
+服务器名称	作用
+deploy-server.com	部署 gitlab、jenkins、harbor（预先装好 docker、docker-compose）
+srv-data.com	    部署 mysql、redis、es 等等，模拟独立环境,k8s 内部连接到此服务器
+nginx-gateway.com	网关，独立于 k8s 集群外部
+k8s                 集群	K8s 集群

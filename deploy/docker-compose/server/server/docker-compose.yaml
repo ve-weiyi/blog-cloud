@@ -1,0 +1,20 @@
+version: "3"
+
+# 设置mysql，redis持久化保存
+#volumes:
+#  mysql:
+#  redis:
+
+services:
+  ve-blog-golang-server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: ve-blog-golang-server:latest  # 设置新的镜像名称和标签
+    container_name: ve-blog-golang-server
+    restart: always
+    ports:
+      - "9997:9999"
+    volumes:
+#      - ./config.yaml:/app/config.yaml
+      - ./runtime:/app/runtime

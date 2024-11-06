@@ -1,0 +1,47 @@
+version: "3.0"
+
+# [docker-compose启动etcd集群]https://www.jianshu.com/p/cbbc072230b4
+# 服务器ip地址: veweiyi.cn
+
+
+volumes:
+  etcd:
+    driver: local
+
+networks:
+  etcd-network:
+    driver: bridge
+
+services:
+  etcd-0:
+    image: bitnami/etcd:latest
+    container_name: etcd-service
+    restart: always
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes #示例中我们不设置密码
+      - ETCD_ROOT_USER=root           # 定义 etcd 认证的用户名
+      - ETCD_ROOT_PASSWORD=etcd7914    # 定义 etcd 认证的密码
+      - ETCD_NAME=etcd0 #节点自己的名字
+      - ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379  #告知集群自己的客户端地址
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 #设置监听客户端通讯的URL列表
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://localhost:2380 #告知集群自己集群通讯地址
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380 #用于监听伙伴通讯的URL列表
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster #etcd 集群的初始化集群记号
+      - ETCD_INITIAL_CLUSTER=etcd0=http://localhost:2380 #集群成员
+      - ETCD_INITIAL_CLUSTER_STATE=new #初始化集群状态
+    volumes:
+      - etcd:/bitnami/etcd
+    networks:
+      - etcd-network
+
+#
+#
+#  etcdkeeper:
+#    image: evildecay/etcdkeeper:latest
+#    ports:
+#      - "8099:8080"
+#    networks:
+#      - etcd-network

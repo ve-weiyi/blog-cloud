@@ -2,12 +2,11 @@ package accountrpclogic
 
 import (
 	"context"
-	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
-
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 )
@@ -28,94 +27,76 @@ func NewFindUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 
 // 查找用户列表
 func (l *FindUserListLogic) FindUserList(in *accountrpc.FindUserListReq) (*accountrpc.FindUserListResp, error) {
-	page, size, sorts, conditions, params := convertQuery(in)
+	page, size, sorts, conditions, params := convertUserQuery(in)
 
-	result, err := l.svcCtx.TUserModel.FindList(l.ctx, page, size, sorts, conditions, params...)
-	if err != nil {
-		return nil, err
-	}
-
-	total, err := l.svcCtx.TUserModel.FindCount(l.ctx, conditions, params...)
+	records, total, err := l.svcCtx.TUserModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
 		return nil, err
 	}
 
 	var list []*accountrpc.User
-	for _, item := range result {
+	for _, item := range records {
 		list = append(list, convertUserOut(item))
 	}
 
 	resp := &accountrpc.FindUserListResp{}
-	resp.Total = total
+	resp.Pagination = &accountrpc.PageResp{
+		Page:     int64(page),
+		PageSize: int64(size),
+		Total:    total,
+	}
 	resp.List = list
 
 	return resp, nil
 }
 
-func convertQuery(in *accountrpc.FindUserListReq) (page int, size int, sorts string, conditions string, params []interface{}) {
-	page = int(in.Page)
-	size = int(in.PageSize)
-	sorts = strings.Join(in.Sorts, ",")
-	if sorts == "" {
-		sorts = "id desc"
+func convertUserQuery(in *accountrpc.FindUserListReq) (page int, size int, sorts string, conditions string, params []interface{}) {
+	var opts []query.Option
+	if in.Paginate != nil {
+		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
+		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
+		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
 	}
 
 	if in.Username != "" {
-		conditions += "username like ?"
-		params = append(params, "%"+in.Username+"%")
+		opts = append(opts, query.WithCondition("username like ?", "%"+in.Username+"%"))
 	}
 
 	if in.Nickname != "" {
-		if conditions != "" {
-			conditions += " and "
-		}
-		conditions += "nickname like ?"
-		params = append(params, "%"+in.Nickname+"%")
+		opts = append(opts, query.WithCondition("nickname like ?", "%"+in.Nickname+"%"))
 	}
 
 	if in.Email != "" {
-		if conditions != "" {
-			conditions += " and "
-		}
-		conditions += "email like ?"
-		params = append(params, "%"+in.Email+"%")
+		opts = append(opts, query.WithCondition("email like ?", "%"+in.Email+"%"))
 	}
 
 	if in.Status != 0 {
-		if conditions != "" {
-			conditions += " and "
-		}
-		conditions += "status = ?"
-		params = append(params, in.Status)
+		opts = append(opts, query.WithCondition("status = ?", in.Status))
 	}
 
 	if len(in.UserIds) != 0 {
-		if conditions != "" {
-			conditions += " and "
-		}
-		conditions += "id in (?)"
-		params = append(params, in.UserIds)
+		opts = append(opts, query.WithCondition("user_id in (?)", in.UserIds))
 	}
 
-	return page, size, sorts, conditions, params
+	return query.NewQueryBuilder(opts...).Build()
 }
 
 func convertUserOut(in *model.TUser) (out *accountrpc.User) {
 
 	out = &accountrpc.User{
-		UserId:    in.UserId,
-		Username:  in.Username,
-		Nickname:  in.Nickname,
-		Avatar:    in.Avatar,
-		Email:     in.Email,
-		Phone:     in.Phone,
-		Info:      in.Info,
-		Status:    in.Status,
-		LoginType: in.LoginType,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		CreatedAt: in.CreatedAt.Unix(),
-		UpdatedAt: in.UpdatedAt.Unix(),
+		UserId:       in.UserId,
+		Username:     in.Username,
+		Nickname:     in.Nickname,
+		Avatar:       in.Avatar,
+		Email:        in.Email,
+		Phone:        in.Phone,
+		Info:         in.Info,
+		Status:       in.Status,
+		RegisterType: in.RegisterType,
+		IpAddress:    in.IpAddress,
+		IpSource:     in.IpSource,
+		CreatedAt:    in.CreatedAt.Unix(),
+		UpdatedAt:    in.UpdatedAt.Unix(),
 	}
 
 	return out

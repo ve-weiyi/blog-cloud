@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/gormlogger"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/config"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/gormlogger"
 )
 
 func ConnectGorm(c config.MysqlConf) (*gorm.DB, error) {

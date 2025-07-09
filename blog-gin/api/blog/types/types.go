@@ -1,0 +1,225 @@
+package types
+
+type ArticleHome struct {
+	Id             int64    `json:"id"`              // 文章ID
+	ArticleCover   string   `json:"article_cover"`   // 文章缩略图
+	ArticleTitle   string   `json:"article_title"`   // 标题
+	ArticleContent string   `json:"article_content"` // 内容
+	ArticleType    int64    `json:"article_type"`    // 文章类型
+	OriginalUrl    string   `json:"original_url"`    // 原文链接
+	IsTop          int64    `json:"is_top"`          // 是否置顶
+	Status         int64    `json:"status"`          // 状态值 1 公开 2 私密 3 草稿 4 已删除
+	CreatedAt      int64    `json:"created_at"`      // 发表时间
+	UpdatedAt      int64    `json:"updated_at"`      // 更新时间
+	CategoryName   string   `json:"category_name"`   // 文章分类名
+	TagNameList    []string `json:"tag_name_list"`   // 文章标签列表
+	LikeCount      int64    `json:"like_count"`      // 点赞量
+	ViewsCount     int64    `json:"views_count"`     // 浏览量
+}
+
+type ArticlePreview struct {
+	Id           int64  `json:"id"`            // 文章ID
+	ArticleCover string `json:"article_cover"` // 文章缩略图
+	ArticleTitle string `json:"article_title"` // 标题
+	LikeCount    int64  `json:"like_count"`    // 点赞量
+	ViewsCount   int64  `json:"views_count"`   // 浏览量
+	CreatedAt    int64  `json:"created_at"`    // 创建时间
+}
+
+type Category struct {
+	Id           int64  `json:"id"`
+	CategoryName string `json:"category_name"` // 分类名
+	ArticleCount int64  `json:"article_count"`
+	CreatedAt    int64  `json:"created_at"` // 创建时间
+	UpdatedAt    int64  `json:"updated_at"` // 更新时间
+}
+
+type CommentReply struct {
+	Id             int64       `json:"id"`              // 评论id
+	TopicId        int64       `json:"topic_id"`        // 主题id
+	ParentId       int64       `json:"parent_id"`       // 父评论id
+	ReplyMsgId     int64       `json:"reply_msg_id"`    // 会话id
+	UserId         string      `json:"user_id"`         // 用户id
+	ReplyUserId    string      `json:"reply_user_id"`   // 被回复用户id
+	CommentContent string      `json:"comment_content"` // 评论内容
+	Type           int64       `json:"type"`            // 评论类型 1.文章 2.友链 3.说说
+	CreatedAt      int64       `json:"created_at"`      // 评论时间
+	LikeCount      int64       `json:"like_count"`      // 点赞数
+	User           *UserInfoVO `json:"user"`            // 用户信息
+	ReplyUser      *UserInfoVO `json:"reply_user"`      // 被回复评论用户
+}
+
+type EmptyReq struct {
+}
+
+type EmptyResp struct {
+}
+
+type Friend struct {
+	Id          int64  `json:"id"`           // id
+	LinkName    string `json:"link_name"`    // 链接名
+	LinkAvatar  string `json:"link_avatar"`  // 链接头像
+	LinkAddress string `json:"link_address"` // 链接地址
+	LinkIntro   string `json:"link_intro"`   // 链接介绍
+	CreatedAt   int64  `json:"created_at"`   // 创建时间
+	UpdatedAt   int64  `json:"updated_at"`   // 更新时间
+}
+
+type IdReq struct {
+	Id int64 `json:"id"`
+}
+
+type IdsReq struct {
+	Ids []int64 `json:"ids"`
+}
+
+type MessageEvent struct {
+	Type      int64  `json:"type"`      // 消息类型
+	Data      string `json:"data"`      // 消息内容
+	Timestamp int64  `json:"timestamp"` // 消息时间戳
+}
+
+type Page struct {
+	Id         int64  `json:"id"`                   // 页面id
+	PageName   string `json:"page_name"`            // 页面名
+	PageLabel  string `json:"page_label"`           // 页面标签
+	PageCover  string `json:"page_cover"`           // 页面封面
+	IsCarousel int64  `json:"is_carousel,optional"` // 是否轮播
+	CreatedAt  int64  `json:"created_at"`           // 创建时间
+	UpdatedAt  int64  `json:"updated_at"`           // 更新时间
+}
+
+type PageQuery struct {
+	Page     int64    `json:"page,optional"`
+	PageSize int64    `json:"page_size,optional"`
+	Sorts    []string `json:"sorts,optional"`
+}
+
+type PageResp struct {
+	Page     int64       `json:"page,omitempty"`
+	PageSize int64       `json:"page_size,omitempty"`
+	Total    int64       `json:"total,omitempty"`
+	List     interface{} `json:"list,omitempty"`
+}
+
+type PageVO struct {
+	Id         int64  `json:"id"`                   // 页面ID
+	PageName   string `json:"page_name"`            // 页面名称
+	PageLabel  string `json:"page_label"`           // 页面标签
+	PageCover  string `json:"page_cover"`           // 页面封面
+	IsCarousel int64  `json:"is_carousel,optional"` // 是否轮播
+}
+
+type Photo struct {
+	Id       int64  `json:"id"`        // 主键
+	PhotoUrl string `json:"photo_url"` // 照片地址
+}
+
+type PingReq struct {
+}
+
+type PingResp struct {
+	Env         string   `json:"env"`
+	Name        string   `json:"name"`
+	Version     string   `json:"version"`
+	Runtime     string   `json:"runtime"`
+	Description string   `json:"description"`
+	RpcStatus   []string `json:"rpc_status"`
+}
+
+type Response struct {
+	Code    int         `json:"code"`
+	Msg     string      `json:"msg"`
+	Data    interface{} `json:"data"`
+	TraceId string      `json:"trace_id"`
+}
+
+type RewardQrCode struct {
+	AlipayQrCode string `json:"alipay_qr_code"` // 支付宝二维码
+	WeixinQrCode string `json:"weixin_qr_code"` // 微信二维码
+}
+
+type SocialAccountInfo struct {
+	Name     string `json:"name"`     // 名称-微信
+	Platform string `json:"platform"` // 平台-wechat
+	LinkUrl  string `json:"link_url"` // 链接地址
+	Enabled  bool   `json:"enabled"`  // 是否启用
+}
+
+type Tag struct {
+	Id           int64  `json:"id"`            // 标签ID
+	TagName      string `json:"tag_name"`      // 标签名
+	ArticleCount int64  `json:"article_count"` // 文章数量
+	CreatedAt    int64  `json:"created_at"`    // 创建时间
+	UpdatedAt    int64  `json:"updated_at"`    // 更新时间
+}
+
+type ThirdPlatformInfo struct {
+	Name         string `json:"name"`          // 名称-微信
+	Platform     string `json:"platform"`      // 平台-wechat
+	AuthorizeUrl string `json:"authorize_url"` // 授权地址
+	Enabled      bool   `json:"enabled"`       // 是否启用
+}
+
+type Token struct {
+	UserId           string `json:"user_id"`            // 用户id
+	TokenType        string `json:"token_type"`         // token类型,Bearer
+	AccessToken      string `json:"access_token"`       // 访问token,过期时间较短。2h
+	ExpiresIn        int64  `json:"expires_in"`         // 访问token过期时间
+	RefreshToken     string `json:"refresh_token"`      // 刷新token,过期时间较长。30d
+	RefreshExpiresIn int64  `json:"refresh_expires_in"` // 刷新token过期时间
+	Scope            string `json:"scope"`              // 作用域
+}
+
+type UserInfoExt struct {
+	Gender  int64  `json:"gender,optional"`  // 性别 0未知 1男 2女
+	Intro   string `json:"intro,optional"`   // 简介
+	Website string `json:"website,optional"` // 网站
+}
+
+type UserInfoVO struct {
+	UserId   string `json:"user_id"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
+	Nickname string `json:"nickname"`
+	UserInfoExt
+}
+
+type UserThirdPartyInfo struct {
+	Platform  string `json:"platform"`   // 平台
+	OpenId    string `json:"open_id"`    // 平台用户id
+	Nickname  string `json:"nickname"`   // 昵称
+	Avatar    string `json:"avatar"`     // 头像
+	CreatedAt int64  `json:"created_at"` // 创建时间
+}
+
+type WebsiteConfigVO struct {
+	AdminUrl        string               `json:"admin_url"`         // 后台地址
+	WebsocketUrl    string               `json:"websocket_url"`     // websocket地址
+	TouristAvatar   string               `json:"tourist_avatar"`    // 游客头像
+	UserAvatar      string               `json:"user_avatar"`       // 用户头像
+	WebsiteFeature  *WebsiteFeature      `json:"website_feature"`   // 网站功能
+	WebsiteInfo     *WebsiteInfo         `json:"website_info"`      // 网站信息
+	RewardQrCode    *RewardQrCode        `json:"reward_qr_code"`    // 打赏二维码
+	SocialLoginList []*ThirdPlatformInfo `json:"social_login_list"` // 用户第三方登录列表
+	SocialUrlList   []*SocialAccountInfo `json:"social_url_list"`   // 作者社交地址列表
+}
+
+type WebsiteFeature struct {
+	IsChatRoom      int64 `json:"is_chat_room"`      // 是否开启聊天室
+	IsCommentReview int64 `json:"is_comment_review"` // 是否开启评论审核
+	IsEmailNotice   int64 `json:"is_email_notice"`   // 是否开启邮件通知
+	IsMessageReview int64 `json:"is_message_review"` // 是否开启留言审核
+	IsMusicPlayer   int64 `json:"is_music_player"`   // 是否开启音乐播放器
+	IsReward        int64 `json:"is_reward"`         // 是否开启打赏
+}
+
+type WebsiteInfo struct {
+	WebsiteAuthor     string `json:"website_author"`      // 网站作者
+	WebsiteAvatar     string `json:"website_avatar"`      // 网站头像
+	WebsiteCreateTime string `json:"website_create_time"` // 网站创建时间
+	WebsiteIntro      string `json:"website_intro"`       // 网站介绍
+	WebsiteName       string `json:"website_name"`        // 网站名称
+	WebsiteNotice     string `json:"website_notice"`      // 网站公告
+	WebsiteRecordNo   string `json:"website_record_no"`   // 网站备案号
+}

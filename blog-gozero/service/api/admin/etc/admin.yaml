@@ -1,0 +1,49 @@
+Name: admin-api
+Host: 0.0.0.0
+Port: 9091
+Mode: dev
+Timeout: 5000
+# 健康检查
+DevServer:
+  Enabled: true
+  Port: 6061
+  HealthPath: "/ping"
+  MetricsPath: "/metrics"
+  EnableMetrics: true
+# 日志配置
+Log:
+  Mode: console
+  Encoding: plain
+  Path: runtime/admin-api/log
+# 文件上传配置
+UploadConfig:
+  zone: ZoneHuanan
+  endpoint: s3.cn-south-1.qiniucs.com
+  access-key-id: xxx
+  access-key-secret: xxx
+  bucket-name: veweiyi
+  bucket-url: https://static.veweiyi.cn
+  base-path: blog
+
+RedisConf:
+  db: 0
+  host: veweiyi.cn
+  port: "6379"
+  password: redis7914
+
+# etcd模式
+#BlogRpcConf:
+#  Etcd:
+#    Hosts:
+#     - "localhost:2379"
+#    Key: "blog-dev/blog.rpc"
+#    User: "root"
+#    Pass: "etcd7914"
+#  NonBlock: true
+#  Timeout: 5000
+
+# 直连模式
+BlogRpcConf:
+  Endpoints:
+    - 0.0.0.0:9999
+  Timeout: 5000

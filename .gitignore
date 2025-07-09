@@ -25,10 +25,15 @@ yarn-error.log*
 
 *.iml
 *.log
-web/.pnpm-debug.log
-web/pnpm-lock.yaml
-config.yaml
 *.sum
 
-/rm_file
+bin
+runtime
+default.etcd
+config.yaml
+admin-api.yaml
+blog-api.yaml
 blog-rpc.yaml
+test.*
+any_test.go
+blog-veweiyi.sql

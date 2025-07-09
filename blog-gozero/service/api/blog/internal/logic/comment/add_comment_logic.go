@@ -3,11 +3,9 @@ package comment
 import (
 	"context"
 
-	"github.com/spf13/cast"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,18 +26,16 @@ func NewAddCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCom
 }
 
 func (l *AddCommentLogic) AddComment(req *types.CommentNewReq) (resp *types.Comment, err error) {
-	in := &commentrpc.CommentNewReq{
+	in := &messagerpc.CommentNewReq{
 		ParentId:       req.ParentId,
 		TopicId:        req.TopicId,
 		ReplyMsgId:     req.ReplyMsgId,
-		UserId:         cast.ToString(l.ctx.Value("uid")),
 		ReplyUserId:    req.ReplyUserId,
 		CommentContent: req.CommentContent,
 		Type:           req.Type,
-		Status:         0,
-		IsReview:       0,
+		Status:         req.Status,
 	}
-	out, err := l.svcCtx.CommentRpc.AddComment(l.ctx, in)
+	out, err := l.svcCtx.MessageRpc.AddComment(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

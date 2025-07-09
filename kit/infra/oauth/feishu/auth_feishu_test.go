@@ -8,19 +8,19 @@ import (
 )
 
 func TestFeishu(t *testing.T) {
-	conf := &oauth.AuthConfig{
-		ClientId:     "xxx",
-		ClientSecret: "xxx",
-		RedirectUri:  "https://veweiyi.cn/blog/oauth/login/feishu",
+	conf := &oauth.OauthConfig{
+		ClientId:     "cli_a5082b89657c900c",
+		ClientSecret: "QJiJDotAX6mNLbBIhEQIocpbWza6el4J",
+		RedirectUri:  "https://ankersolix-professional-ci.anker.com/login",
 	}
 
 	auth := NewAuthFeishu(conf)
 	// 获取第三方登录地址
-	url := auth.GetAuthorizeUrl("state")
+	url := auth.GetAuthLoginUrl("state")
 	log.Println("url:", url)
 
 	// 获取用户信息
-	userInfo, err := auth.GetUserOpenInfo("5ebhf5a54b19408892c18e2042edf792")
+	userInfo, err := auth.GetAuthUserInfo("fwBl0AAD5DzG4by09L7yxCa9CxBCHHe2")
 	if err != nil {
 		return
 	}

@@ -26,12 +26,12 @@ func NewRecycleArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 }
 
 func (l *RecycleArticleLogic) RecycleArticle(req *types.ArticleRecycleReq) (resp *types.EmptyResp, err error) {
-	in := &articlerpc.RecycleArticleReq{
+	in := &articlerpc.UpdateArticleDeleteReq{
 		ArticleId: req.Id,
 		IsDelete:  req.IsDelete,
 	}
 
-	_, err = l.svcCtx.ArticleRpc.RecycleArticle(l.ctx, in)
+	_, err = l.svcCtx.ArticleRpc.UpdateArticleDelete(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

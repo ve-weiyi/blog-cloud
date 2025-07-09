@@ -1,97 +1,87 @@
 package nacos
 
 import (
+	"fmt"
+	"path"
+
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
-	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
 type NacosConfig struct {
-	IP          string
-	Port        uint64 //8848
-	UserName    string
-	Password    string
-	NameSpaceId string
-	Group       string
-	DataId      string
-	RuntimeDir  string //runtime
-	LogLevel    string //debug
-	Timeout     int64  //ms
+	// Nacos相关配置
+	NacosHost      string // Nacos服务地址
+	NacosPort      uint64 // Nacos服务端口
+	NacosNamespace string // Nacos命名空间
+	NacosDataID    string // 配置DataID
+	NacosGroup     string // 配置Group
+
+	NacosUsername   string // Nacos用户名
+	NacosPassword   string // Nacos密码
+	NacosRuntimeDir string // Nacos运行时目录
 }
 
-type NacosReader struct {
-	cfg    *NacosConfig
-	client config_client.IConfigClient
-}
-
-func New(cfg *NacosConfig) *NacosReader {
-
-	//create ServerConfig
-	sc := []constant.ServerConfig{
-		*constant.NewServerConfig(cfg.IP, cfg.Port),
+// 初始化Nacos配置并监听变化
+func LoadConfigFromNacos(option *NacosConfig, callback func(content string)) error {
+	logger.GetLogger().Info("Initializing Nacos config from file:", option.NacosHost)
+	// 1. 创建Nacos客户端配置
+	serverConfigs := []constant.ServerConfig{
+		{
+			IpAddr: option.NacosHost,
+			Port:   option.NacosPort, // 默认端口，可根据实际修改
+		},
 	}
 
-	//create ClientConfig
-	cc := constant.NewClientConfig(
-		constant.WithUsername(cfg.UserName),
-		constant.WithPassword(cfg.Password),
-		constant.WithNamespaceId(cfg.NameSpaceId),
-		constant.WithTimeoutMs(5000),
-		constant.WithNotLoadCacheAtStart(true),
-		constant.WithCacheDir(cfg.RuntimeDir+"/cache"),
-		constant.WithLogDir(cfg.RuntimeDir+"/logs"),
-		constant.WithLogLevel(cfg.LogLevel),
-	)
+	clientConfig := &constant.ClientConfig{
+		Username:            option.NacosUsername,
+		Password:            option.NacosPassword,
+		NamespaceId:         option.NacosNamespace, // 命名空间ID（默认为public）
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              path.Join(option.NacosRuntimeDir, "logs"),
+		CacheDir:            path.Join(option.NacosRuntimeDir, "cache"),
+		LogLevel:            "info",
+	}
 
-	// create config client
+	// 2. 创建Nacos配置客户端
 	client, err := clients.NewConfigClient(
 		vo.NacosClientParam{
-			ClientConfig:  cc,
-			ServerConfigs: sc,
+			ClientConfig:  clientConfig,
+			ServerConfigs: serverConfigs,
 		},
 	)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create Nacos client: %w", err)
 	}
 
-	return &NacosReader{
-		cfg:    cfg,
-		client: client,
-	}
-}
-
-func (n *NacosReader) GetConfig() (string, error) {
-	//get config
-	content, err := n.client.GetConfig(vo.ConfigParam{
-		DataId: n.cfg.DataId,
-		Group:  n.cfg.Group,
+	// 3. 首次从Nacos获取配置
+	content, err := client.GetConfig(vo.ConfigParam{
+		DataId: option.NacosDataID,
+		Group:  option.NacosGroup,
 	})
 	if err != nil {
-		return "", err
+		return fmt.Errorf("failed to get Nacos config: %w", err)
 	}
 
-	logger.GetLogger().Info("nacos get config:\n" + content)
-	return content, nil
-}
+	// 4. 解析Nacos配置（修复：传指针给Unmarshal）
+	callback(content)
 
-func (n *NacosReader) AddListener(listener func(content string) error) error {
-
-	//Listen config change,key=dataId+group+namespaceId.
-	err := n.client.ListenConfig(vo.ConfigParam{
-		DataId: n.cfg.DataId,
-		Group:  n.cfg.Group,
+	// 5. 监听Nacos配置变化：更新时直接修改cfg指向的内存
+	err = client.ListenConfig(vo.ConfigParam{
+		DataId: option.NacosDataID,
+		Group:  option.NacosGroup,
 		OnChange: func(namespace, group, dataId, data string) {
-			logger.GetLogger().Info("nacos config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
-			if err := listener(data); err != nil {
-				logger.GetLogger().Error("nacos config changed reload failed")
-			}
+			logger.GetLogger().Info("Nacos config changed: dataId=%s, group=%s\n", dataId, group)
+			// 重新解析变更后的配置到原指针
+			callback(content)
 		},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to listen Nacos config changes: %w", err)
 	}
 
-	return nil
+	logger.GetLogger().Info("Nacos config initialization completed")
+	return nil // 返回指针，外部持有后会同步更新
 }

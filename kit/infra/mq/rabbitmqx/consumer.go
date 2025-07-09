@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/glog"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/logz"
 )
 
 type RabbitmqConsumer struct {
-	glog.Logger
+	logz.Logger
 
 	conn *RabbitmqConn
 	opts ConsumerOptions
@@ -30,7 +30,7 @@ func NewRabbitmqConsumer(conn *RabbitmqConn, opts ...ConsumerOption) *RabbitmqCo
 	}
 
 	return &RabbitmqConsumer{
-		Logger: glog.Default(),
+		Logger: logz.S(),
 		conn:   conn,
 		opts:   opt,
 	}

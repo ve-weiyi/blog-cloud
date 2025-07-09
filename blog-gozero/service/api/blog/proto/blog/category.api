@@ -10,7 +10,6 @@ type (
         CreatedAt int64 `json:"created_at"`        // 创建时间
         UpdatedAt int64 `json:"updated_at"`        // 更新时间
     }
-
     CategoryQueryReq {
         PageQuery
         CategoryName string `json:"category_name,optional"` // 分类名
@@ -18,13 +17,15 @@ type (
 )
 
 @server(
-    prefix: /api/v1
+    tags: "分类"
+    prefix:     /blog-api/v1
     group: category
-    middleware: SignToken
+    authType: apiKey
+    middleware: TerminalToken
 )
-
 service blog-api {
     @doc "分页获取文章分类列表"
     @handler FindCategoryList
     post /category/find_category_list (CategoryQueryReq) returns (PageResp)
 }
+

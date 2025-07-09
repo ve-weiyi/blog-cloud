@@ -4,7 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/upload"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oss"
 )
 
 type Config struct {
@@ -12,7 +12,7 @@ type Config struct {
 
 	BlogRpcConf zrpc.RpcClientConf
 
-	UploadConfig *upload.UploadConfig
+	UploadConfig *oss.Config
 	RedisConf    RedisConf
 }
 

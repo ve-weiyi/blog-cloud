@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,11 +26,16 @@ func NewGetAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAlbum
 }
 
 func (l *GetAlbumLogic) GetAlbum(req *types.IdReq) (resp *types.Album, err error) {
-	in := &photorpc.IdReq{Id: req.Id}
-	album, err := l.svcCtx.PhotoRpc.GetAlbum(l.ctx, in)
+	in := &resourcerpc.IdReq{Id: req.Id}
+	album, err := l.svcCtx.ResourceRpc.GetAlbum(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertAlbumTypes(album), nil
+	return &types.Album{
+		Id:         album.Id,
+		AlbumName:  album.AlbumName,
+		AlbumDesc:  album.AlbumDesc,
+		AlbumCover: album.AlbumCover,
+	}, nil
 }

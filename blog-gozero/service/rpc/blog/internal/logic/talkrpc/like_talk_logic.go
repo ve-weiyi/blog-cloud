@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/internal/rpcutil"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/talkrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -29,19 +29,19 @@ func NewLikeTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeTalk
 
 // 点赞说说
 func (l *LikeTalkLogic) LikeTalk(in *talkrpc.IdReq) (*talkrpc.EmptyResp, error) {
-	uid, err := rpcutil.GetRPCUserId(l.ctx)
+	uid, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	id := cast.ToString(in.Id)
 
-	entity, err := l.svcCtx.TTalkModel.FindOne(l.ctx, in.Id)
+	entity, err := l.svcCtx.TTalkModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 	// 设置集合
 	likeKey := rediskey.GetUserLikeTalkKey(uid)
-	countKey := rediskey.GetTalkLikeCountKey(id)
+	countKey := rediskey.GetTalkLikeCountKey()
 
 	ok, _ := l.svcCtx.Redis.SIsMember(l.ctx, likeKey, id).Result()
 	if ok {
@@ -51,7 +51,7 @@ func (l *LikeTalkLogic) LikeTalk(in *talkrpc.IdReq) (*talkrpc.EmptyResp, error) 
 		if err != nil {
 			return nil, err
 		}
-		err = l.svcCtx.Redis.Decr(l.ctx, countKey).Err()
+		err = l.svcCtx.Redis.ZIncrBy(l.ctx, countKey, -1, id).Err()
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +62,7 @@ func (l *LikeTalkLogic) LikeTalk(in *talkrpc.IdReq) (*talkrpc.EmptyResp, error) 
 		if err != nil {
 			return nil, err
 		}
-		err = l.svcCtx.Redis.Incr(l.ctx, countKey).Err()
+		err = l.svcCtx.Redis.ZIncrBy(l.ctx, countKey, 1, id).Err()
 		if err != nil {
 			return nil, err
 		}

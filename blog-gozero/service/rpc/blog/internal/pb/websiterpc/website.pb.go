@@ -24,129 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type EmptyReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *EmptyReq) Reset() {
-	*x = EmptyReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_website_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *EmptyReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmptyReq) ProtoMessage() {}
-
-func (x *EmptyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_website_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmptyReq.ProtoReflect.Descriptor instead.
-func (*EmptyReq) Descriptor() ([]byte, []int) {
-	return file_website_proto_rawDescGZIP(), []int{0}
-}
-
-type EmptyResp struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *EmptyResp) Reset() {
-	*x = EmptyResp{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_website_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *EmptyResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmptyResp) ProtoMessage() {}
-
-func (x *EmptyResp) ProtoReflect() protoreflect.Message {
-	mi := &file_website_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmptyResp.ProtoReflect.Descriptor instead.
-func (*EmptyResp) Descriptor() ([]byte, []int) {
-	return file_website_proto_rawDescGZIP(), []int{1}
-}
-
-type IdReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-}
-
-func (x *IdReq) Reset() {
-	*x = IdReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_website_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *IdReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*IdReq) ProtoMessage() {}
-
-func (x *IdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_website_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use IdReq.ProtoReflect.Descriptor instead.
-func (*IdReq) Descriptor() ([]byte, []int) {
-	return file_website_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *IdReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
+// ==================== 通用消息 ====================
 type IdsReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -158,7 +36,7 @@ type IdsReq struct {
 func (x *IdsReq) Reset() {
 	*x = IdsReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_website_proto_msgTypes[3]
+		mi := &file_website_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -171,7 +49,7 @@ func (x *IdsReq) String() string {
 func (*IdsReq) ProtoMessage() {}
 
 func (x *IdsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_website_proto_msgTypes[3]
+	mi := &file_website_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -184,7 +62,7 @@ func (x *IdsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IdsReq.ProtoReflect.Descriptor instead.
 func (*IdsReq) Descriptor() ([]byte, []int) {
-	return file_website_proto_rawDescGZIP(), []int{3}
+	return file_website_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *IdsReq) GetIds() []int64 {
@@ -194,17 +72,196 @@ func (x *IdsReq) GetIds() []int64 {
 	return nil
 }
 
-type UserVisit struct {
+type BatchResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Date      string `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
-	ViewCount int64  `protobuf:"varint,2,opt,name=view_count,json=viewCount,proto3" json:"view_count,omitempty"`
+	SuccessCount int64 `protobuf:"varint,1,opt,name=success_count,json=successCount,proto3" json:"success_count,omitempty"`
 }
 
-func (x *UserVisit) Reset() {
-	*x = UserVisit{}
+func (x *BatchResp) Reset() {
+	*x = BatchResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BatchResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchResp) ProtoMessage() {}
+
+func (x *BatchResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchResp.ProtoReflect.Descriptor instead.
+func (*BatchResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *BatchResp) GetSuccessCount() int64 {
+	if x != nil {
+		return x.SuccessCount
+	}
+	return 0
+}
+
+// 分页请求
+type PageReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page     int64    `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`                         // 页码
+	PageSize int64    `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"` // 每页大小
+	Sorts    []string `protobuf:"bytes,3,rep,name=sorts,proto3" json:"sorts,omitempty"`                        // 排序字段
+}
+
+func (x *PageReq) Reset() {
+	*x = PageReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageReq) ProtoMessage() {}
+
+func (x *PageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageReq.ProtoReflect.Descriptor instead.
+func (*PageReq) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PageReq) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *PageReq) GetPageSize() int64 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *PageReq) GetSorts() []string {
+	if x != nil {
+		return x.Sorts
+	}
+	return nil
+}
+
+// 分页响应
+type PageResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page     int64 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`                         // 页码
+	PageSize int64 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"` // 每页大小
+	Total    int64 `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`                       // 总数
+}
+
+func (x *PageResp) Reset() {
+	*x = PageResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PageResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageResp) ProtoMessage() {}
+
+func (x *PageResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageResp.ProtoReflect.Descriptor instead.
+func (*PageResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PageResp) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *PageResp) GetPageSize() int64 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *PageResp) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// ************* blog 友链管理 *************
+type FriendNewReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                     // id
+	LinkName    string `protobuf:"bytes,2,opt,name=link_name,json=linkName,proto3" json:"link_name,omitempty"`          // 链接名
+	LinkAvatar  string `protobuf:"bytes,3,opt,name=link_avatar,json=linkAvatar,proto3" json:"link_avatar,omitempty"`    // 链接头像
+	LinkAddress string `protobuf:"bytes,4,opt,name=link_address,json=linkAddress,proto3" json:"link_address,omitempty"` // 链接地址
+	LinkIntro   string `protobuf:"bytes,5,opt,name=link_intro,json=linkIntro,proto3" json:"link_intro,omitempty"`       // 链接介绍
+}
+
+func (x *FriendNewReq) Reset() {
+	*x = FriendNewReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_website_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -212,13 +269,13 @@ func (x *UserVisit) Reset() {
 	}
 }
 
-func (x *UserVisit) String() string {
+func (x *FriendNewReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserVisit) ProtoMessage() {}
+func (*FriendNewReq) ProtoMessage() {}
 
-func (x *UserVisit) ProtoReflect() protoreflect.Message {
+func (x *FriendNewReq) ProtoReflect() protoreflect.Message {
 	mi := &file_website_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -230,35 +287,62 @@ func (x *UserVisit) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserVisit.ProtoReflect.Descriptor instead.
-func (*UserVisit) Descriptor() ([]byte, []int) {
+// Deprecated: Use FriendNewReq.ProtoReflect.Descriptor instead.
+func (*FriendNewReq) Descriptor() ([]byte, []int) {
 	return file_website_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UserVisit) GetDate() string {
+func (x *FriendNewReq) GetId() int64 {
 	if x != nil {
-		return x.Date
-	}
-	return ""
-}
-
-func (x *UserVisit) GetViewCount() int64 {
-	if x != nil {
-		return x.ViewCount
+		return x.Id
 	}
 	return 0
 }
 
-type UserDailyVisitRsp struct {
+func (x *FriendNewReq) GetLinkName() string {
+	if x != nil {
+		return x.LinkName
+	}
+	return ""
+}
+
+func (x *FriendNewReq) GetLinkAvatar() string {
+	if x != nil {
+		return x.LinkAvatar
+	}
+	return ""
+}
+
+func (x *FriendNewReq) GetLinkAddress() string {
+	if x != nil {
+		return x.LinkAddress
+	}
+	return ""
+}
+
+func (x *FriendNewReq) GetLinkIntro() string {
+	if x != nil {
+		return x.LinkIntro
+	}
+	return ""
+}
+
+type FriendDetailsResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	List []*UserVisit `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Id          int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                     // id
+	LinkName    string `protobuf:"bytes,2,opt,name=link_name,json=linkName,proto3" json:"link_name,omitempty"`          // 链接名
+	LinkAvatar  string `protobuf:"bytes,3,opt,name=link_avatar,json=linkAvatar,proto3" json:"link_avatar,omitempty"`    // 链接头像
+	LinkAddress string `protobuf:"bytes,4,opt,name=link_address,json=linkAddress,proto3" json:"link_address,omitempty"` // 链接地址
+	LinkIntro   string `protobuf:"bytes,5,opt,name=link_intro,json=linkIntro,proto3" json:"link_intro,omitempty"`       // 链接介绍
+	CreatedAt   int64  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`      // 创建时间
+	UpdatedAt   int64  `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`      // 更新时间
 }
 
-func (x *UserDailyVisitRsp) Reset() {
-	*x = UserDailyVisitRsp{}
+func (x *FriendDetailsResp) Reset() {
+	*x = FriendDetailsResp{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_website_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -266,13 +350,13 @@ func (x *UserDailyVisitRsp) Reset() {
 	}
 }
 
-func (x *UserDailyVisitRsp) String() string {
+func (x *FriendDetailsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDailyVisitRsp) ProtoMessage() {}
+func (*FriendDetailsResp) ProtoMessage() {}
 
-func (x *UserDailyVisitRsp) ProtoReflect() protoreflect.Message {
+func (x *FriendDetailsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_website_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -284,14 +368,532 @@ func (x *UserDailyVisitRsp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDailyVisitRsp.ProtoReflect.Descriptor instead.
-func (*UserDailyVisitRsp) Descriptor() ([]byte, []int) {
+// Deprecated: Use FriendDetailsResp.ProtoReflect.Descriptor instead.
+func (*FriendDetailsResp) Descriptor() ([]byte, []int) {
 	return file_website_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UserDailyVisitRsp) GetList() []*UserVisit {
+func (x *FriendDetailsResp) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *FriendDetailsResp) GetLinkName() string {
+	if x != nil {
+		return x.LinkName
+	}
+	return ""
+}
+
+func (x *FriendDetailsResp) GetLinkAvatar() string {
+	if x != nil {
+		return x.LinkAvatar
+	}
+	return ""
+}
+
+func (x *FriendDetailsResp) GetLinkAddress() string {
+	if x != nil {
+		return x.LinkAddress
+	}
+	return ""
+}
+
+func (x *FriendDetailsResp) GetLinkIntro() string {
+	if x != nil {
+		return x.LinkIntro
+	}
+	return ""
+}
+
+func (x *FriendDetailsResp) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *FriendDetailsResp) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
+}
+
+type FindFriendListReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Paginate *PageReq `protobuf:"bytes,1,opt,name=paginate,proto3" json:"paginate,omitempty"`                 // 分页参数
+	LinkName string   `protobuf:"bytes,2,opt,name=link_name,json=linkName,proto3" json:"link_name,omitempty"` // 链接名
+}
+
+func (x *FindFriendListReq) Reset() {
+	*x = FindFriendListReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FindFriendListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindFriendListReq) ProtoMessage() {}
+
+func (x *FindFriendListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindFriendListReq.ProtoReflect.Descriptor instead.
+func (*FindFriendListReq) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *FindFriendListReq) GetPaginate() *PageReq {
+	if x != nil {
+		return x.Paginate
+	}
+	return nil
+}
+
+func (x *FindFriendListReq) GetLinkName() string {
+	if x != nil {
+		return x.LinkName
+	}
+	return ""
+}
+
+type FindFriendListResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Pagination *PageResp            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"` // 分页信息
+	List       []*FriendDetailsResp `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+}
+
+func (x *FindFriendListResp) Reset() {
+	*x = FindFriendListResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FindFriendListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindFriendListResp) ProtoMessage() {}
+
+func (x *FindFriendListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindFriendListResp.ProtoReflect.Descriptor instead.
+func (*FindFriendListResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *FindFriendListResp) GetPagination() *PageResp {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *FindFriendListResp) GetList() []*FriendDetailsResp {
 	if x != nil {
 		return x.List
+	}
+	return nil
+}
+
+type VisitDailyStatistics struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Date  string `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`    // 日期
+	Count int64  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"` // 数量
+}
+
+func (x *VisitDailyStatistics) Reset() {
+	*x = VisitDailyStatistics{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *VisitDailyStatistics) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VisitDailyStatistics) ProtoMessage() {}
+
+func (x *VisitDailyStatistics) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VisitDailyStatistics.ProtoReflect.Descriptor instead.
+func (*VisitDailyStatistics) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *VisitDailyStatistics) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *VisitDailyStatistics) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type AnalysisVisitReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AnalysisVisitReq) Reset() {
+	*x = AnalysisVisitReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnalysisVisitReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnalysisVisitReq) ProtoMessage() {}
+
+func (x *AnalysisVisitReq) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnalysisVisitReq.ProtoReflect.Descriptor instead.
+func (*AnalysisVisitReq) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{9}
+}
+
+type AnalysisVisitResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TodayUvCount int64   `protobuf:"varint,1,opt,name=today_uv_count,json=todayUvCount,proto3" json:"today_uv_count,omitempty"`  // 今日访客数(UV)
+	TotalUvCount int64   `protobuf:"varint,2,opt,name=total_uv_count,json=totalUvCount,proto3" json:"total_uv_count,omitempty"`  // 总访客数
+	UvGrowthRate float64 `protobuf:"fixed64,3,opt,name=uv_growth_rate,json=uvGrowthRate,proto3" json:"uv_growth_rate,omitempty"` // 访客数同比增长率（相对于昨天同一时间段的增长率）
+	TodayPvCount int64   `protobuf:"varint,4,opt,name=today_pv_count,json=todayPvCount,proto3" json:"today_pv_count,omitempty"`  // 今日浏览量(PV)
+	TotalPvCount int64   `protobuf:"varint,5,opt,name=total_pv_count,json=totalPvCount,proto3" json:"total_pv_count,omitempty"`  // 总浏览量
+	PvGrowthRate float64 `protobuf:"fixed64,6,opt,name=pv_growth_rate,json=pvGrowthRate,proto3" json:"pv_growth_rate,omitempty"` // 同比增长率（相对于昨天同一时间段的增长率）
+}
+
+func (x *AnalysisVisitResp) Reset() {
+	*x = AnalysisVisitResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnalysisVisitResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnalysisVisitResp) ProtoMessage() {}
+
+func (x *AnalysisVisitResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnalysisVisitResp.ProtoReflect.Descriptor instead.
+func (*AnalysisVisitResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *AnalysisVisitResp) GetTodayUvCount() int64 {
+	if x != nil {
+		return x.TodayUvCount
+	}
+	return 0
+}
+
+func (x *AnalysisVisitResp) GetTotalUvCount() int64 {
+	if x != nil {
+		return x.TotalUvCount
+	}
+	return 0
+}
+
+func (x *AnalysisVisitResp) GetUvGrowthRate() float64 {
+	if x != nil {
+		return x.UvGrowthRate
+	}
+	return 0
+}
+
+func (x *AnalysisVisitResp) GetTodayPvCount() int64 {
+	if x != nil {
+		return x.TodayPvCount
+	}
+	return 0
+}
+
+func (x *AnalysisVisitResp) GetTotalPvCount() int64 {
+	if x != nil {
+		return x.TotalPvCount
+	}
+	return 0
+}
+
+func (x *AnalysisVisitResp) GetPvGrowthRate() float64 {
+	if x != nil {
+		return x.PvGrowthRate
+	}
+	return 0
+}
+
+type AddVisitReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AddVisitReq) Reset() {
+	*x = AddVisitReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddVisitReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddVisitReq) ProtoMessage() {}
+
+func (x *AddVisitReq) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddVisitReq.ProtoReflect.Descriptor instead.
+func (*AddVisitReq) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{11}
+}
+
+type AddVisitResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AddVisitResp) Reset() {
+	*x = AddVisitResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddVisitResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddVisitResp) ProtoMessage() {}
+
+func (x *AddVisitResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddVisitResp.ProtoReflect.Descriptor instead.
+func (*AddVisitResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{12}
+}
+
+type FindVisitTrendReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	StartDate string `protobuf:"bytes,1,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"` // 开始日期
+	EndDate   string `protobuf:"bytes,2,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`       // 结束日期
+}
+
+func (x *FindVisitTrendReq) Reset() {
+	*x = FindVisitTrendReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FindVisitTrendReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindVisitTrendReq) ProtoMessage() {}
+
+func (x *FindVisitTrendReq) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindVisitTrendReq.ProtoReflect.Descriptor instead.
+func (*FindVisitTrendReq) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *FindVisitTrendReq) GetStartDate() string {
+	if x != nil {
+		return x.StartDate
+	}
+	return ""
+}
+
+func (x *FindVisitTrendReq) GetEndDate() string {
+	if x != nil {
+		return x.EndDate
+	}
+	return ""
+}
+
+type FindVisitTrendResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UvTrend []*VisitDailyStatistics `protobuf:"bytes,7,rep,name=uv_trend,json=uvTrend,proto3" json:"uv_trend,omitempty"` // 访客数趋势
+	PvTrend []*VisitDailyStatistics `protobuf:"bytes,8,rep,name=pv_trend,json=pvTrend,proto3" json:"pv_trend,omitempty"` // 浏览量趋势
+}
+
+func (x *FindVisitTrendResp) Reset() {
+	*x = FindVisitTrendResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_website_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FindVisitTrendResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindVisitTrendResp) ProtoMessage() {}
+
+func (x *FindVisitTrendResp) ProtoReflect() protoreflect.Message {
+	mi := &file_website_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindVisitTrendResp.ProtoReflect.Descriptor instead.
+func (*FindVisitTrendResp) Descriptor() ([]byte, []int) {
+	return file_website_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *FindVisitTrendResp) GetUvTrend() []*VisitDailyStatistics {
+	if x != nil {
+		return x.UvTrend
+	}
+	return nil
+}
+
+func (x *FindVisitTrendResp) GetPvTrend() []*VisitDailyStatistics {
+	if x != nil {
+		return x.PvTrend
 	}
 	return nil
 }
@@ -300,27 +902,132 @@ var File_website_proto protoreflect.FileDescriptor
 
 var file_website_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
-	0x0a, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x22, 0x0a, 0x0a, 0x08, 0x45,
-	0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x71, 0x22, 0x0b, 0x0a, 0x09, 0x45, 0x6d, 0x70, 0x74, 0x79,
-	0x52, 0x65, 0x73, 0x70, 0x22, 0x17, 0x0a, 0x05, 0x49, 0x64, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x1a, 0x0a,
-	0x06, 0x49, 0x64, 0x73, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x69, 0x64, 0x73, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x03, 0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x3e, 0x0a, 0x09, 0x55, 0x73, 0x65,
-	0x72, 0x56, 0x69, 0x73, 0x69, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x65, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x76, 0x69,
-	0x65, 0x77, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09,
-	0x76, 0x69, 0x65, 0x77, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x3e, 0x0a, 0x11, 0x55, 0x73, 0x65,
-	0x72, 0x44, 0x61, 0x69, 0x6c, 0x79, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x73, 0x70, 0x12, 0x29,
-	0x0a, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x77,
-	0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x56, 0x69,
-	0x73, 0x69, 0x74, 0x52, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x32, 0x56, 0x0a, 0x0a, 0x57, 0x65, 0x62,
-	0x73, 0x69, 0x74, 0x65, 0x52, 0x70, 0x63, 0x12, 0x48, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x55, 0x73,
-	0x65, 0x72, 0x44, 0x61, 0x69, 0x6c, 0x79, 0x56, 0x69, 0x73, 0x69, 0x74, 0x12, 0x14, 0x2e, 0x77,
-	0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52,
+	0x0a, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x22, 0x1a, 0x0a, 0x06, 0x49,
+	0x64, 0x73, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x03, 0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x30, 0x0a, 0x09, 0x42, 0x61, 0x74, 0x63, 0x68,
+	0x52, 0x65, 0x73, 0x70, 0x12, 0x23, 0x0a, 0x0d, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0c, 0x73, 0x75, 0x63,
+	0x63, 0x65, 0x73, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x50, 0x0a, 0x07, 0x50, 0x61, 0x67,
+	0x65, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x03, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70, 0x61, 0x67, 0x65,
+	0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x70, 0x61, 0x67,
+	0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x6f, 0x72, 0x74, 0x73, 0x18, 0x03,
+	0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x73, 0x6f, 0x72, 0x74, 0x73, 0x22, 0x51, 0x0a, 0x08, 0x50,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70,
+	0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08,
+	0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x74, 0x61,
+	0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x22, 0x9e,
+	0x01, 0x0a, 0x0c, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x4e, 0x65, 0x77, 0x52, 0x65, 0x71, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x1b, 0x0a, 0x09, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x6c, 0x69, 0x6e, 0x6b, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1f, 0x0a, 0x0b,
+	0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x61, 0x76, 0x61, 0x74, 0x61, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x6c, 0x69, 0x6e, 0x6b, 0x41, 0x76, 0x61, 0x74, 0x61, 0x72, 0x12, 0x21, 0x0a,
+	0x0c, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x6c, 0x69, 0x6e, 0x6b, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x12, 0x1d, 0x0a, 0x0a, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x69, 0x6e, 0x74, 0x72, 0x6f, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x69, 0x6e, 0x6b, 0x49, 0x6e, 0x74, 0x72, 0x6f, 0x22,
+	0xe1, 0x01, 0x0a, 0x11, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x69, 0x6e, 0x6b, 0x4e, 0x61,
+	0x6d, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x61, 0x76, 0x61, 0x74, 0x61,
+	0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6c, 0x69, 0x6e, 0x6b, 0x41, 0x76, 0x61,
+	0x74, 0x61, 0x72, 0x12, 0x21, 0x0a, 0x0c, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x61, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x6c, 0x69, 0x6e, 0x6b, 0x41,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x6c, 0x69, 0x6e, 0x6b, 0x5f, 0x69,
+	0x6e, 0x74, 0x72, 0x6f, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6c, 0x69, 0x6e, 0x6b,
+	0x49, 0x6e, 0x74, 0x72, 0x6f, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64,
+	0x5f, 0x61, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x64, 0x41, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f,
+	0x61, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x64, 0x41, 0x74, 0x22, 0x61, 0x0a, 0x11, 0x46, 0x69, 0x6e, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e,
+	0x64, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x12, 0x2f, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x69,
+	0x6e, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x77, 0x65, 0x62,
+	0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x52,
+	0x08, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x6c, 0x69, 0x6e,
+	0x6b, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x69,
+	0x6e, 0x6b, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x7d, 0x0a, 0x12, 0x46, 0x69, 0x6e, 0x64, 0x46, 0x72,
+	0x69, 0x65, 0x6e, 0x64, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x34, 0x0a, 0x0a,
+	0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x14, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61,
+	0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x12, 0x31, 0x0a, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x1d, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x72,
+	0x69, 0x65, 0x6e, 0x64, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x52,
+	0x04, 0x6c, 0x69, 0x73, 0x74, 0x22, 0x40, 0x0a, 0x14, 0x56, 0x69, 0x73, 0x69, 0x74, 0x44, 0x61,
+	0x69, 0x6c, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x73, 0x74, 0x69, 0x63, 0x73, 0x12, 0x12, 0x0a,
+	0x04, 0x64, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74,
+	0x65, 0x12, 0x14, 0x0a, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x12, 0x0a, 0x10, 0x41, 0x6e, 0x61, 0x6c, 0x79,
+	0x73, 0x69, 0x73, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x71, 0x22, 0xf7, 0x01, 0x0a, 0x11,
+	0x41, 0x6e, 0x61, 0x6c, 0x79, 0x73, 0x69, 0x73, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x12, 0x24, 0x0a, 0x0e, 0x74, 0x6f, 0x64, 0x61, 0x79, 0x5f, 0x75, 0x76, 0x5f, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0c, 0x74, 0x6f, 0x64, 0x61, 0x79,
+	0x55, 0x76, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x24, 0x0a, 0x0e, 0x74, 0x6f, 0x74, 0x61, 0x6c,
+	0x5f, 0x75, 0x76, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x0c, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x55, 0x76, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x24, 0x0a,
+	0x0e, 0x75, 0x76, 0x5f, 0x67, 0x72, 0x6f, 0x77, 0x74, 0x68, 0x5f, 0x72, 0x61, 0x74, 0x65, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x01, 0x52, 0x0c, 0x75, 0x76, 0x47, 0x72, 0x6f, 0x77, 0x74, 0x68, 0x52,
+	0x61, 0x74, 0x65, 0x12, 0x24, 0x0a, 0x0e, 0x74, 0x6f, 0x64, 0x61, 0x79, 0x5f, 0x70, 0x76, 0x5f,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0c, 0x74, 0x6f, 0x64,
+	0x61, 0x79, 0x50, 0x76, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x24, 0x0a, 0x0e, 0x74, 0x6f, 0x74,
+	0x61, 0x6c, 0x5f, 0x70, 0x76, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x0c, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x50, 0x76, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12,
+	0x24, 0x0a, 0x0e, 0x70, 0x76, 0x5f, 0x67, 0x72, 0x6f, 0x77, 0x74, 0x68, 0x5f, 0x72, 0x61, 0x74,
+	0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x01, 0x52, 0x0c, 0x70, 0x76, 0x47, 0x72, 0x6f, 0x77, 0x74,
+	0x68, 0x52, 0x61, 0x74, 0x65, 0x22, 0x0d, 0x0a, 0x0b, 0x41, 0x64, 0x64, 0x56, 0x69, 0x73, 0x69,
+	0x74, 0x52, 0x65, 0x71, 0x22, 0x0e, 0x0a, 0x0c, 0x41, 0x64, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74,
+	0x52, 0x65, 0x73, 0x70, 0x22, 0x4d, 0x0a, 0x11, 0x46, 0x69, 0x6e, 0x64, 0x56, 0x69, 0x73, 0x69,
+	0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73,
+	0x74, 0x61, 0x72, 0x74, 0x44, 0x61, 0x74, 0x65, 0x12, 0x19, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x5f,
+	0x64, 0x61, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x65, 0x6e, 0x64, 0x44,
+	0x61, 0x74, 0x65, 0x22, 0x8e, 0x01, 0x0a, 0x12, 0x46, 0x69, 0x6e, 0x64, 0x56, 0x69, 0x73, 0x69,
+	0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x12, 0x3b, 0x0a, 0x08, 0x75, 0x76,
+	0x5f, 0x74, 0x72, 0x65, 0x6e, 0x64, 0x18, 0x07, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x77,
+	0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x56, 0x69, 0x73, 0x69, 0x74, 0x44,
+	0x61, 0x69, 0x6c, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x73, 0x74, 0x69, 0x63, 0x73, 0x52, 0x07,
+	0x75, 0x76, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x12, 0x3b, 0x0a, 0x08, 0x70, 0x76, 0x5f, 0x74, 0x72,
+	0x65, 0x6e, 0x64, 0x18, 0x08, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x77, 0x65, 0x62, 0x73,
+	0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x56, 0x69, 0x73, 0x69, 0x74, 0x44, 0x61, 0x69, 0x6c,
+	0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x73, 0x74, 0x69, 0x63, 0x73, 0x52, 0x07, 0x70, 0x76, 0x54,
+	0x72, 0x65, 0x6e, 0x64, 0x32, 0x85, 0x04, 0x0a, 0x0a, 0x57, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65,
+	0x52, 0x70, 0x63, 0x12, 0x4c, 0x0a, 0x0d, 0x41, 0x6e, 0x61, 0x6c, 0x79, 0x73, 0x69, 0x73, 0x56,
+	0x69, 0x73, 0x69, 0x74, 0x12, 0x1c, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70,
+	0x63, 0x2e, 0x41, 0x6e, 0x61, 0x6c, 0x79, 0x73, 0x69, 0x73, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52,
 	0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e,
-	0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x69, 0x6c, 0x79, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x73,
-	0x70, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2f, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70,
-	0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x41, 0x6e, 0x61, 0x6c, 0x79, 0x73, 0x69, 0x73, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x12, 0x3d, 0x0a, 0x08, 0x41, 0x64, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74, 0x12, 0x17, 0x2e,
+	0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x69,
+	0x73, 0x69, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65,
+	0x72, 0x70, 0x63, 0x2e, 0x41, 0x64, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x4f, 0x0a, 0x0e, 0x46, 0x69, 0x6e, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74, 0x54, 0x72, 0x65,
+	0x6e, 0x64, 0x12, 0x1d, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e,
+	0x46, 0x69, 0x6e, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x52, 0x65,
+	0x71, 0x1a, 0x1e, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46,
+	0x69, 0x6e, 0x64, 0x56, 0x69, 0x73, 0x69, 0x74, 0x54, 0x72, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73,
+	0x70, 0x12, 0x44, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x12, 0x18,
+	0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x72, 0x69, 0x65,
+	0x6e, 0x64, 0x4e, 0x65, 0x77, 0x52, 0x65, 0x71, 0x1a, 0x1d, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69,
+	0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x44, 0x65, 0x74, 0x61,
+	0x69, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x47, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x12, 0x18, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74,
+	0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x4e, 0x65, 0x77, 0x52, 0x65,
+	0x71, 0x1a, 0x1d, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x39, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64,
+	0x12, 0x12, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x64,
+	0x73, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70,
+	0x63, 0x2e, 0x42, 0x61, 0x74, 0x63, 0x68, 0x52, 0x65, 0x73, 0x70, 0x12, 0x4f, 0x0a, 0x0e, 0x46,
+	0x69, 0x6e, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x1d, 0x2e,
+	0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x69, 0x6e, 0x64, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x1e, 0x2e, 0x77,
+	0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x69, 0x6e, 0x64, 0x46, 0x72,
+	0x69, 0x65, 0x6e, 0x64, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x42, 0x0e, 0x5a, 0x0c,
+	0x2e, 0x2f, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -335,24 +1042,49 @@ func file_website_proto_rawDescGZIP() []byte {
 	return file_website_proto_rawDescData
 }
 
-var file_website_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_website_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_website_proto_goTypes = []any{
-	(*EmptyReq)(nil),          // 0: websiterpc.EmptyReq
-	(*EmptyResp)(nil),         // 1: websiterpc.EmptyResp
-	(*IdReq)(nil),             // 2: websiterpc.IdReq
-	(*IdsReq)(nil),            // 3: websiterpc.IdsReq
-	(*UserVisit)(nil),         // 4: websiterpc.UserVisit
-	(*UserDailyVisitRsp)(nil), // 5: websiterpc.UserDailyVisitRsp
+	(*IdsReq)(nil),               // 0: websiterpc.IdsReq
+	(*BatchResp)(nil),            // 1: websiterpc.BatchResp
+	(*PageReq)(nil),              // 2: websiterpc.PageReq
+	(*PageResp)(nil),             // 3: websiterpc.PageResp
+	(*FriendNewReq)(nil),         // 4: websiterpc.FriendNewReq
+	(*FriendDetailsResp)(nil),    // 5: websiterpc.FriendDetailsResp
+	(*FindFriendListReq)(nil),    // 6: websiterpc.FindFriendListReq
+	(*FindFriendListResp)(nil),   // 7: websiterpc.FindFriendListResp
+	(*VisitDailyStatistics)(nil), // 8: websiterpc.VisitDailyStatistics
+	(*AnalysisVisitReq)(nil),     // 9: websiterpc.AnalysisVisitReq
+	(*AnalysisVisitResp)(nil),    // 10: websiterpc.AnalysisVisitResp
+	(*AddVisitReq)(nil),          // 11: websiterpc.AddVisitReq
+	(*AddVisitResp)(nil),         // 12: websiterpc.AddVisitResp
+	(*FindVisitTrendReq)(nil),    // 13: websiterpc.FindVisitTrendReq
+	(*FindVisitTrendResp)(nil),   // 14: websiterpc.FindVisitTrendResp
 }
 var file_website_proto_depIdxs = []int32{
-	4, // 0: websiterpc.UserDailyVisitRsp.list:type_name -> websiterpc.UserVisit
-	0, // 1: websiterpc.WebsiteRpc.GetUserDailyVisit:input_type -> websiterpc.EmptyReq
-	5, // 2: websiterpc.WebsiteRpc.GetUserDailyVisit:output_type -> websiterpc.UserDailyVisitRsp
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2,  // 0: websiterpc.FindFriendListReq.paginate:type_name -> websiterpc.PageReq
+	3,  // 1: websiterpc.FindFriendListResp.pagination:type_name -> websiterpc.PageResp
+	5,  // 2: websiterpc.FindFriendListResp.list:type_name -> websiterpc.FriendDetailsResp
+	8,  // 3: websiterpc.FindVisitTrendResp.uv_trend:type_name -> websiterpc.VisitDailyStatistics
+	8,  // 4: websiterpc.FindVisitTrendResp.pv_trend:type_name -> websiterpc.VisitDailyStatistics
+	9,  // 5: websiterpc.WebsiteRpc.AnalysisVisit:input_type -> websiterpc.AnalysisVisitReq
+	11, // 6: websiterpc.WebsiteRpc.AddVisit:input_type -> websiterpc.AddVisitReq
+	13, // 7: websiterpc.WebsiteRpc.FindVisitTrend:input_type -> websiterpc.FindVisitTrendReq
+	4,  // 8: websiterpc.WebsiteRpc.AddFriend:input_type -> websiterpc.FriendNewReq
+	4,  // 9: websiterpc.WebsiteRpc.UpdateFriend:input_type -> websiterpc.FriendNewReq
+	0,  // 10: websiterpc.WebsiteRpc.DeleteFriend:input_type -> websiterpc.IdsReq
+	6,  // 11: websiterpc.WebsiteRpc.FindFriendList:input_type -> websiterpc.FindFriendListReq
+	10, // 12: websiterpc.WebsiteRpc.AnalysisVisit:output_type -> websiterpc.AnalysisVisitResp
+	12, // 13: websiterpc.WebsiteRpc.AddVisit:output_type -> websiterpc.AddVisitResp
+	14, // 14: websiterpc.WebsiteRpc.FindVisitTrend:output_type -> websiterpc.FindVisitTrendResp
+	5,  // 15: websiterpc.WebsiteRpc.AddFriend:output_type -> websiterpc.FriendDetailsResp
+	5,  // 16: websiterpc.WebsiteRpc.UpdateFriend:output_type -> websiterpc.FriendDetailsResp
+	1,  // 17: websiterpc.WebsiteRpc.DeleteFriend:output_type -> websiterpc.BatchResp
+	7,  // 18: websiterpc.WebsiteRpc.FindFriendList:output_type -> websiterpc.FindFriendListResp
+	12, // [12:19] is the sub-list for method output_type
+	5,  // [5:12] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_website_proto_init() }
@@ -362,42 +1094,6 @@ func file_website_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_website_proto_msgTypes[0].Exporter = func(v any, i int) any {
-			switch v := v.(*EmptyReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_website_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*EmptyResp); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_website_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*IdReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_website_proto_msgTypes[3].Exporter = func(v any, i int) any {
 			switch v := v.(*IdsReq); i {
 			case 0:
 				return &v.state
@@ -409,8 +1105,44 @@ func file_website_proto_init() {
 				return nil
 			}
 		}
+		file_website_proto_msgTypes[1].Exporter = func(v any, i int) any {
+			switch v := v.(*BatchResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*PageReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*PageResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_website_proto_msgTypes[4].Exporter = func(v any, i int) any {
-			switch v := v.(*UserVisit); i {
+			switch v := v.(*FriendNewReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -422,7 +1154,115 @@ func file_website_proto_init() {
 			}
 		}
 		file_website_proto_msgTypes[5].Exporter = func(v any, i int) any {
-			switch v := v.(*UserDailyVisitRsp); i {
+			switch v := v.(*FriendDetailsResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*FindFriendListReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*FindFriendListResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*VisitDailyStatistics); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[9].Exporter = func(v any, i int) any {
+			switch v := v.(*AnalysisVisitReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[10].Exporter = func(v any, i int) any {
+			switch v := v.(*AnalysisVisitResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[11].Exporter = func(v any, i int) any {
+			switch v := v.(*AddVisitReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[12].Exporter = func(v any, i int) any {
+			switch v := v.(*AddVisitResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[13].Exporter = func(v any, i int) any {
+			switch v := v.(*FindVisitTrendReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_website_proto_msgTypes[14].Exporter = func(v any, i int) any {
+			switch v := v.(*FindVisitTrendResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -440,7 +1280,7 @@ func file_website_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_website_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

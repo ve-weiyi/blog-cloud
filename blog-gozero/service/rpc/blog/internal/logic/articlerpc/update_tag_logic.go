@@ -24,12 +24,17 @@ func NewUpdateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateT
 }
 
 // 更新标签
-func (l *UpdateTagLogic) UpdateTag(in *articlerpc.TagNewReq) (*articlerpc.TagDetails, error) {
+func (l *UpdateTagLogic) UpdateTag(in *articlerpc.TagNewReq) (*articlerpc.TagPreviewResp, error) {
 	entity := convertTagIn(in)
 	_, err := l.svcCtx.TTagModel.Save(l.ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.TagDetails{}, nil
+	return &articlerpc.TagPreviewResp{
+		Id:        entity.Id,
+		TagName:   entity.TagName,
+		CreatedAt: entity.CreatedAt.Unix(),
+		UpdatedAt: entity.UpdatedAt.Unix(),
+	}, nil
 }

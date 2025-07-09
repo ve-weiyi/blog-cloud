@@ -30,6 +30,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.EmptyResp,
 	in := &accountrpc.RegisterReq{
 		Username:   req.Username,
 		Password:   req.Password,
+		Email:      req.Email,
 		VerifyCode: req.VerifyCode,
 	}
 

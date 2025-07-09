@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOMP WebSocket 聊天室</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #messages {
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        input, button, select {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .controls {
+            margin: 10px 0;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007cba;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>STOMP WebSocket 聊天室</h1>
+
+    <div class="controls">
+        <input type="text" id="username" placeholder="用户名"/>
+        <input type="password" id="password" placeholder="密码"/>
+        <button onclick="connect()">连接</button>
+        <button onclick="disconnect()">断开</button>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="topic" placeholder="主题 (如: /topic/chat)"/>
+        <button onclick="subscribe()">订阅主题</button>
+        <button onclick="unsubscribe()">取消订阅</button>
+    </div>
+
+    <div id="messages"></div>
+
+    <div class="controls">
+        <select id="sendType" onchange="updateDestinationPlaceholder()">
+            <option value="topic">广播到主题</option>
+            <option value="user">私信用户</option>
+            <option value="command">特殊命令</option>
+        </select>
+        <input type="text" id="destination" placeholder="/topic/chat"/>
+        <input type="text" id="messageInput" placeholder="输入消息..."/>
+        <button onclick="sendMessage()">发送</button>
+    </div>
+
+    <div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+        <strong>测试账号：</strong> alice/password123, bob/secret456, guest/guest, admin/admin<br>
+        <strong>使用说明：</strong><br>
+        • 广播：目标填 <code>/topic/chat</code><br>
+        • 私信：目标填 <code>/user/用户名</code><br>
+        • 命令：消息填 <code>/help</code> <code>/online</code> <code>/time</code>
+    </div>
+</div>
+
+<script>
+    let ws = null;
+    let connected = false;
+    let subscriptions = {}; // 保存订阅 ID
+
+    function connect() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        if (!username) {
+            alert('请输入用户名');
+            return;
+        }
+
+        ws = new WebSocket('ws://localhost:9091/admin-api/v1/websocket');
+
+        ws.onopen = function () {
+            // 发送 STOMP CONNECT 帧，包含用户名和密码
+            let connectFrame = `CONNECT\naccept-version:1.2\nhost:/\nlogin:${username}\n`;
+            if (password) {
+                connectFrame += `passcode:${password}\n`;
+            }
+            connectFrame += `\n\x00`;
+            ws.send(connectFrame);
+        };
+
+        ws.onmessage = function (event) {
+            handleStompMessage(event.data);
+        };
+
+        ws.onclose = function () {
+            connected = false;
+            addMessage('系统', '连接已断开');
+        };
+    }
+
+    function disconnect() {
+        if (ws && connected) {
+            const disconnectFrame = `DISCONNECT\n\n\x00`;
+            ws.send(disconnectFrame);
+            ws.close();
+        }
+    }
+
+    function subscribe() {
+        const topic = document.getElementById('topic').value;
+        if (!topic || !connected) {
+            alert('请先连接并输入主题');
+            return;
+        }
+
+        const subId = `sub-${Date.now()}`;
+        subscriptions[topic] = subId; // 保存订阅 ID
+        const subscribeFrame = `SUBSCRIBE\ndestination:${topic}\nid:${subId}\n\n\x00`;
+        ws.send(subscribeFrame);
+        addMessage('系统', '已订阅主题: ' + topic);
+    }
+
+    function unsubscribe() {
+        const topic = document.getElementById('topic').value;
+        if (!topic || !connected) return;
+
+        const subId = subscriptions[topic];
+        if (!subId) {
+            alert('未找到该主题的订阅');
+            return;
+        }
+
+        const unsubscribeFrame = `UNSUBSCRIBE\nid:${subId}\n\n\x00`;
+        ws.send(unsubscribeFrame);
+        delete subscriptions[topic]; // 删除订阅记录
+        addMessage('系统', '已取消订阅: ' + topic);
+    }
+
+    function updateDestinationPlaceholder() {
+        const sendType = document.getElementById('sendType').value;
+        const destInput = document.getElementById('destination');
+        const msgInput = document.getElementById('messageInput');
+
+        if (sendType === 'topic') {
+            destInput.placeholder = '/topic/chat';
+            msgInput.placeholder = '输入消息...';
+        } else if (sendType === 'user') {
+            destInput.placeholder = '/user/用户名';
+            msgInput.placeholder = '输入私信内容...';
+        } else if (sendType === 'command') {
+            destInput.placeholder = '/topic/chat';
+            msgInput.placeholder = '/help 或 /online 或 /time';
+        }
+    }
+
+    function sendMessage() {
+        const destination = document.getElementById('destination').value;
+        const message = document.getElementById('messageInput').value;
+        const username = document.getElementById('username').value;
+
+        if (!destination || !message || !connected) return;
+
+        const body = JSON.stringify({
+            username: username,
+            content: message,
+            timestamp: new Date().toISOString()
+        });
+
+        const sendFrame = `SEND\ndestination:${destination}\n\n${body}\x00`;
+        ws.send(sendFrame);
+
+        document.getElementById('messageInput').value = '';
+    }
+
+    function handleStompMessage(data) {
+        const lines = data.split('\n');
+        const command = lines[0];
+
+        if (command === 'CONNECTED') {
+            connected = true;
+            addMessage('系统', '已连接到服务器');
+        } else if (command === 'MESSAGE') {
+            let destination = '';
+            let body = '';
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i] === '') {
+                    body = lines.slice(i + 1).join('\n').replace(/\x00$/, '');
+                    break;
+                }
+                if (lines[i].startsWith('destination:')) {
+                    destination = lines[i].substring(12);
+                }
+            }
+
+            try {
+                const msg = JSON.parse(body);
+                addMessage(msg.username || '未知用户', msg.content, destination);
+            } catch (e) {
+                addMessage('系统', body, destination);
+            }
+        } else if (command === 'RECEIPT') {
+            // 静默处理
+        }
+    }
+
+    function addMessage(user, content, destination = '') {
+        const messages = document.getElementById('messages');
+        const div = document.createElement('div');
+        div.className = 'message';
+
+        const prefix = destination ? `[${destination}] ` : '';
+        div.innerHTML = `${prefix}<strong>${user}:</strong> ${content}`;
+
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // 回车发送消息
+    document.getElementById('messageInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+</body>
+</html>

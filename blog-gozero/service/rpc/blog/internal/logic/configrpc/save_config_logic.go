@@ -3,6 +3,7 @@ package configrpclogic
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/configrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -24,19 +25,24 @@ func NewSaveConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveCo
 }
 
 // 保存配置
-func (l *SaveConfigLogic) SaveConfig(in *configrpc.SaveConfigReq) (*configrpc.EmptyResp, error) {
+func (l *SaveConfigLogic) SaveConfig(in *configrpc.SaveConfigReq) (*configrpc.SaveConfigResp, error) {
+	// 修改
+	entity := &model.TWebsiteConfig{
+		Id:     0,
+		Key:    in.ConfigKey,
+		Config: in.ConfigValue,
+	}
+
 	// 查找
 	result, err := l.svcCtx.TWebsiteConfigModel.FindOneByKey(l.ctx, in.ConfigKey)
+	if result != nil {
+		entity.Id = result.Id
+	}
+
+	_, err = l.svcCtx.TWebsiteConfigModel.Save(l.ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	// 修改
-	result.Config = in.ConfigValue
-	_, err = l.svcCtx.TWebsiteConfigModel.Save(l.ctx, result)
-	if err != nil {
-		return nil, err
-	}
-
-	return &configrpc.EmptyResp{}, nil
+	return &configrpc.SaveConfigResp{}, nil
 }

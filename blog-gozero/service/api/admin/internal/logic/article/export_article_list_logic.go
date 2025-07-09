@@ -5,7 +5,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/tools/invent"
+	"github.com/ve-weiyi/ve-blog-golang/kit/quickstart/invent"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -37,7 +37,7 @@ func (l *ExportArticleListLogic) ExportArticleList(req *types.IdsReq) (resp *typ
 		return nil, err
 	}
 
-	var list []*types.ArticleBackDTO
+	var list []*types.ArticleBackVO
 	for _, v := range out.List {
 		m := ConvertArticleTypes(v)
 		list = append(list, m)
@@ -54,7 +54,7 @@ func (l *ExportArticleListLogic) ExportArticleList(req *types.IdsReq) (resp *typ
 	return &types.EmptyResp{}, nil
 }
 
-func (l *ExportArticleListLogic) exportArticle(a *types.ArticleBackDTO) (err error) {
+func (l *ExportArticleListLogic) exportArticle(a *types.ArticleBackVO) (err error) {
 	fn := path.Join("./runtime/article", a.ArticleTitle+".md")
 
 	ac := invent.TemplateMeta{

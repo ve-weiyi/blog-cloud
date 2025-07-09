@@ -24,7 +24,7 @@ func NewUpdateMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新菜单
-func (l *UpdateMenuLogic) UpdateMenu(in *permissionrpc.MenuNewReq) (*permissionrpc.MenuDetails, error) {
+func (l *UpdateMenuLogic) UpdateMenu(in *permissionrpc.MenuNewReq) (*permissionrpc.MenuDetailsResp, error) {
 	entity := convertMenuIn(in)
 
 	_, err := l.svcCtx.TMenuModel.Save(l.ctx, entity)

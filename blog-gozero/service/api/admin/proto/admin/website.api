@@ -3,127 +3,163 @@ syntax = "v1"
 import "base.api"
 
 type (
-    BlogHomeInfo {
-        ArticleCount int64 `json:"article_count"`               // 文章数量
-        CategoryCount int64 `json:"category_count"`             // 分类数量
-        TagCount int64 `json:"tag_count"`                       // 标签数量
-        ViewsCount string `json:"views_count"`                  // 访问量
-        WebsiteConfig WebsiteConfig `json:"website_config"`     // 网站配置
-        PageList []*PageDTO `json:"page_list"`                  // 页面列表
-    }
-
-    WebsiteConfig {
-        AdminUrl string `json:"admin_url"`                    // 后台地址
-        AlipayQrCode string `json:"alipay_qr_code"`           // 支付宝二维码
-        Gitee string `json:"gitee"`                           // Gitee
-        Github string `json:"github"`                         // Github
-        IsChatRoom int64 `json:"is_chat_room"`                // 是否开启聊天室
-        IsCommentReview int64 `json:"is_comment_review"`      // 是否开启评论审核
-        IsEmailNotice int64 `json:"is_email_notice"`          // 是否开启邮件通知
-        IsMessageReview int64 `json:"is_message_review"`      // 是否开启留言审核
-        IsMusicPlayer int64 `json:"is_music_player"`          // 是否开启音乐播放器
-        IsReward int64 `json:"is_reward"`                     // 是否开启打赏
-        Qq string `json:"qq"`                                 // QQ
-        SocialLoginList []string `json:"social_login_list"`   // 社交登录列表
-        SocialUrlList []string `json:"social_url_list"`       // 社交地址列表
-        TouristAvatar string `json:"tourist_avatar"`          // 游客头像
-        UserAvatar string `json:"user_avatar"`                // 用户头像
-        WebsiteAuthor string `json:"website_author"`          // 网站作者
-        WebsiteAvatar string `json:"website_avatar"`          // 网站头像
-        WebsiteCreateTime string `json:"website_create_time"` // 网站创建时间
-        WebsiteIntro string `json:"website_intro"`            // 网站介绍
-        WebsiteName string `json:"website_name"`              // 网站名称
-        WebsiteNotice string `json:"website_notice"`          // 网站公告
-        WebsiteRecordNo string `json:"website_record_no"`     // 网站备案号
-        WebsocketUrl string `json:"websocket_url"`            // websocket地址
-        WeixinQrCode string `json:"weixin_qr_code"`           // 微信二维码
-    }
-
-    PageDTO {
-        Id int64 `json:"id,optional"`                 // 页面ID
-        PageName string `json:"page_name"`   // 页面名称
-        PageLabel string `json:"page_label"` // 页面标签
-        PageCover string `json:"page_cover"` // 页面封面
-    }
-
-    AdminHomeInfo {
-        ViewsCount int64 `json:"views_count"`                                               // 访问量
-        MessageCount int64 `json:"message_count"`                                           // 留言量
-        UserCount int64 `json:"user_count"`                                                 // 用户量
-        ArticleCount int64 `json:"article_count"`                                           // 文章量
-        CategoryList []*CategoryDTO `json:"category_list"`                                  // 分类列表
-        TagList []*TagDTO `json:"tag_list"`                                                 // 标签列表
-        ArticleViewRankList []*ArticleViewRankDTO `json:"article_view_rank_list"`           // 文章浏览量排行
-        ArticleStatisticsList []*ArticleStatisticsDTO `json:"article_statistics_list"`      // 每日文章生产量
-        UniqueViewList []*UniqueViewDTO `json:"unique_view_list"`                           // 每日用户访问量
-    }
-
-    CategoryDTO {
-        Id int64 `json:"id,optional"`
-        CategoryName string `json:"category_name"` // 分类名
-    }
-
-    TagDTO {
-        Id int64 `json:"id,optional"`             // 标签ID
-        TagName string `json:"tag_name"` // 标签名
-    }
-
-    ArticleViewRankDTO {
-        Id int64 `json:"id,optional"`                       // 文章ID
-        ArticleTitle string `json:"article_title"` // 文章标题
-        Count int64 `json:"count"`                 // 数量
-    }
-
-    ArticleStatisticsDTO {
-        Date string `json:"date"`    // 日期
-        Count int64 `json:"count"` // 数量
-    }
-
-    UniqueViewDTO {
-        Date string `json:"date"`    // 日期
-        Count int64 `json:"count"` // 数量
-    }
-
-    AboutMe {
-        Content string `json:"content"`
-    }
+	AdminHomeInfo {
+		UserCount int64 `json:"user_count"`                                  // 用户量
+		ArticleCount int64 `json:"article_count"`                            // 文章量
+		RemarkCount int64 `json:"remark_count"`                              // 留言量
+		CategoryList []*CategoryVO `json:"category_list"`                    // 分类列表
+		TagList []*TagVO `json:"tag_list"`                                   // 标签列表
+		ArticleViewRanks []*ArticleViewVO `json:"article_view_ranks"`        // 文章浏览量排行
+		ArticleStatistics []*ArticleStatisticsVO `json:"article_statistics"` // 文章提交统计
+	}
+	CategoryVO {
+		Id int64 `json:"id,optional"`
+		CategoryName string `json:"category_name"` // 分类名
+		ArticleCount int64 `json:"article_count"`  // 文章数量
+	}
+	TagVO {
+		Id int64 `json:"id,optional"`             // 标签ID
+		TagName string `json:"tag_name"`          // 标签名
+		ArticleCount int64 `json:"article_count"` // 文章数量
+	}
+	ArticleViewVO {
+		Id int64 `json:"id,optional"`              // 文章ID
+		ArticleTitle string `json:"article_title"` // 文章标题
+		ViewCount int64 `json:"view_count"`        // 浏览量
+	}
+	ArticleStatisticsVO {
+		Date string `json:"date"`  // 日期
+		Count int64 `json:"count"` // 数量
+	}
+	GetVisitStatsResp {
+		TodayUvCount int64 `json:"today_uv_count"`   // 今日访客数(UV)
+		TotalUvCount int64 `json:"total_uv_count"`   // 总访客数
+		UvGrowthRate float64 `json:"uv_growth_rate"` // 访客数同比增长率（相对于昨天同一时间段的增长率）
+		TodayPvCount int64 `json:"today_pv_count"`   // 今日浏览量(PV)
+		TotalPvCount int64 `json:"total_pv_count"`   // 总浏览量
+		PvGrowthRate float64 `json:"pv_growth_rate"` // 同比增长率（相对于昨天同一时间段的增长率）
+	}
+	GetVisitTrendReq {
+		StartDate string `json:"start_date"`      // 开始日期
+		EndDate string `json:"end_date,optional"` // 结束日期
+	}
+	GetVisitTrendResp {
+		VisitTrend []VisitTrendVO `json:"visit_trend"` // 访客数和浏览量趋势
+	}
+	VisitTrendVO {
+		Date string `json:"date"`       // 日期
+		UvCount int64 `json:"uv_count"` // 访客数
+		PvCount int64 `json:"pv_count"` // 浏览量
+	}
+	GetUserAreaStatsReq {
+		UserType int64 `json:"user_type,optional"` // 用户类型: 0注册用户 1游客
+	}
+	GetUserAreaStatsResp {
+		UserAreas []*UserAreaVO `json:"user_areas"`       // 用户分布地区
+		TouristAreas []*UserAreaVO `json:"tourist_areas"` // 游客分布地区
+	}
+	UserAreaVO {
+		Name string `json:"name"`
+		Value int64 `json:"value"`
+	}
+	WebsiteConfigVO {
+		AdminUrl string `json:"admin_url"`                              // 后台地址
+		WebsocketUrl string `json:"websocket_url"`                      // websocket地址
+		TouristAvatar string `json:"tourist_avatar"`                    // 游客头像
+		UserAvatar string `json:"user_avatar"`                          // 用户头像
+		WebsiteFeature *WebsiteFeature `json:"website_feature"`         // 网站功能
+		WebsiteInfo *WebsiteInfo `json:"website_info"`                  // 网站信息
+		RewardQrCode *RewardQrCode `json:"reward_qr_code"`              // 打赏二维码
+		SocialLoginList []*ThirdPlatformInfo `json:"social_login_list"` // 用户第三方登录列表
+		SocialUrlList []*SocialAccountInfo `json:"social_url_list"`     // 作者社交地址列表
+	}
+	ThirdPlatformInfo {
+		Name string `json:"name"`                  // 名称-微信
+		Platform string `json:"platform"`          // 平台-wechat
+		AuthorizeUrl string `json:"authorize_url"` // 授权地址
+		Enabled bool `json:"enabled"`              // 是否启用
+	}
+	SocialAccountInfo {
+		Name string `json:"name"`         // 名称-微信
+		Platform string `json:"platform"` // 平台-wechat
+		LinkUrl string `json:"link_url"`  // 链接地址
+		Enabled bool `json:"enabled"`     // 是否启用
+	}
+	WebsiteFeature {
+		IsChatRoom int64 `json:"is_chat_room"`           // 是否开启聊天室
+		IsCommentReview int64 `json:"is_comment_review"` // 是否开启评论审核
+		IsEmailNotice int64 `json:"is_email_notice"`     // 是否开启邮件通知
+		IsMessageReview int64 `json:"is_message_review"` // 是否开启留言审核
+		IsMusicPlayer int64 `json:"is_music_player"`     // 是否开启音乐播放器
+		IsReward int64 `json:"is_reward"`                // 是否开启打赏
+	}
+	RewardQrCode {
+		AlipayQrCode string `json:"alipay_qr_code"` // 支付宝二维码
+		WeixinQrCode string `json:"weixin_qr_code"` // 微信二维码
+	}
+	WebsiteInfo {
+		WebsiteAuthor string `json:"website_author"`          // 网站作者
+		WebsiteAvatar string `json:"website_avatar"`          // 网站头像
+		WebsiteCreateTime string `json:"website_create_time"` // 网站创建时间
+		WebsiteIntro string `json:"website_intro"`            // 网站介绍
+		WebsiteName string `json:"website_name"`              // 网站名称
+		WebsiteNotice string `json:"website_notice"`          // 网站公告
+		WebsiteRecordNo string `json:"website_record_no"`     // 网站备案号
+	}
+	AboutMeVO {
+		Content string `json:"content"`
+	}
 )
 
 type Server {
-    Os interface{} `json:"os"`
-    Cpu interface{} `json:"cpu"`
-    Ram interface{} `json:"ram"`
-    Disk interface{} `json:"disk"`
+	Os interface{} `json:"os"`
+	Cpu interface{} `json:"cpu"`
+	Ram interface{} `json:"ram"`
+	Disk interface{} `json:"disk"`
 }
-
 
 @server(
-    prefix: /admin_api/v1
-    group: website
-    middleware: SignToken,JwtToken,Operation
+	tags: "网站管理"
+	prefix:     /admin-api/v1
+	group: website
+	authType: apiKey
+	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
-    @doc "获取后台首页信息"
-    @handler GetAdminHomeInfo
-    get /admin (EmptyReq) returns (AdminHomeInfo)
+	@doc "获取后台首页信息"
+	@handler GetAdminHomeInfo
+	get /admin (EmptyReq) returns (AdminHomeInfo)
 
-    @doc "获取网站配置"
-    @handler GetWebsiteConfig
-    get /admin/get_website_config (EmptyReq) returns (WebsiteConfig)
+	@doc "获取访客数据分析"
+	@handler GetVisitStats
+	get /admin/get_visit_stats (EmptyReq) returns (GetVisitStatsResp)
 
-    @doc "更新网站配置"
-    @handler UpdateWebsiteConfig
-    put /admin/update_website_config (WebsiteConfig) returns (EmptyResp)
+	@doc "获取访客数据趋势"
+	@handler GetVisitTrend
+	post /admin/get_visit_trend (GetVisitTrendReq) returns (GetVisitTrendResp)
 
-    @doc "获取关于我的信息"
-    @handler GetAboutMe
-    get /admin/about_me (EmptyReq) returns (AboutMe)
+	@doc "获取用户分布地区"
+	@handler GetUserAreaStats
+	post /account/get_user_area_stats (GetUserAreaStatsReq) returns (GetUserAreaStatsResp)
 
-    @doc "更新关于我的信息"
-    @handler UpdateAboutMe
-    put /admin/about_me (AboutMe) returns (EmptyResp)
+	@doc "获取服务器信息"
+	@handler GetSystemState
+	get /admin/system_state (EmptyReq) returns (Server)
 
-    @doc "获取服务器信息"
-    @handler GetSystemState
-    get /admin/system_state (EmptyReq) returns (Server)
+	@doc "获取网站配置"
+	@handler GetWebsiteConfig
+	get /admin/get_website_config (EmptyReq) returns (WebsiteConfigVO)
+
+	@doc "更新网站配置"
+	@handler UpdateWebsiteConfig
+	put /admin/update_website_config (WebsiteConfigVO) returns (EmptyResp)
+
+	@doc "获取关于我的信息"
+	@handler GetAboutMe
+	get /admin/get_about_me (EmptyReq) returns (AboutMeVO)
+
+	@doc "更新关于我的信息"
+	@handler UpdateAboutMe
+	put /admin/update_about_me (AboutMeVO) returns (EmptyResp)
 }
+

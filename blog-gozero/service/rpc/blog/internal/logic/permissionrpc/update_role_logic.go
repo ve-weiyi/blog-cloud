@@ -23,7 +23,7 @@ func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateRoleLogic) UpdateRole(in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetails, error) {
+func (l *UpdateRoleLogic) UpdateRole(in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetailsResp, error) {
 	entity := convertRoleIn(in)
 
 	_, err := l.svcCtx.TRoleModel.Save(l.ctx, entity)

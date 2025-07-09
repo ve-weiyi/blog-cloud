@@ -24,42 +24,50 @@ func NewSyncApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncA
 }
 
 // 同步接口列表
-func (l *SyncApiListLogic) SyncApiList(in *permissionrpc.SyncApiReq) (*permissionrpc.BatchResp, error) {
+func (l *SyncApiListLogic) SyncApiList(in *permissionrpc.SyncApiListReq) (*permissionrpc.BatchResp, error) {
+	go l.syncApiList(in)
+
+	return &permissionrpc.BatchResp{
+		SuccessCount: 0,
+	}, nil
+}
+
+func (l *SyncApiListLogic) syncApiList(in *permissionrpc.SyncApiListReq) {
+	// 使用后台上下文，服务返回后仍然可以继续执行
+	ctx := context.Background()
+
 	var err error
-	var data int64
 	for _, item := range in.Apis {
-		// 已存在则跳过
-		exist, _ := l.svcCtx.TApiModel.First(l.ctx, "path = ?", item.Path)
-		if exist == nil {
-
-			// 插入数据
-			exist = convertApiIn(item)
-			_, err = l.svcCtx.TApiModel.Insert(l.ctx, exist)
-			if err != nil {
-				return nil, err
-			}
-
-			data++
-		}
-
-		for _, child := range item.Children {
-			// 已存在则跳过
-			menu, _ := l.svcCtx.TApiModel.First(l.ctx, "path = ?", child.Path)
-			if menu == nil {
-				// 插入数据
-				menu = convertApiIn(child)
-				menu.ParentId = exist.Id
-				_, err = l.svcCtx.TApiModel.Insert(l.ctx, menu)
-				if err != nil {
-					return nil, err
-				}
-
-				data++
-			}
+		err = l.InsertApi(ctx, item)
+		if err != nil {
+			l.Errorf("插入数据失败: %v", err)
+			return
 		}
 	}
 
-	return &permissionrpc.BatchResp{
-		SuccessCount: data,
-	}, nil
+	l.Infof("成功同步接口")
+	return
+}
+
+func (l *SyncApiListLogic) InsertApi(ctx context.Context, item *permissionrpc.ApiNewReq) (err error) {
+	// 已存在则跳过
+	parent, _ := l.svcCtx.TApiModel.FindOneByPathMethodName(ctx, item.Path, item.Method, item.Name)
+	if parent == nil {
+		// 插入数据
+		parent = convertApiIn(item)
+		_, err = l.svcCtx.TApiModel.Insert(ctx, parent)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, child := range item.Children {
+		child.ParentId = parent.Id
+		err = l.InsertApi(ctx, child)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

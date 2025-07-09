@@ -1,1 +1,1 @@
-FindOneBy{{.upperField}}(ctx context.Context, {{.in}}) (out *{{.upperStartCamelObject}},err error)
+FindOneBy{{.upperField}}(ctx context.Context, {{.in}}) (*{{.upperStartCamelObject}}, error)

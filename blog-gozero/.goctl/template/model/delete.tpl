@@ -1,23 +1,14 @@
-
-// 删除{{.upperStartCamelObject}}记录
-func (m *default{{.upperStartCamelObject}}Model) Delete(ctx context.Context, id int64) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	db = db.Where("id = ?", id)
-
-	query := db.Delete(&{{.upperStartCamelObject}}{})
-	return query.RowsAffected, query.Error
-}
-
-// 删除{{.upperStartCamelObject}}记录
-func (m *default{{.upperStartCamelObject}}Model) DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
+func (m *default{{.upperStartCamelObject}}Model) Delete(ctx context.Context, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) error {
+	{{if .withCache}}{{if .containsIndexCache}}data, err:=m.FindOne(ctx, {{.lowerStartCamelPrimaryKey}})
+	if err!=nil{
+		return err
 	}
 
-	result := db.Delete(&{{.upperStartCamelObject}}{})
-	return result.RowsAffected, result.Error
+{{end}}	{{.keys}}
+    _, err {{if .containsIndexCache}}={{else}}:={{end}} m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where {{.originalPrimaryKey}} = {{if .postgreSql}}$1{{else}}?{{end}}", m.table)
+		return conn.ExecCtx(ctx, query, {{.lowerStartCamelPrimaryKey}})
+	}, {{.keyValues}}){{else}}query := fmt.Sprintf("delete from %s where {{.originalPrimaryKey}} = {{if .postgreSql}}$1{{else}}?{{end}}", m.table)
+		_,err:=m.conn.ExecCtx(ctx, query, {{.lowerStartCamelPrimaryKey}}){{end}}
+	return err
 }

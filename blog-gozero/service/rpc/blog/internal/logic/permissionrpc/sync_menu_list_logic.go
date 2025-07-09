@@ -24,42 +24,50 @@ func NewSyncMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 // 同步菜单列表
-func (l *SyncMenuListLogic) SyncMenuList(in *permissionrpc.SyncMenuReq) (*permissionrpc.BatchResp, error) {
+func (l *SyncMenuListLogic) SyncMenuList(in *permissionrpc.SyncMenuListReq) (*permissionrpc.BatchResp, error) {
+	go l.syncMenuList(in)
+
+	return &permissionrpc.BatchResp{
+		SuccessCount: 0,
+	}, nil
+}
+
+func (l *SyncMenuListLogic) syncMenuList(in *permissionrpc.SyncMenuListReq) {
+	// 使用后台上下文，服务返回后仍然可以继续执行
+	ctx := context.Background()
+
 	var err error
-	var data int64
 	for _, item := range in.Menus {
-		// 已存在则跳过
-		exist, _ := l.svcCtx.TMenuModel.First(l.ctx, "path = ?", item.Path)
-		if exist == nil {
-
-			// 插入数据
-			exist = convertMenuIn(item)
-			_, err = l.svcCtx.TMenuModel.Insert(l.ctx, exist)
-			if err != nil {
-				return nil, err
-			}
-
-			data++
-		}
-
-		for _, child := range item.Children {
-			// 已存在则跳过
-			menu, _ := l.svcCtx.TMenuModel.First(l.ctx, "path = ?", child.Path)
-			if menu == nil {
-				// 插入数据
-				menu = convertMenuIn(child)
-				menu.ParentId = exist.Id
-				_, err = l.svcCtx.TMenuModel.Insert(l.ctx, menu)
-				if err != nil {
-					return nil, err
-				}
-
-				data++
-			}
+		err = l.InsertMenu(ctx, item)
+		if err != nil {
+			l.Errorf("插入数据失败: %v", err)
+			return
 		}
 	}
 
-	return &permissionrpc.BatchResp{
-		SuccessCount: data,
-	}, nil
+	l.Infof("成功同步菜单")
+	return
+}
+
+func (l *SyncMenuListLogic) InsertMenu(ctx context.Context, item *permissionrpc.MenuNewReq) (err error) {
+	// 已存在则跳过
+	parent, _ := l.svcCtx.TMenuModel.FindOneByPath(ctx, item.Path)
+	if parent == nil {
+		// 插入数据
+		parent = convertMenuIn(item)
+		_, err = l.svcCtx.TMenuModel.Insert(ctx, parent)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, child := range item.Children {
+		child.ParentId = parent.Id
+		err = l.InsertMenu(ctx, child)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

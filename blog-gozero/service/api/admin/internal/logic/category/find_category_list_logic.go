@@ -3,11 +3,11 @@ package category
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindCategoryListLogic struct {
@@ -27,9 +27,11 @@ func NewFindCategoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQuery) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindCategoryListReq{
-		Page:         req.Page,
-		PageSize:     req.PageSize,
-		Sorts:        req.Sorts,
+		Paginate: &articlerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		CategoryName: req.CategoryName,
 	}
 
@@ -38,16 +40,22 @@ func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQuery) (resp
 		return nil, err
 	}
 
-	var list []*types.CategoryBackDTO
+	var list []*types.CategoryBackVO
 	for _, v := range out.List {
-		m := ConvertCategoryTypes(v)
+		m := &types.CategoryBackVO{
+			Id:           v.Id,
+			CategoryName: v.CategoryName,
+			ArticleCount: v.ArticleCount,
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
+		}
 		list = append(list, m)
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }

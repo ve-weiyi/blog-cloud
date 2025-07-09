@@ -1,125 +1,146 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
 	"log"
-	"os"
-	"strings"
+	"net/http"
+	"time"
 
-	"github.com/mitchellh/mapstructure"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/nacos"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/config"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/core"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/logz"
 )
 
-type ApiCmd struct {
-	cmd        *cobra.Command
-	configMode string // 运行方式 file|nacos
-	filepath   string
-	nacosCfg   *nacos.NacosConfig
+// API命令参数
+type ApiFlags struct {
+	ConfigMode string // 运行方式 file|nacos
+	ConfigType string // 配置类型（yaml/json等）
+
+	// 本地配置相关
+	LocalPath string // 本地配置文件路径（如config.yaml）
+
+	// Nacos相关配置
+	NacosHost       string // Nacos服务地址
+	NacosPort       uint64 // Nacos服务端口
+	NacosNamespace  string // Nacos命名空间
+	NacosDataID     string // 配置DataID
+	NacosGroup      string // 配置Group
+	NacosRuntimeDir string // Nacos运行时目录
+	NacosUsername   string // Nacos用户名
+	NacosPassword   string // Nacos密码
 }
 
-func NewApiCmd() *ApiCmd {
-	apiCmd := &ApiCmd{}
-	apiCmd.cmd = &cobra.Command{
+var apiFlags = &ApiFlags{
+	ConfigMode:      "file",
+	ConfigType:      "yaml",
+	LocalPath:       "config.yaml",
+	NacosHost:       "veweiyi.cn",
+	NacosPort:       8848,
+	NacosNamespace:  "dev",
+	NacosDataID:     "ve-blog-golang",
+	NacosGroup:      "blog",
+	NacosRuntimeDir: "runtime/nacos",
+	NacosUsername:   "nacos",
+	NacosPassword:   "nacos",
+}
+
+func NewApiCmd() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "api",
 		Short: "启动接口服务",
 		Long:  `启动接口服务`,
-		Run: func(cmd *cobra.Command, args []string) {
-			apiCmd.RunApi(cmd, args)
-		},
+		RunE:  runApi,
 	}
 
-	apiCmd.init()
-	return apiCmd
+	// 配置文件相关
+	cmd.Flags().StringVarP(&apiFlags.ConfigMode, "config", "c", apiFlags.ConfigMode, "the way of read config file (file|nacos)")
+	cmd.Flags().StringVarP(&apiFlags.LocalPath, "filepath", "f", apiFlags.LocalPath, "config file path")
+
+	// Nacos 相关
+	cmd.Flags().StringVar(&apiFlags.NacosHost, "n-host", apiFlags.NacosHost, "the host for nacos")
+	cmd.Flags().Uint64Var(&apiFlags.NacosPort, "n-port", apiFlags.NacosPort, "the port for nacos")
+	cmd.Flags().StringVar(&apiFlags.NacosNamespace, "n-namespace", apiFlags.NacosNamespace, "the namespace for nacos")
+	cmd.Flags().StringVar(&apiFlags.NacosDataID, "n-data-id", apiFlags.NacosDataID, "the DataId for nacos")
+	cmd.Flags().StringVar(&apiFlags.NacosGroup, "n-group", apiFlags.NacosGroup, "the group for nacos")
+	cmd.Flags().StringVar(&apiFlags.NacosUsername, "n-user", apiFlags.NacosUsername, "the user for nacos")
+	cmd.Flags().StringVar(&apiFlags.NacosPassword, "n-password", apiFlags.NacosPassword, "the password for nacos")
+
+	return cmd
 }
 
-func (s *ApiCmd) init() {
-	nacosCfg := s.GetDefaultNacosConfig()
-	s.nacosCfg = nacosCfg
-	// 设置默认参数
-	s.cmd.Flags().StringVarP(&s.configMode, "config", "c", "file", "the way of read config file (file|nacos)")
-	s.cmd.Flags().StringVarP(&s.filepath, "filepath", "f", "config.yaml", "config file path (default is ./config.yaml)")
-	s.cmd.Flags().StringVar(&s.nacosCfg.IP, "n-ip", nacosCfg.IP, "the ip for nacos")
-	s.cmd.Flags().Uint64Var(&s.nacosCfg.Port, "n-port", nacosCfg.Port, "the port for nacos")
-	s.cmd.Flags().StringVar(&s.nacosCfg.UserName, "n-user", nacosCfg.UserName, "the user for nacos")
-	s.cmd.Flags().StringVar(&s.nacosCfg.Password, "n-password", nacosCfg.Password, "the password for nacos")
-	s.cmd.Flags().StringVar(&s.nacosCfg.DataId, "n-data-id", nacosCfg.DataId, "the DataId for nacos")
-	s.cmd.Flags().StringVar(&s.nacosCfg.Group, "n-group", nacosCfg.Group, "the group for nacos")
-	s.cmd.Flags().StringVar(&s.nacosCfg.NameSpaceId, "n-namespace", nacosCfg.NameSpaceId, "the namespace for nacos")
-}
-
-func (s *ApiCmd) GetDefaultNacosConfig() *nacos.NacosConfig {
-	return &nacos.NacosConfig{
-		IP:          "120.79.136.81",
-		Port:        8848,
-		UserName:    "nacos",
-		Password:    "nacos",
-		NameSpaceId: "dev",
-		Group:       "veweiyi.cn",
-		DataId:      "ve-blog-golang",
-		RuntimeDir:  "runtime/log/nacos",
-		LogLevel:    "warn",
-		Timeout:     5000,
-	}
-}
-
-func (s *ApiCmd) RunApi(cmd *cobra.Command, args []string) {
-	var c config.Config
-	var content string
-
-	switch s.configMode {
+func runApi(cmd *cobra.Command, args []string) error {
+	var err error
+	var c *config.Config
+	switch apiFlags.ConfigMode {
 	case "file":
-		log.Println("读取配置文件..使用文件路径")
-
-		text, err := os.ReadFile(s.filepath)
-		if err != nil {
-			panic(err)
-		}
-
-		content = string(text)
-
+		c, err = config.LoadConfigFromFile(apiFlags.LocalPath, apiFlags.ConfigType)
 	case "nacos":
-		log.Println("读取配置文件...使用nacos")
-		// 初始化Nacos
-		nc := nacos.New(s.nacosCfg)
-
-		// 读取配置文件
-		text, err := nc.GetConfig()
-		if err != nil {
-			panic("nacos config read failed " + err.Error())
-		}
-
-		content = text
+		c, err = config.LoadConfigFromNacos(&config.LoadNacosConfigOption{
+			ConfigType:      apiFlags.ConfigType,
+			NacosHost:       apiFlags.NacosHost,
+			NacosPort:       apiFlags.NacosPort,
+			NacosNamespace:  apiFlags.NacosNamespace,
+			NacosDataID:     apiFlags.NacosDataID,
+			NacosGroup:      apiFlags.NacosGroup,
+			NacosRuntimeDir: apiFlags.NacosRuntimeDir,
+			NacosUsername:   apiFlags.NacosUsername,
+			NacosPassword:   apiFlags.NacosPassword,
+		})
 	default:
-		panic("config mode not support,please use cmd 'go run main.go api --c=file --f=./config.yaml'")
+		log.Fatalf("unsupported config file mode: %s", apiFlags.ConfigMode)
 	}
-
-	// 初始化Viper
-	v := viper.New()
-	v.SetConfigType("yaml")
-
-	// 读取配置文件
-	err := v.ReadConfig(strings.NewReader(content))
 	if err != nil {
-		panic(fmt.Errorf("fatal error config file: %s \n", err))
+		log.Fatalf("failed to initialize config: %v\n", err)
 	}
-	// 修改解析的tag（默认是mapstructure）
-	withJsonTag := func(c *mapstructure.DecoderConfig) {
-		c.TagName = "json"
-	}
-	// 解析配置文件
-	if err = v.Unmarshal(&c, withJsonTag); err != nil {
-		panic(err)
-	}
-	// 暂时不开启监听配置文件变化
 
-	// 初始化配置文件
-	core.RunWindowsServer(&c)
+	RunHttpServer(c)
+	return nil
+}
+
+func RunHttpServer(c *config.Config) {
+	// 初始化zap日志库
+	logz.SetLog(&logz.LogConfig{
+		Level:      c.Zap.Level,
+		Mode:       c.Zap.Mode,
+		Filename:   c.Zap.Filename,
+		MaxSize:    c.Zap.MaxSize,
+		MaxBackups: c.Zap.MaxBackups,
+		MaxAge:     c.Zap.MaxAge,
+		Compress:   c.Zap.Compress,
+	})
+	logz.L().Sugar().Infof("zap log init success. mode:%v, level:%v", c.Zap.Mode, c.Zap.Level)
+
+	ctx := svctx.NewServiceContext(c)
+
+	// 设置ReleaseMode则不会打印路由注册日志
+	gin.SetMode(gin.DebugMode)
+	engine := gin.Default()
+	api.RegisterRouters(engine, ctx)
+
+	logz.L().Sugar().Infof("register router success")
+
+	address := fmt.Sprintf(":%d", c.System.Port)
+	s := &http.Server{
+		Addr:           address,
+		Handler:        engine,
+		ReadTimeout:    20 * time.Second,
+		WriteTimeout:   20 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	// 保证文本顺序输出
+	// In order to ensure that the text order output can be deleted
+	time.Sleep(10 * time.Microsecond)
+	logz.L().Sugar().Infof("run server on http://localhost:%v success", c.System.Port)
+
+	fmt.Printf(`
+	欢迎使用 ve-blog-golang
+	当前版本: %s
+	微信号：wy791422171 QQ：791422171
+	默认接口文档地址:http://localhost:%v/api/v1/swagger/index.html
+`, c.System.Version, c.System.Port)
+	fmt.Println(s.ListenAndServe().Error())
 }

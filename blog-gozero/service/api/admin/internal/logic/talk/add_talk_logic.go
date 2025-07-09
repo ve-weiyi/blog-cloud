@@ -5,9 +5,10 @@ import (
 
 	"github.com/spf13/cast"
 
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,9 +29,16 @@ func NewAddTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTalkLo
 	}
 }
 
-func (l *AddTalkLogic) AddTalk(req *types.TalkNewReq) (resp *types.TalkBackDTO, err error) {
-	in := ConvertTalkPb(req)
-	in.UserId = cast.ToString(l.ctx.Value("uid"))
+func (l *AddTalkLogic) AddTalk(req *types.TalkNewReq) (resp *types.TalkBackVO, err error) {
+	in := &talkrpc.TalkNewReq{
+		Id:      req.Id,
+		UserId:  cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		Content: req.Content,
+		ImgList: req.ImgList,
+		IsTop:   req.IsTop,
+		Status:  req.Status,
+	}
+
 	out, err := l.svcCtx.TalkRpc.AddTalk(l.ctx, in)
 	if err != nil {
 		return nil, err
@@ -40,25 +48,10 @@ func (l *AddTalkLogic) AddTalk(req *types.TalkNewReq) (resp *types.TalkBackDTO, 
 	return resp, nil
 }
 
-func ConvertTalkPb(in *types.TalkNewReq) (out *talkrpc.TalkNewReq) {
-	out = &talkrpc.TalkNewReq{
-		Id:      in.Id,
-		UserId:  "",
-		Content: in.Content,
-		ImgList: in.ImgList,
-		IsTop:   in.IsTop,
-		Status:  in.Status,
-	}
-
-	return
-}
-
-func ConvertTalkTypes(in *talkrpc.TalkDetails, usm map[string]*accountrpc.User) (out *types.TalkBackDTO) {
-	out = &types.TalkBackDTO{
+func ConvertTalkTypes(in *talkrpc.TalkDetailsResp, usm map[string]*types.UserInfoVO) (out *types.TalkBackVO) {
+	out = &types.TalkBackVO{
 		Id:           in.Id,
 		UserId:       in.UserId,
-		Nickname:     "",
-		Avatar:       "",
 		Content:      in.Content,
 		ImgList:      in.ImgList,
 		IsTop:        in.IsTop,
@@ -73,8 +66,7 @@ func ConvertTalkTypes(in *talkrpc.TalkDetails, usm map[string]*accountrpc.User) 
 	if out.UserId != "" {
 		user, ok := usm[out.UserId]
 		if ok && user != nil {
-			out.Nickname = user.Nickname
-			out.Avatar = user.Avatar
+			out.User = user
 		}
 	}
 

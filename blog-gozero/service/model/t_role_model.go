@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,40 +27,38 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TRole) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TRole, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TRole, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TRole, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TRole, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TRole, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRole, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRole, total int64, err error)
 		// add extra method in here
 	}
 
 	// 表字段定义
 	TRole struct {
-		Id          int64     `json:"id" gorm:"column:id" `                     // 主键id
-		ParentId    int64     `json:"parent_id" gorm:"column:parent_id" `       // 父角色id
-		RoleName    string    `json:"role_name" gorm:"column:role_name" `       // 角色名
-		RoleLabel   string    `json:"role_label" gorm:"column:role_label" `     // 角色标签
-		RoleComment string    `json:"role_comment" gorm:"column:role_comment" ` // 角色备注
-		IsDisable   int64     `json:"is_disable" gorm:"column:is_disable" `     // 是否禁用  0否 1是
-		IsDefault   int64     `json:"is_default" gorm:"column:is_default" `     // 是否默认角色 0否 1是
-		CreatedAt   time.Time `json:"created_at" gorm:"column:created_at" `     // 创建时间
-		UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at" `     // 更新时间
+		Id          int64     `json:"id" gorm:"column:id"`                     // 主键id
+		ParentId    int64     `json:"parent_id" gorm:"column:parent_id"`       // 父角色id
+		RoleKey     string    `json:"role_key" gorm:"column:role_key"`         // 角色标识
+		RoleLabel   string    `json:"role_label" gorm:"column:role_label"`     // 角色标签
+		RoleComment string    `json:"role_comment" gorm:"column:role_comment"` // 角色备注
+		IsDisable   int64     `json:"is_disable" gorm:"column:is_disable"`     // 是否禁用  0否 1是
+		IsDefault   int64     `json:"is_default" gorm:"column:is_default"`     // 是否默认角色 0否 1是
+		CreatedAt   time.Time `json:"created_at" gorm:"column:created_at"`     // 创建时间
+		UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at"`     // 更新时间
 	}
 
 	// 接口实现
 	defaultTRoleModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTRoleModel(db *gorm.DB, cache *redis.Client) TRoleModel {
+func NewTRoleModel(db *gorm.DB) TRoleModel {
 	return &defaultTRoleModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_role`",
+		DbEngin: db,
+		table:   "`t_role`",
 	}
 }
 
@@ -71,7 +68,7 @@ func (m *defaultTRoleModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTRoleModel) WithTransaction(tx *gorm.DB) (out TRoleModel) {
-	return NewTRoleModel(tx, m.CacheEngin)
+	return NewTRoleModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -166,7 +163,7 @@ func (m *defaultTRoleModel) Save(ctx context.Context, in *TRole) (rows int64, er
 }
 
 // 查询记录
-func (m *defaultTRoleModel) FindOne(ctx context.Context, id int64) (out *TRole, err error) {
+func (m *defaultTRoleModel) FindById(ctx context.Context, id int64) (out *TRole, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -178,7 +175,7 @@ func (m *defaultTRoleModel) FindOne(ctx context.Context, id int64) (out *TRole, 
 }
 
 // 查询记录
-func (m *defaultTRoleModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TRole, err error) {
+func (m *defaultTRoleModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TRole, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -190,23 +187,8 @@ func (m *defaultTRoleModel) First(ctx context.Context, conditions string, args .
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTRoleModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TRole{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -225,8 +207,24 @@ func (m *defaultTRoleModel) FindALL(ctx context.Context, conditions string, args
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTRoleModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTRoleModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRole, err error) {
+func (m *defaultTRoleModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRole, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -240,6 +238,11 @@ func (m *defaultTRoleModel) FindList(ctx context.Context, page int, size int, so
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -250,10 +253,10 @@ func (m *defaultTRoleModel) FindList(ctx context.Context, page int, size int, so
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

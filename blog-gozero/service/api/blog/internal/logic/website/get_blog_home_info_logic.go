@@ -3,11 +3,14 @@ package website
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/configrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,30 +31,59 @@ func NewGetBlogHomeInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetBlogHomeInfoLogic) GetBlogHomeInfo(req *types.GetBlogHomeInfoReq) (resp *types.GetBlogHomeInfoResp, err error) {
-	analysis, err := l.svcCtx.ArticleRpc.AnalysisArticle(l.ctx, &articlerpc.EmptyReq{})
+	_, err = l.svcCtx.WebsiteRpc.AddVisit(l.ctx, &websiterpc.AddVisitReq{})
 	if err != nil {
 		return nil, err
 	}
 
-	in := &configrpc.FindConfigReq{
-		ConfigKey: "website_config",
-	}
-
-	out, err := l.svcCtx.ConfigRpc.FindConfig(l.ctx, in)
+	analysis, err := l.svcCtx.ArticleRpc.AnalysisArticle(l.ctx, &articlerpc.AnalysisArticleReq{})
 	if err != nil {
 		return nil, err
 	}
 
-	config := &types.WebsiteConfigDTO{}
-	jsonconv.JsonToAny(out.ConfigValue, &config)
+	visit, err := l.svcCtx.WebsiteRpc.AnalysisVisit(l.ctx, &websiterpc.AnalysisVisitReq{})
+	if err != nil {
+		return nil, err
+	}
+
+	pages, err := l.svcCtx.ResourceRpc.FindPageList(l.ctx, &resourcerpc.FindPageListReq{})
+	if err != nil {
+		return nil, err
+	}
+
+	ps := make([]*types.PageVO, 0)
+	for _, v := range pages.List {
+		p := &types.PageVO{
+			Id:         v.Id,
+			PageName:   v.PageName,
+			PageLabel:  v.PageLabel,
+			PageCover:  v.PageCover,
+			IsCarousel: v.IsCarousel,
+		}
+		ps = append(ps, p)
+	}
+
+	conf, err := l.svcCtx.ConfigRpc.FindConfig(l.ctx, &configrpc.FindConfigReq{
+		ConfigKey: constant.ConfigKeyWebsite,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	config := types.WebsiteConfigVO{}
+	err = jsonconv.JsonToAny(conf.ConfigValue, &config)
+	if err != nil {
+		return nil, err
+	}
 
 	resp = &types.GetBlogHomeInfoResp{
-		ArticleCount:  analysis.ArticleCount,
-		CategoryCount: analysis.CategoryCount,
-		TagCount:      analysis.TagCount,
-		ViewsCount:    0,
-		WebsiteConfig: *config,
-		PageList:      make([]*types.PageDTO, 0),
+		ArticleCount:       analysis.ArticleCount,
+		CategoryCount:      analysis.CategoryCount,
+		TagCount:           analysis.TagCount,
+		TotalUserViewCount: visit.TotalUvCount,
+		TotalPageViewCount: visit.TotalPvCount,
+		WebsiteConfig:      config,
+		PageList:           ps,
 	}
 
 	return resp, nil

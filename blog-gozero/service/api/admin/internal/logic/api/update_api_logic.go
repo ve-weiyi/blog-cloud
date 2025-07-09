@@ -25,7 +25,7 @@ func NewUpdateApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 	}
 }
 
-func (l *UpdateApiLogic) UpdateApi(req *types.ApiNewReq) (resp *types.ApiBackDTO, err error) {
+func (l *UpdateApiLogic) UpdateApi(req *types.ApiNewReq) (resp *types.ApiBackVO, err error) {
 	in := &permissionrpc.ApiNewReq{
 		Id:        req.Id,
 		ParentId:  req.ParentId,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,41 +27,39 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TApi) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TApi, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TApi, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TApi, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TApi, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TApi, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TApi, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TApi, total int64, err error)
 		// add extra method in here
 		FindOneByPathMethodName(ctx context.Context, path string, method string, name string) (out *TApi, err error)
 	}
 
 	// 表字段定义
 	TApi struct {
-		Id        int64     `json:"id" gorm:"column:id" `                 // 主键id
-		ParentId  int64     `json:"parent_id" gorm:"column:parent_id" `   // 分组id
-		Name      string    `json:"name" gorm:"column:name" `             // api名称
-		Path      string    `json:"path" gorm:"column:path" `             // api路径
-		Method    string    `json:"method" gorm:"column:method" `         // api请求方法
-		Traceable int64     `json:"traceable" gorm:"column:traceable" `   // 是否追溯操作记录 0需要，1是
-		IsDisable int64     `json:"is_disable" gorm:"column:is_disable" ` // 是否禁用 0否 1是
-		CreatedAt time.Time `json:"created_at" gorm:"column:created_at" ` // 创建时间
-		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at" ` // 更新时间
+		Id        int64     `json:"id" gorm:"column:id"`                 // 主键id
+		ParentId  int64     `json:"parent_id" gorm:"column:parent_id"`   // 分组id
+		Name      string    `json:"name" gorm:"column:name"`             // api名称
+		Path      string    `json:"path" gorm:"column:path"`             // api路径
+		Method    string    `json:"method" gorm:"column:method"`         // api请求方法
+		Traceable int64     `json:"traceable" gorm:"column:traceable"`   // 是否追溯操作记录 0需要，1是
+		IsDisable int64     `json:"is_disable" gorm:"column:is_disable"` // 是否禁用 0否 1是
+		CreatedAt time.Time `json:"created_at" gorm:"column:created_at"` // 创建时间
+		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at"` // 更新时间
 	}
 
 	// 接口实现
 	defaultTApiModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTApiModel(db *gorm.DB, cache *redis.Client) TApiModel {
+func NewTApiModel(db *gorm.DB) TApiModel {
 	return &defaultTApiModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_api`",
+		DbEngin: db,
+		table:   "`t_api`",
 	}
 }
 
@@ -72,7 +69,7 @@ func (m *defaultTApiModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTApiModel) WithTransaction(tx *gorm.DB) (out TApiModel) {
-	return NewTApiModel(tx, m.CacheEngin)
+	return NewTApiModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -167,7 +164,7 @@ func (m *defaultTApiModel) Save(ctx context.Context, in *TApi) (rows int64, err 
 }
 
 // 查询记录
-func (m *defaultTApiModel) FindOne(ctx context.Context, id int64) (out *TApi, err error) {
+func (m *defaultTApiModel) FindById(ctx context.Context, id int64) (out *TApi, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -179,7 +176,7 @@ func (m *defaultTApiModel) FindOne(ctx context.Context, id int64) (out *TApi, er
 }
 
 // 查询记录
-func (m *defaultTApiModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TApi, err error) {
+func (m *defaultTApiModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TApi, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -191,23 +188,8 @@ func (m *defaultTApiModel) First(ctx context.Context, conditions string, args ..
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTApiModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TApi{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -226,8 +208,24 @@ func (m *defaultTApiModel) FindALL(ctx context.Context, conditions string, args 
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTApiModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTApiModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TApi, err error) {
+func (m *defaultTApiModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TApi, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -241,6 +239,11 @@ func (m *defaultTApiModel) FindList(ctx context.Context, page int, size int, sor
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -251,10 +254,10 @@ func (m *defaultTApiModel) FindList(ctx context.Context, page int, size int, sor
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

@@ -23,15 +23,33 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	WebsiteRpc_GetUserDailyVisit_FullMethodName = "/websiterpc.WebsiteRpc/GetUserDailyVisit"
+	WebsiteRpc_AnalysisVisit_FullMethodName  = "/websiterpc.WebsiteRpc/AnalysisVisit"
+	WebsiteRpc_AddVisit_FullMethodName       = "/websiterpc.WebsiteRpc/AddVisit"
+	WebsiteRpc_FindVisitTrend_FullMethodName = "/websiterpc.WebsiteRpc/FindVisitTrend"
+	WebsiteRpc_AddFriend_FullMethodName      = "/websiterpc.WebsiteRpc/AddFriend"
+	WebsiteRpc_UpdateFriend_FullMethodName   = "/websiterpc.WebsiteRpc/UpdateFriend"
+	WebsiteRpc_DeleteFriend_FullMethodName   = "/websiterpc.WebsiteRpc/DeleteFriend"
+	WebsiteRpc_FindFriendList_FullMethodName = "/websiterpc.WebsiteRpc/FindFriendList"
 )
 
 // WebsiteRpcClient is the client API for WebsiteRpc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WebsiteRpcClient interface {
-	// 用户日浏览量
-	GetUserDailyVisit(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*UserDailyVisitRsp, error)
+	// 用户日浏览量分析
+	AnalysisVisit(ctx context.Context, in *AnalysisVisitReq, opts ...grpc.CallOption) (*AnalysisVisitResp, error)
+	// 添加用户访问记录
+	AddVisit(ctx context.Context, in *AddVisitReq, opts ...grpc.CallOption) (*AddVisitResp, error)
+	// 查询用户访问趋势
+	FindVisitTrend(ctx context.Context, in *FindVisitTrendReq, opts ...grpc.CallOption) (*FindVisitTrendResp, error)
+	// 创建友链
+	AddFriend(ctx context.Context, in *FriendNewReq, opts ...grpc.CallOption) (*FriendDetailsResp, error)
+	// 更新友链
+	UpdateFriend(ctx context.Context, in *FriendNewReq, opts ...grpc.CallOption) (*FriendDetailsResp, error)
+	// 删除友链
+	DeleteFriend(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	// 查询友链列表
+	FindFriendList(ctx context.Context, in *FindFriendListReq, opts ...grpc.CallOption) (*FindFriendListResp, error)
 }
 
 type websiteRpcClient struct {
@@ -42,9 +60,63 @@ func NewWebsiteRpcClient(cc grpc.ClientConnInterface) WebsiteRpcClient {
 	return &websiteRpcClient{cc}
 }
 
-func (c *websiteRpcClient) GetUserDailyVisit(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*UserDailyVisitRsp, error) {
-	out := new(UserDailyVisitRsp)
-	err := c.cc.Invoke(ctx, WebsiteRpc_GetUserDailyVisit_FullMethodName, in, out, opts...)
+func (c *websiteRpcClient) AnalysisVisit(ctx context.Context, in *AnalysisVisitReq, opts ...grpc.CallOption) (*AnalysisVisitResp, error) {
+	out := new(AnalysisVisitResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_AnalysisVisit_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) AddVisit(ctx context.Context, in *AddVisitReq, opts ...grpc.CallOption) (*AddVisitResp, error) {
+	out := new(AddVisitResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_AddVisit_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) FindVisitTrend(ctx context.Context, in *FindVisitTrendReq, opts ...grpc.CallOption) (*FindVisitTrendResp, error) {
+	out := new(FindVisitTrendResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_FindVisitTrend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) AddFriend(ctx context.Context, in *FriendNewReq, opts ...grpc.CallOption) (*FriendDetailsResp, error) {
+	out := new(FriendDetailsResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_AddFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) UpdateFriend(ctx context.Context, in *FriendNewReq, opts ...grpc.CallOption) (*FriendDetailsResp, error) {
+	out := new(FriendDetailsResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_UpdateFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) DeleteFriend(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+	out := new(BatchResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_DeleteFriend_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *websiteRpcClient) FindFriendList(ctx context.Context, in *FindFriendListReq, opts ...grpc.CallOption) (*FindFriendListResp, error) {
+	out := new(FindFriendListResp)
+	err := c.cc.Invoke(ctx, WebsiteRpc_FindFriendList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +127,20 @@ func (c *websiteRpcClient) GetUserDailyVisit(ctx context.Context, in *EmptyReq, 
 // All implementations must embed UnimplementedWebsiteRpcServer
 // for forward compatibility
 type WebsiteRpcServer interface {
-	// 用户日浏览量
-	GetUserDailyVisit(context.Context, *EmptyReq) (*UserDailyVisitRsp, error)
+	// 用户日浏览量分析
+	AnalysisVisit(context.Context, *AnalysisVisitReq) (*AnalysisVisitResp, error)
+	// 添加用户访问记录
+	AddVisit(context.Context, *AddVisitReq) (*AddVisitResp, error)
+	// 查询用户访问趋势
+	FindVisitTrend(context.Context, *FindVisitTrendReq) (*FindVisitTrendResp, error)
+	// 创建友链
+	AddFriend(context.Context, *FriendNewReq) (*FriendDetailsResp, error)
+	// 更新友链
+	UpdateFriend(context.Context, *FriendNewReq) (*FriendDetailsResp, error)
+	// 删除友链
+	DeleteFriend(context.Context, *IdsReq) (*BatchResp, error)
+	// 查询友链列表
+	FindFriendList(context.Context, *FindFriendListReq) (*FindFriendListResp, error)
 	mustEmbedUnimplementedWebsiteRpcServer()
 }
 
@@ -64,8 +148,26 @@ type WebsiteRpcServer interface {
 type UnimplementedWebsiteRpcServer struct {
 }
 
-func (UnimplementedWebsiteRpcServer) GetUserDailyVisit(context.Context, *EmptyReq) (*UserDailyVisitRsp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserDailyVisit not implemented")
+func (UnimplementedWebsiteRpcServer) AnalysisVisit(context.Context, *AnalysisVisitReq) (*AnalysisVisitResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AnalysisVisit not implemented")
+}
+func (UnimplementedWebsiteRpcServer) AddVisit(context.Context, *AddVisitReq) (*AddVisitResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddVisit not implemented")
+}
+func (UnimplementedWebsiteRpcServer) FindVisitTrend(context.Context, *FindVisitTrendReq) (*FindVisitTrendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindVisitTrend not implemented")
+}
+func (UnimplementedWebsiteRpcServer) AddFriend(context.Context, *FriendNewReq) (*FriendDetailsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFriend not implemented")
+}
+func (UnimplementedWebsiteRpcServer) UpdateFriend(context.Context, *FriendNewReq) (*FriendDetailsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateFriend not implemented")
+}
+func (UnimplementedWebsiteRpcServer) DeleteFriend(context.Context, *IdsReq) (*BatchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
+}
+func (UnimplementedWebsiteRpcServer) FindFriendList(context.Context, *FindFriendListReq) (*FindFriendListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindFriendList not implemented")
 }
 func (UnimplementedWebsiteRpcServer) mustEmbedUnimplementedWebsiteRpcServer() {}
 
@@ -80,20 +182,128 @@ func RegisterWebsiteRpcServer(s grpc.ServiceRegistrar, srv WebsiteRpcServer) {
 	s.RegisterService(&WebsiteRpc_ServiceDesc, srv)
 }
 
-func _WebsiteRpc_GetUserDailyVisit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyReq)
+func _WebsiteRpc_AnalysisVisit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnalysisVisitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WebsiteRpcServer).GetUserDailyVisit(ctx, in)
+		return srv.(WebsiteRpcServer).AnalysisVisit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: WebsiteRpc_GetUserDailyVisit_FullMethodName,
+		FullMethod: WebsiteRpc_AnalysisVisit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebsiteRpcServer).GetUserDailyVisit(ctx, req.(*EmptyReq))
+		return srv.(WebsiteRpcServer).AnalysisVisit(ctx, req.(*AnalysisVisitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_AddVisit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddVisitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).AddVisit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_AddVisit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).AddVisit(ctx, req.(*AddVisitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_FindVisitTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindVisitTrendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).FindVisitTrend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_FindVisitTrend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).FindVisitTrend(ctx, req.(*FindVisitTrendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FriendNewReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).AddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_AddFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).AddFriend(ctx, req.(*FriendNewReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_UpdateFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FriendNewReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).UpdateFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_UpdateFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).UpdateFriend(ctx, req.(*FriendNewReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_DeleteFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).DeleteFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_DeleteFriend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).DeleteFriend(ctx, req.(*IdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WebsiteRpc_FindFriendList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindFriendListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebsiteRpcServer).FindFriendList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WebsiteRpc_FindFriendList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebsiteRpcServer).FindFriendList(ctx, req.(*FindFriendListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -106,8 +316,32 @@ var WebsiteRpc_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*WebsiteRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetUserDailyVisit",
-			Handler:    _WebsiteRpc_GetUserDailyVisit_Handler,
+			MethodName: "AnalysisVisit",
+			Handler:    _WebsiteRpc_AnalysisVisit_Handler,
+		},
+		{
+			MethodName: "AddVisit",
+			Handler:    _WebsiteRpc_AddVisit_Handler,
+		},
+		{
+			MethodName: "FindVisitTrend",
+			Handler:    _WebsiteRpc_FindVisitTrend_Handler,
+		},
+		{
+			MethodName: "AddFriend",
+			Handler:    _WebsiteRpc_AddFriend_Handler,
+		},
+		{
+			MethodName: "UpdateFriend",
+			Handler:    _WebsiteRpc_UpdateFriend_Handler,
+		},
+		{
+			MethodName: "DeleteFriend",
+			Handler:    _WebsiteRpc_DeleteFriend_Handler,
+		},
+		{
+			MethodName: "FindFriendList",
+			Handler:    _WebsiteRpc_FindFriendList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

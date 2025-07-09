@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,37 +27,35 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TWebsiteConfig) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TWebsiteConfig, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TWebsiteConfig, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TWebsiteConfig, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TWebsiteConfig, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TWebsiteConfig, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TWebsiteConfig, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TWebsiteConfig, total int64, err error)
 		// add extra method in here
 		FindOneByKey(ctx context.Context, key string) (out *TWebsiteConfig, err error)
 	}
 
 	// 表字段定义
 	TWebsiteConfig struct {
-		Id        int64     `json:"id" gorm:"column:id" `                 // id
-		Key       string    `json:"key" gorm:"column:key" `               // 关键词
-		Config    string    `json:"config" gorm:"column:config" `         // 配置信息
-		CreatedAt time.Time `json:"created_at" gorm:"column:created_at" ` // 创建时间
-		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at" ` // 更新时间
+		Id        int64     `json:"id" gorm:"column:id"`                 // id
+		Key       string    `json:"key" gorm:"column:key"`               // 关键词
+		Config    string    `json:"config" gorm:"column:config"`         // 配置信息
+		CreatedAt time.Time `json:"created_at" gorm:"column:created_at"` // 创建时间
+		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at"` // 更新时间
 	}
 
 	// 接口实现
 	defaultTWebsiteConfigModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTWebsiteConfigModel(db *gorm.DB, cache *redis.Client) TWebsiteConfigModel {
+func NewTWebsiteConfigModel(db *gorm.DB) TWebsiteConfigModel {
 	return &defaultTWebsiteConfigModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_website_config`",
+		DbEngin: db,
+		table:   "`t_website_config`",
 	}
 }
 
@@ -68,7 +65,7 @@ func (m *defaultTWebsiteConfigModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTWebsiteConfigModel) WithTransaction(tx *gorm.DB) (out TWebsiteConfigModel) {
-	return NewTWebsiteConfigModel(tx, m.CacheEngin)
+	return NewTWebsiteConfigModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -163,7 +160,7 @@ func (m *defaultTWebsiteConfigModel) Save(ctx context.Context, in *TWebsiteConfi
 }
 
 // 查询记录
-func (m *defaultTWebsiteConfigModel) FindOne(ctx context.Context, id int64) (out *TWebsiteConfig, err error) {
+func (m *defaultTWebsiteConfigModel) FindById(ctx context.Context, id int64) (out *TWebsiteConfig, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -175,7 +172,7 @@ func (m *defaultTWebsiteConfigModel) FindOne(ctx context.Context, id int64) (out
 }
 
 // 查询记录
-func (m *defaultTWebsiteConfigModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TWebsiteConfig, err error) {
+func (m *defaultTWebsiteConfigModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TWebsiteConfig, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -187,23 +184,8 @@ func (m *defaultTWebsiteConfigModel) First(ctx context.Context, conditions strin
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTWebsiteConfigModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TWebsiteConfig{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -222,8 +204,24 @@ func (m *defaultTWebsiteConfigModel) FindALL(ctx context.Context, conditions str
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTWebsiteConfigModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTWebsiteConfigModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TWebsiteConfig, err error) {
+func (m *defaultTWebsiteConfigModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TWebsiteConfig, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -237,6 +235,11 @@ func (m *defaultTWebsiteConfigModel) FindList(ctx context.Context, page int, siz
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -247,10 +250,10 @@ func (m *defaultTWebsiteConfigModel) FindList(ctx context.Context, page int, siz
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

@@ -6,11 +6,14 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	MysqlConf     MysqlConf
-	RedisConf     RedisConf
-	RabbitMQConf  RabbitMQConf
-	EmailConf     EmailConf
-	OauthConfList map[string]OauthConf
+	MysqlConf      MysqlConf
+	RedisConf      RedisConf
+	RabbitMQConf   RabbitMQConf
+	EmailConf      EmailConf
+	ThirdPartyConf map[string]map[string]ThirdPartyInfo
+
+	DefaultCommentReviewStatus int64 `json:",default=1"` // 默认评论审核状态
+	DefaultRemarkReviewStatus  int64 `json:",default=1"` // 默认留言审核状态
 }
 
 // mysql数据库配置
@@ -46,11 +49,10 @@ type EmailConf struct {
 	Username string   `json:"username"` // 发件人
 	Password string   `json:"password"` // 密钥
 	Nickname string   `json:"nickname"` // 发件人昵称
-	Deliver  []string `json:"deliver"`  // 抄送邮箱:多个以英文逗号分隔
+	BCC      []string `json:"bcc"`      // 密送邮箱:多个以英文逗号分隔
 }
 
-// oauth配置
-type OauthConf struct {
+type ThirdPartyInfo struct {
 	ClientId     string `json:"client_id"`
 	ClientSecret string `json:"client_secret"`
 	RedirectUri  string `json:"redirect_uri"`

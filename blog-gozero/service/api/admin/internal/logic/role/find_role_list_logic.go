@@ -27,9 +27,12 @@ func NewFindRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 
 func (l *FindRoleListLogic) FindRoleList(req *types.RoleQuery) (resp *types.PageResp, err error) {
 	in := &permissionrpc.FindRoleListReq{
-		Page:      req.Page,
-		PageSize:  req.PageSize,
-		RoleName:  req.RoleName,
+		Paginate: &permissionrpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
+		RoleKey:   req.RoleKey,
 		RoleLabel: req.RoleLabel,
 		IsDisable: req.IsDisable,
 	}
@@ -39,15 +42,24 @@ func (l *FindRoleListLogic) FindRoleList(req *types.RoleQuery) (resp *types.Page
 		return nil, err
 	}
 
-	var list []*types.RoleBackDTO
+	var list []*types.RoleBackVO
 	for _, v := range out.List {
-		m := convertRoleTypes(v)
-		list = append(list, m)
+		list = append(list, &types.RoleBackVO{
+			Id:          v.Id,
+			ParentId:    v.ParentId,
+			RoleKey:     v.RoleKey,
+			RoleLabel:   v.RoleLabel,
+			RoleComment: v.RoleComment,
+			IsDisable:   v.IsDisable,
+			IsDefault:   v.IsDefault,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		})
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
+	resp.Page = 0
+	resp.PageSize = int64(len(list))
 	resp.Total = int64(len(list))
 	resp.List = list
 	return resp, nil

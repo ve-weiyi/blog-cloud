@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,15 +25,25 @@ func NewGetAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAlbum
 	}
 }
 
-func (l *GetAlbumLogic) GetAlbum(req *types.IdReq) (resp *types.AlbumBackDTO, err error) {
-	in := &photorpc.IdReq{
+func (l *GetAlbumLogic) GetAlbum(req *types.IdReq) (resp *types.AlbumBackVO, err error) {
+	in := &resourcerpc.IdReq{
 		Id: req.Id,
 	}
 
-	out, err := l.svcCtx.PhotoRpc.GetAlbum(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.GetAlbum(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertAlbumTypes(out), nil
+	return &types.AlbumBackVO{
+		Id:         out.Id,
+		AlbumName:  out.AlbumName,
+		AlbumDesc:  out.AlbumDesc,
+		AlbumCover: out.AlbumCover,
+		IsDelete:   out.IsDelete,
+		Status:     out.Status,
+		CreatedAt:  out.CreatedAt,
+		UpdatedAt:  out.UpdatedAt,
+		PhotoCount: out.PhotoCount,
+	}, nil
 }

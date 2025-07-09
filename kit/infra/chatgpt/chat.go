@@ -49,7 +49,7 @@ func (s *AIChatGPT) Chat(req []*ChatMessage) (resp *ChatResponse, err error) {
 
 	fmt.Println("content", content)
 
-	res, err := httpx.NewClient(
+	res, err := httpx.NewRequest(
 		"POST",
 		s.ApiHost+ChatUrl,
 		httpx.WithHeaders(map[string]string{
@@ -57,7 +57,7 @@ func (s *AIChatGPT) Chat(req []*ChatMessage) (resp *ChatResponse, err error) {
 			"Content-Type":  "application/json; charset=utf-8",
 		}),
 		httpx.WithBodyJson(content),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (s *AIChatGPT) ImageGeneration(prompt string) (resp any, err error) {
 		"n":      1,
 	}
 
-	res, err := httpx.NewClient(
+	res, err := httpx.NewRequest(
 		"POST",
 		s.ApiHost+ImageUrl,
 		httpx.WithHeaders(map[string]string{
@@ -88,7 +88,7 @@ func (s *AIChatGPT) ImageGeneration(prompt string) (resp any, err error) {
 			"Content-Type":  "application/json; charset=utf-8",
 		}),
 		httpx.WithBodyJson(req),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (s *AIChatGPT) CosRole(act string) (resp *ChatResponse, err error) {
 		}}),
 	}
 
-	res, err := httpx.NewClient(
+	res, err := httpx.NewRequest(
 		"POST",
 		s.ApiHost+ChatUrl,
 		httpx.WithHeaders(map[string]string{
@@ -125,7 +125,7 @@ func (s *AIChatGPT) CosRole(act string) (resp *ChatResponse, err error) {
 			"Content-Type":  "application/json; charset=utf-8",
 		}),
 		httpx.WithBodyJson(content),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}

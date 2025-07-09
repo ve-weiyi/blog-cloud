@@ -26,12 +26,12 @@ func NewUpdateAccountStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UpdateAccountStatusLogic) UpdateAccountStatus(req *types.UpdateAccountStatusReq) (resp *types.EmptyResp, err error) {
-	in := &accountrpc.UpdateUserStatusReq{
+	in := &accountrpc.AdminUpdateUserStatusReq{
 		UserId: req.UserId,
 		Status: req.Status,
 	}
 
-	_, err = l.svcCtx.AccountRpc.UpdateUserStatus(l.ctx, in)
+	_, err = l.svcCtx.AccountRpc.AdminUpdateUserStatus(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

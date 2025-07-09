@@ -23,55 +23,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type RootCmd struct {
-	cmd *cobra.Command
-}
-
-func NewRootCmd() *RootCmd {
-	var rootCmd = &cobra.Command{
-		Use:   "",
-		Short: "A brief description of your application",
-		Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-		// Uncomment the following line if your bare application
-		// has an action associated with it:
+func NewRootCmd() *cobra.Command {
+	rootCmd := &cobra.Command{
+		Use:     "blog-gin",
+		Short:   "ve-blog-golang 博客系统",
+		Version: fmt.Sprintf("%s %s/%s", "v1.0.0", runtime.GOOS, runtime.GOARCH),
 		Run: func(cmd *cobra.Command, args []string) {
 			//实现功能逻辑的函数。
-			_ = cmd.Help()
-			return
+			//_ = cmd.Help()
+			NewApiCmd().Execute()
 		},
 	}
 
-	rootCmd.Version = fmt.Sprintf("%s %s/%s", "v1.0.0", runtime.GOOS, runtime.GOARCH)
-	rootCmd.AddCommand(NewApiCmd().cmd)
-	rootCmd.AddCommand(NewMigrateCmd().cmd)
+	rootCmd.AddCommand(NewApiCmd())
+	rootCmd.AddCommand(NewMigrateCmd())
 
-	root := &RootCmd{
-		cmd: rootCmd,
-	}
-	root.init()
-	return root
+	return rootCmd
 }
 
-func (s *RootCmd) init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.Flags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.server.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-
-}
-
-func (s *RootCmd) Execute() {
-	err := s.cmd.Execute()
-	if err != nil {
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() {
+	if err := NewRootCmd().Execute(); err != nil {
 		os.Exit(1)
 	}
 }

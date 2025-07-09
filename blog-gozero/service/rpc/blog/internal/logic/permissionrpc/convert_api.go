@@ -20,8 +20,8 @@ func convertApiIn(in *permissionrpc.ApiNewReq) (out *model.TApi) {
 	return out
 }
 
-func convertApiOut(in *model.TApi) (out *permissionrpc.ApiDetails) {
-	out = &permissionrpc.ApiDetails{
+func convertApiOut(in *model.TApi) (out *permissionrpc.ApiDetailsResp) {
+	out = &permissionrpc.ApiDetailsResp{
 		Id:        in.Id,
 		ParentId:  in.ParentId,
 		Name:      in.Name,

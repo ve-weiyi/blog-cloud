@@ -24,7 +24,7 @@ func NewUpdateTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新说说
-func (l *UpdateTalkLogic) UpdateTalk(in *talkrpc.TalkNewReq) (*talkrpc.TalkDetails, error) {
+func (l *UpdateTalkLogic) UpdateTalk(in *talkrpc.TalkNewReq) (*talkrpc.TalkDetailsResp, error) {
 	entity := convertTalkIn(in)
 
 	_, err := l.svcCtx.TTalkModel.Save(l.ctx, entity)

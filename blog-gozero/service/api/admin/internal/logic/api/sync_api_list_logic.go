@@ -2,15 +2,19 @@ package api
 
 import (
 	"context"
-	"strings"
+	"encoding/json"
+	"net/http"
+	"sort"
 
-	"github.com/zeromicro/go-zero/tools/goctl/api/parser"
+	"github.com/go-openapi/loads"
+	"github.com/go-openapi/spec"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/docs"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SyncApiListLogic struct {
@@ -29,44 +33,46 @@ func NewSyncApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncA
 }
 
 func (l *SyncApiListLogic) SyncApiList(req *types.SyncApiReq) (resp *types.BatchResp, err error) {
-	sp, err := parser.Parse(req.ApiFilePath)
+	doc, err := loads.Analyzed(json.RawMessage(docs.Docs), "")
 	if err != nil {
-		return nil, err
+		panic(err)
+	}
+
+	sp := doc.Spec()
+	routes := getRoutes(sp)
+
+	// 分组
+	groups := make(map[string][]*permissionrpc.ApiNewReq)
+	for k, v := range routes {
+		for m, o := range v {
+			if o != nil {
+				child := &permissionrpc.ApiNewReq{
+					Id:        0,
+					ParentId:  0,
+					Path:      k,
+					Name:      o.Summary,
+					Method:    m,
+					Traceable: 0,
+					IsDisable: 0,
+					Children:  nil,
+				}
+
+				var group = ""
+				if len(o.Tags) > 0 {
+					group = o.Tags[0]
+				}
+				groups[group] = append(groups[group], child)
+			}
+		}
 	}
 
 	var list []*permissionrpc.ApiNewReq
-	for _, g := range sp.Service.Groups {
-		var prefix = g.Annotation.Properties["prefix"]
-		var group = g.Annotation.Properties["group"]
-
-		var children []*permissionrpc.ApiNewReq
-		for _, r := range g.Routes {
-			var traceable int64
-			if !strings.Contains(strings.ToUpper(r.Method), "GET") {
-				if strings.Contains(r.Path, "find") {
-					traceable = 0
-				} else {
-					traceable = 1
-				}
-			}
-
-			child := &permissionrpc.ApiNewReq{
-				Id:        0,
-				ParentId:  0,
-				Path:      prefix + r.Path,
-				Name:      strings.Trim(r.AtDoc.Text, `"`),
-				Method:    strings.ToUpper(r.Method),
-				Traceable: traceable,
-				IsDisable: 0,
-				Children:  nil,
-			}
-			children = append(children, child)
-		}
+	for g, children := range groups {
 		root := &permissionrpc.ApiNewReq{
 			Id:        0,
 			ParentId:  0,
-			Path:      group,
-			Name:      group,
+			Path:      g,
+			Name:      g,
 			Method:    "",
 			Traceable: 0,
 			IsDisable: 0,
@@ -75,7 +81,11 @@ func (l *SyncApiListLogic) SyncApiList(req *types.SyncApiReq) (resp *types.Batch
 		list = append(list, root)
 	}
 
-	in := &permissionrpc.SyncApiReq{
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Path < list[j].Path
+	})
+
+	in := &permissionrpc.SyncApiListReq{
 		Apis: list,
 	}
 
@@ -84,13 +94,45 @@ func (l *SyncApiListLogic) SyncApiList(req *types.SyncApiReq) (resp *types.Batch
 		return nil, err
 	}
 
-	err = l.svcCtx.RbacHolder.LoadPolicy()
-	if err != nil {
-		return nil, err
-	}
-
 	resp = &types.BatchResp{
 		SuccessCount: out.SuccessCount,
 	}
 	return resp, nil
+}
+
+func getRoutes(sp *spec.Swagger) map[string]map[string]*spec.Operation {
+	// map[path][method] -> operation
+	routes := make(map[string]map[string]*spec.Operation)
+
+	for k, v := range sp.Paths.Paths {
+		if routes[k] == nil {
+			routes[k] = make(map[string]*spec.Operation)
+		}
+
+		if v.Get != nil {
+			routes[k][http.MethodGet] = v.Get
+		}
+
+		if v.Put != nil {
+			routes[k][http.MethodPut] = v.Put
+		}
+
+		if v.Post != nil {
+			routes[k][http.MethodPost] = v.Post
+		}
+
+		if v.Delete != nil {
+			routes[k][http.MethodDelete] = v.Delete
+		}
+
+		if v.Options != nil {
+			routes[k][http.MethodOptions] = v.Options
+		}
+
+		if v.Head != nil {
+			routes[k][http.MethodHead] = v.Head
+		}
+	}
+
+	return routes
 }

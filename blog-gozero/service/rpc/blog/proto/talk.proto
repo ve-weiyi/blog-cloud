@@ -7,9 +7,7 @@ package talkrpc;
 // 生成 golang 代码后的包名
 option go_package = "./talkrpc";
 
-message EmptyReq {
-}
-
+//==================== 通用消息 ====================
 message EmptyResp {
 }
 
@@ -29,8 +27,18 @@ message BatchResp {
   int64 success_count = 1;
 }
 
-message CountResp {
-  int64 count = 1;
+// 分页请求
+message PageReq {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  repeated string sorts = 3; // 排序字段
+}
+
+// 分页响应
+message PageResp {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  int64 total = 3;     // 总数
 }
 
 /************** blog 说说管理 **************/
@@ -43,7 +51,7 @@ message TalkNewReq {
   int64 status = 6;// 状态 1.公开 2.私密
 }
 
-message TalkDetails {
+message TalkDetailsResp {
   int64 id = 1;// 说说id
   string user_id = 2;// 用户id
   string content = 3;// 说说内容
@@ -57,15 +65,13 @@ message TalkDetails {
 }
 
 message FindTalkListReq {
-  int64 page = 1;
-  int64 page_size = 2;
-  repeated string sorts = 3; // 排序
-  int64 status = 6;// 状态 1.公开 2.私密
+  PageReq paginate = 1;    // 分页参数
+  int64 status = 2;// 状态 1.公开 2.私密
 }
 
 message FindTalkListResp {
-  repeated TalkDetails list = 1;
-  int64 total = 2;
+  PageResp pagination = 1; // 分页信息
+  repeated TalkDetailsResp list = 2;
 }
 
 message FindLikeTalkResp{
@@ -74,13 +80,13 @@ message FindLikeTalkResp{
 
 service TalkRpc {
   // 创建说说
-  rpc AddTalk(TalkNewReq) returns(TalkDetails);
+  rpc AddTalk(TalkNewReq) returns(TalkDetailsResp);
   // 更新说说
-  rpc UpdateTalk(TalkNewReq) returns(TalkDetails);
+  rpc UpdateTalk(TalkNewReq) returns(TalkDetailsResp);
   // 删除说说
   rpc DeleteTalk(IdsReq) returns(BatchResp);
   // 查询说说
-  rpc GetTalk(IdReq) returns(TalkDetails);
+  rpc GetTalk(IdReq) returns(TalkDetailsResp);
   // 查询说说列表
   rpc FindTalkList(FindTalkListReq) returns(FindTalkListResp);
 

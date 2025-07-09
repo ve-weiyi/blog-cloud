@@ -30,34 +30,22 @@ func (l *FindArticleListLogic) FindArticleList(in *articlerpc.FindArticleListReq
 	page, size, sorts, conditions, params := helper.convertArticleQuery(in)
 
 	// 查询文章信息
-	records, err := l.svcCtx.TArticleModel.FindList(l.ctx, page, size, sorts, conditions, params...)
+	records, total, err := l.svcCtx.TArticleModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
 		return nil, err
 	}
 
-	count, err := l.svcCtx.TArticleModel.FindCount(l.ctx, conditions, params...)
+	list, err := helper.convertArticleDetailsResp(records)
 	if err != nil {
 		return nil, err
-	}
-
-	acm, err := helper.findCategoryGroupArticle(records)
-	if err != nil {
-		return nil, err
-
-	}
-
-	atm, err := helper.findTagGroupArticle(records)
-	if err != nil {
-		return nil, err
-	}
-
-	var list []*articlerpc.ArticleDetails
-	for _, v := range records {
-		list = append(list, convertArticleOut(v, acm, atm))
 	}
 
 	return &articlerpc.FindArticleListResp{
-		List:  list,
-		Total: count,
+		List: list,
+		Pagination: &articlerpc.PageResp{
+			Page:     int64(page),
+			PageSize: int64(size),
+			Total:    total,
+		},
 	}, nil
 }

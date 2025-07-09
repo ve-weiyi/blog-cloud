@@ -49,9 +49,8 @@ func NewTestConfig() config.Config {
 			Username: "",
 			Password: "",
 			Nickname: "",
-			Deliver:  nil,
+			BCC:      []string{},
 		},
-		OauthConfList: nil,
 	}
 }
 

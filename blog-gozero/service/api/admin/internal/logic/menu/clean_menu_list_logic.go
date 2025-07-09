@@ -26,7 +26,7 @@ func NewCleanMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cle
 }
 
 func (l *CleanMenuListLogic) CleanMenuList(req *types.EmptyReq) (resp *types.BatchResp, err error) {
-	in := &permissionrpc.EmptyReq{}
+	in := &permissionrpc.CleanMenuListReq{}
 
 	out, err := l.svcCtx.PermissionRpc.CleanMenuList(l.ctx, in)
 	if err != nil {

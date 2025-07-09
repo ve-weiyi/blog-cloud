@@ -31,7 +31,7 @@ func (l *SyncMenuListLogic) SyncMenuList(req *types.SyncMenuReq) (resp *types.Ba
 		menus = append(menus, ConvertMenuPb(menu))
 	}
 
-	in := &permissionrpc.SyncMenuReq{
+	in := &permissionrpc.SyncMenuListReq{
 		Menus: menus,
 	}
 

@@ -5,8 +5,11 @@ import (
 
 	"github.com/spf13/cast"
 
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,9 +29,16 @@ func NewUpdateTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateTalkLogic) UpdateTalk(req *types.TalkNewReq) (resp *types.TalkBackDTO, err error) {
-	in := ConvertTalkPb(req)
-	in.UserId = cast.ToString(l.ctx.Value("uid"))
+func (l *UpdateTalkLogic) UpdateTalk(req *types.TalkNewReq) (resp *types.TalkBackVO, err error) {
+	in := &talkrpc.TalkNewReq{
+		Id:      req.Id,
+		UserId:  cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		Content: req.Content,
+		ImgList: req.ImgList,
+		IsTop:   req.IsTop,
+		Status:  req.Status,
+	}
+
 	out, err := l.svcCtx.TalkRpc.UpdateTalk(l.ctx, in)
 	if err != nil {
 		return nil, err

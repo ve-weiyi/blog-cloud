@@ -26,7 +26,7 @@ func NewCleanApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Clea
 }
 
 func (l *CleanApiListLogic) CleanApiList(req *types.EmptyReq) (resp *types.BatchResp, err error) {
-	in := &permissionrpc.EmptyReq{}
+	in := &permissionrpc.CleanApiListReq{}
 
 	out, err := l.svcCtx.PermissionRpc.CleanApiList(l.ctx, in)
 	if err != nil {

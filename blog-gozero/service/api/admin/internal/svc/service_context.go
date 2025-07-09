@@ -1,33 +1,33 @@
 package svc
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
-	"time"
 
+	"github.com/go-openapi/loads"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/upload"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/internal/tokenx"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/internal/middlewarex"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/internal/rbacx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/permissionx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/tokenx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/docs"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/common/stomphook"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/config"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/middleware"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/configrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/friendrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oss"
+	"github.com/ve-weiyi/ve-blog-golang/stompws/logws"
+	"github.com/ve-weiyi/ve-blog-golang/stompws/server/client"
 )
 
 type ServiceContext struct {
@@ -36,24 +36,23 @@ type ServiceContext struct {
 	AccountRpc    accountrpc.AccountRpc
 	PermissionRpc permissionrpc.PermissionRpc
 	ArticleRpc    articlerpc.ArticleRpc
-	CommentRpc    commentrpc.CommentRpc
 	MessageRpc    messagerpc.MessageRpc
-	PhotoRpc      photorpc.PhotoRpc
+	ResourceRpc   resourcerpc.ResourceRpc
 	TalkRpc       talkrpc.TalkRpc
-	FriendRpc     friendrpc.FriendRpc
-	SyslogRpc     syslogrpc.SyslogRpc
 	WebsiteRpc    websiterpc.WebsiteRpc
 	ConfigRpc     configrpc.ConfigRpc
-	ResourceRpc   resourcerpc.ResourceRpc
+	SyslogRpc     syslogrpc.SyslogRpc
 
-	Redis       *redis.Redis
-	TokenHolder *tokenx.JwtTokenHolder
-	RbacHolder  *rbacx.RbacHolder
-	Uploader    upload.Uploader
+	Redis            *redis.Redis
+	Uploader         oss.OSS
+	TokenHolder      tokenx.TokenHolder
+	PermissionHolder permissionx.PermissionHolder
 
-	JwtToken  rest.Middleware
-	SignToken rest.Middleware
-	Operation rest.Middleware
+	StompHubServer *client.StompHubServer
+
+	AdminToken   rest.Middleware
+	Permission   rest.Middleware
+	OperationLog rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -65,35 +64,62 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 
+	uploader := oss.NewQiniu(c.UploadConfig)
+
 	th := tokenx.NewJwtTokenHolder(c.Name, c.Name, rds)
 
-	rh := rbacx.NewRbacHolder(permissionrpc.NewPermissionRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)))
-	go rh.LoadPolicy()
+	doc, err := loads.Analyzed(json.RawMessage(docs.Docs), "")
+	if err != nil {
+		panic(err)
+	}
+
+	accountRpc := accountrpc.NewAccountRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	permissionRpc := permissionrpc.NewPermissionRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	articleRpc := articlerpc.NewArticleRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	messageRpc := messagerpc.NewMessageRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	resourceRpc := resourcerpc.NewResourceRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	talkRpc := talkrpc.NewTalkRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	websiteRpc := websiterpc.NewWebsiteRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	configRpc := configrpc.NewConfigRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	syslogRpc := syslogrpc.NewSyslogRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+
+	ph := permissionx.NewMemoryHolder(permissionRpc)
+	err = ph.LoadPolicy()
+	if err != nil {
+		logx.Infof("load permission policy fail: %v", err)
+	}
+
+	hub := client.NewStompHubServer(
+		client.WithEventHooks(
+			stomphook.NewChatRoomEventHook(),
+			stomphook.NewOnlineEventHook(),
+		),
+		client.WithAuthenticator(stomphook.NewJwtAuthenticator(th)),
+		client.WithLogger(logws.NewDefaultLogger()),
+	)
 
 	return &ServiceContext{
 		Config:        c,
-		AccountRpc:    accountrpc.NewAccountRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		PermissionRpc: permissionrpc.NewPermissionRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		ArticleRpc:    articlerpc.NewArticleRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		CommentRpc:    commentrpc.NewCommentRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		MessageRpc:    messagerpc.NewMessageRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		PhotoRpc:      photorpc.NewPhotoRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		TalkRpc:       talkrpc.NewTalkRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		FriendRpc:     friendrpc.NewFriendRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		SyslogRpc:     syslogrpc.NewSyslogRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		WebsiteRpc:    websiterpc.NewWebsiteRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		ConfigRpc:     configrpc.NewConfigRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		ResourceRpc:   resourcerpc.NewResourceRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		Uploader:      upload.NewQiniu(c.UploadConfig),
-		TokenHolder:   th,
-		Redis:         rds,
-		RbacHolder:    rh,
-		JwtToken:      middlewarex.NewJwtTokenMiddleware(th).Handle,
-		SignToken:     middlewarex.NewSignTokenMiddleware().Handle,
-		Operation: middlewarex.NewOperationMiddleware(
-			rh,
-			syslogrpc.NewSyslogRpc(zrpc.MustNewClient(c.BlogRpcConf, options...)),
-		).Handle,
+		AccountRpc:    accountRpc,
+		PermissionRpc: permissionRpc,
+		ArticleRpc:    articleRpc,
+		MessageRpc:    messageRpc,
+		ResourceRpc:   resourceRpc,
+		TalkRpc:       talkRpc,
+		WebsiteRpc:    websiteRpc,
+		ConfigRpc:     configRpc,
+		SyslogRpc:     syslogRpc,
+
+		Redis:            rds,
+		Uploader:         uploader,
+		TokenHolder:      th,
+		PermissionHolder: ph,
+		StompHubServer:   hub,
+
+		AdminToken: middleware.NewAdminTokenMiddleware(th).Handle,
+		Permission: middleware.NewSimpleMiddleware().Handle, // 不使用接口权限控制
+		//Permission:       middleware.NewPermissionMiddleware(ph).Handle,
+		OperationLog: middleware.NewOperationLogMiddleware(doc.Spec(), syslogRpc, permissionRpc).Handle,
 	}
 }
 
@@ -110,6 +136,5 @@ func ConnectRedis(c config.RedisConf) (*redis.Redis, error) {
 		return nil, fmt.Errorf("redis 连接失败: %v", err)
 	}
 
-	client.SetexCtx(context.Background(), fmt.Sprintf("redis:admin:%s", "PONG"), time.Now().String(), -1)
 	return client, nil
 }

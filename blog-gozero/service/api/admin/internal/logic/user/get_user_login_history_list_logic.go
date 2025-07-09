@@ -5,11 +5,13 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 )
 
 type GetUserLoginHistoryListLogic struct {
@@ -28,39 +30,38 @@ func NewGetUserLoginHistoryListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *GetUserLoginHistoryListLogic) GetUserLoginHistoryList(req *types.UserLoginHistoryQuery) (resp *types.PageResp, err error) {
-	in := &accountrpc.FindLoginHistoryListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
-		UserId:   cast.ToString(l.ctx.Value("uid")),
+	in := &syslogrpc.FindLoginLogListReq{
+		Paginate: &syslogrpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
+		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
 	}
 
-	out, err := l.svcCtx.AccountRpc.FindUserLoginHistoryList(l.ctx, in)
+	out, err := l.svcCtx.SyslogRpc.FindLoginLogList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
 	var list []*types.UserLoginHistory
 	for _, v := range out.List {
-		m := ConvertUserLoginHistoryTypes(v)
-		list = append(list, m)
+		list = append(list, &types.UserLoginHistory{
+			Id:        v.Id,
+			LoginType: v.LoginType,
+			Os:        v.Os,
+			Browser:   v.Browser,
+			IpAddress: v.IpAddress,
+			IpSource:  v.IpSource,
+			LoginAt:   v.LoginAt,
+			LogoutAt:  v.LogoutAt,
+		})
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertUserLoginHistoryTypes(in *accountrpc.UserLoginHistory) *types.UserLoginHistory {
-	return &types.UserLoginHistory{
-		Id:        in.Id,
-		LoginType: in.LoginType,
-		Agent:     in.Agent,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		LoginAt:   in.LoginAt,
-		LogoutAt:  in.LogoutAt,
-	}
 }

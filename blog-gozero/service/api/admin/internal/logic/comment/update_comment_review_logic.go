@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,12 +26,12 @@ func NewUpdateCommentReviewLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UpdateCommentReviewLogic) UpdateCommentReview(req *types.CommentReviewReq) (resp *types.BatchResp, err error) {
-	in := &commentrpc.UpdateCommentReviewReq{
+	in := &messagerpc.UpdateCommentReviewReq{
 		Ids:      req.Ids,
 		IsReview: req.IsReview,
 	}
 
-	out, err := l.svcCtx.CommentRpc.UpdateCommentReview(l.ctx, in)
+	out, err := l.svcCtx.MessageRpc.UpdateCommentReview(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

@@ -3,10 +3,11 @@ package user
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
 )
 
 type UpdateUserAvatarLogic struct {
@@ -25,7 +26,14 @@ func NewUpdateUserAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UpdateUserAvatarLogic) UpdateUserAvatar(req *types.UpdateUserAvatarReq) (resp *types.EmptyResp, err error) {
-	// todo: add your logic here and delete this line
+	in := &accountrpc.UpdateUserAvatarReq{
+		Avatar: req.Avatar,
+	}
 
-	return
+	_, err = l.svcCtx.AccountRpc.UpdateUserAvatar(l.ctx, in)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.EmptyResp{}, nil
 }

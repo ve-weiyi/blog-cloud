@@ -27,7 +27,7 @@ func NewAddTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTalkLo
 }
 
 // 创建说说
-func (l *AddTalkLogic) AddTalk(in *talkrpc.TalkNewReq) (*talkrpc.TalkDetails, error) {
+func (l *AddTalkLogic) AddTalk(in *talkrpc.TalkNewReq) (*talkrpc.TalkDetailsResp, error) {
 	entity := convertTalkIn(in)
 
 	_, err := l.svcCtx.TTalkModel.Insert(l.ctx, entity)
@@ -52,11 +52,11 @@ func convertTalkIn(in *talkrpc.TalkNewReq) (out *model.TTalk) {
 	return out
 }
 
-func convertTalkOut(in *model.TTalk) (out *talkrpc.TalkDetails) {
+func convertTalkOut(in *model.TTalk) (out *talkrpc.TalkDetailsResp) {
 	var images []string
 	jsonconv.JsonToAny(in.Images, &images)
 
-	out = &talkrpc.TalkDetails{
+	out = &talkrpc.TalkDetailsResp{
 		Id:           in.Id,
 		UserId:       in.UserId,
 		Content:      in.Content,

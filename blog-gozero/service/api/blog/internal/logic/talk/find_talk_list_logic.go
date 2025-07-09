@@ -3,10 +3,10 @@ package talk
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/common/apiutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,8 +29,11 @@ func NewFindTalkListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 
 func (l *FindTalkListLogic) FindTalkList(req *types.TalkQueryReq) (resp *types.PageResp, err error) {
 	in := &talkrpc.FindTalkListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		Paginate: &talkrpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 	}
 	out, err := l.svcCtx.TalkRpc.FindTalkList(l.ctx, in)
 	if err != nil {
@@ -45,21 +48,14 @@ func (l *FindTalkListLogic) FindTalkList(req *types.TalkQueryReq) (resp *types.P
 	}
 
 	// 查询用户信息
-	users, err := l.svcCtx.AccountRpc.FindUserList(l.ctx, &accountrpc.FindUserListReq{
-		UserIds: uids,
-	})
+	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
 	if err != nil {
 		return nil, err
 	}
 
-	usm := make(map[string]*accountrpc.User)
-	for _, v := range users.List {
-		usm[v.UserId] = v
-	}
-
 	// 查询评论量
-	counts, err := l.svcCtx.CommentRpc.FindTopicCommentCounts(l.ctx, &commentrpc.IdsReq{
-		Ids: tids,
+	counts, err := l.svcCtx.MessageRpc.FindCommentReplyCounts(l.ctx, &messagerpc.FindCommentReplyCountsReq{
+		TopicIds: tids,
 	})
 	if err != nil {
 		return nil, err
@@ -72,14 +68,14 @@ func (l *FindTalkListLogic) FindTalkList(req *types.TalkQueryReq) (resp *types.P
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }
 
-func ConvertTalkTypes(in *talkrpc.TalkDetails, usm map[string]*accountrpc.User, csm map[int64]int64) (out *types.Talk) {
+func ConvertTalkTypes(in *talkrpc.TalkDetailsResp, usm map[string]*types.UserInfoVO, csm map[int64]int64) (out *types.Talk) {
 	out = &types.Talk{
 		Id:           in.Id,
 		UserId:       in.UserId,
@@ -97,8 +93,7 @@ func ConvertTalkTypes(in *talkrpc.TalkDetails, usm map[string]*accountrpc.User, 
 	if out.UserId != "" {
 		user, ok := usm[out.UserId]
 		if ok && user != nil {
-			out.Nickname = user.Nickname
-			out.Avatar = user.Avatar
+			out.User = user
 		}
 	}
 

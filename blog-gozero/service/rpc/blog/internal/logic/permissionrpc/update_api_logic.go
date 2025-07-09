@@ -24,7 +24,7 @@ func NewUpdateApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 }
 
 // 更新接口
-func (l *UpdateApiLogic) UpdateApi(in *permissionrpc.ApiNewReq) (*permissionrpc.ApiDetails, error) {
+func (l *UpdateApiLogic) UpdateApi(in *permissionrpc.ApiNewReq) (*permissionrpc.ApiDetailsResp, error) {
 	entity := convertApiIn(in)
 
 	_, err := l.svcCtx.TApiModel.Save(l.ctx, entity)

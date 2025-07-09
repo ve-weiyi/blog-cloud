@@ -5,6 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,13 +25,20 @@ func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 	}
 }
 
-func (l *UpdateCategoryLogic) UpdateCategory(req *types.CategoryNewReq) (resp *types.CategoryBackDTO, err error) {
-	in := ConvertCategoryPb(req)
+func (l *UpdateCategoryLogic) UpdateCategory(req *types.CategoryNewReq) (resp *types.CategoryBackVO, err error) {
+	in := &articlerpc.CategoryNewReq{
+		CategoryName: req.CategoryName,
+	}
 	out, err := l.svcCtx.ArticleRpc.UpdateCategory(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertCategoryTypes(out)
-	return resp, nil
+	return &types.CategoryBackVO{
+		Id:           out.Id,
+		CategoryName: out.CategoryName,
+		ArticleCount: 0,
+		CreatedAt:    out.CreatedAt,
+		UpdatedAt:    out.UpdatedAt,
+	}, nil
 }

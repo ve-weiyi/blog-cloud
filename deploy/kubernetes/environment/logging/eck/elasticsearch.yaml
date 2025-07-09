@@ -1,0 +1,36 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  namespace: elastic-system # 建议与operator放在同一命名空间
+spec:
+  version: "8.11.0" # 选择一个与ECK 2.10.0兼容的ES版本
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: false
+  nodeSets:
+    - name: default
+      count: 1 # 单个节点，同时承担master、data、ingest角色
+      config:
+        node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests:
+                  memory: 1Gi   # 根据 Elasticsearch 官方建议，Java 堆内存至少 1Gi
+                  cpu: 500m     # 请求 0.5 核 CPU
+                limits:
+                  memory: 1Gi   # 限制内存为 1Gi，防止占用过多
+                  cpu: 1000m    # 限制最多使用 1 核 CPU
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            accessModes: [ ReadWriteOnce ]
+            storageClassName: standard # 使用你集群中已有的 StorageClass
+            resources:
+              requests:
+                storage: 5Gi # 根据你的需求调整存储大小

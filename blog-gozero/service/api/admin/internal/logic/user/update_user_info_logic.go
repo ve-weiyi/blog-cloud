@@ -3,8 +3,6 @@ package user
 import (
 	"context"
 
-	"github.com/spf13/cast"
-
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
@@ -29,12 +27,9 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 	}
 }
 
-func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UserInfoReq) (resp *types.EmptyResp, err error) {
-
+func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserInfoReq) (resp *types.EmptyResp, err error) {
 	in := &accountrpc.UpdateUserInfoReq{
-		UserId:   cast.ToString(l.ctx.Value("uid")),
 		Nickname: req.Nickname,
-		Avatar:   req.Avatar,
 		Info:     jsonconv.AnyToJsonNE(req.UserInfoExt),
 	}
 

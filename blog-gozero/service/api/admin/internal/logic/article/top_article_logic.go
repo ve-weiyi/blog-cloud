@@ -26,12 +26,12 @@ func NewTopArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TopArt
 }
 
 func (l *TopArticleLogic) TopArticle(req *types.ArticleTopReq) (resp *types.EmptyResp, err error) {
-	in := &articlerpc.TopArticleReq{
+	in := &articlerpc.UpdateArticleTopReq{
 		ArticleId: req.Id,
 		IsTop:     req.IsTop,
 	}
 
-	_, err = l.svcCtx.ArticleRpc.TopArticle(l.ctx, in)
+	_, err = l.svcCtx.ArticleRpc.UpdateArticleTop(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

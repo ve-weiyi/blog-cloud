@@ -6,6 +6,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,8 +28,11 @@ func NewFindTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindT
 
 func (l *FindTagListLogic) FindTagList(req *types.TagQueryReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindTagListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		Paginate: &articlerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 	}
 	out, err := l.svcCtx.ArticleRpc.FindTagList(l.ctx, in)
 	if err != nil {
@@ -37,24 +41,26 @@ func (l *FindTagListLogic) FindTagList(req *types.TagQueryReq) (resp *types.Page
 
 	list := make([]*types.Tag, 0)
 	for _, v := range out.List {
-		m := ConvertTagTypes(v)
-		list = append(list, m)
+		list = append(list, &types.Tag{
+			Id:           v.Id,
+			TagName:      v.TagName,
+			ArticleCount: v.ArticleCount,
+			CreatedAt:    v.CreatedAt,
+			UpdatedAt:    v.UpdatedAt,
+		})
+	}
+
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+		PageName: "标签",
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = req.Page
-	resp.PageSize = req.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertTagTypes(in *articlerpc.TagDetails) (out *types.Tag) {
-	return &types.Tag{
-		Id:           in.Id,
-		TagName:      in.TagName,
-		ArticleCount: in.ArticleCount,
-		CreatedAt:    in.CreatedAt,
-		UpdatedAt:    in.UpdatedAt,
-	}
 }

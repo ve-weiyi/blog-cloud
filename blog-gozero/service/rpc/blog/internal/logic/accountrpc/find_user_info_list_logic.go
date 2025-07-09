@@ -26,20 +26,15 @@ func NewFindUserInfoListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 查找用户信息列表
 func (l *FindUserInfoListLogic) FindUserInfoList(in *accountrpc.FindUserListReq) (*accountrpc.FindUserInfoListResp, error) {
-	page, size, sorts, conditions, params := convertQuery(in)
+	page, size, sorts, conditions, params := convertUserQuery(in)
 
-	result, err := l.svcCtx.TUserModel.FindList(l.ctx, page, size, sorts, conditions, params...)
-	if err != nil {
-		return nil, err
-	}
-
-	total, err := l.svcCtx.TUserModel.FindCount(l.ctx, conditions, params...)
+	records, total, err := l.svcCtx.TUserModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
 		return nil, err
 	}
 
 	var uids []string
-	for _, item := range result {
+	for _, item := range records {
 		uids = append(uids, item.UserId)
 	}
 
@@ -63,7 +58,7 @@ func (l *FindUserInfoListLogic) FindUserInfoList(in *accountrpc.FindUserListReq)
 	}
 
 	var list []*accountrpc.UserInfoResp
-	for _, item := range result {
+	for _, item := range records {
 
 		var roles []*model.TRole
 		ur, _ := ursMap[item.UserId]
@@ -80,7 +75,11 @@ func (l *FindUserInfoListLogic) FindUserInfoList(in *accountrpc.FindUserListReq)
 	}
 
 	resp := &accountrpc.FindUserInfoListResp{}
-	resp.Total = total
+	resp.Pagination = &accountrpc.PageResp{
+		Page:     int64(page),
+		PageSize: int64(size),
+		Total:    total,
+	}
 	resp.List = list
 
 	return resp, nil

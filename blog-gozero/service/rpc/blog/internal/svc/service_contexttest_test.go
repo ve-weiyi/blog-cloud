@@ -29,7 +29,6 @@ func TestInitEmailDeliver(t *testing.T) {
 		To:      []string{"791422171@qq.com"},
 		Subject: "测试邮件标题",
 		Content: "测试邮件内容",
-		Type:    0,
 	}
 
 	err := sv.EmailDeliver.DeliveryEmail(msg)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,36 +27,34 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TTag) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TTag, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TTag, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TTag, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TTag, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TTag, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TTag, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TTag, total int64, err error)
 		// add extra method in here
 		FindOneByTagName(ctx context.Context, tag_name string) (out *TTag, err error)
 	}
 
 	// 表字段定义
 	TTag struct {
-		Id        int64     `json:"id" gorm:"column:id" `                 // id
-		TagName   string    `json:"tag_name" gorm:"column:tag_name" `     // 标签名
-		CreatedAt time.Time `json:"created_at" gorm:"column:created_at" ` // 创建时间
-		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at" ` // 更新时间
+		Id        int64     `json:"id" gorm:"column:id"`                 // id
+		TagName   string    `json:"tag_name" gorm:"column:tag_name"`     // 标签名
+		CreatedAt time.Time `json:"created_at" gorm:"column:created_at"` // 创建时间
+		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at"` // 更新时间
 	}
 
 	// 接口实现
 	defaultTTagModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTTagModel(db *gorm.DB, cache *redis.Client) TTagModel {
+func NewTTagModel(db *gorm.DB) TTagModel {
 	return &defaultTTagModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_tag`",
+		DbEngin: db,
+		table:   "`t_tag`",
 	}
 }
 
@@ -67,7 +64,7 @@ func (m *defaultTTagModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTTagModel) WithTransaction(tx *gorm.DB) (out TTagModel) {
-	return NewTTagModel(tx, m.CacheEngin)
+	return NewTTagModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -162,7 +159,7 @@ func (m *defaultTTagModel) Save(ctx context.Context, in *TTag) (rows int64, err 
 }
 
 // 查询记录
-func (m *defaultTTagModel) FindOne(ctx context.Context, id int64) (out *TTag, err error) {
+func (m *defaultTTagModel) FindById(ctx context.Context, id int64) (out *TTag, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -174,7 +171,7 @@ func (m *defaultTTagModel) FindOne(ctx context.Context, id int64) (out *TTag, er
 }
 
 // 查询记录
-func (m *defaultTTagModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TTag, err error) {
+func (m *defaultTTagModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TTag, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -186,23 +183,8 @@ func (m *defaultTTagModel) First(ctx context.Context, conditions string, args ..
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTTagModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TTag{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -221,8 +203,24 @@ func (m *defaultTTagModel) FindALL(ctx context.Context, conditions string, args 
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTTagModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTTagModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TTag, err error) {
+func (m *defaultTTagModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TTag, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -236,6 +234,11 @@ func (m *defaultTTagModel) FindList(ctx context.Context, page int, size int, sor
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -246,10 +249,10 @@ func (m *defaultTTagModel) FindList(ctx context.Context, page int, size int, sor
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

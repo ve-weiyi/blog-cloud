@@ -1,42 +1,214 @@
-[go操作RabbitMQ](https://www.topgoer.com/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C/go%E6%93%8D%E4%BD%9CRabbitMQ/Topic%E6%A8%A1%E5%BC%8F.html)
-[amqp官方go例子](https://github.com/rabbitmq/rabbitmq-tutorials/blob/main/go/README.md)
+# RabbitMQ 队列模式详解
 
-RabbitMQ支持多种消息传递模式，每种模式都适用于不同的应用场景。以下是几种常见的RabbitMQ模式：
+## 1. 简介
 
-1. 点对点模式（Point-to-Point）：
-   - 在点对点模式中，一个生产者将消息发送到一个队列，然后一个消费者从该队列中接收并处理消息。
-   - 每个消息只能被一个消费者接收，确保每个消息只有一个处理者。
-   - 这种模式适用于任务分发和排队处理的场景。
+RabbitMQ 是一个功能强大的消息代理，支持多种消息传递模式。本文档详细介绍了 RabbitMQ 的各种队列模式及其应用场景。
 
-2. 工作队列模式（Work Queues）：
-   - 工作队列模式也被称为任务队列模式，多个消费者共享一个队列，并竞争消费队列中的消息。
-   - 每个消息只能被一个消费者接收和处理。
-   - 这种模式适用于任务分发和负载均衡的场景。
-   - Work模式和Simple模式相比代码并没有发生变化只是多了一个消费者
-   
-3. 发布/订阅模式（Publish/Subscribe）：
-   (订阅模式，一个消息被多个消费者获取，消息被路由投递给多个队列)
-   - 在发布/订阅模式中，一个生产者将消息发布到一个交换机（Exchange），然后交换机将消息广播给绑定到它上面的所有队列。
-   - 每个队列都有自己的消费者，它们订阅了交换机上的消息。
-   - 这种模式适用于广播消息和多个消费者同时接收消息的场景。
+## 2. 基础概念
 
-4. 路由模式（Routing）：
-   (路由模式，一个消息被多个消费者获取，并且消息的目标队列可被生产者指定)
-   - 消息生产者将消息发送给交换机按照路由判断,交换机根据路由的key,只能匹配上路由key对应的消息队列,对应的消费者才能消费消息;
-   - 根据业务功能定义路由字符串
-   - 从系统的代码逻辑中获取对应的功能字符串,将消息任务扔到对应的队列中业务场景:error 通知;EXCEPTION;错误通知的功能;传统意义的错误通知;客户通知;
-   - 利用key路由,可以将程序中的错误封装成消息传入到消息队列中,开发者可以自定义消费者,实时接收错误;
-   
-5. 主题模式（Topic）：
-   (话题模式，一个消息被多个消费者获取，消息的目标queue可用BindingKey以通配符，（#：一个或多个词，*：一个词）的方式指定)
-   - 在主题模式中，消息的发布者将消息发送到一个交换机，并指定一个主题（Topic）作为消息的路由键，交换机根据key的规则模糊匹配到对应的队列,由队列的监听消费者接收消息消费。
-   - 消费者可以根据主题模式匹配规则来订阅感兴趣的消息。
-   - 主题模式使用通配符匹配来选择性地将消息发送给不同的队列和消费者。
-   - 这种模式适用于灵活的消息路由和选择性消费的场景。
+- **Exchange（交换机）**：消息路由的核心组件，负责将消息分发到队列
+- **Queue（队列）**：存储消息的容器
+- **Binding（绑定）**：连接交换机和队列的规则
+- **Routing Key（路由键）**：用于消息路由的关键字
 
-6. RPC模式（Remote Procedure Call）：
-   - RPC模式允许客户端应用程序向远程服务器发送请求，并等待服务器返回结果。
-   - RPC模式使用了请求-响应模式，客户端发送请求消息到一个队列，服务器接收并处理请求，并将结果发送回客户端指定的队列。
-   - 这种模式适用于远程调用和请求-响应的场景。
+## 3. 队列模式详解
 
-每种模式都有其特定的优势和适用场景，根据具体需求选择合适的模式可以更好地满足应用程序的需求。
+### 3.1 点对点模式（Point-to-Point）
+
+**特点**：
+
+- 一对一消息传递
+- 消息只能被一个消费者接收
+- 保证消息处理的顺序性
+
+**应用场景**：
+
+- 任务分发
+- 订单处理
+- 日志处理
+
+**代码示例**：
+
+```go
+// 创建简单队列
+queue := &rabbitmqx.QueueOptions{
+Name:    "simple_queue",
+Durable: true,
+}
+
+// 发送消息
+producer := rabbitmqx.NewRabbitmqProducer(conn)
+producer.PublishMessage(ctx, []byte("Hello World"))
+```
+
+### 3.2 工作队列模式（Work Queues）
+
+**特点**：
+
+- 多个消费者共享一个队列
+- 消息只能被一个消费者处理
+- 支持负载均衡
+
+**应用场景**：
+
+- 异步任务处理
+- 邮件发送
+- 文件处理
+
+**代码示例**：
+
+```go
+// 创建消费者
+consumer := rabbitmqx.NewRabbitmqConsumer(conn,
+rabbitmqx.WithConsumerQueue("work_queue"),
+rabbitmqx.WithConsumerAutoAck(false),
+)
+
+// 处理消息
+consumer.SubscribeMessage(func (ctx context.Context, msg []byte) error {
+// 处理消息逻辑
+return nil
+})
+```
+
+### 3.3 发布/订阅模式（Publish/Subscribe）
+
+**特点**：
+
+- 一个消息可以被多个消费者接收
+- 使用 fanout 类型的交换机
+- 消息广播机制
+
+**应用场景**：
+
+- 系统通知
+- 实时数据同步
+- 日志广播
+
+**代码示例**：
+
+```go
+// 创建交换机
+exchange := &rabbitmqx.ExchangeOptions{
+Name:    "fanout_exchange",
+Kind:    rabbitmqx.ExchangeTypeFanout,
+Durable: true,
+}
+
+// 发布消息
+producer := rabbitmqx.NewRabbitmqProducer(conn,
+rabbitmqx.WithPublisherExchange(exchange.Name),
+)
+```
+
+### 3.4 路由模式（Routing）
+
+**特点**：
+
+- 基于路由键进行消息分发
+- 使用 direct 类型的交换机
+- 精确匹配路由规则
+
+**应用场景**：
+
+- 错误日志处理
+- 系统告警
+- 分类消息处理
+
+**代码示例**：
+
+```go
+// 创建路由绑定
+binding := &rabbitmqx.BindingOptions{
+RoutingKey: "error.log",
+}
+
+// 订阅特定路由的消息
+consumer := rabbitmqx.NewRabbitmqConsumer(conn,
+rabbitmqx.WithConsumerQueue("error_queue"),
+)
+```
+
+### 3.5 主题模式（Topic）
+
+**特点**：
+
+- 支持通配符匹配
+- 使用 topic 类型的交换机
+- 灵活的消息路由
+
+**应用场景**：
+
+- 聊天室消息
+- 实时数据过滤
+- 多级消息分类
+
+**代码示例**：
+
+```go
+// 创建主题交换机
+exchange := &rabbitmqx.ExchangeOptions{
+Name:    "topic_exchange",
+Kind:    rabbitmqx.ExchangeTypeTopic,
+Durable: true,
+}
+
+// 订阅特定主题
+binding := &rabbitmqx.BindingOptions{
+RoutingKey: "chat.room.*",
+}
+```
+
+### 3.6 RPC模式（Remote Procedure Call）
+
+**特点**：
+
+- 请求-响应模式
+- 支持同步调用
+- 消息关联性
+
+**应用场景**：
+
+- 远程服务调用
+- 分布式计算
+- 服务间通信
+
+## 4. 性能优化建议
+
+1. **队列配置优化**：
+   - 合理设置队列持久化
+   - 控制队列长度
+   - 配置死信队列
+
+2. **消息处理优化**：
+   - 批量处理消息
+   - 合理设置消息确认机制
+   - 控制消息大小
+
+3. **集群配置**：
+   - 合理规划节点数量
+   - 配置镜像队列
+   - 监控系统资源
+
+## 5. 最佳实践
+
+1. **消息可靠性**：
+   - 启用消息持久化
+   - 使用消息确认机制
+   - 实现重试机制
+
+2. **错误处理**：
+   - 实现死信队列
+   - 记录错误日志
+   - 监控异常情况
+
+3. **监控告警**：
+   - 监控队列长度
+   - 监控消息处理延迟
+   - 设置告警阈值
+
+## 6. 参考资料
+
+- [RabbitMQ 官方文档](https://www.rabbitmq.com/documentation.html)
+- [RabbitMQ 中文文档](https://rabbitmq.mr-ping.com/)
+- [AMQP 协议规范](https://www.amqp.org/)

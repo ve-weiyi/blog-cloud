@@ -25,7 +25,7 @@ func NewGetArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArt
 	}
 }
 
-func (l *GetArticleLogic) GetArticle(req *types.IdReq) (resp *types.ArticleBackDTO, err error) {
+func (l *GetArticleLogic) GetArticle(req *types.IdReq) (resp *types.ArticleBackVO, err error) {
 	in := &articlerpc.IdReq{
 		Id: req.Id,
 	}

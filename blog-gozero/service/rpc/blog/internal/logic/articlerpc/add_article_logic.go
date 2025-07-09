@@ -3,6 +3,7 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
@@ -25,10 +26,23 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 }
 
 // 创建文章
-func (l *AddArticleLogic) AddArticle(in *articlerpc.ArticleNewReq) (*articlerpc.ArticleDetails, error) {
+func (l *AddArticleLogic) AddArticle(in *articlerpc.ArticleNewReq) (*articlerpc.ArticlePreview, error) {
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
 
-	entity := convertArticleIn(in)
+	entity := &model.TArticle{
+		Id:             in.Id,
+		UserId:         in.UserId,
+		CategoryId:     0,
+		ArticleCover:   in.ArticleCover,
+		ArticleTitle:   in.ArticleTitle,
+		ArticleContent: in.ArticleContent,
+		ArticleType:    in.ArticleType,
+		OriginalUrl:    in.OriginalUrl,
+		IsTop:          constant.ArticleIsTopNo,
+		IsDelete:       constant.ArticleIsDeleteNo,
+		Status:         in.Status,
+		LikeCount:      0,
+	}
 
 	// 插入文章分类
 	categoryId, err := helper.findOrAddCategory(in.CategoryName)
@@ -59,5 +73,5 @@ func (l *AddArticleLogic) AddArticle(in *articlerpc.ArticleNewReq) (*articlerpc.
 	l.svcCtx.TArticleTagModel.Deletes(l.ctx, "article_id = ?", entity.Id)
 	l.svcCtx.TArticleTagModel.Inserts(l.ctx, ats...)
 
-	return &articlerpc.ArticleDetails{}, nil
+	return helper.convertArticlePreviewOut(entity), nil
 }

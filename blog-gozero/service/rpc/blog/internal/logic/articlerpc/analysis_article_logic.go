@@ -24,7 +24,7 @@ func NewAnalysisArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 }
 
 // 查询文章数量
-func (l *AnalysisArticleLogic) AnalysisArticle(in *articlerpc.EmptyReq) (*articlerpc.AnalysisArticleResp, error) {
+func (l *AnalysisArticleLogic) AnalysisArticle(in *articlerpc.AnalysisArticleReq) (*articlerpc.AnalysisArticleResp, error) {
 	ac, err := l.svcCtx.TArticleModel.FindCount(l.ctx, "")
 	if err != nil {
 		return nil, err
@@ -40,10 +40,61 @@ func (l *AnalysisArticleLogic) AnalysisArticle(in *articlerpc.EmptyReq) (*articl
 		return nil, err
 	}
 
+	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
+
+	cl, err := l.svcCtx.TCategoryModel.FindALL(l.ctx, "")
+	if err != nil {
+		return nil, err
+	}
+
+	cds, err := helper.convertCategoryDetailsResp(cl)
+	if err != nil {
+		return nil, err
+	}
+
+	tl, err := l.svcCtx.TTagModel.FindALL(l.ctx, "")
+	if err != nil {
+		return nil, err
+	}
+
+	tds, err := helper.convertTagDetailsResp(tl)
+	if err != nil {
+		return nil, err
+	}
+
+	tops, err := helper.GetViewTopArticleList(10)
+	if err != nil {
+		return nil, err
+	}
+
+	var ars []*articlerpc.ArticlePreview
+	for _, article := range tops {
+		m := helper.convertArticlePreviewOut(article)
+		ars = append(ars, m)
+	}
+
+	daily, err := helper.GetArticleDailyStatistics()
+	if err != nil {
+		return nil, err
+	}
+
+	var ads []*articlerpc.ArticleDailyStatistics
+	for k, v := range daily {
+		m := &articlerpc.ArticleDailyStatistics{
+			Date:  k,
+			Count: v,
+		}
+		ads = append(ads, m)
+	}
+
 	out := &articlerpc.AnalysisArticleResp{
-		ArticleCount:  ac,
-		CategoryCount: cc,
-		TagCount:      tc,
+		ArticleCount:           ac,
+		CategoryCount:          cc,
+		TagCount:               tc,
+		CategoryList:           cds,
+		TagList:                tds,
+		ArticleRankList:        ars,
+		ArticleDailyStatistics: ads,
 	}
 
 	return out, nil

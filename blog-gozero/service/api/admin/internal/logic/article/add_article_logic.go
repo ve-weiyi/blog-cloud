@@ -5,6 +5,8 @@ import (
 
 	"github.com/spf13/cast"
 
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
@@ -27,37 +29,33 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 	}
 }
 
-func (l *AddArticleLogic) AddArticle(req *types.ArticleNewReq) (resp *types.ArticleBackDTO, err error) {
-	in := ConvertArticlePb(req)
-	in.UserId = cast.ToString(l.ctx.Value("uid"))
+func (l *AddArticleLogic) AddArticle(req *types.ArticleNewReq) (resp *types.ArticleBackVO, err error) {
+	in := &articlerpc.ArticleNewReq{
+		Id:             req.Id,
+		UserId:         cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		ArticleCover:   req.ArticleCover,
+		ArticleTitle:   req.ArticleTitle,
+		ArticleContent: req.ArticleContent,
+		ArticleType:    req.ArticleType,
+		OriginalUrl:    req.OriginalUrl,
+		IsTop:          req.IsTop,
+		Status:         req.Status,
+		CategoryName:   req.CategoryName,
+		TagNameList:    req.TagNameList,
+	}
+
 	out, err := l.svcCtx.ArticleRpc.AddArticle(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertArticleTypes(out)
-	return resp, nil
+	return &types.ArticleBackVO{
+		Id: out.Id,
+	}, nil
 }
 
-func ConvertArticlePb(in *types.ArticleNewReq) (out *articlerpc.ArticleNewReq) {
-	out = &articlerpc.ArticleNewReq{
-		Id:             in.Id,
-		UserId:         "",
-		ArticleCover:   in.ArticleCover,
-		ArticleTitle:   in.ArticleTitle,
-		ArticleContent: in.ArticleContent,
-		ArticleType:    in.ArticleType,
-		OriginalUrl:    in.OriginalUrl,
-		Status:         in.Status,
-		CategoryName:   in.CategoryName,
-		TagNameList:    in.TagNameList,
-	}
-
-	return
-}
-
-func ConvertArticleTypes(in *articlerpc.ArticleDetails) (out *types.ArticleBackDTO) {
-	out = &types.ArticleBackDTO{
+func ConvertArticleTypes(in *articlerpc.ArticleDetailsResp) (out *types.ArticleBackVO) {
+	out = &types.ArticleBackVO{
 		Id:             in.Id,
 		ArticleCover:   in.ArticleCover,
 		ArticleTitle:   in.ArticleTitle,

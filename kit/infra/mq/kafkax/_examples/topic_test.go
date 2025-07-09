@@ -1,6 +1,7 @@
 package _examples
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -36,7 +37,7 @@ func Test_Topic_Subscribe1(t *testing.T) {
 
 	mq := kafkax.NewKafkaConsumer(c)
 
-	mq.SubscribeMessage(func(msg []byte) error {
+	mq.SubscribeMessage(func(ctx context.Context, msg []byte) error {
 		log.Printf("1 receive message: %s", string(msg))
 		return nil
 	})
@@ -47,7 +48,7 @@ func Test_Topic_Subscribe1(t *testing.T) {
 func Test_Topic_Subscribe2(t *testing.T) {
 	mq := kafkax.NewKafkaConsumer(c)
 
-	mq.SubscribeMessage(func(msg []byte) error {
+	mq.SubscribeMessage(func(ctx context.Context, msg []byte) error {
 		log.Printf("2 receive message: %s", string(msg))
 		return nil
 	})

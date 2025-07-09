@@ -1,0 +1,55 @@
+package types
+
+type DeleteUserBindThirdPartyReq struct {
+	Platform string `json:"platform"` // 平台
+}
+
+type UpdateUserAvatarReq struct {
+	Avatar string `json:"avatar"` // 头像
+}
+
+type UpdateUserBindEmailReq struct {
+	Email      string `json:"email"`       // 邮箱
+	VerifyCode string `json:"verify_code"` // 验证码
+}
+
+type UpdateUserBindPhoneReq struct {
+	Phone      string `json:"phone"`       // 手机号
+	VerifyCode string `json:"verify_code"` // 验证码
+}
+
+type UpdateUserBindThirdPartyReq struct {
+	Platform string `json:"platform"`       // 平台
+	Code     string `json:"code"`           // 授权码
+	State    string `json:"state,optional"` // 状态
+}
+
+type UpdateUserInfoReq struct {
+	Nickname string `json:"nickname"` // 昵称
+	UserInfoExt
+}
+
+type UpdateUserPasswordReq struct {
+	OldPassword     string `json:"old_password"`     // 旧密码
+	NewPassword     string `json:"new_password"`     // 新密码
+	ConfirmPassword string `json:"confirm_password"` // 确认密码
+}
+
+type UserInfoResp struct {
+	UserId       string `json:"user_id"`       // 用户id
+	Username     string `json:"username"`      // 用户名
+	Nickname     string `json:"nickname"`      // 用户昵称
+	Avatar       string `json:"avatar"`        // 用户头像
+	Email        string `json:"email"`         // 用户邮箱
+	Phone        string `json:"phone"`         // 用户手机号
+	RegisterType string `json:"register_type"` // 注册方式
+	CreatedAt    int64  `json:"created_at"`    // 创建时间
+	UserInfoExt
+	ThirdParty []*UserThirdPartyInfo `json:"third_party"`
+}
+
+type UserLikeResp struct {
+	ArticleLikeSet []int64 `json:"article_like_set"`
+	CommentLikeSet []int64 `json:"comment_like_set"`
+	TalkLikeSet    []int64 `json:"talk_like_set"`
+}

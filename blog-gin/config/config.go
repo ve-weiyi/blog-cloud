@@ -1,65 +1,60 @@
 package config
 
 type Config struct {
-	System   SystemConf   `json:"system" yaml:"system"`
-	JWT      JWTConf      `json:"jwt" yaml:"jwt"`
-	Zap      Zap          `json:"zap" yaml:"zap"`
-	Mysql    MysqlConf    `json:"mysql" yaml:"mysql"`
-	Redis    RedisConf    `json:"redis" yaml:"redis"`
-	RabbitMQ RabbitMQConf `json:"rabbitmq" yaml:"rabbitmq"`
+	System   SystemConf   `json:"system"`
+	JWT      JWTConf      `json:"jwt"`
+	Zap      Zap          `json:"zap"`
+	Mysql    MysqlConf    `json:"mysql"`
+	Redis    RedisConf    `json:"redis"`
+	RabbitMQ RabbitMQConf `json:"rabbitmq"`
 }
 
 // 系统配置
 type SystemConf struct {
-	Version     string `json:"version" yaml:"version"`           // 程序版本
-	Env         string `json:"env" yaml:"env"`                   // 运行环境
-	Port        int    `json:"port" yaml:"port"`                 // 运行端口
-	RuntimePath string `json:"runtime-path" yaml:"runtime-path"` // 运行时目录
+	Port        int    `json:"port" example:"8080"`              // 运行端口
+	Env         string `json:"env" example:"dev"`                // 运行环境 dev、test、prod
+	Version     string `json:"version" example:"v1.0.0"`         // 程序版本
+	RuntimePath string `json:"runtime-path" example:"./runtime"` // 运行时目录
 }
 
 // jwt鉴权
 type JWTConf struct {
-	SigningKey  string `json:"signing-key" yaml:"signing-key"`   // jwt签名
-	ExpiresTime string `json:"expires-time" yaml:"expires-time"` // 过期时间
-	Issuer      string `json:"issuer" yaml:"issuer"`             // 签发者
-	Type        string `json:"type" yaml:"type"`                 // 类型 例如：Bearer
+	Secret      string `json:"secret" example:"your-secret-key"` // 加密密钥
+	ExpiresTime string `json:"expires-time" example:"7d"`        // 过期时间
 }
 
 // mysql数据库
 type MysqlConf struct {
-	Host     string `json:"host" yaml:"host"`
-	Port     string `json:"port" yaml:"port"`
-	Username string `json:"username" yaml:"username"`
-	Password string `json:"password" yaml:"password"`
-	Dbname   string `json:"dbname" yaml:"dbname"`
-	Config   string `json:"config" yaml:"config"`
+	Host     string `json:"host" example:"localhost"`
+	Port     string `json:"port" example:"3306"`
+	Username string `json:"username" example:"root"`
+	Password string `json:"password" example:"123456"`
+	Dbname   string `json:"dbname" example:"blog"`
+	Config   string `json:"config" example:"charset=utf8mb4&parseTime=True&loc=Local"`
 }
 
 // redis缓存
 type RedisConf struct {
-	Host     string `json:"host" yaml:"host"` // 服务器地址:端口
-	Port     string `json:"port" yaml:"port"`
-	Password string `json:"password" yaml:"password"` // 密码
-	DB       int    `json:"db" yaml:"db"`             // redis的哪个数据库
+	Host     string `json:"host" example:"localhost"` // 服务器地址
+	Port     string `json:"port" example:"6379"`      // 端口
+	Password string `json:"password" example:""`      // 密码
+	DB       int    `json:"db" example:"0"`           // redis的哪个数据库
 }
 
 // rabbitmq消息队列
 type RabbitMQConf struct {
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Host     string `json:"host" example:"localhost"`
+	Port     string `json:"port" example:"5672"`
+	Username string `json:"username" example:"guest"`
+	Password string `json:"password" example:"guest"`
 }
 
 type Zap struct {
-	Mode           string `json:"mode" yaml:"mode"`                       // 模式
-	Format         string `json:"format" yaml:"format"`                   // 输出
-	Level          string `json:"level" yaml:"level"`                     // 级别
-	Prefix         string `json:"prefix" yaml:"prefix"`                   // 日志前缀
-	EncodeCaller   string `json:"encode-caller" yaml:"encode-caller"`     // 编码调用者
-	EncodeColorful bool   `json:"encode-colorful" yaml:"encode-colorful"` // 编码调用者
-
-	Filename string `json:"filename" yaml:"filename"`   // 日志文件名称
-	CacheDir string `json:"cache-dir" yaml:"cache-dir"` // 日志文件夹
-	MaxAge   int    `json:"max-age" yaml:"max-age"`     // 日志留存时间
+	Level      string `json:"level" example:"debug"`
+	Mode       string `json:"mode" example:"console|file"` // console|file
+	Filename   string `json:"file_name" example:"./runtime/app.log"`
+	MaxSize    int    `json:"max_size" example:"100"`
+	MaxBackups int    `json:"max_backups" example:"3"`
+	MaxAge     int    `json:"max_age" example:"30"`
+	Compress   bool   `json:"compress" example:"true"`
 }

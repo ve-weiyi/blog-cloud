@@ -24,12 +24,17 @@ func NewAddTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTagLogi
 }
 
 // 创建标签
-func (l *AddTagLogic) AddTag(in *articlerpc.TagNewReq) (*articlerpc.TagDetails, error) {
+func (l *AddTagLogic) AddTag(in *articlerpc.TagNewReq) (*articlerpc.TagPreviewResp, error) {
 	entity := convertTagIn(in)
 	_, err := l.svcCtx.TTagModel.Insert(l.ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.TagDetails{}, nil
+	return &articlerpc.TagPreviewResp{
+		Id:        entity.Id,
+		TagName:   entity.TagName,
+		CreatedAt: entity.CreatedAt.Unix(),
+		UpdatedAt: entity.UpdatedAt.Unix(),
+	}, nil
 }

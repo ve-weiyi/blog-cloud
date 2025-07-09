@@ -25,23 +25,17 @@ func NewGetArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArt
 }
 
 // 查询文章
-func (l *GetArticleLogic) GetArticle(in *articlerpc.IdReq) (*articlerpc.ArticleDetails, error) {
+func (l *GetArticleLogic) GetArticle(in *articlerpc.IdReq) (*articlerpc.ArticleDetailsResp, error) {
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
-	record, err := l.svcCtx.TArticleModel.FindOne(l.ctx, in.Id)
+	record, err := l.svcCtx.TArticleModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	acm, err := helper.findCategoryGroupArticle([]*model.TArticle{record})
-	if err != nil {
-		return nil, err
-
-	}
-
-	atm, err := helper.findTagGroupArticle([]*model.TArticle{record})
+	acm, err := helper.convertArticleDetailsResp([]*model.TArticle{record})
 	if err != nil {
 		return nil, err
 	}
 
-	return convertArticleOut(record, acm, atm), nil
+	return acm[0], nil
 }

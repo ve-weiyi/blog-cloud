@@ -32,7 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfigRpcClient interface {
 	// 保存配置
-	SaveConfig(ctx context.Context, in *SaveConfigReq, opts ...grpc.CallOption) (*EmptyResp, error)
+	SaveConfig(ctx context.Context, in *SaveConfigReq, opts ...grpc.CallOption) (*SaveConfigResp, error)
 	// 查询配置
 	FindConfig(ctx context.Context, in *FindConfigReq, opts ...grpc.CallOption) (*FindConfigResp, error)
 }
@@ -45,8 +45,8 @@ func NewConfigRpcClient(cc grpc.ClientConnInterface) ConfigRpcClient {
 	return &configRpcClient{cc}
 }
 
-func (c *configRpcClient) SaveConfig(ctx context.Context, in *SaveConfigReq, opts ...grpc.CallOption) (*EmptyResp, error) {
-	out := new(EmptyResp)
+func (c *configRpcClient) SaveConfig(ctx context.Context, in *SaveConfigReq, opts ...grpc.CallOption) (*SaveConfigResp, error) {
+	out := new(SaveConfigResp)
 	err := c.cc.Invoke(ctx, ConfigRpc_SaveConfig_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (c *configRpcClient) FindConfig(ctx context.Context, in *FindConfigReq, opt
 // for forward compatibility
 type ConfigRpcServer interface {
 	// 保存配置
-	SaveConfig(context.Context, *SaveConfigReq) (*EmptyResp, error)
+	SaveConfig(context.Context, *SaveConfigReq) (*SaveConfigResp, error)
 	// 查询配置
 	FindConfig(context.Context, *FindConfigReq) (*FindConfigResp, error)
 	mustEmbedUnimplementedConfigRpcServer()
@@ -78,7 +78,7 @@ type ConfigRpcServer interface {
 type UnimplementedConfigRpcServer struct {
 }
 
-func (UnimplementedConfigRpcServer) SaveConfig(context.Context, *SaveConfigReq) (*EmptyResp, error) {
+func (UnimplementedConfigRpcServer) SaveConfig(context.Context, *SaveConfigReq) (*SaveConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveConfig not implemented")
 }
 func (UnimplementedConfigRpcServer) FindConfig(context.Context, *FindConfigReq) (*FindConfigResp, error) {

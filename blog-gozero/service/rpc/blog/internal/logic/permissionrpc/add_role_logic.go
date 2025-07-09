@@ -24,7 +24,7 @@ func NewAddRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRoleLo
 }
 
 // 创建角色
-func (l *AddRoleLogic) AddRole(in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetails, error) {
+func (l *AddRoleLogic) AddRole(in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetailsResp, error) {
 	entity := convertRoleIn(in)
 
 	_, err := l.svcCtx.TRoleModel.Insert(l.ctx, entity)

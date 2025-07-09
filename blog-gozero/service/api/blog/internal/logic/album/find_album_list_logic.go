@@ -7,7 +7,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 )
 
 type FindAlbumListLogic struct {
@@ -26,36 +27,39 @@ func NewFindAlbumListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 }
 
 func (l *FindAlbumListLogic) FindAlbumList(req *types.AlbumQueryReq) (resp *types.PageResp, err error) {
-	in := &photorpc.FindAlbumListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
-		Sorts:    req.Sorts,
+	in := &resourcerpc.FindAlbumListReq{
+		Paginate: &resourcerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 	}
-	out, err := l.svcCtx.PhotoRpc.FindAlbumList(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.FindAlbumList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
 	list := make([]*types.Album, 0)
 	for _, v := range out.List {
-		m := ConvertAlbumTypes(v)
-		list = append(list, m)
+		list = append(list, &types.Album{
+			Id:         v.Id,
+			AlbumName:  v.AlbumName,
+			AlbumDesc:  v.AlbumDesc,
+			AlbumCover: v.AlbumCover,
+		})
+	}
+
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+		PageName: "相册",
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = int64(len(list))
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertAlbumTypes(req *photorpc.AlbumDetails) (out *types.Album) {
-
-	return &types.Album{
-		Id:         req.Id,
-		AlbumName:  req.AlbumName,
-		AlbumDesc:  req.AlbumDesc,
-		AlbumCover: req.AlbumCover,
-	}
 }

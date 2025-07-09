@@ -2,7 +2,6 @@ syntax = "v1"
 
 import "base.api"
 
-
 type (
     Album {
         Id int64 `json:"id"`                   // 主键
@@ -10,28 +9,25 @@ type (
         AlbumDesc string `json:"album_desc"`   // 相册描述
         AlbumCover string `json:"album_cover"` // 相册封面
     }
-
     Photo {
-        Id int64 `json:"id"`                 // 主键
-        PhotoUrl string `json:"photo_url"`   // 照片地址
+        Id int64 `json:"id"`               // 主键
+        PhotoUrl string `json:"photo_url"` // 照片地址
     }
-
-
     PhotoQueryReq {
         AlbumId int64 `json:"album_id"` // 相册ID
     }
-
     AlbumQueryReq {
         PageQuery
     }
 )
 
 @server(
-    prefix: /api/v1
+    tags: "相册"
+    prefix:     /blog-api/v1
     group: album
-    middleware: SignToken
+    authType: apiKey
+    middleware: TerminalToken
 )
-
 service blog-api {
     @doc "获取相册"
     @handler GetAlbum
@@ -45,3 +41,4 @@ service blog-api {
     @handler FindPhotoList
     post /album/find_photo_list (PhotoQueryReq) returns (PageResp)
 }
+

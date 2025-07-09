@@ -3,11 +3,11 @@ package article
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindArticleListLogic struct {
@@ -27,9 +27,11 @@ func NewFindArticleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 
 func (l *FindArticleListLogic) FindArticleList(req *types.ArticleQuery) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindArticleListReq{
-		Page:         req.Page,
-		PageSize:     req.PageSize,
-		Sorts:        req.Sorts,
+		Paginate: &articlerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		ArticleTitle: req.ArticleTitle,
 		ArticleType:  req.ArticleType,
 		CategoryName: req.CategoryName,
@@ -44,16 +46,16 @@ func (l *FindArticleListLogic) FindArticleList(req *types.ArticleQuery) (resp *t
 		return nil, err
 	}
 
-	var list []*types.ArticleBackDTO
+	var list []*types.ArticleBackVO
 	for _, v := range out.List {
 		m := ConvertArticleTypes(v)
 		list = append(list, m)
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }

@@ -1,12 +1,10 @@
-
 type (
 	{{.lowerStartCamelObject}}Model interface{
 		{{.method}}
 	}
 
 	default{{.upperStartCamelObject}}Model struct {
-		DbEngin    *gorm.DB
-		{{if .withCache}}CacheEngin *redis.Client{{end}}
+		{{if .withCache}}sqlc.CachedConn{{else}}conn sqlx.SqlConn{{end}}
 		table string
 	}
 

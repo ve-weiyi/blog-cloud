@@ -2,8 +2,9 @@ package syslogrpclogic
 
 import (
 	"context"
-	"strings"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/syslogrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -28,34 +29,59 @@ func NewFindOperationLogListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *FindOperationLogListLogic) FindOperationLogList(in *syslogrpc.FindOperationLogListReq) (*syslogrpc.FindOperationLogListResp, error) {
 	page, size, sorts, conditions, params := convertOperationLogQuery(in)
 
-	result, err := l.svcCtx.TOperationLogModel.FindList(l.ctx, page, size, sorts, conditions, params...)
+	records, total, err := l.svcCtx.TOperationLogModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
 		return nil, err
 	}
 
-	count, err := l.svcCtx.TOperationLogModel.FindCount(l.ctx, conditions, params...)
-	if err != nil {
-		return nil, err
-	}
-
-	var list []*syslogrpc.OperationLogDetails
-	for _, v := range result {
+	var list []*syslogrpc.OperationLogDetailsResp
+	for _, v := range records {
 		list = append(list, convertOperationLogOut(v))
 	}
 
 	return &syslogrpc.FindOperationLogListResp{
-		List:  list,
-		Total: count,
+		List: list,
+		Pagination: &syslogrpc.PageResp{
+			Page:     int64(page),
+			PageSize: int64(size),
+			Total:    total,
+		},
 	}, nil
 }
 
 func convertOperationLogQuery(in *syslogrpc.FindOperationLogListReq) (page int, size int, sorts string, conditions string, params []any) {
-	page = int(in.Page)
-	size = int(in.PageSize)
-	sorts = strings.Join(in.Sorts, ",")
-	if sorts == "" {
-		sorts = "id desc"
+	var opts []query.Option
+	if in.Paginate != nil {
+		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
+		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
+		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
 	}
 
-	return
+	if in.Keywords != "" {
+		opts = append(opts, query.WithCondition("opt_desc = ?", "%"+in.Keywords+"%"))
+	}
+
+	return query.NewQueryBuilder(opts...).Build()
+}
+
+func convertOperationLogOut(in *model.TOperationLog) (out *syslogrpc.OperationLogDetailsResp) {
+	out = &syslogrpc.OperationLogDetailsResp{
+		Id:             in.Id,
+		UserId:         in.UserId,
+		TerminalId:     in.TerminalId,
+		IpAddress:      in.IpAddress,
+		IpSource:       in.IpSource,
+		OptModule:      in.OptModule,
+		OptDesc:        in.OptDesc,
+		RequestUri:     in.RequestUri,
+		RequestMethod:  in.RequestMethod,
+		RequestData:    in.RequestData,
+		ResponseData:   in.ResponseData,
+		ResponseStatus: in.ResponseStatus,
+		Cost:           in.Cost,
+		CreatedAt:      in.CreatedAt.Unix(),
+		UpdatedAt:      in.UpdatedAt.Unix(),
+	}
+
+	return out
 }

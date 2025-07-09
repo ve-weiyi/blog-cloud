@@ -25,11 +25,11 @@ func NewAddRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRoleLo
 	}
 }
 
-func (l *AddRoleLogic) AddRole(req *types.RoleNewReq) (resp *types.RoleBackDTO, err error) {
+func (l *AddRoleLogic) AddRole(req *types.RoleNewReq) (resp *types.RoleBackVO, err error) {
 	in := &permissionrpc.RoleNewReq{
 		Id:          req.Id,
 		ParentId:    req.ParentId,
-		RoleName:    req.RoleName,
+		RoleKey:     req.RoleKey,
 		RoleLabel:   req.RoleLabel,
 		RoleComment: req.RoleComment,
 		IsDisable:   req.IsDisable,
@@ -41,21 +41,15 @@ func (l *AddRoleLogic) AddRole(req *types.RoleNewReq) (resp *types.RoleBackDTO, 
 		return nil, err
 	}
 
-	return convertRoleTypes(out), nil
-}
-
-func convertRoleTypes(req *permissionrpc.RoleDetails) *types.RoleBackDTO {
-	out := &types.RoleBackDTO{
-		Id:          req.Id,
-		ParentId:    req.ParentId,
-		RoleName:    req.RoleName,
-		RoleLabel:   req.RoleLabel,
-		RoleComment: req.RoleComment,
-		IsDisable:   req.IsDisable,
-		IsDefault:   req.IsDefault,
-		CreatedAt:   req.CreatedAt,
-		UpdatedAt:   req.UpdatedAt,
-	}
-
-	return out
+	return &types.RoleBackVO{
+		Id:          out.Id,
+		ParentId:    out.ParentId,
+		RoleKey:     out.RoleKey,
+		RoleLabel:   out.RoleLabel,
+		RoleComment: out.RoleComment,
+		IsDisable:   out.IsDisable,
+		IsDefault:   out.IsDefault,
+		CreatedAt:   out.CreatedAt,
+		UpdatedAt:   out.UpdatedAt,
+	}, nil
 }

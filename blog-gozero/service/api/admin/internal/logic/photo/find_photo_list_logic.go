@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,28 +26,39 @@ func NewFindPhotoListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 }
 
 func (l *FindPhotoListLogic) FindPhotoList(req *types.PhotoQuery) (resp *types.PageResp, err error) {
-	in := &photorpc.FindPhotoListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
-		Sorts:    req.Sorts,
+	in := &resourcerpc.FindPhotoListReq{
+		Paginate: &resourcerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		AlbumId:  req.AlbumId,
+		IsDelete: req.IsDelete,
 	}
 
-	out, err := l.svcCtx.PhotoRpc.FindPhotoList(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.FindPhotoList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	var list []*types.PhotoBackDTO
+	var list []*types.PhotoBackVO
 	for _, v := range out.List {
-		m := ConvertPhotoTypes(v)
-		list = append(list, m)
+		list = append(list, &types.PhotoBackVO{
+			Id:        v.Id,
+			AlbumId:   v.AlbumId,
+			PhotoName: v.PhotoName,
+			PhotoDesc: v.PhotoDesc,
+			PhotoSrc:  v.PhotoSrc,
+			IsDelete:  v.IsDelete,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		})
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }

@@ -3,6 +3,7 @@ package accountrpclogic
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -25,16 +26,20 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 
 // 修改用户信息
 func (l *UpdateUserInfoLogic) UpdateUserInfo(in *accountrpc.UpdateUserInfoReq) (*accountrpc.EmptyResp, error) {
-	ui, err := l.svcCtx.TUserModel.First(l.ctx, "id = ?", in.UserId)
+	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	ui.Nickname = in.Nickname
-	ui.Avatar = in.Avatar
-	ui.Info = in.Info
+	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, userId)
+	if err != nil {
+		return nil, err
+	}
 
-	_, err = l.svcCtx.TUserModel.Save(l.ctx, ui)
+	user.Nickname = in.Nickname
+	user.Info = in.Info
+
+	_, err = l.svcCtx.TUserModel.Save(l.ctx, user)
 	if err != nil {
 		return nil, err
 	}

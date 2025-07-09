@@ -3,10 +3,11 @@ package website
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/configrpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,7 +29,7 @@ func NewGetAboutMeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAbo
 
 func (l *GetAboutMeLogic) GetAboutMe(req *types.GetAboutMeReq) (resp *types.GetAboutMeResp, err error) {
 	in := &configrpc.FindConfigReq{
-		ConfigKey: "about_me",
+		ConfigKey: constant.ConfigKeyAboutMe,
 	}
 
 	out, err := l.svcCtx.ConfigRpc.FindConfig(l.ctx, in)
@@ -37,6 +38,9 @@ func (l *GetAboutMeLogic) GetAboutMe(req *types.GetAboutMeReq) (resp *types.GetA
 	}
 
 	resp = &types.GetAboutMeResp{}
-	jsonconv.JsonToAny(out.ConfigValue, &resp)
+	err = jsonconv.JsonToAny(out.ConfigValue, &resp)
+	if err != nil {
+		return nil, err
+	}
 	return resp, nil
 }

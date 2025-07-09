@@ -37,13 +37,13 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TalkRpcClient interface {
 	// 创建说说
-	AddTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetails, error)
+	AddTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
 	// 更新说说
-	UpdateTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetails, error)
+	UpdateTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
 	// 删除说说
 	DeleteTalk(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询说说
-	GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetails, error)
+	GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
 	// 查询说说列表
 	FindTalkList(ctx context.Context, in *FindTalkListReq, opts ...grpc.CallOption) (*FindTalkListResp, error)
 	// 点赞说说
@@ -60,8 +60,8 @@ func NewTalkRpcClient(cc grpc.ClientConnInterface) TalkRpcClient {
 	return &talkRpcClient{cc}
 }
 
-func (c *talkRpcClient) AddTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetails, error) {
-	out := new(TalkDetails)
+func (c *talkRpcClient) AddTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
+	out := new(TalkDetailsResp)
 	err := c.cc.Invoke(ctx, TalkRpc_AddTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,8 +69,8 @@ func (c *talkRpcClient) AddTalk(ctx context.Context, in *TalkNewReq, opts ...grp
 	return out, nil
 }
 
-func (c *talkRpcClient) UpdateTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetails, error) {
-	out := new(TalkDetails)
+func (c *talkRpcClient) UpdateTalk(ctx context.Context, in *TalkNewReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
+	out := new(TalkDetailsResp)
 	err := c.cc.Invoke(ctx, TalkRpc_UpdateTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -87,8 +87,8 @@ func (c *talkRpcClient) DeleteTalk(ctx context.Context, in *IdsReq, opts ...grpc
 	return out, nil
 }
 
-func (c *talkRpcClient) GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetails, error) {
-	out := new(TalkDetails)
+func (c *talkRpcClient) GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
+	out := new(TalkDetailsResp)
 	err := c.cc.Invoke(ctx, TalkRpc_GetTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -128,13 +128,13 @@ func (c *talkRpcClient) FindUserLikeTalk(ctx context.Context, in *UserIdReq, opt
 // for forward compatibility
 type TalkRpcServer interface {
 	// 创建说说
-	AddTalk(context.Context, *TalkNewReq) (*TalkDetails, error)
+	AddTalk(context.Context, *TalkNewReq) (*TalkDetailsResp, error)
 	// 更新说说
-	UpdateTalk(context.Context, *TalkNewReq) (*TalkDetails, error)
+	UpdateTalk(context.Context, *TalkNewReq) (*TalkDetailsResp, error)
 	// 删除说说
 	DeleteTalk(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询说说
-	GetTalk(context.Context, *IdReq) (*TalkDetails, error)
+	GetTalk(context.Context, *IdReq) (*TalkDetailsResp, error)
 	// 查询说说列表
 	FindTalkList(context.Context, *FindTalkListReq) (*FindTalkListResp, error)
 	// 点赞说说
@@ -148,16 +148,16 @@ type TalkRpcServer interface {
 type UnimplementedTalkRpcServer struct {
 }
 
-func (UnimplementedTalkRpcServer) AddTalk(context.Context, *TalkNewReq) (*TalkDetails, error) {
+func (UnimplementedTalkRpcServer) AddTalk(context.Context, *TalkNewReq) (*TalkDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTalk not implemented")
 }
-func (UnimplementedTalkRpcServer) UpdateTalk(context.Context, *TalkNewReq) (*TalkDetails, error) {
+func (UnimplementedTalkRpcServer) UpdateTalk(context.Context, *TalkNewReq) (*TalkDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTalk not implemented")
 }
 func (UnimplementedTalkRpcServer) DeleteTalk(context.Context, *IdsReq) (*BatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTalk not implemented")
 }
-func (UnimplementedTalkRpcServer) GetTalk(context.Context, *IdReq) (*TalkDetails, error) {
+func (UnimplementedTalkRpcServer) GetTalk(context.Context, *IdReq) (*TalkDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTalk not implemented")
 }
 func (UnimplementedTalkRpcServer) FindTalkList(context.Context, *FindTalkListReq) (*FindTalkListResp, error) {

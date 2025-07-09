@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,36 +27,34 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TCategory) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TCategory, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TCategory, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TCategory, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TCategory, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TCategory, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TCategory, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TCategory, total int64, err error)
 		// add extra method in here
 		FindOneByCategoryName(ctx context.Context, category_name string) (out *TCategory, err error)
 	}
 
 	// 表字段定义
 	TCategory struct {
-		Id           int64     `json:"id" gorm:"column:id" `                       // id
-		CategoryName string    `json:"category_name" gorm:"column:category_name" ` // 分类名
-		CreatedAt    time.Time `json:"created_at" gorm:"column:created_at" `       // 创建时间
-		UpdatedAt    time.Time `json:"updated_at" gorm:"column:updated_at" `       // 更新时间
+		Id           int64     `json:"id" gorm:"column:id"`                       // id
+		CategoryName string    `json:"category_name" gorm:"column:category_name"` // 分类名
+		CreatedAt    time.Time `json:"created_at" gorm:"column:created_at"`       // 创建时间
+		UpdatedAt    time.Time `json:"updated_at" gorm:"column:updated_at"`       // 更新时间
 	}
 
 	// 接口实现
 	defaultTCategoryModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTCategoryModel(db *gorm.DB, cache *redis.Client) TCategoryModel {
+func NewTCategoryModel(db *gorm.DB) TCategoryModel {
 	return &defaultTCategoryModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_category`",
+		DbEngin: db,
+		table:   "`t_category`",
 	}
 }
 
@@ -67,7 +64,7 @@ func (m *defaultTCategoryModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTCategoryModel) WithTransaction(tx *gorm.DB) (out TCategoryModel) {
-	return NewTCategoryModel(tx, m.CacheEngin)
+	return NewTCategoryModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -162,7 +159,7 @@ func (m *defaultTCategoryModel) Save(ctx context.Context, in *TCategory) (rows i
 }
 
 // 查询记录
-func (m *defaultTCategoryModel) FindOne(ctx context.Context, id int64) (out *TCategory, err error) {
+func (m *defaultTCategoryModel) FindById(ctx context.Context, id int64) (out *TCategory, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -174,7 +171,7 @@ func (m *defaultTCategoryModel) FindOne(ctx context.Context, id int64) (out *TCa
 }
 
 // 查询记录
-func (m *defaultTCategoryModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TCategory, err error) {
+func (m *defaultTCategoryModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TCategory, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -186,23 +183,8 @@ func (m *defaultTCategoryModel) First(ctx context.Context, conditions string, ar
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTCategoryModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TCategory{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -221,8 +203,24 @@ func (m *defaultTCategoryModel) FindALL(ctx context.Context, conditions string, 
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTCategoryModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTCategoryModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TCategory, err error) {
+func (m *defaultTCategoryModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TCategory, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -236,6 +234,11 @@ func (m *defaultTCategoryModel) FindList(ctx context.Context, page int, size int
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -246,10 +249,10 @@ func (m *defaultTCategoryModel) FindList(ctx context.Context, page int, size int
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

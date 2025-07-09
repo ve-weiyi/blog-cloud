@@ -27,7 +27,7 @@ func NewUpdateUserRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 
 // 修改用户角色
 func (l *UpdateUserRoleLogic) UpdateUserRole(in *permissionrpc.UpdateUserRoleReq) (*permissionrpc.EmptyResp, error) {
-	ua, err := l.svcCtx.TUserModel.First(l.ctx, "id = ?", in.UserId)
+	ua, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
 		return nil, err
 	}

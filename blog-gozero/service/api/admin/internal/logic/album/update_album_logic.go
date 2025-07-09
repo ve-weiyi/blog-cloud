@@ -5,6 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,13 +25,31 @@ func NewUpdateAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Updat
 	}
 }
 
-func (l *UpdateAlbumLogic) UpdateAlbum(req *types.AlbumNewReq) (resp *types.AlbumBackDTO, err error) {
-	in := ConvertAlbumPb(req)
-	out, err := l.svcCtx.PhotoRpc.UpdateAlbum(l.ctx, in)
+func (l *UpdateAlbumLogic) UpdateAlbum(req *types.AlbumNewReq) (resp *types.AlbumBackVO, err error) {
+	in := &resourcerpc.AlbumNewReq{
+		Id:         req.Id,
+		AlbumName:  req.AlbumName,
+		AlbumDesc:  req.AlbumDesc,
+		AlbumCover: req.AlbumCover,
+		IsDelete:   req.IsDelete,
+		Status:     req.Status,
+	}
+
+	out, err := l.svcCtx.ResourceRpc.UpdateAlbum(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertAlbumTypes(out)
+	resp = &types.AlbumBackVO{
+		Id:         out.Id,
+		AlbumName:  out.AlbumName,
+		AlbumDesc:  out.AlbumDesc,
+		AlbumCover: out.AlbumCover,
+		IsDelete:   out.IsDelete,
+		Status:     out.Status,
+		CreatedAt:  out.CreatedAt,
+		UpdatedAt:  out.UpdatedAt,
+		PhotoCount: out.PhotoCount,
+	}
 	return resp, nil
 }

@@ -3,6 +3,7 @@ package operation_log
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/common/apiutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
@@ -27,9 +28,11 @@ func NewFindOperationLogListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *FindOperationLogListLogic) FindOperationLogList(req *types.OperationLogQuery) (resp *types.PageResp, err error) {
 	in := &syslogrpc.FindOperationLogListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
-		Sorts:    req.Sorts,
+		Paginate: &syslogrpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 	}
 
 	out, err := l.svcCtx.SyslogRpc.FindOperationLogList(l.ctx, in)
@@ -37,33 +40,42 @@ func (l *FindOperationLogListLogic) FindOperationLogList(req *types.OperationLog
 		return nil, err
 	}
 
-	var list []*types.OperationLogBackDTO
+	var uids []string
 	for _, v := range out.List {
-		m := ConvertOperationLogTypes(v)
+		uids = append(uids, v.UserId)
+	}
+
+	// 获取用户信息
+	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []*types.OperationLogBackVO
+	for _, v := range out.List {
+		m := ConvertOperationLogTypes(v, usm)
 		list = append(list, m)
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }
 
-func ConvertOperationLogTypes(in *syslogrpc.OperationLogDetails) (out *types.OperationLogBackDTO) {
+func ConvertOperationLogTypes(in *syslogrpc.OperationLogDetailsResp, usm map[string]*types.UserInfoVO) (out *types.OperationLogBackVO) {
 
-	return &types.OperationLogBackDTO{
+	out = &types.OperationLogBackVO{
 		Id:             in.Id,
 		UserId:         in.UserId,
-		Nickname:       in.Nickname,
 		IpAddress:      in.IpAddress,
 		IpSource:       in.IpSource,
 		OptModule:      in.OptModule,
 		OptDesc:        in.OptDesc,
-		RequestUrl:     in.RequestUrl,
+		RequestUri:     in.RequestUri,
 		RequestMethod:  in.RequestMethod,
-		RequestHeader:  in.RequestHeader,
 		RequestData:    in.RequestData,
 		ResponseData:   in.ResponseData,
 		ResponseStatus: in.ResponseStatus,
@@ -71,4 +83,14 @@ func ConvertOperationLogTypes(in *syslogrpc.OperationLogDetails) (out *types.Ope
 		CreatedAt:      in.CreatedAt,
 		UpdatedAt:      in.UpdatedAt,
 	}
+
+	// 用户信息
+	if in.UserId != "" {
+		user, ok := usm[in.UserId]
+		if ok && user != nil {
+			out.User = user
+		}
+	}
+
+	return out
 }

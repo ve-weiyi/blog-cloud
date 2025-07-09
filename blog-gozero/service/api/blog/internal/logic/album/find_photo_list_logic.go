@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 )
 
 type FindPhotoListLogic struct {
@@ -26,32 +26,26 @@ func NewFindPhotoListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 }
 
 func (l *FindPhotoListLogic) FindPhotoList(req *types.PhotoQueryReq) (resp *types.PageResp, err error) {
-	in := &photorpc.FindPhotoListReq{
+	in := &resourcerpc.FindPhotoListReq{
 		AlbumId: req.AlbumId,
 	}
-	out, err := l.svcCtx.PhotoRpc.FindPhotoList(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.FindPhotoList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
 	list := make([]*types.Photo, 0)
 	for _, v := range out.List {
-		m := ConvertPhotoTypes(v)
-		list = append(list, m)
+		list = append(list, &types.Photo{
+			Id:       v.Id,
+			PhotoUrl: v.PhotoSrc,
+		})
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = int64(len(list))
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertPhotoTypes(req *photorpc.PhotoDetails) (out *types.Photo) {
-
-	return &types.Photo{
-		Id:       req.Id,
-		PhotoUrl: req.PhotoSrc,
-	}
 }

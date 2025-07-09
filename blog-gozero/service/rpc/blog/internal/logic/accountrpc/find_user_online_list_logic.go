@@ -2,9 +2,9 @@ package accountrpclogic
 
 import (
 	"context"
-	"time"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -27,30 +27,25 @@ func NewFindUserOnlineListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查找在线用户列表
 func (l *FindUserOnlineListLogic) FindUserOnlineList(in *accountrpc.FindUserListReq) (*accountrpc.FindUserInfoListResp, error) {
-	page, size, sorts, conditions, params := convertQuery(in)
-	if conditions != "" {
-		conditions += " and "
+	total, err := l.svcCtx.OnlineUserService.GetOnlineUserCount(l.ctx)
+	if err != nil {
+		return nil, err
 	}
-	conditions += "login_at > logout_at and login_at > ?"
-	params = append(params, time.Now().Add(-time.Hour*24*7))
 
+	var opts []query.Option
+	if in.Paginate != nil {
+		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
+		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
+		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
+	}
+	page, size, _, _, _ := query.NewQueryBuilder(opts...).Build()
 	// 查找在线用户
-	result, err := l.svcCtx.TUserLoginHistoryModel.FindList(l.ctx, page, size, sorts, conditions, params...)
+	uids, err := l.svcCtx.OnlineUserService.GetOnlineUsers(l.ctx, in.Paginate.Page, in.Paginate.PageSize)
 	if err != nil {
 		return nil, err
 	}
 
-	total, err := l.svcCtx.TUserLoginHistoryModel.FindCount(l.ctx, conditions, params...)
-	if err != nil {
-		return nil, err
-	}
-
-	var uids []string
-	for _, item := range result {
-		uids = append(uids, item.UserId)
-	}
-
-	users, err := l.svcCtx.TUserModel.FindALL(l.ctx, "id in (?)", uids)
+	users, err := l.svcCtx.TUserModel.FindALL(l.ctx, "user_id in (?)", uids)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +87,11 @@ func (l *FindUserOnlineListLogic) FindUserOnlineList(in *accountrpc.FindUserList
 	}
 
 	resp := &accountrpc.FindUserInfoListResp{}
-	resp.Total = total
+	resp.Pagination = &accountrpc.PageResp{
+		Page:     int64(page),
+		PageSize: int64(size),
+		Total:    total,
+	}
 	resp.List = list
 
 	return resp, nil

@@ -8,15 +8,15 @@ import (
 )
 
 func TestWeibo(t *testing.T) {
-	conf := &oauth.AuthConfig{
+	conf := &oauth.OauthConfig{
 		ClientId:     "xxx",
 		ClientSecret: "xxx",
-		RedirectUri:  "https://veweiyi.cn/blog/oauth/login/weibo",
+		RedirectUri:  "https://blog.veweiyi.cn/oauth/login/weibo",
 	}
 
 	auth := NewAuthWb(conf)
 	// 获取第三方登录地址
-	url := auth.GetAuthorizeUrl("state")
+	url := auth.GetAuthLoginUrl("state")
 	log.Println("url:", url)
 
 	// 获取token信息
@@ -28,7 +28,7 @@ func TestWeibo(t *testing.T) {
 	// log.Println("refresh:", err, refresh)
 
 	// 获取用户信息
-	userInfo, err := auth.GetUserOpenInfo("1c0bde90de5b063d3cf95887ca771f12")
+	userInfo, err := auth.GetAuthUserInfo("1c0bde90de5b063d3cf95887ca771f12")
 	log.Println("userInfo:", err, userInfo)
 
 }

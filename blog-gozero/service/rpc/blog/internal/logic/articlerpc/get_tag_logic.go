@@ -24,8 +24,17 @@ func NewGetTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTagLogi
 }
 
 // 查询标签
-func (l *GetTagLogic) GetTag(in *articlerpc.IdReq) (*articlerpc.TagDetails, error) {
-	// todo: add your logic here and delete this line
+func (l *GetTagLogic) GetTag(in *articlerpc.IdReq) (*articlerpc.TagDetailsResp, error) {
+	entity, err := l.svcCtx.TTagModel.FindById(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
 
-	return &articlerpc.TagDetails{}, nil
+	return &articlerpc.TagDetailsResp{
+		Id:           entity.Id,
+		TagName:      entity.TagName,
+		CreatedAt:    entity.CreatedAt.Unix(),
+		UpdatedAt:    entity.UpdatedAt.Unix(),
+		ArticleCount: 0,
+	}, nil
 }

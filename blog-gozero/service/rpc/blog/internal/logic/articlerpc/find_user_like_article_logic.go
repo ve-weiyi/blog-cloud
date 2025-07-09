@@ -37,8 +37,8 @@ func (l *FindUserLikeArticleLogic) FindUserLikeArticle(in *articlerpc.UserIdReq)
 	}
 
 	ids := make([]int64, 0)
-	for k, _ := range result {
-		ids = append(ids, cast.ToInt64(k))
+	for _, v := range result {
+		ids = append(ids, cast.ToInt64(v))
 	}
 
 	return &articlerpc.FindLikeArticleResp{

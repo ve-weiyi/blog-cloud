@@ -1,0 +1,26 @@
+package types
+
+type PageBackVO struct {
+	Id             int64    `json:"id,optional"`     // 页面id
+	PageName       string   `json:"page_name"`       // 页面名
+	PageLabel      string   `json:"page_label"`      // 页面标签
+	PageCover      string   `json:"page_cover"`      // 页面封面
+	IsCarousel     int64    `json:"is_carousel"`     // 是否轮播
+	CarouselCovers []string `json:"carousel_covers"` // 轮播封面
+	CreatedAt      int64    `json:"created_at"`      // 创建时间
+	UpdatedAt      int64    `json:"updated_at"`      // 更新时间
+}
+
+type PageNewReq struct {
+	Id             int64    `json:"id,optional"`              // 页面id
+	PageName       string   `json:"page_name"`                // 页面名
+	PageLabel      string   `json:"page_label"`               // 页面标签
+	PageCover      string   `json:"page_cover"`               // 页面封面
+	IsCarousel     int64    `json:"is_carousel,optional"`     // 是否轮播
+	CarouselCovers []string `json:"carousel_covers,optional"` // 轮播封面
+}
+
+type PageQueryReq struct {
+	PageQuery
+	PageName string `json:"page_name,optional"` // 页面名
+}

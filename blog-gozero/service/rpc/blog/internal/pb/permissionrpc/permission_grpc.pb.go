@@ -29,16 +29,19 @@ const (
 	PermissionRpc_FindApiList_FullMethodName       = "/permissionrpc.PermissionRpc/FindApiList"
 	PermissionRpc_SyncApiList_FullMethodName       = "/permissionrpc.PermissionRpc/SyncApiList"
 	PermissionRpc_CleanApiList_FullMethodName      = "/permissionrpc.PermissionRpc/CleanApiList"
+	PermissionRpc_FindAllApi_FullMethodName        = "/permissionrpc.PermissionRpc/FindAllApi"
 	PermissionRpc_AddMenu_FullMethodName           = "/permissionrpc.PermissionRpc/AddMenu"
 	PermissionRpc_UpdateMenu_FullMethodName        = "/permissionrpc.PermissionRpc/UpdateMenu"
 	PermissionRpc_DeleteMenu_FullMethodName        = "/permissionrpc.PermissionRpc/DeleteMenu"
 	PermissionRpc_FindMenuList_FullMethodName      = "/permissionrpc.PermissionRpc/FindMenuList"
 	PermissionRpc_SyncMenuList_FullMethodName      = "/permissionrpc.PermissionRpc/SyncMenuList"
 	PermissionRpc_CleanMenuList_FullMethodName     = "/permissionrpc.PermissionRpc/CleanMenuList"
+	PermissionRpc_FindAllMenu_FullMethodName       = "/permissionrpc.PermissionRpc/FindAllMenu"
 	PermissionRpc_AddRole_FullMethodName           = "/permissionrpc.PermissionRpc/AddRole"
 	PermissionRpc_UpdateRole_FullMethodName        = "/permissionrpc.PermissionRpc/UpdateRole"
 	PermissionRpc_DeleteRole_FullMethodName        = "/permissionrpc.PermissionRpc/DeleteRole"
 	PermissionRpc_FindRoleList_FullMethodName      = "/permissionrpc.PermissionRpc/FindRoleList"
+	PermissionRpc_FindAllRole_FullMethodName       = "/permissionrpc.PermissionRpc/FindAllRole"
 	PermissionRpc_UpdateRoleMenus_FullMethodName   = "/permissionrpc.PermissionRpc/UpdateRoleMenus"
 	PermissionRpc_UpdateRoleApis_FullMethodName    = "/permissionrpc.PermissionRpc/UpdateRoleApis"
 	PermissionRpc_FindRoleResources_FullMethodName = "/permissionrpc.PermissionRpc/FindRoleResources"
@@ -53,37 +56,43 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermissionRpcClient interface {
 	// 创建接口
-	AddApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetails, error)
+	AddApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetailsResp, error)
 	// 更新接口
-	UpdateApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetails, error)
+	UpdateApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetailsResp, error)
 	// 删除接口
 	DeleteApi(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询接口列表
 	FindApiList(ctx context.Context, in *FindApiListReq, opts ...grpc.CallOption) (*FindApiListResp, error)
 	// 同步接口列表
-	SyncApiList(ctx context.Context, in *SyncApiReq, opts ...grpc.CallOption) (*BatchResp, error)
+	SyncApiList(ctx context.Context, in *SyncApiListReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 清空接口列表
-	CleanApiList(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*BatchResp, error)
+	CleanApiList(ctx context.Context, in *CleanApiListReq, opts ...grpc.CallOption) (*BatchResp, error)
+	// 查找所有接口
+	FindAllApi(ctx context.Context, in *FindAllApiReq, opts ...grpc.CallOption) (*FindApiListResp, error)
 	// 创建菜单
-	AddMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetails, error)
+	AddMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetailsResp, error)
 	// 更新菜单
-	UpdateMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetails, error)
+	UpdateMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetailsResp, error)
 	// 删除菜单
 	DeleteMenu(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询菜单列表
 	FindMenuList(ctx context.Context, in *FindMenuListReq, opts ...grpc.CallOption) (*FindMenuListResp, error)
 	// 同步菜单列表
-	SyncMenuList(ctx context.Context, in *SyncMenuReq, opts ...grpc.CallOption) (*BatchResp, error)
+	SyncMenuList(ctx context.Context, in *SyncMenuListReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 清空菜单列表
-	CleanMenuList(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*BatchResp, error)
+	CleanMenuList(ctx context.Context, in *CleanMenuListReq, opts ...grpc.CallOption) (*BatchResp, error)
+	// 查找所有菜单
+	FindAllMenu(ctx context.Context, in *FindAllMenuReq, opts ...grpc.CallOption) (*FindMenuListResp, error)
 	// 创建角色
-	AddRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetails, error)
+	AddRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetailsResp, error)
 	// 更新角色
-	UpdateRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetails, error)
+	UpdateRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetailsResp, error)
 	// 删除角色
 	DeleteRole(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询角色列表
 	FindRoleList(ctx context.Context, in *FindRoleListReq, opts ...grpc.CallOption) (*FindRoleListResp, error)
+	// 查询所有角色
+	FindAllRole(ctx context.Context, in *FindAllRoleReq, opts ...grpc.CallOption) (*FindRoleListResp, error)
 	// 更新角色菜单
 	UpdateRoleMenus(ctx context.Context, in *UpdateRoleMenusReq, opts ...grpc.CallOption) (*EmptyResp, error)
 	// 更新角色资源
@@ -108,8 +117,8 @@ func NewPermissionRpcClient(cc grpc.ClientConnInterface) PermissionRpcClient {
 	return &permissionRpcClient{cc}
 }
 
-func (c *permissionRpcClient) AddApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetails, error) {
-	out := new(ApiDetails)
+func (c *permissionRpcClient) AddApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetailsResp, error) {
+	out := new(ApiDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_AddApi_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -117,8 +126,8 @@ func (c *permissionRpcClient) AddApi(ctx context.Context, in *ApiNewReq, opts ..
 	return out, nil
 }
 
-func (c *permissionRpcClient) UpdateApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetails, error) {
-	out := new(ApiDetails)
+func (c *permissionRpcClient) UpdateApi(ctx context.Context, in *ApiNewReq, opts ...grpc.CallOption) (*ApiDetailsResp, error) {
+	out := new(ApiDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_UpdateApi_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -144,7 +153,7 @@ func (c *permissionRpcClient) FindApiList(ctx context.Context, in *FindApiListRe
 	return out, nil
 }
 
-func (c *permissionRpcClient) SyncApiList(ctx context.Context, in *SyncApiReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *permissionRpcClient) SyncApiList(ctx context.Context, in *SyncApiListReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_SyncApiList_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -153,7 +162,7 @@ func (c *permissionRpcClient) SyncApiList(ctx context.Context, in *SyncApiReq, o
 	return out, nil
 }
 
-func (c *permissionRpcClient) CleanApiList(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *permissionRpcClient) CleanApiList(ctx context.Context, in *CleanApiListReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_CleanApiList_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -162,8 +171,17 @@ func (c *permissionRpcClient) CleanApiList(ctx context.Context, in *EmptyReq, op
 	return out, nil
 }
 
-func (c *permissionRpcClient) AddMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetails, error) {
-	out := new(MenuDetails)
+func (c *permissionRpcClient) FindAllApi(ctx context.Context, in *FindAllApiReq, opts ...grpc.CallOption) (*FindApiListResp, error) {
+	out := new(FindApiListResp)
+	err := c.cc.Invoke(ctx, PermissionRpc_FindAllApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionRpcClient) AddMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetailsResp, error) {
+	out := new(MenuDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_AddMenu_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -171,8 +189,8 @@ func (c *permissionRpcClient) AddMenu(ctx context.Context, in *MenuNewReq, opts 
 	return out, nil
 }
 
-func (c *permissionRpcClient) UpdateMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetails, error) {
-	out := new(MenuDetails)
+func (c *permissionRpcClient) UpdateMenu(ctx context.Context, in *MenuNewReq, opts ...grpc.CallOption) (*MenuDetailsResp, error) {
+	out := new(MenuDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_UpdateMenu_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -198,7 +216,7 @@ func (c *permissionRpcClient) FindMenuList(ctx context.Context, in *FindMenuList
 	return out, nil
 }
 
-func (c *permissionRpcClient) SyncMenuList(ctx context.Context, in *SyncMenuReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *permissionRpcClient) SyncMenuList(ctx context.Context, in *SyncMenuListReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_SyncMenuList_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -207,7 +225,7 @@ func (c *permissionRpcClient) SyncMenuList(ctx context.Context, in *SyncMenuReq,
 	return out, nil
 }
 
-func (c *permissionRpcClient) CleanMenuList(ctx context.Context, in *EmptyReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *permissionRpcClient) CleanMenuList(ctx context.Context, in *CleanMenuListReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_CleanMenuList_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -216,8 +234,17 @@ func (c *permissionRpcClient) CleanMenuList(ctx context.Context, in *EmptyReq, o
 	return out, nil
 }
 
-func (c *permissionRpcClient) AddRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetails, error) {
-	out := new(RoleDetails)
+func (c *permissionRpcClient) FindAllMenu(ctx context.Context, in *FindAllMenuReq, opts ...grpc.CallOption) (*FindMenuListResp, error) {
+	out := new(FindMenuListResp)
+	err := c.cc.Invoke(ctx, PermissionRpc_FindAllMenu_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionRpcClient) AddRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetailsResp, error) {
+	out := new(RoleDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_AddRole_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -225,8 +252,8 @@ func (c *permissionRpcClient) AddRole(ctx context.Context, in *RoleNewReq, opts 
 	return out, nil
 }
 
-func (c *permissionRpcClient) UpdateRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetails, error) {
-	out := new(RoleDetails)
+func (c *permissionRpcClient) UpdateRole(ctx context.Context, in *RoleNewReq, opts ...grpc.CallOption) (*RoleDetailsResp, error) {
+	out := new(RoleDetailsResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_UpdateRole_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -246,6 +273,15 @@ func (c *permissionRpcClient) DeleteRole(ctx context.Context, in *IdsReq, opts .
 func (c *permissionRpcClient) FindRoleList(ctx context.Context, in *FindRoleListReq, opts ...grpc.CallOption) (*FindRoleListResp, error) {
 	out := new(FindRoleListResp)
 	err := c.cc.Invoke(ctx, PermissionRpc_FindRoleList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionRpcClient) FindAllRole(ctx context.Context, in *FindAllRoleReq, opts ...grpc.CallOption) (*FindRoleListResp, error) {
+	out := new(FindRoleListResp)
+	err := c.cc.Invoke(ctx, PermissionRpc_FindAllRole_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -320,37 +356,43 @@ func (c *permissionRpcClient) FindUserRoles(ctx context.Context, in *UserIdReq, 
 // for forward compatibility
 type PermissionRpcServer interface {
 	// 创建接口
-	AddApi(context.Context, *ApiNewReq) (*ApiDetails, error)
+	AddApi(context.Context, *ApiNewReq) (*ApiDetailsResp, error)
 	// 更新接口
-	UpdateApi(context.Context, *ApiNewReq) (*ApiDetails, error)
+	UpdateApi(context.Context, *ApiNewReq) (*ApiDetailsResp, error)
 	// 删除接口
 	DeleteApi(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询接口列表
 	FindApiList(context.Context, *FindApiListReq) (*FindApiListResp, error)
 	// 同步接口列表
-	SyncApiList(context.Context, *SyncApiReq) (*BatchResp, error)
+	SyncApiList(context.Context, *SyncApiListReq) (*BatchResp, error)
 	// 清空接口列表
-	CleanApiList(context.Context, *EmptyReq) (*BatchResp, error)
+	CleanApiList(context.Context, *CleanApiListReq) (*BatchResp, error)
+	// 查找所有接口
+	FindAllApi(context.Context, *FindAllApiReq) (*FindApiListResp, error)
 	// 创建菜单
-	AddMenu(context.Context, *MenuNewReq) (*MenuDetails, error)
+	AddMenu(context.Context, *MenuNewReq) (*MenuDetailsResp, error)
 	// 更新菜单
-	UpdateMenu(context.Context, *MenuNewReq) (*MenuDetails, error)
+	UpdateMenu(context.Context, *MenuNewReq) (*MenuDetailsResp, error)
 	// 删除菜单
 	DeleteMenu(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询菜单列表
 	FindMenuList(context.Context, *FindMenuListReq) (*FindMenuListResp, error)
 	// 同步菜单列表
-	SyncMenuList(context.Context, *SyncMenuReq) (*BatchResp, error)
+	SyncMenuList(context.Context, *SyncMenuListReq) (*BatchResp, error)
 	// 清空菜单列表
-	CleanMenuList(context.Context, *EmptyReq) (*BatchResp, error)
+	CleanMenuList(context.Context, *CleanMenuListReq) (*BatchResp, error)
+	// 查找所有菜单
+	FindAllMenu(context.Context, *FindAllMenuReq) (*FindMenuListResp, error)
 	// 创建角色
-	AddRole(context.Context, *RoleNewReq) (*RoleDetails, error)
+	AddRole(context.Context, *RoleNewReq) (*RoleDetailsResp, error)
 	// 更新角色
-	UpdateRole(context.Context, *RoleNewReq) (*RoleDetails, error)
+	UpdateRole(context.Context, *RoleNewReq) (*RoleDetailsResp, error)
 	// 删除角色
 	DeleteRole(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询角色列表
 	FindRoleList(context.Context, *FindRoleListReq) (*FindRoleListResp, error)
+	// 查询所有角色
+	FindAllRole(context.Context, *FindAllRoleReq) (*FindRoleListResp, error)
 	// 更新角色菜单
 	UpdateRoleMenus(context.Context, *UpdateRoleMenusReq) (*EmptyResp, error)
 	// 更新角色资源
@@ -372,10 +414,10 @@ type PermissionRpcServer interface {
 type UnimplementedPermissionRpcServer struct {
 }
 
-func (UnimplementedPermissionRpcServer) AddApi(context.Context, *ApiNewReq) (*ApiDetails, error) {
+func (UnimplementedPermissionRpcServer) AddApi(context.Context, *ApiNewReq) (*ApiDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddApi not implemented")
 }
-func (UnimplementedPermissionRpcServer) UpdateApi(context.Context, *ApiNewReq) (*ApiDetails, error) {
+func (UnimplementedPermissionRpcServer) UpdateApi(context.Context, *ApiNewReq) (*ApiDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateApi not implemented")
 }
 func (UnimplementedPermissionRpcServer) DeleteApi(context.Context, *IdsReq) (*BatchResp, error) {
@@ -384,16 +426,19 @@ func (UnimplementedPermissionRpcServer) DeleteApi(context.Context, *IdsReq) (*Ba
 func (UnimplementedPermissionRpcServer) FindApiList(context.Context, *FindApiListReq) (*FindApiListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindApiList not implemented")
 }
-func (UnimplementedPermissionRpcServer) SyncApiList(context.Context, *SyncApiReq) (*BatchResp, error) {
+func (UnimplementedPermissionRpcServer) SyncApiList(context.Context, *SyncApiListReq) (*BatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncApiList not implemented")
 }
-func (UnimplementedPermissionRpcServer) CleanApiList(context.Context, *EmptyReq) (*BatchResp, error) {
+func (UnimplementedPermissionRpcServer) CleanApiList(context.Context, *CleanApiListReq) (*BatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CleanApiList not implemented")
 }
-func (UnimplementedPermissionRpcServer) AddMenu(context.Context, *MenuNewReq) (*MenuDetails, error) {
+func (UnimplementedPermissionRpcServer) FindAllApi(context.Context, *FindAllApiReq) (*FindApiListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllApi not implemented")
+}
+func (UnimplementedPermissionRpcServer) AddMenu(context.Context, *MenuNewReq) (*MenuDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddMenu not implemented")
 }
-func (UnimplementedPermissionRpcServer) UpdateMenu(context.Context, *MenuNewReq) (*MenuDetails, error) {
+func (UnimplementedPermissionRpcServer) UpdateMenu(context.Context, *MenuNewReq) (*MenuDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenu not implemented")
 }
 func (UnimplementedPermissionRpcServer) DeleteMenu(context.Context, *IdsReq) (*BatchResp, error) {
@@ -402,16 +447,19 @@ func (UnimplementedPermissionRpcServer) DeleteMenu(context.Context, *IdsReq) (*B
 func (UnimplementedPermissionRpcServer) FindMenuList(context.Context, *FindMenuListReq) (*FindMenuListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindMenuList not implemented")
 }
-func (UnimplementedPermissionRpcServer) SyncMenuList(context.Context, *SyncMenuReq) (*BatchResp, error) {
+func (UnimplementedPermissionRpcServer) SyncMenuList(context.Context, *SyncMenuListReq) (*BatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncMenuList not implemented")
 }
-func (UnimplementedPermissionRpcServer) CleanMenuList(context.Context, *EmptyReq) (*BatchResp, error) {
+func (UnimplementedPermissionRpcServer) CleanMenuList(context.Context, *CleanMenuListReq) (*BatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CleanMenuList not implemented")
 }
-func (UnimplementedPermissionRpcServer) AddRole(context.Context, *RoleNewReq) (*RoleDetails, error) {
+func (UnimplementedPermissionRpcServer) FindAllMenu(context.Context, *FindAllMenuReq) (*FindMenuListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllMenu not implemented")
+}
+func (UnimplementedPermissionRpcServer) AddRole(context.Context, *RoleNewReq) (*RoleDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddRole not implemented")
 }
-func (UnimplementedPermissionRpcServer) UpdateRole(context.Context, *RoleNewReq) (*RoleDetails, error) {
+func (UnimplementedPermissionRpcServer) UpdateRole(context.Context, *RoleNewReq) (*RoleDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
 }
 func (UnimplementedPermissionRpcServer) DeleteRole(context.Context, *IdsReq) (*BatchResp, error) {
@@ -419,6 +467,9 @@ func (UnimplementedPermissionRpcServer) DeleteRole(context.Context, *IdsReq) (*B
 }
 func (UnimplementedPermissionRpcServer) FindRoleList(context.Context, *FindRoleListReq) (*FindRoleListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindRoleList not implemented")
+}
+func (UnimplementedPermissionRpcServer) FindAllRole(context.Context, *FindAllRoleReq) (*FindRoleListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllRole not implemented")
 }
 func (UnimplementedPermissionRpcServer) UpdateRoleMenus(context.Context, *UpdateRoleMenusReq) (*EmptyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleMenus not implemented")
@@ -527,7 +578,7 @@ func _PermissionRpc_FindApiList_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _PermissionRpc_SyncApiList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncApiReq)
+	in := new(SyncApiListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -539,13 +590,13 @@ func _PermissionRpc_SyncApiList_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: PermissionRpc_SyncApiList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionRpcServer).SyncApiList(ctx, req.(*SyncApiReq))
+		return srv.(PermissionRpcServer).SyncApiList(ctx, req.(*SyncApiListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PermissionRpc_CleanApiList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyReq)
+	in := new(CleanApiListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -557,7 +608,25 @@ func _PermissionRpc_CleanApiList_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: PermissionRpc_CleanApiList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionRpcServer).CleanApiList(ctx, req.(*EmptyReq))
+		return srv.(PermissionRpcServer).CleanApiList(ctx, req.(*CleanApiListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionRpc_FindAllApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllApiReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionRpcServer).FindAllApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionRpc_FindAllApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionRpcServer).FindAllApi(ctx, req.(*FindAllApiReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -635,7 +704,7 @@ func _PermissionRpc_FindMenuList_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _PermissionRpc_SyncMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncMenuReq)
+	in := new(SyncMenuListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -647,13 +716,13 @@ func _PermissionRpc_SyncMenuList_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: PermissionRpc_SyncMenuList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionRpcServer).SyncMenuList(ctx, req.(*SyncMenuReq))
+		return srv.(PermissionRpcServer).SyncMenuList(ctx, req.(*SyncMenuListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PermissionRpc_CleanMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyReq)
+	in := new(CleanMenuListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -665,7 +734,25 @@ func _PermissionRpc_CleanMenuList_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: PermissionRpc_CleanMenuList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionRpcServer).CleanMenuList(ctx, req.(*EmptyReq))
+		return srv.(PermissionRpcServer).CleanMenuList(ctx, req.(*CleanMenuListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionRpc_FindAllMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionRpcServer).FindAllMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionRpc_FindAllMenu_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionRpcServer).FindAllMenu(ctx, req.(*FindAllMenuReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -738,6 +825,24 @@ func _PermissionRpc_FindRoleList_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionRpcServer).FindRoleList(ctx, req.(*FindRoleListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionRpc_FindAllRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionRpcServer).FindAllRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionRpc_FindAllRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionRpcServer).FindAllRole(ctx, req.(*FindAllRoleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -900,6 +1005,10 @@ var PermissionRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PermissionRpc_CleanApiList_Handler,
 		},
 		{
+			MethodName: "FindAllApi",
+			Handler:    _PermissionRpc_FindAllApi_Handler,
+		},
+		{
 			MethodName: "AddMenu",
 			Handler:    _PermissionRpc_AddMenu_Handler,
 		},
@@ -924,6 +1033,10 @@ var PermissionRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PermissionRpc_CleanMenuList_Handler,
 		},
 		{
+			MethodName: "FindAllMenu",
+			Handler:    _PermissionRpc_FindAllMenu_Handler,
+		},
+		{
 			MethodName: "AddRole",
 			Handler:    _PermissionRpc_AddRole_Handler,
 		},
@@ -938,6 +1051,10 @@ var PermissionRpc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindRoleList",
 			Handler:    _PermissionRpc_FindRoleList_Handler,
+		},
+		{
+			MethodName: "FindAllRole",
+			Handler:    _PermissionRpc_FindAllRole_Handler,
 		},
 		{
 			MethodName: "UpdateRoleMenus",

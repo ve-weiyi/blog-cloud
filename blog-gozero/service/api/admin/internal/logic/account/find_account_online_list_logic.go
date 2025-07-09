@@ -3,11 +3,11 @@ package account
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindAccountOnlineListLogic struct {
@@ -27,8 +27,11 @@ func NewFindAccountOnlineListLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.AccountQuery) (resp *types.PageResp, err error) {
 	in := &accountrpc.FindUserListReq{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		Paginate: &accountrpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		Nickname: req.Nickname,
 	}
 
@@ -37,16 +40,16 @@ func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.AccountQue
 		return nil, err
 	}
 
-	var list []*types.UserInfoResp
+	var list []*types.UserInfoDetail
 	for _, v := range out.List {
 		m := ConvertUserInfoTypes(v)
 		list = append(list, m)
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }

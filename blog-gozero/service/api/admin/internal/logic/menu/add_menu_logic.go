@@ -27,7 +27,7 @@ func NewAddMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMenuLo
 	}
 }
 
-func (l *AddMenuLogic) AddMenu(req *types.MenuNewReq) (resp *types.MenuBackDTO, err error) {
+func (l *AddMenuLogic) AddMenu(req *types.MenuNewReq) (resp *types.MenuBackVO, err error) {
 	in := ConvertMenuPb(req)
 	out, err := l.svcCtx.PermissionRpc.AddMenu(l.ctx, in)
 	if err != nil {
@@ -71,8 +71,8 @@ func ConvertMenuPb(in *types.MenuNewReq) (out *permissionrpc.MenuNewReq) {
 	return
 }
 
-func ConvertMenuTypes(in *permissionrpc.MenuDetails) (out *types.MenuBackDTO) {
-	var children []*types.MenuBackDTO
+func ConvertMenuTypes(in *permissionrpc.MenuDetailsResp) (out *types.MenuBackVO) {
+	var children []*types.MenuBackVO
 	if in.Children != nil {
 		for _, v := range in.Children {
 			children = append(children, ConvertMenuTypes(v))
@@ -82,7 +82,7 @@ func ConvertMenuTypes(in *permissionrpc.MenuDetails) (out *types.MenuBackDTO) {
 	var params []*types.MenuMetaParams
 	jsonconv.JsonToAny(in.Meta.Params, &params)
 
-	out = &types.MenuBackDTO{
+	out = &types.MenuBackVO{
 		Id:        in.Id,
 		ParentId:  in.ParentId,
 		Path:      in.Path,

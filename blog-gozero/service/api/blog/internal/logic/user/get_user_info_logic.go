@@ -5,6 +5,8 @@ import (
 
 	"github.com/spf13/cast"
 
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
@@ -32,7 +34,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInfoResp, err error) {
 	in := &accountrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value("uid")),
+		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
 	}
 
 	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, in)
@@ -40,21 +42,41 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInf
 		return nil, err
 	}
 
-	return ConvertUserInfoTypes(info), nil
-}
-
-func ConvertUserInfoTypes(in *accountrpc.UserInfoResp) (out *types.UserInfoResp) {
-	out = &types.UserInfoResp{
-		UserId:      in.UserId,
-		Username:    in.Username,
-		Nickname:    in.Nickname,
-		Avatar:      in.Avatar,
-		Email:       in.Email,
-		Phone:       in.Phone,
-		UserInfoExt: types.UserInfoExt{},
+	thp, err := l.svcCtx.AccountRpc.GetUserOauthInfo(l.ctx, in)
+	if err != nil {
+		return nil, err
 	}
 
-	jsonconv.JsonToAny(in.Info, &out.UserInfoExt)
+	return ConvertUserInfoTypes(info, thp), nil
+}
+
+func ConvertUserInfoTypes(in *accountrpc.UserInfoResp, thp *accountrpc.GetUserOauthInfoResp) (out *types.UserInfoResp) {
+	var info types.UserInfoExt
+	jsonconv.JsonToAny(in.Info, &info)
+
+	thirdParty := make([]*types.UserThirdPartyInfo, 0)
+	for _, v := range thp.List {
+		thirdParty = append(thirdParty, &types.UserThirdPartyInfo{
+			Platform:  v.Platform,
+			OpenId:    v.OpenId,
+			Nickname:  v.Nickname,
+			Avatar:    v.Avatar,
+			CreatedAt: v.CreatedAt,
+		})
+	}
+
+	out = &types.UserInfoResp{
+		UserId:       in.UserId,
+		Username:     in.Username,
+		Nickname:     in.Nickname,
+		Avatar:       in.Avatar,
+		Email:        in.Email,
+		Phone:        in.Phone,
+		RegisterType: in.RegisterType,
+		CreatedAt:    in.CreatedAt,
+		UserInfoExt:  info,
+		ThirdParty:   thirdParty,
+	}
 
 	return out
 }

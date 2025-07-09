@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,39 +27,37 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TPhoto) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TPhoto, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TPhoto, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TPhoto, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TPhoto, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TPhoto, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TPhoto, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TPhoto, total int64, err error)
 		// add extra method in here
 	}
 
 	// 表字段定义
 	TPhoto struct {
-		Id        int64     `json:"id" gorm:"column:id" `                 // 主键
-		AlbumId   int64     `json:"album_id" gorm:"column:album_id" `     // 相册id
-		PhotoName string    `json:"photo_name" gorm:"column:photo_name" ` // 照片名
-		PhotoDesc string    `json:"photo_desc" gorm:"column:photo_desc" ` // 照片描述
-		PhotoSrc  string    `json:"photo_src" gorm:"column:photo_src" `   // 照片地址
-		IsDelete  int64     `json:"is_delete" gorm:"column:is_delete" `   // 是否删除
-		CreatedAt time.Time `json:"created_at" gorm:"column:created_at" ` // 创建时间
-		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at" ` // 更新时间
+		Id        int64     `json:"id" gorm:"column:id"`                 // 主键
+		AlbumId   int64     `json:"album_id" gorm:"column:album_id"`     // 相册id
+		PhotoName string    `json:"photo_name" gorm:"column:photo_name"` // 照片名
+		PhotoDesc string    `json:"photo_desc" gorm:"column:photo_desc"` // 照片描述
+		PhotoSrc  string    `json:"photo_src" gorm:"column:photo_src"`   // 照片地址
+		IsDelete  int64     `json:"is_delete" gorm:"column:is_delete"`   // 是否删除
+		CreatedAt time.Time `json:"created_at" gorm:"column:created_at"` // 创建时间
+		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at"` // 更新时间
 	}
 
 	// 接口实现
 	defaultTPhotoModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTPhotoModel(db *gorm.DB, cache *redis.Client) TPhotoModel {
+func NewTPhotoModel(db *gorm.DB) TPhotoModel {
 	return &defaultTPhotoModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_photo`",
+		DbEngin: db,
+		table:   "`t_photo`",
 	}
 }
 
@@ -70,7 +67,7 @@ func (m *defaultTPhotoModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTPhotoModel) WithTransaction(tx *gorm.DB) (out TPhotoModel) {
-	return NewTPhotoModel(tx, m.CacheEngin)
+	return NewTPhotoModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -165,7 +162,7 @@ func (m *defaultTPhotoModel) Save(ctx context.Context, in *TPhoto) (rows int64, 
 }
 
 // 查询记录
-func (m *defaultTPhotoModel) FindOne(ctx context.Context, id int64) (out *TPhoto, err error) {
+func (m *defaultTPhotoModel) FindById(ctx context.Context, id int64) (out *TPhoto, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -177,7 +174,7 @@ func (m *defaultTPhotoModel) FindOne(ctx context.Context, id int64) (out *TPhoto
 }
 
 // 查询记录
-func (m *defaultTPhotoModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TPhoto, err error) {
+func (m *defaultTPhotoModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TPhoto, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -189,23 +186,8 @@ func (m *defaultTPhotoModel) First(ctx context.Context, conditions string, args 
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTPhotoModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TPhoto{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -224,8 +206,24 @@ func (m *defaultTPhotoModel) FindALL(ctx context.Context, conditions string, arg
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTPhotoModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTPhotoModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TPhoto, err error) {
+func (m *defaultTPhotoModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TPhoto, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -239,6 +237,11 @@ func (m *defaultTPhotoModel) FindList(ctx context.Context, page int, size int, s
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -249,10 +252,10 @@ func (m *defaultTPhotoModel) FindList(ctx context.Context, page int, size int, s
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

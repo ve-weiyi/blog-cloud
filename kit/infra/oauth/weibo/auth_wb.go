@@ -12,21 +12,21 @@ import (
 
 // 微博授权登录
 type AuthWb struct {
-	Config *oauth.AuthConfig
-	oauth.AuthOauthURL
+	Config *oauth.OauthConfig
+
+	Name           string // 第三方名称
+	AuthorizeUrl   string // 授权登录URL
+	AccessTokenUrl string // 获得访问令牌URL
+	UserInfoUrl    string // 获取用户信息URL
 }
 
-func NewAuthWb(conf *oauth.AuthConfig) *AuthWb {
-	auth := oauth.AuthOauthURL{}
-
-	auth.Name = "weibo"
-	auth.AuthorizeUrl = "https://api.weibo.com/oauth2/authorize"
-	auth.AccessTokenUrl = "https://api.weibo.com/oauth2/access_token"
-	auth.UserInfoUrl = "https://api.weibo.com/2/users/show.json"
-
+func NewAuthWb(conf *oauth.OauthConfig) *AuthWb {
 	return &AuthWb{
-		Config:       conf,
-		AuthOauthURL: auth,
+		Config:         conf,
+		Name:           "weibo",
+		AuthorizeUrl:   "https://api.weibo.com/oauth2/authorize",
+		AccessTokenUrl: "https://api.weibo.com/oauth2/access_token",
+		UserInfoUrl:    "https://api.weibo.com/2/users/show.json",
 	}
 }
 
@@ -35,9 +35,9 @@ func (a *AuthWb) GetName() string {
 }
 
 // 获取登录地址
-func (a *AuthWb) GetAuthorizeUrl(state string) string {
+func (a *AuthWb) GetAuthLoginUrl(state string) string {
 
-	url := httpx.NewClient(
+	url := httpx.NewRequest(
 		"GET",
 		a.AuthorizeUrl,
 		httpx.WithParams(map[string]string{
@@ -52,7 +52,7 @@ func (a *AuthWb) GetAuthorizeUrl(state string) string {
 }
 
 // 获取用户信息
-func (a *AuthWb) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error) {
+func (a *AuthWb) GetAuthUserInfo(code string) (resp *oauth.UserResult, err error) {
 	tk, err := a.GetAccessToken(code)
 	if err != nil {
 		return nil, err
@@ -76,8 +76,8 @@ func (a *AuthWb) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error
 // 获取token
 func (a *AuthWb) GetAccessToken(code string) (resp *TokenResult, err error) {
 
-	body, err := httpx.NewClient(
-		"GET",
+	body, err := httpx.NewRequest(
+		"POST",
 		a.AccessTokenUrl,
 		httpx.WithParams(map[string]string{
 			"client_id":     a.Config.ClientId,
@@ -86,7 +86,7 @@ func (a *AuthWb) GetAccessToken(code string) (resp *TokenResult, err error) {
 			"code":          code,
 			"grant_type":    "authorization_code",
 		}),
-	).DoRequest()
+	).Do()
 
 	if err != nil {
 		return nil, err
@@ -105,14 +105,14 @@ func (a *AuthWb) GetAccessToken(code string) (resp *TokenResult, err error) {
 // 获取第三方用户信息
 func (a *AuthWb) GetUserInfo(accessToken string, openId string) (resp *UserResult, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"GET",
 		a.UserInfoUrl,
 		httpx.WithParams(map[string]string{
 			"uid":          openId,
 			"access_token": accessToken,
 		}),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}

@@ -37,8 +37,8 @@ func (l *FindUserLikeTalkLogic) FindUserLikeTalk(in *talkrpc.UserIdReq) (*talkrp
 	}
 
 	ids := make([]int64, 0)
-	for k, _ := range result {
-		ids = append(ids, cast.ToInt64(k))
+	for _, v := range result {
+		ids = append(ids, cast.ToInt64(v))
 	}
 
 	return &talkrpc.FindLikeTalkResp{

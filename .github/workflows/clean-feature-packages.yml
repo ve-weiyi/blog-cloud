@@ -1,0 +1,41 @@
+name: Cleanup Feature Branches Packages
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # 每周日 00:00 UTC 运行
+  workflow_dispatch:      # 支持手动触发
+
+
+#on:
+#  push:
+#    branches:
+#      - feature/**  # 监听feature 分支
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    strategy:
+      matrix:
+        # 要清理的包列表（支持通配符）
+        package:
+          - 'blog-rpc'
+          - 'blog-api'
+          - 'admin-api'
+
+    steps:
+      - name: Delete old feature branch images (${{ matrix.package }})
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ matrix.package }}
+          package-type: 'container'
+
+          # 关键配置：仅清理 feature* 标签，保留最新的 5 个版本
+          ignore-versions: '^(?!feature).*'  # 跳过非 feature 开头的标签
+          min-versions-to-keep: 5            # 保留最新的 5 个 feature 版本
+
+          # 认证（推荐使用 PAT 避免权限问题）
+          token: ${{ secrets.GITHUB_TOKEN }}  # 或 secrets.PAT_WITH_PACKAGE_ACCESS

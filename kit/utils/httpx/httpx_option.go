@@ -6,13 +6,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"time"
 )
 
-// Client 表示HTTP客户端。
-type Client struct {
-	timeout time.Duration // 请求超时时间
-
+// Request 表示HTTP客户端。
+type Request struct {
 	method string // 请求方法
 	url    string // 请求URL
 
@@ -22,15 +19,14 @@ type Client struct {
 }
 
 // Option 表示用于配置HTTP客户端的函数选项。
-type Option func(*Client)
+type Option func(*Request)
 
-// NewClient 使用默认设置创建一个新的HTTP客户端。
-func NewClient(method, url string, options ...Option) *Client {
-	client := &Client{
+// NewRequest 使用默认设置创建一个新的HTTP客户端。
+func NewRequest(method, url string, options ...Option) *Request {
+	client := &Request{
 		method: method,
 		url:    url,
 
-		timeout: 30 * time.Second, // 默认超时时间
 		headers: make(map[string]string),
 		params:  make(map[string]string),
 		body:    make([]byte, 0),
@@ -44,16 +40,9 @@ func NewClient(method, url string, options ...Option) *Client {
 	return client
 }
 
-// WithTimeout 设置HTTP请求的超时时间。
-func WithTimeout(timeout time.Duration) Option {
-	return func(c *Client) {
-		c.timeout = timeout
-	}
-}
-
 // WithHeaders 设置HTTP请求的头部。
 func WithHeaders(headers map[string]string) Option {
-	return func(c *Client) {
+	return func(c *Request) {
 		for key, value := range headers {
 			c.headers[key] = value
 		}
@@ -62,7 +51,7 @@ func WithHeaders(headers map[string]string) Option {
 
 // WithParams 设置HTTP请求的参数。
 func WithParams(params map[string]string) Option {
-	return func(c *Client) {
+	return func(c *Request) {
 		for key, value := range params {
 			c.params[key] = value
 		}
@@ -71,13 +60,13 @@ func WithParams(params map[string]string) Option {
 
 // WithBody 设置HTTP请求的请求体。
 func WithBody(body []byte) Option {
-	return func(c *Client) {
+	return func(c *Request) {
 		c.body = body
 	}
 }
 
-// DoRequest 执行一个HTTP请求。
-func (c *Client) DoRequest() (respBody []byte, err error) {
+// Do 执行一个HTTP请求。
+func (c *Request) Do() (respBody []byte, err error) {
 	// 解析URL
 	uv, err := url.ParseRequestURI(c.url)
 	if err != nil {
@@ -103,10 +92,7 @@ func (c *Client) DoRequest() (respBody []byte, err error) {
 	req.URL.RawQuery = query.Encode()
 
 	// 底层HTTP客户端
-	httpClient := &http.Client{}
-
-	// 设置超时时间
-	httpClient.Timeout = c.timeout
+	//httpClient := &http.Client{}
 
 	// 执行请求
 	resp, err := httpClient.Do(req)
@@ -116,7 +102,7 @@ func (c *Client) DoRequest() (respBody []byte, err error) {
 
 	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("http request fail. url:%v, code:%d,err:%s", req.URL.String(), resp.StatusCode, resp.Status)
+		return nil, fmt.Errorf(`http response abnormal status: %s`, resp.Status)
 	}
 
 	defer resp.Body.Close()
@@ -129,7 +115,7 @@ func (c *Client) DoRequest() (respBody []byte, err error) {
 }
 
 // EncodeURL 编码URL。
-func (c *Client) EncodeURL() string {
+func (c *Request) EncodeURL() string {
 	req, err := http.NewRequest(c.method, c.url, nil)
 	if err != nil {
 		return c.url
@@ -146,7 +132,7 @@ func (c *Client) EncodeURL() string {
 }
 
 // 输出 curl
-func (c *Client) CURL() string {
+func (c *Request) CURL() string {
 	var curl string
 	curl = fmt.Sprintf("curl --location --request %s '%s'", c.method, c.url)
 

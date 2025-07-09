@@ -1,0 +1,21 @@
+package types
+
+type GetAboutMeReq struct {
+}
+
+type GetAboutMeResp struct {
+	Content string `json:"content"`
+}
+
+type GetBlogHomeInfoReq struct {
+}
+
+type GetBlogHomeInfoResp struct {
+	ArticleCount       int64           `json:"article_count"`         // 文章数量
+	CategoryCount      int64           `json:"category_count"`        // 分类数量
+	TagCount           int64           `json:"tag_count"`             // 标签数量
+	TotalUserViewCount int64           `json:"total_user_view_count"` // 总服务量
+	TotalPageViewCount int64           `json:"total_page_view_count"` // 总浏览量
+	PageList           []*PageVO       `json:"page_list"`             // 页面列表
+	WebsiteConfig      WebsiteConfigVO `json:"website_config"`        // 网站配置
+}

@@ -5,10 +5,10 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/common/apiutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 )
 
 type FindCommentRecentListLogic struct {
@@ -27,16 +27,18 @@ func NewFindCommentRecentListLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *FindCommentRecentListLogic) FindCommentRecentList(req *types.CommentQueryReq) (resp *types.PageResp, err error) {
-	in := &commentrpc.FindCommentListReq{
-		Page:       req.Page,
-		PageSize:   req.PageSize,
-		Sorts:      req.Sorts,
+	in := &messagerpc.FindCommentListReq{
+		Paginate: &messagerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		TopicId:    req.TopicId,
 		ParentId:   req.ParentId,
 		ReplyMsgId: 0,
 		Type:       req.Type,
 	}
-	out, err := l.svcCtx.CommentRpc.FindCommentList(l.ctx, in)
+	out, err := l.svcCtx.MessageRpc.FindCommentList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -48,16 +50,9 @@ func (l *FindCommentRecentListLogic) FindCommentRecentList(req *types.CommentQue
 	}
 
 	// 查询用户信息
-	users, err := l.svcCtx.AccountRpc.FindUserList(l.ctx, &accountrpc.FindUserListReq{
-		UserIds: uids,
-	})
+	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
 	if err != nil {
 		return nil, err
-	}
-
-	usm := make(map[string]*accountrpc.User)
-	for _, v := range users.List {
-		usm[v.UserId] = v
 	}
 
 	list := make([]*types.Comment, 0)
@@ -67,9 +62,9 @@ func (l *FindCommentRecentListLogic) FindCommentRecentList(req *types.CommentQue
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }

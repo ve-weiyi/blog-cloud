@@ -24,19 +24,28 @@ func NewFindArticlePreviewListLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 查询文章列表
-func (l *FindArticlePreviewListLogic) FindArticlePreviewList(in *articlerpc.FindArticlePreviewListReq) (*articlerpc.FindArticlePreviewListResp, error) {
+func (l *FindArticlePreviewListLogic) FindArticlePreviewList(in *articlerpc.FindArticleListReq) (*articlerpc.FindArticlePreviewListResp, error) {
+	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
+
+	page, size, sorts, conditions, params := helper.convertArticleQuery(in)
+
 	// 查询文章信息
-	records, err := l.svcCtx.TArticleModel.FindALL(l.ctx, "id in (?)", in.Ids)
+	records, total, err := l.svcCtx.TArticleModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
 		return nil, err
 	}
 
 	var list []*articlerpc.ArticlePreview
 	for _, v := range records {
-		list = append(list, convertArticlePreviewOut(v))
+		list = append(list, helper.convertArticlePreviewOut(v))
 	}
 
-	resp := &articlerpc.FindArticlePreviewListResp{}
-	resp.List = list
-	return resp, nil
+	return &articlerpc.FindArticlePreviewListResp{
+		List: list,
+		Pagination: &articlerpc.PageResp{
+			Page:     int64(page),
+			PageSize: int64(size),
+			Total:    total,
+		},
+	}, nil
 }

@@ -2,13 +2,17 @@ package auth
 
 import (
 	"context"
+	"time"
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
+
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,15 +34,20 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 
 func (l *LogoutLogic) Logout(req *types.EmptyReq) (resp *types.EmptyResp, err error) {
 	in := &accountrpc.LogoutReq{
-		UserId: cast.ToString(l.ctx.Value("uid")),
+		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
 	}
 
-	out, err := l.svcCtx.AccountRpc.Logout(l.ctx, in)
+	_, err = l.svcCtx.AccountRpc.Logout(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	l.svcCtx.TokenHolder.SetLogout(l.ctx, cast.ToString(l.ctx.Value("uid")), out.LogoutAt)
+	// 登录日志
+	_, err = l.svcCtx.SyslogRpc.AddLogoutLog(l.ctx, &syslogrpc.AddLogoutLogReq{
+		UserId:   cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		LogoutAt: time.Now().Unix(),
+	})
 
+	l.svcCtx.TokenHolder.RemoveToken(l.ctx, cast.ToString(l.ctx.Value(restx.HeaderUid)))
 	return &types.EmptyResp{}, nil
 }

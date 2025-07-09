@@ -1,0 +1,54 @@
+
+services:
+  # Elasticsearch - 日志存储
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.28
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - logging-network
+
+  # Kibana - 日志可视化 - https://www.elastic.co/guide/cn/kibana/current/introduction.html
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.28
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - I18N_LOCALE=zh-CN
+      - ELASTICSEARCH_USERNAME=kibana
+      - ELASTICSEARCH_PASSWORD=kibana  # 生产环境建议设置密码
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - logging-network
+
+  # Filebeat - 日志收集器
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.28
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ../../../../blog-gozero/runtime:/app/runtime:ro  # 挂载 runtime 目录
+    command: filebeat -e --strict.perms=false
+    depends_on:
+      - elasticsearch
+    networks:
+      - logging-network
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  logging-network:
+    driver: bridge

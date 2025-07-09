@@ -1,5 +1,5 @@
 package {{.pkg}}
 
-import "gorm.io/gorm"
+import "github.com/zeromicro/go-zero/core/stores/sqlx"
 
-var ErrNotFound = gorm.ErrRecordNotFound
+var ErrNotFound = sqlx.ErrNotFound

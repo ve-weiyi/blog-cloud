@@ -1,4 +1,4 @@
 
 	server.AddRoutes(
-		{{.routes}} {{.jwt}}{{.signature}} {{.prefix}} {{.timeout}} {{.maxBytes}}
+		{{.routes}} {{.jwt}}{{.signature}} {{.prefix}} {{.timeout}} {{.maxBytes}} {{.sse}}
 	)

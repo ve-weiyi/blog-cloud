@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -27,34 +26,32 @@ type (
 		// 保存
 		Save(ctx context.Context, in *TRoleApi) (rows int64, err error)
 		// 查询
-		FindOne(ctx context.Context, id int64) (out *TRoleApi, err error)
-		First(ctx context.Context, conditions string, args ...interface{}) (out *TRoleApi, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindById(ctx context.Context, id int64) (out *TRoleApi, err error)
+		FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TRoleApi, err error)
 		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TRoleApi, err error)
-		FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRoleApi, err error)
+		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
+		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRoleApi, total int64, err error)
 		// add extra method in here
 	}
 
 	// 表字段定义
 	TRoleApi struct {
-		Id     int64 `json:"id" gorm:"column:id" `           // 主键id
-		RoleId int64 `json:"role_id" gorm:"column:role_id" ` // 角色id
-		ApiId  int64 `json:"api_id" gorm:"column:api_id" `   // 接口id
+		Id     int64 `json:"id" gorm:"column:id"`           // 主键id
+		RoleId int64 `json:"role_id" gorm:"column:role_id"` // 角色id
+		ApiId  int64 `json:"api_id" gorm:"column:api_id"`   // 接口id
 	}
 
 	// 接口实现
 	defaultTRoleApiModel struct {
-		DbEngin    *gorm.DB
-		CacheEngin *redis.Client
-		table      string
+		DbEngin *gorm.DB
+		table   string
 	}
 )
 
-func NewTRoleApiModel(db *gorm.DB, cache *redis.Client) TRoleApiModel {
+func NewTRoleApiModel(db *gorm.DB) TRoleApiModel {
 	return &defaultTRoleApiModel{
-		DbEngin:    db,
-		CacheEngin: cache,
-		table:      "`t_role_api`",
+		DbEngin: db,
+		table:   "`t_role_api`",
 	}
 }
 
@@ -64,7 +61,7 @@ func (m *defaultTRoleApiModel) TableName() string {
 
 // 在事务中操作
 func (m *defaultTRoleApiModel) WithTransaction(tx *gorm.DB) (out TRoleApiModel) {
-	return NewTRoleApiModel(tx, m.CacheEngin)
+	return NewTRoleApiModel(tx)
 }
 
 // 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
@@ -159,7 +156,7 @@ func (m *defaultTRoleApiModel) Save(ctx context.Context, in *TRoleApi) (rows int
 }
 
 // 查询记录
-func (m *defaultTRoleApiModel) FindOne(ctx context.Context, id int64) (out *TRoleApi, err error) {
+func (m *defaultTRoleApiModel) FindById(ctx context.Context, id int64) (out *TRoleApi, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	err = db.Where("`id` = ?", id).First(&out).Error
@@ -171,7 +168,7 @@ func (m *defaultTRoleApiModel) FindOne(ctx context.Context, id int64) (out *TRol
 }
 
 // 查询记录
-func (m *defaultTRoleApiModel) First(ctx context.Context, conditions string, args ...interface{}) (out *TRoleApi, err error) {
+func (m *defaultTRoleApiModel) FindOne(ctx context.Context, conditions string, args ...interface{}) (out *TRoleApi, err error) {
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
 	// 如果有条件语句
@@ -183,23 +180,8 @@ func (m *defaultTRoleApiModel) First(ctx context.Context, conditions string, arg
 	if err != nil {
 		return nil, err
 	}
+
 	return out, err
-}
-
-// 查询总数
-func (m *defaultTRoleApiModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Model(&TRoleApi{}).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 // 查询列表
@@ -218,8 +200,24 @@ func (m *defaultTRoleApiModel) FindALL(ctx context.Context, conditions string, a
 	return out, err
 }
 
+// 查询总数
+func (m *defaultTRoleApiModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
+	db := m.DbEngin.WithContext(ctx).Table(m.table)
+
+	// 如果有条件语句
+	if len(conditions) != 0 {
+		db = db.Where(conditions, args...)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // 分页查询记录
-func (m *defaultTRoleApiModel) FindList(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRoleApi, err error) {
+func (m *defaultTRoleApiModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TRoleApi, total int64, err error) {
 	// 插入db
 	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
@@ -233,6 +231,11 @@ func (m *defaultTRoleApiModel) FindList(ctx context.Context, page int, size int,
 		db = db.Order(sorts)
 	}
 
+	err = db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
 	// 如果有分页参数
 	if page > 0 && size > 0 {
 		limit := size
@@ -243,10 +246,10 @@ func (m *defaultTRoleApiModel) FindList(ctx context.Context, page int, size int,
 	// 查询数据
 	err = db.Find(&list).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 // add extra method in here

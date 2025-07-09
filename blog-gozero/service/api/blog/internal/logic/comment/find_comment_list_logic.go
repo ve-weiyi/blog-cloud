@@ -5,10 +5,10 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/common/apiutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/commentrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 )
 
 type FindCommentListLogic struct {
@@ -27,10 +27,12 @@ func NewFindCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 }
 
 func (l *FindCommentListLogic) FindCommentList(req *types.CommentQueryReq) (resp *types.PageResp, err error) {
-	in := &commentrpc.FindCommentListReq{
-		Page:       req.Page,
-		PageSize:   req.PageSize,
-		Sorts:      req.Sorts,
+	in := &messagerpc.FindCommentListReq{
+		Paginate: &messagerpc.PageReq{
+			Page:     req.Page,
+			PageSize: req.PageSize,
+			Sorts:    req.Sorts,
+		},
 		TopicId:    req.TopicId,
 		ParentId:   req.ParentId,
 		ReplyMsgId: 0,
@@ -38,7 +40,7 @@ func (l *FindCommentListLogic) FindCommentList(req *types.CommentQueryReq) (resp
 	}
 
 	// 查找评论列表
-	out, err := l.svcCtx.CommentRpc.FindCommentList(l.ctx, in)
+	out, err := l.svcCtx.MessageRpc.FindCommentList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -50,16 +52,9 @@ func (l *FindCommentListLogic) FindCommentList(req *types.CommentQueryReq) (resp
 	}
 
 	// 查询用户信息
-	users, err := l.svcCtx.AccountRpc.FindUserList(l.ctx, &accountrpc.FindUserListReq{
-		UserIds: uids,
-	})
+	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
 	if err != nil {
 		return nil, err
-	}
-
-	usm := make(map[string]*accountrpc.User)
-	for _, v := range users.List {
-		usm[v.UserId] = v
 	}
 
 	// 查找评论回复列表
@@ -67,10 +62,12 @@ func (l *FindCommentListLogic) FindCommentList(req *types.CommentQueryReq) (resp
 	for _, v := range out.List {
 		m := ConvertCommentTypes(v, usm)
 		// 查询回复评论
-		reply, _ := l.svcCtx.CommentRpc.FindCommentReplyList(l.ctx, &commentrpc.FindCommentReplyListReq{
-			Page:       1,
-			PageSize:   3,
-			Sorts:      in.Sorts,
+		reply, _ := l.svcCtx.MessageRpc.FindCommentReplyList(l.ctx, &messagerpc.FindCommentReplyListReq{
+			Paginate: &messagerpc.PageReq{
+				Page:     1,
+				PageSize: 3,
+				Sorts:    []string{"created_at desc"},
+			},
 			TopicId:    req.TopicId,
 			ParentId:   v.Id,
 			ReplyMsgId: 0,
@@ -80,19 +77,19 @@ func (l *FindCommentListLogic) FindCommentList(req *types.CommentQueryReq) (resp
 		for _, r := range reply.List {
 			m.CommentReplyList = append(m.CommentReplyList, ConvertCommentReplyTypes(r, usm))
 		}
-		m.ReplyCount = reply.Total
+		m.ReplyCount = reply.Pagination.Total
 		list = append(list, m)
 	}
 
 	resp = &types.PageResp{}
-	resp.Page = in.Page
-	resp.PageSize = in.PageSize
-	resp.Total = out.Total
+	resp.Page = out.Pagination.Page
+	resp.PageSize = out.Pagination.PageSize
+	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
 }
 
-func ConvertCommentTypes(in *commentrpc.CommentDetails, usm map[string]*accountrpc.User) (out *types.Comment) {
+func ConvertCommentTypes(in *messagerpc.CommentDetailsResp, usm map[string]*types.UserInfoVO) (out *types.Comment) {
 	out = &types.Comment{
 		Id:               in.Id,
 		TopicId:          in.TopicId,
@@ -112,21 +109,21 @@ func ConvertCommentTypes(in *commentrpc.CommentDetails, usm map[string]*accountr
 	if out.UserId != "" {
 		user, ok := usm[out.UserId]
 		if ok && user != nil {
-			out.User = ConvertCommentUserInfoToPb(user)
+			out.User = user
 		}
 	}
 	// 回复用户信息
 	if out.ReplyUserId != "" {
 		user, ok := usm[out.ReplyUserId]
 		if ok && user != nil {
-			out.ReplyUser = ConvertCommentUserInfoToPb(user)
+			out.ReplyUser = user
 		}
 	}
 
 	return
 }
 
-func ConvertCommentReplyTypes(req *commentrpc.CommentDetails, usm map[string]*accountrpc.User) (out *types.CommentReply) {
+func ConvertCommentReplyTypes(req *messagerpc.CommentDetailsResp, usm map[string]*types.UserInfoVO) (out *types.CommentReply) {
 	out = &types.CommentReply{
 		Id:             req.Id,
 		TopicId:        req.TopicId,
@@ -144,25 +141,16 @@ func ConvertCommentReplyTypes(req *commentrpc.CommentDetails, usm map[string]*ac
 	if out.UserId != "" {
 		user, ok := usm[out.UserId]
 		if ok && user != nil {
-			out.User = ConvertCommentUserInfoToPb(user)
+			out.User = user
 		}
 	}
 	// 回复用户信息
 	if out.ReplyUserId != "" {
 		user, ok := usm[out.ReplyUserId]
 		if ok && user != nil {
-			out.ReplyUser = ConvertCommentUserInfoToPb(user)
+			out.ReplyUser = user
 		}
 	}
 
 	return
-}
-
-func ConvertCommentUserInfoToPb(in *accountrpc.User) (out *types.CommentUserInfo) {
-	return &types.CommentUserInfo{
-		UserId:   in.UserId,
-		Nickname: in.Nickname,
-		Avatar:   in.Avatar,
-		Website:  in.Info,
-	}
 }

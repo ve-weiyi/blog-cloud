@@ -32,9 +32,9 @@ func convertMenuIn(in *permissionrpc.MenuNewReq) (out *model.TMenu) {
 	return out
 }
 
-func convertMenuOut(in *model.TMenu) (out *permissionrpc.MenuDetails) {
+func convertMenuOut(in *model.TMenu) (out *permissionrpc.MenuDetailsResp) {
 
-	out = &permissionrpc.MenuDetails{
+	out = &permissionrpc.MenuDetailsResp{
 		Id:        in.Id,
 		ParentId:  in.ParentId,
 		Path:      in.Path,

@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/photorpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,41 +25,30 @@ func NewAddPhotoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPhoto
 	}
 }
 
-func (l *AddPhotoLogic) AddPhoto(req *types.PhotoNewReq) (resp *types.PhotoBackDTO, err error) {
-	in := ConvertPhotoPb(req)
-	out, err := l.svcCtx.PhotoRpc.AddPhoto(l.ctx, in)
+func (l *AddPhotoLogic) AddPhoto(req *types.PhotoNewReq) (resp *types.PhotoBackVO, err error) {
+	in := &resourcerpc.PhotoNewReq{
+		Id:        req.Id,
+		AlbumId:   req.AlbumId,
+		PhotoName: req.PhotoName,
+		PhotoDesc: req.PhotoDesc,
+		PhotoSrc:  req.PhotoSrc,
+		IsDelete:  req.IsDelete,
+	}
+
+	out, err := l.svcCtx.ResourceRpc.AddPhoto(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertPhotoTypes(out)
+	resp = &types.PhotoBackVO{
+		Id:        out.Id,
+		AlbumId:   out.AlbumId,
+		PhotoName: out.PhotoName,
+		PhotoDesc: out.PhotoDesc,
+		PhotoSrc:  out.PhotoSrc,
+		IsDelete:  out.IsDelete,
+		CreatedAt: out.CreatedAt,
+		UpdatedAt: out.UpdatedAt,
+	}
 	return resp, nil
-}
-
-func ConvertPhotoPb(in *types.PhotoNewReq) (out *photorpc.PhotoNewReq) {
-	out = &photorpc.PhotoNewReq{
-		Id:        in.Id,
-		AlbumId:   in.AlbumId,
-		PhotoName: in.PhotoName,
-		PhotoDesc: in.PhotoDesc,
-		PhotoSrc:  in.PhotoSrc,
-		IsDelete:  in.IsDelete,
-	}
-
-	return
-}
-
-func ConvertPhotoTypes(in *photorpc.PhotoDetails) (out *types.PhotoBackDTO) {
-	out = &types.PhotoBackDTO{
-		Id:        in.Id,
-		AlbumId:   in.AlbumId,
-		PhotoName: in.PhotoName,
-		PhotoDesc: in.PhotoDesc,
-		PhotoSrc:  in.PhotoSrc,
-		IsDelete:  in.IsDelete,
-		CreatedAt: in.CreatedAt,
-		UpdatedAt: in.UpdatedAt,
-	}
-
-	return
 }

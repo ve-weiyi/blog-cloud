@@ -28,7 +28,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 func (l *GetUserInfoLogic) GetUserInfo(in *accountrpc.UserIdReq) (*accountrpc.UserInfoResp, error) {
 	uid := in.UserId
 
-	ui, err := l.svcCtx.TUserModel.First(l.ctx, "id = ?", uid)
+	ui, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,8 @@ func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.
 	for _, role := range roles {
 		m := &accountrpc.UserRoleLabel{
 			RoleId:      role.Id,
-			RoleName:    role.RoleName,
+			RoleKey:     role.RoleKey,
+			RoleLabel:   role.RoleLabel,
 			RoleComment: role.RoleComment,
 		}
 
@@ -78,20 +79,20 @@ func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.
 	}
 
 	out = &accountrpc.UserInfoResp{
-		UserId:    in.UserId,
-		Username:  in.Username,
-		Nickname:  in.Nickname,
-		Avatar:    in.Avatar,
-		Email:     in.Email,
-		Phone:     in.Phone,
-		Info:      in.Info,
-		Status:    in.Status,
-		LoginType: in.LoginType,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		CreatedAt: in.CreatedAt.Unix(),
-		UpdatedAt: in.UpdatedAt.Unix(),
-		Roles:     list,
+		UserId:       in.UserId,
+		Username:     in.Username,
+		Nickname:     in.Nickname,
+		Avatar:       in.Avatar,
+		Email:        in.Email,
+		Phone:        in.Phone,
+		Info:         in.Info,
+		Status:       in.Status,
+		RegisterType: in.RegisterType,
+		IpAddress:    in.IpAddress,
+		IpSource:     in.IpSource,
+		CreatedAt:    in.CreatedAt.Unix(),
+		UpdatedAt:    in.UpdatedAt.Unix(),
+		Roles:        list,
 	}
 
 	return out

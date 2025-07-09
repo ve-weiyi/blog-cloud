@@ -7,7 +7,7 @@ import (
 
 func TestIP(t *testing.T) {
 
-	var ip = "119.23.144.144"
+	var ip = "46.243.122.48"
 	//var ip = "24.48.0.1"
 	baidu, err := GetIpInfoByBaidu(ip)
 	log.Println(err)

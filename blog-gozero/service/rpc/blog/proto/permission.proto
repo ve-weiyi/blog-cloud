@@ -7,9 +7,7 @@ package permissionrpc;
 // 生成 golang 代码后的包名
 option go_package = "./permissionrpc";
 
-message EmptyReq {
-}
-
+//==================== 通用消息 ====================
 message EmptyResp {
 }
 
@@ -24,12 +22,22 @@ message BatchResp {
   int64 success_count = 1;
 }
 
-message CountResp {
-  int64 count = 1;
-}
-
 message UserIdReq {
   string user_id = 1;
+}
+
+// 分页请求
+message PageReq {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  repeated string sorts = 3; // 排序字段
+}
+
+// 分页响应
+message PageResp {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  int64 total = 3;     // 总数
 }
 
 /************** rbac 权限相关 **************/
@@ -44,7 +52,7 @@ message ApiNewReq {
   repeated ApiNewReq children = 10;
 }
 
-message ApiDetails {
+message ApiDetailsResp {
   int64 id = 1;// 主键id
   int64 parent_id = 2;// 分组id
   string path = 3;// api路径
@@ -54,11 +62,12 @@ message ApiDetails {
   int64 is_disable = 7;// 是否禁用  0否 1是
   int64 created_at = 8;// 创建时间
   int64 updated_at = 9;// 更新时间
-  repeated ApiDetails children = 10;
+  repeated ApiDetailsResp children = 10;
 }
 
 message FindApiListResp {
-  repeated ApiDetails list = 1;
+  PageResp pagination = 1; // 分页信息
+  repeated ApiDetailsResp list = 2;
 }
 
 message MenuNewReq {
@@ -73,7 +82,7 @@ message MenuNewReq {
 }
 
 message MenuMeta{
-  int64 type = 11;// 菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）
+  string type = 11;// 菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）
   string title = 12;// 菜单标题
   string icon = 13;// 菜单标题
   int64 rank = 14;// 菜单排序
@@ -85,7 +94,7 @@ message MenuMeta{
   int64 is_disable = 20;// 是否禁用  0否 1是
 }
 
-message MenuDetails {
+message MenuDetailsResp {
   int64 id = 1;// 主键
   int64 parent_id = 2;// 父id
   string path = 3;// 路由路径
@@ -94,26 +103,33 @@ message MenuDetails {
   string redirect = 6;// 路由重定向
   int64 created_at = 7;// 创建时间
   int64 updated_at = 8;// 更新时间
-  repeated MenuDetails children = 10;
+  repeated MenuDetailsResp children = 10;
   MenuMeta meta = 11;
 }
 
 message FindMenuListResp {
-  repeated MenuDetails list = 1;
+  PageResp pagination = 1; // 分页信息
+  repeated MenuDetailsResp list = 2;
 }
 
-message SyncMenuReq {
+message SyncMenuListReq {
   repeated MenuNewReq menus = 1;
 }
 
-message SyncApiReq {
+message SyncApiListReq {
   repeated ApiNewReq apis = 1;
+}
+
+message CleanApiListReq {
+}
+
+message FindAllApiReq {
 }
 
 message RoleNewReq {
   int64 id = 1;// 主键id
   int64 parent_id = 2;// 父角色id
-  string role_name = 3;// 角色名
+  string role_key = 3;// 角色名
   string role_label = 4;// 角色标签
   string role_comment = 5;// 角色备注
   int64 is_disable = 6;// 是否禁用  0否 1是
@@ -122,22 +138,22 @@ message RoleNewReq {
   //  int64 updated_at = 9;// 更新时间
 }
 
-message RoleDetails {
+message RoleDetailsResp {
   int64 id = 1;// 主键id
   int64 parent_id = 2;// 父角色id
-  string role_name = 3;// 角色名
+  string role_key = 3;// 角色名
   string role_label = 4;// 角色标签
   string role_comment = 5;// 角色备注
   int64 is_disable = 6;// 是否禁用  0否 1是
   int64 is_default = 7;// 是否默认角色 0否 1是
   int64 created_at = 8;// 创建时间
   int64 updated_at = 9;// 更新时间
-  repeated RoleDetails children = 10;
+  repeated RoleDetailsResp children = 10;
 }
 
 message FindRoleListResp {
-  repeated RoleDetails list = 1;
-  int64 total = 2;
+  PageResp pagination = 1; // 分页信息
+  repeated RoleDetailsResp list = 2;
 }
 
 message RoleResourcesResp {
@@ -162,68 +178,74 @@ message UpdateUserRoleReq {
 }
 
 message FindApiListReq {
-  int64 page = 1;
-  int64 page_size = 2;
-  repeated string sorts = 3; // 排序
-  string name = 4;// api名称
-  string path = 5;// api路径
-  string method = 6;// api请求方法
+  string name = 2;// api名称
+  string path = 3;// api路径
+  string method = 4;// api请求方法
 }
 
 message FindMenuListReq {
-  int64 page = 1;
-  int64 page_size = 2;
-  repeated string sorts = 3; // 排序
-  string title = 4;// 菜单标题
-  string name = 6;// 路由名字
+  string title = 2;// 菜单标题
+  string name = 3;// 路由名字
 }
 
 message FindRoleListReq {
-  int64 page = 1;
-  int64 page_size = 2;
-  repeated string sorts = 3; // 排序
-  string role_name = 4;// 角色名
-  string role_label = 5;// 角色标签
-  int64 is_disable = 6;// 是否禁用  0否 1是
+  PageReq paginate = 1;    // 分页参数
+  string role_key = 2;// 角色名
+  string role_label = 3;// 角色标签
+  int64 is_disable = 4;// 是否禁用  0否 1是
+}
+
+message FindAllRoleReq {
+}
+
+message CleanMenuListReq {
+}
+
+message FindAllMenuReq {
 }
 
 service PermissionRpc {
   // 创建接口
-  rpc AddApi(ApiNewReq) returns(ApiDetails);
+  rpc AddApi(ApiNewReq) returns(ApiDetailsResp);
   // 更新接口
-  rpc UpdateApi(ApiNewReq) returns(ApiDetails);
+  rpc UpdateApi(ApiNewReq) returns(ApiDetailsResp);
   // 删除接口
   rpc DeleteApi(IdsReq) returns(BatchResp);
   // 查询接口列表
   rpc FindApiList(FindApiListReq) returns(FindApiListResp);
   // 同步接口列表
-  rpc SyncApiList(SyncApiReq) returns(BatchResp);
+  rpc SyncApiList(SyncApiListReq) returns(BatchResp);
   // 清空接口列表
-  rpc CleanApiList(EmptyReq) returns(BatchResp);
-
+  rpc CleanApiList(CleanApiListReq) returns(BatchResp);
+  // 查找所有接口
+  rpc FindAllApi(FindAllApiReq) returns(FindApiListResp);
 
   // 创建菜单
-  rpc AddMenu(MenuNewReq) returns(MenuDetails);
+  rpc AddMenu(MenuNewReq) returns(MenuDetailsResp);
   // 更新菜单
-  rpc UpdateMenu(MenuNewReq) returns(MenuDetails);
+  rpc UpdateMenu(MenuNewReq) returns(MenuDetailsResp);
   // 删除菜单
   rpc DeleteMenu(IdsReq) returns(BatchResp);
   // 查询菜单列表
   rpc FindMenuList(FindMenuListReq) returns(FindMenuListResp);
   // 同步菜单列表
-  rpc SyncMenuList(SyncMenuReq) returns(BatchResp);
+  rpc SyncMenuList(SyncMenuListReq) returns(BatchResp);
   // 清空菜单列表
-  rpc CleanMenuList(EmptyReq) returns(BatchResp);
+  rpc CleanMenuList(CleanMenuListReq) returns(BatchResp);
+  // 查找所有菜单
+  rpc FindAllMenu(FindAllMenuReq) returns(FindMenuListResp);
 
 
   // 创建角色
-  rpc AddRole(RoleNewReq) returns(RoleDetails);
+  rpc AddRole(RoleNewReq) returns(RoleDetailsResp);
   // 更新角色
-  rpc UpdateRole(RoleNewReq) returns(RoleDetails);
+  rpc UpdateRole(RoleNewReq) returns(RoleDetailsResp);
   // 删除角色
   rpc DeleteRole(IdsReq) returns(BatchResp);
   // 查询角色列表
   rpc FindRoleList(FindRoleListReq) returns(FindRoleListResp);
+  // 查询所有角色
+  rpc FindAllRole(FindAllRoleReq) returns(FindRoleListResp);
 
   // 更新角色菜单
   rpc UpdateRoleMenus(UpdateRoleMenusReq) returns(EmptyResp);

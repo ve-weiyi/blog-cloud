@@ -68,6 +68,23 @@ func RemoveDuplicates[S ~[]E, E comparable](s S) (ret S) {
 	return ret
 }
 
+// FindDuplicates 查找数组中的所有重复元素
+// FindDuplicates 查找切片中的所有重复元素
+func FindDuplicates[S ~[]E, E comparable](s S) (ret []E) {
+	counts := make(map[E]int) // 记录元素出现次数
+
+	for _, item := range s {
+		counts[item]++
+	}
+
+	for key, count := range counts {
+		if count > 1 {
+			ret = append(ret, key)
+		}
+	}
+	return ret
+}
+
 // MapKeys 返回映射 m 中的所有键，按任意顺序返回一个键的切片
 func MapKeys[M ~map[K]V, K comparable, V any](m M) []K {
 	keys := make([]K, 0, len(m)) // 创建一个切片，容量为映射的键数量

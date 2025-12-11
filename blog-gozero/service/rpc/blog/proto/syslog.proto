@@ -1,0 +1,217 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package syslogrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./syslogrpc";
+
+//==================== 通用消息 ====================
+message EmptyResp {
+}
+
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+message BatchResp {
+  int64 success_count = 1;
+}
+
+// 分页请求
+message PageReq {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  repeated string sorts = 3; // 排序字段
+}
+
+// 分页响应
+message PageResp {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  int64 total = 3;     // 总数
+}
+
+/************** blog 日志管理 **************/
+message LoginLogDetailsResp {
+  int64 id = 1;
+  string user_id = 2; // 用户id
+  string login_type = 3;// 登录类型
+  string app_name = 4;// 应用名称
+  string os = 5;// 操作系统
+  string browser = 6;// 浏览器
+  string ip_address = 7;// ip host
+  string ip_source = 8;// ip 源
+  int64 login_at = 9;// 登录时间
+  int64 logout_at = 10;// 登出时间
+}
+
+message LoginLogNewReq {
+  string user_id = 2; // 用户id
+  string login_type = 3;// 登录类型
+}
+
+message AddLogoutLogReq{
+  string user_id = 2; // 用户id
+  int64 logout_at = 8;// 登出时间
+}
+
+message AddLogoutLogResp{
+}
+
+message FindLoginLogListReq {
+  PageReq paginate = 1;    // 分页参数
+  string user_id = 2; // 用户id
+}
+
+message FindLoginLogListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated LoginLogDetailsResp list = 2;
+}
+
+/************** blog 日志管理 **************/
+message VisitLogDetailsResp {
+  int64 id = 1;// 主键id
+  string user_id = 2;// 用户id
+  string terminal_id = 3;// 设备id
+  string page_name = 4;// 访问页面
+  string ip_address = 5;// 操作ip
+  string ip_source = 6;// 操作地址
+  string os = 7;// 操作系统
+  string browser = 8;// 浏览器
+  int64 created_at = 15;// 创建时间
+  int64 updated_at = 16;// 更新时间
+}
+
+message VisitLogNewReq {
+  string page_name = 1;// 访问页面
+}
+
+message FindVisitLogListReq {
+  PageReq paginate = 1;    // 分页参数
+  string user_id = 2; // 用户id
+  string terminal_id = 3;// 设备id
+  string page_name = 4;// 访问页面
+}
+
+message FindVisitLogListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated VisitLogDetailsResp list = 2;
+}
+
+/************** blog 日志管理 **************/
+message OperationLogDetailsResp {
+  int64 id = 1;// 主键id
+  string user_id = 2;// 用户id
+  string terminal_id = 3;// 设备id
+  string ip_address = 4;// 操作ip
+  string ip_source = 5;// 操作地址
+  string opt_module = 6;// 操作模块
+  string opt_desc = 7;// 操作描述
+  string request_uri = 8;// 请求地址
+  string request_method = 9;// 请求方式
+  string request_data = 11;// 请求参数
+  string response_data = 12;// 返回数据
+  int64 response_status = 13;// 响应状态码
+  string cost = 14;// 耗时（ms）
+  int64 created_at = 15;// 创建时间
+  int64 updated_at = 16;// 更新时间
+}
+
+message OperationLogNewReq {
+  string user_id = 2;// 用户id
+  string terminal_id = 3;// 设备id
+  string ip_address = 4;// 操作ip
+  string ip_source = 5;// 操作地址
+  string opt_module = 6;// 操作模块
+  string opt_desc = 7;// 操作描述
+  string request_uri = 8;// 请求地址
+  string request_method = 9;// 请求方式
+  string request_data = 11;// 请求参数
+  string response_data = 12;// 返回数据
+  int64 response_status = 13;// 响应状态码
+  string cost = 14;// 耗时（ms）
+}
+
+message FindOperationLogListReq {
+  PageReq paginate = 1;    // 分页参数
+  string keywords = 2; // 关键字
+}
+
+message FindOperationLogListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated OperationLogDetailsResp list = 2;
+}
+
+
+/************** blog 上传日志管理 **************/
+message UploadLogNewReq {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 文件路径
+  string file_name = 4;// 文件名称
+  string file_type = 5;// 文件类型
+  int64 file_size = 6;// 文件大小
+  string file_md5 = 7;// 文件md5值
+  string file_url = 8;// 上传路径
+}
+
+message UploadLogDetailsResp {
+  int64 id = 1;// id
+  string user_id = 2;// 用户id
+  string file_path = 3;// 文件路径
+  string file_name = 4;// 文件名称
+  string file_type = 5;// 文件类型
+  int64 file_size = 6;// 文件大小
+  string file_md5 = 7;// 文件md5值
+  string file_url = 8;// 上传路径
+  int64 created_at = 9;// 创建时间
+  int64 updated_at = 10;// 更新时间
+}
+
+message FindUploadLogListReq {
+  PageReq paginate = 1;    // 分页参数
+  string file_path = 2;// 文件路径
+  string file_name = 3;// 文件名称
+  string file_type = 4;// 文件类型
+}
+
+message FindUploadLogListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated UploadLogDetailsResp list = 2;
+}
+
+service SyslogRpc {
+  // 创建登录记录
+  rpc AddLoginLog(LoginLogNewReq) returns(EmptyResp);
+  // 更新登录记录
+  rpc AddLogoutLog(AddLogoutLogReq) returns(AddLogoutLogResp);
+  // 批量删除登录记录
+  rpc DeletesLoginLog(IdsReq) returns(BatchResp);
+  // 查询登录记录列表
+  rpc FindLoginLogList(FindLoginLogListReq) returns(FindLoginLogListResp);
+
+  // 创建访问记录
+  rpc AddVisitLog(VisitLogNewReq) returns(EmptyResp);
+  // 批量删除访问记录
+  rpc DeletesVisitLog(IdsReq) returns(BatchResp);
+  // 查询操作访问列表
+  rpc FindVisitLogList(FindVisitLogListReq) returns(FindVisitLogListResp);
+
+  // 创建操作记录
+  rpc AddOperationLog(OperationLogNewReq) returns(EmptyResp);
+  // 批量删除操作记录
+  rpc DeletesOperationLog(IdsReq) returns(BatchResp);
+  // 查询操作记录列表
+  rpc FindOperationLogList(FindOperationLogListReq) returns(FindOperationLogListResp);
+
+
+  // 创建上传记录
+  rpc AddUploadLog(UploadLogNewReq) returns(UploadLogDetailsResp);
+  // 批量删除上传记录
+  rpc DeletesUploadLog(IdsReq) returns(BatchResp);
+  // 查询上传记录列表
+  rpc FindUploadLogList(FindUploadLogListReq) returns(FindUploadLogListResp);
+
+}

@@ -8,15 +8,15 @@ import (
 )
 
 func TestQQ(t *testing.T) {
-	conf := &oauth.AuthConfig{
-		ClientId:     "xxx",
-		ClientSecret: "xxx",
-		RedirectUri:  "https://veweiyi.cn/blog/oauth/login/qq",
+	conf := &oauth.OauthConfig{
+		ClientId:     "102080664",
+		ClientSecret: "JTQEtKYYO0OYaR5V",
+		RedirectUri:  "https://blog.veweiyi.cn/oauth/login/qq",
 	}
 
 	auth := NewAuthQq(conf)
 	// 获取第三方登录地址
-	url := auth.GetAuthorizeUrl("state")
+	url := auth.GetAuthLoginUrl("state")
 	log.Println("url:", url)
 	// 获取用户信息
 	// userInfo, err := auth.GetUserOpenInfo("D3337DCCFF3A9ACD1A3F4501E90AC7F5")

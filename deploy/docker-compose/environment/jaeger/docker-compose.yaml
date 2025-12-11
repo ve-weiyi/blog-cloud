@@ -1,0 +1,74 @@
+
+services:
+
+  # 存储后端 - Elasticsearch
+  jaeger-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.28
+    container_name: jaeger-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9201:9200" # 外部访问用9201，内部仍然是9200
+    volumes:
+      - jaeger-esdata:/usr/share/elasticsearch/data
+    networks:
+      - jaeger-network
+
+
+  # Jaeger 收集器
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:latest
+    container_name: jaeger-collector
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://jaeger-elasticsearch:9200
+    ports:
+      - "14250:14250"  # 收集器 gRPC
+      - "14268:14268"  # 收集器 HTTP
+      - "14269:14269"  # 收集器健康检查
+    depends_on:
+      - jaeger-elasticsearch
+    networks:
+      - jaeger-network
+
+  # Jaeger 查询服务
+  jaeger-query:
+    image: jaegertracing/jaeger-query:latest
+    container_name: jaeger-query
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://jaeger-elasticsearch:9200
+    ports:
+      - "16686:16686"  # Web UI
+      - "16687:16687"  # 查询服务健康检查
+    depends_on:
+      - jaeger-collector
+      - jaeger-elasticsearch
+    networks:
+      - jaeger-network
+
+  # Jaeger Agent (可选，用于接收应用发送的追踪数据)
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent:latest
+    container_name: jaeger-agent
+    environment:
+      - REPORTER_GRPC_HOST_PORT=jaeger-collector:14250
+    ports:
+      - "5775:5775/udp"    # 兼容 Zipkin 的紧凑协议
+      - "6831:6831/udp"    # 兼容 Jaeger 的紧凑协议
+      - "6832:6832/udp"    # 兼容 Jaeger 的二进制协议
+      - "5778:5778"        # 配置端口
+    depends_on:
+      - jaeger-collector
+    networks:
+      - jaeger-network
+
+volumes:
+  jaeger-esdata:
+    driver: local
+
+networks:
+  jaeger-network:
+    driver: bridge

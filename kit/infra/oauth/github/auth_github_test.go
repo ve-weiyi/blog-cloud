@@ -1,42 +1,37 @@
 package github
 
 import (
+	"encoding/base64"
 	"log"
 	"testing"
 
-	"github.com/mitchellh/mapstructure"
-	"github.com/spf13/viper"
-
 	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oauth"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
 )
 
 func TestGithub(t *testing.T) {
-	v := viper.New()
-	v.SetConfigFile("../config.yaml")
-	v.SetConfigType("yaml")
-	err := v.ReadInConfig()
-	if err != nil {
-		log.Fatal(err)
+	conf := &oauth.OauthConfig{
+		ClientId:     "Ov23li2CTGk4hHq93ZYz",
+		ClientSecret: "73804611edc3f1f86ead487a189dd43b1fffaf76",
+		RedirectUri:  "http://127.0.0.1:9421/oauth/login/github",
 	}
 
-	ms := map[string]*oauth.AuthConfig{}
-	err = v.Unmarshal(&ms, func(c *mapstructure.DecoderConfig) {
-		c.TagName = "json"
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	conf := ms["github"]
 	auth := NewAuthGithub(conf)
 	// 获取第三方登录地址
-	url := auth.GetAuthorizeUrl("state")
+	url := auth.GetAuthLoginUrl("")
 	log.Println("url:", url)
 
 	// 获取用户信息
-	userInfo, err := auth.GetUserOpenInfo("69b1ccc128ef6aada3c4")
+	userInfo, err := auth.GetAuthUserInfo("97b175340da66743a50d")
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("userInfo:", err, userInfo)
+}
+
+func TestName(t *testing.T) {
+	openid := "67481255"
+	uid := crypto.Md5v(openid, "")
+	t.Log("uid:", uid)
+	t.Log(base64.StdEncoding.EncodeToString([]byte(uid)))
 }

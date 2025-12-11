@@ -1,0 +1,61 @@
+package types
+
+type AboutMeVO struct {
+	Content string `json:"content"`
+}
+
+type AdminHomeInfo struct {
+	UserCount         int64                  `json:"user_count"`         // 用户量
+	ArticleCount      int64                  `json:"article_count"`      // 文章量
+	RemarkCount       int64                  `json:"remark_count"`       // 留言量
+	CategoryList      []*CategoryVO          `json:"category_list"`      // 分类列表
+	TagList           []*TagVO               `json:"tag_list"`           // 标签列表
+	ArticleViewRanks  []*ArticleViewVO       `json:"article_view_ranks"` // 文章浏览量排行
+	ArticleStatistics []*ArticleStatisticsVO `json:"article_statistics"` // 文章提交统计
+}
+
+type GetUserAreaStatsReq struct {
+	UserType int64 `json:"user_type,optional"` // 用户类型: 0注册用户 1游客
+}
+
+type GetUserAreaStatsResp struct {
+	UserAreas    []*UserAreaVO `json:"user_areas"`    // 用户分布地区
+	TouristAreas []*UserAreaVO `json:"tourist_areas"` // 游客分布地区
+}
+
+type GetVisitStatsResp struct {
+	TodayUvCount int64   `json:"today_uv_count"` // 今日访客数(UV)
+	TotalUvCount int64   `json:"total_uv_count"` // 总访客数
+	UvGrowthRate float64 `json:"uv_growth_rate"` // 访客数同比增长率（相对于昨天同一时间段的增长率）
+	TodayPvCount int64   `json:"today_pv_count"` // 今日浏览量(PV)
+	TotalPvCount int64   `json:"total_pv_count"` // 总浏览量
+	PvGrowthRate float64 `json:"pv_growth_rate"` // 同比增长率（相对于昨天同一时间段的增长率）
+}
+
+type GetVisitTrendReq struct {
+	StartDate string `json:"start_date"`        // 开始日期
+	EndDate   string `json:"end_date,optional"` // 结束日期
+}
+
+type GetVisitTrendResp struct {
+	VisitTrend []VisitTrendVO `json:"visit_trend"` // 访客数和浏览量趋势
+}
+
+type Server struct {
+	Os   interface{} `json:"os"`
+	Cpu  interface{} `json:"cpu"`
+	Ram  interface{} `json:"ram"`
+	Disk interface{} `json:"disk"`
+}
+
+type WebsiteConfigVO struct {
+	AdminUrl        string               `json:"admin_url"`         // 后台地址
+	WebsocketUrl    string               `json:"websocket_url"`     // websocket地址
+	TouristAvatar   string               `json:"tourist_avatar"`    // 游客头像
+	UserAvatar      string               `json:"user_avatar"`       // 用户头像
+	WebsiteFeature  *WebsiteFeature      `json:"website_feature"`   // 网站功能
+	WebsiteInfo     *WebsiteInfo         `json:"website_info"`      // 网站信息
+	RewardQrCode    *RewardQrCode        `json:"reward_qr_code"`    // 打赏二维码
+	SocialLoginList []*ThirdPlatformInfo `json:"social_login_list"` // 用户第三方登录列表
+	SocialUrlList   []*SocialAccountInfo `json:"social_url_list"`   // 作者社交地址列表
+}

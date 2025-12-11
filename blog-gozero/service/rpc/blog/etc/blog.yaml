@@ -1,0 +1,77 @@
+Name: blog.rpc
+ListenOn: 0.0.0.0:9999
+Mode: dev
+Timeout: 5000
+Health: true
+# 服务注册，直连模式不需要
+# 注意把防火墙 2379、2380口打开
+# 检查服务是否注册 etcdctl get --prefix 'blog' --user=root:etcd7914
+#Etcd:
+#  Hosts:
+#   - "localhost:2379"
+#  Key: "blog-dev/blog.rpc"
+#  User: "root"
+#  Pass: "etcd7914"
+
+Log:
+  Mode: console
+  Encoding: plain
+  Path: runtime/blog-rpc/log
+
+MysqlConf:
+  host: veweiyi.cn
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  dbname: blog-veweiyi
+  username: root
+  password: mysql7914
+
+RedisConf:
+  db: 0
+  host: veweiyi.cn
+  port: "6379"
+  password: redis7914
+
+# mq配置
+RabbitMQConf:
+  host: veweiyi.cn
+  port: "5672"
+  username: veweiyi
+  password: rabbitmq7914
+
+EmailConf:
+  host: smtp.qq.com
+  port: 465
+  # 邮箱 647166282@qq.com
+  username: xx@qq.com
+  # 16位授权码 不是邮箱密码
+  password: xxx
+  # 发送者昵称
+  nickname: 与梦
+  # 密送邮箱,逗号隔开
+  bcc:
+    - 791422171@qq.com
+  is_ssl: true
+
+ThirdPartyConf:
+  blog-web:
+    github:
+      client_id: "Ov23li75b3rd6pQWF0Mf"
+      client_secret: "9181955a31adcef7db53e96d3e1cf5d96070b3ff"
+      redirect_uri: http://127.0.0.1:9420/oauth/login/github
+
+    gitee:
+      client_id: "52e312db47f1a03d01434618ae797f9ee3292850193ab7109916fd6b62c0f1eb"
+      client_secret: "9ebaf44964c4a385e05478b8b7882b833d3b4950a55e8a86a96901ca018f846d"
+      redirect_uri: http://127.0.0.1:9420/oauth/login/gitee
+
+  admin-web:
+    github:
+      client_id: "Ov23li2CTGk4hHq93ZYz"
+      client_secret: "73804611edc3f1f86ead487a189dd43b1fffaf76"
+      redirect_uri: http://127.0.0.1:9421/oauth/login/github
+
+    gitee:
+      client_id: "3836732746457306df93147721a0a38686536845d87e8807c7f63feca0770206"
+      client_secret: "f61a0edadc75b8b3e7a0850509add17b04eb52f7195c8b35c5617f952f9d4777"
+      redirect_uri: http://127.0.0.1:9421/oauth/login/gitee

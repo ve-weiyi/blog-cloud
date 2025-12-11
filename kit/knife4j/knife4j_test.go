@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDir(t *testing.T) {
+func Test_Knife4j(t *testing.T) {
 	f := []byte(` 
 { 
   "swagger": "2.0",
@@ -26,7 +26,7 @@ func TestDir(t *testing.T) {
 }
 `)
 
-	prefix := "/admin_api/v1/swagger/"
+	prefix := "/api/v1/swagger/"
 
 	http.HandleFunc(fmt.Sprintf("%s%s", prefix, "swagger-resources"), func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -54,8 +54,18 @@ func TestDir(t *testing.T) {
 	})))
 
 	// 启动 HTTP 服务器
-	log.Println("WebDAV 服务器启动于 http://localhost:9091")
-	if err := http.ListenAndServe(":9091", nil); err != nil {
+	log.Println("接口文档地址:http://localhost:8088/api/v1/swagger/index.html")
+	if err := http.ListenAndServe(":8088", nil); err != nil {
 		log.Fatalf("服务器启动失败: %v", err)
 	}
+}
+
+func Test_Embed(t *testing.T) {
+	// 读取 static 目录中的 index.html 文件
+	data, err := content.ReadFile("resource/doc.html")
+	if err != nil {
+		log.Fatalf("读取文件失败: %v", err)
+	}
+
+	log.Println(string(data))
 }

@@ -25,17 +25,19 @@ yarn-error.log*
 
 *.iml
 *.log
-web/.pnpm-debug.log
-web/pnpm-lock.yaml
-server/config.yaml
 *.sum
 
-/rm_file
-*.ts
-**/test.sql
-**/runtime/*
-**/test/*
-**/tmp/*
-**/default.etcd/*
-/deploy/docker/
+bin
+runtime
+default.etcd
+config.yaml
+admin-api.yaml
+blog-api.yaml
 blog-rpc.yaml
+test.sql
+test.api
+test.json
+test.txt
+test.sh
+any_test.go
+blog-veweiyi.sql

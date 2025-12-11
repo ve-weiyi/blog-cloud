@@ -11,23 +11,26 @@ import (
 
 // QQ授权登录
 type AuthQq struct {
-	Config *oauth.AuthConfig
-	oauth.AuthOauthURL
+	Config *oauth.OauthConfig
+
+	Name string // 第三方名称
+
+	AuthorizeUrl    string // 授权登录URL
+	AccessTokenUrl  string // 获得访问令牌URL
+	RefreshTokenUrl string // 刷新令牌URL
+	OpenidUrl       string // 获取用户OPENID
+	UserInfoUrl     string // 获取用户信息URL
 }
 
-func NewAuthQq(conf *oauth.AuthConfig) *AuthQq {
-	auth := oauth.AuthOauthURL{}
-
-	auth.Name = "qq"
-	auth.AuthorizeUrl = "https://graph.qq.com/oauth2.0/authorize"
-	auth.AccessTokenUrl = "https://graph.qq.com/oauth2.0/token"
-	auth.RefreshTokenUrl = "https://graph.qq.com/oauth2.0/token"
-	auth.OpenidUrl = "https://graph.qq.com/oauth2.0/me"
-	auth.UserInfoUrl = "https://graph.qq.com/user/get_user_info"
-
+func NewAuthQq(conf *oauth.OauthConfig) *AuthQq {
 	return &AuthQq{
-		Config:       conf,
-		AuthOauthURL: auth,
+		Config:          conf,
+		Name:            "qq",
+		AuthorizeUrl:    "https://graph.qq.com/oauth2.0/authorize",
+		AccessTokenUrl:  "https://graph.qq.com/oauth2.0/token",
+		RefreshTokenUrl: "https://graph.qq.com/oauth2.0/token",
+		OpenidUrl:       "https://graph.qq.com/oauth2.0/me",
+		UserInfoUrl:     "https://graph.qq.com/user/get_user_info",
 	}
 }
 
@@ -36,9 +39,9 @@ func (a *AuthQq) GetName() string {
 }
 
 // 获取登录地址
-func (a *AuthQq) GetAuthorizeUrl(state string) string {
+func (a *AuthQq) GetAuthLoginUrl(state string) string {
 
-	url := httpx.NewClient(
+	url := httpx.NewRequest(
 		"GET",
 		a.AuthorizeUrl,
 		httpx.WithParams(map[string]string{
@@ -53,7 +56,7 @@ func (a *AuthQq) GetAuthorizeUrl(state string) string {
 	return url
 }
 
-func (a *AuthQq) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error) {
+func (a *AuthQq) GetAuthUserInfo(code string) (resp *oauth.UserResult, err error) {
 	token, err := a.GetAccessToken(code)
 	if err != nil {
 		return nil, err
@@ -74,7 +77,7 @@ func (a *AuthQq) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error
 		NickName: user.Nickname,
 		Name:     user.Nickname,
 		EnName:   user.Nickname,
-		Avatar:   user.FigureURLQQ,
+		Avatar:   user.FigureURLQQ1,
 		Email:    "",
 		Mobile:   "",
 	}
@@ -84,7 +87,7 @@ func (a *AuthQq) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error
 // 获取token
 func (a *AuthQq) GetAccessToken(code string) (resp *TokenResult, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"GET",
 		a.AccessTokenUrl,
 		httpx.WithParams(map[string]string{
@@ -95,7 +98,7 @@ func (a *AuthQq) GetAccessToken(code string) (resp *TokenResult, err error) {
 			"grant_type":    "authorization_code",
 			"fmt":           "json", // 由于历史原因，加上这个参数则返回json格式数据
 		}),
-	).DoRequest()
+	).Do()
 
 	if err != nil {
 		return nil, err
@@ -114,7 +117,7 @@ func (a *AuthQq) GetAccessToken(code string) (resp *TokenResult, err error) {
 // 刷新token
 func (a *AuthQq) RefreshToken(refreshToken string) (resp *RefreshResult, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"GET",
 		a.RefreshTokenUrl,
 		httpx.WithParams(map[string]string{
@@ -124,7 +127,7 @@ func (a *AuthQq) RefreshToken(refreshToken string) (resp *RefreshResult, err err
 			"refresh_token": refreshToken,
 			"fmt":           "json",
 		}),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -143,14 +146,14 @@ func (a *AuthQq) RefreshToken(refreshToken string) (resp *RefreshResult, err err
 // 获取用户openid
 func (a *AuthQq) GetOpenid(accessToken string) (resp *OpenResult, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"GET",
 		a.OpenidUrl,
 		httpx.WithParams(map[string]string{
 			"access_token": accessToken,
 			"fmt":          "json",
 		}),
-	).DoRequest()
+	).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -168,15 +171,15 @@ func (a *AuthQq) GetOpenid(accessToken string) (resp *OpenResult, err error) {
 // 获取第三方用户信息 https://wiki.connect.qq.com/get_user_info
 func (a *AuthQq) GetUserInfo(accessToken string, openId string) (resp *UserResult, err error) {
 
-	body, err := httpx.NewClient(
-		"POST",
+	body, err := httpx.NewRequest(
+		"GET",
 		a.UserInfoUrl,
 		httpx.WithParams(map[string]string{
 			"openid":             openId,
 			"access_token":       accessToken,
 			"oauth_consumer_key": a.Config.ClientId,
 		}),
-	).DoRequest()
+	).Do()
 
 	if err != nil {
 		return nil, err

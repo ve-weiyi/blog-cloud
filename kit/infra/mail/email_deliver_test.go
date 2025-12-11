@@ -17,10 +17,11 @@ func Test_Send(t *testing.T) {
 	m.SetAddressHeader("From", "647166282@qq.com", "与梦")
 	m.SetHeader("To", "791422171@qq.com")
 	m.SetHeader("Cc", "919390162@qq.com")
+	m.SetHeader("Bcc", "791422171@qq.com")
 	m.SetHeader("Subject", "Hello!")
 	m.SetBody("text/html", "Hello <b>Bob</b> and <i>Cora</i>!")
 
-	d := gomail.NewDialer(host, 465, "647166282@qq.com", "")
+	d := gomail.NewDialer(host, 465, "647166282@qq.com", "culyqmzvmppabccd")
 
 	s, err := d.Dial()
 	if err != nil {

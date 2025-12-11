@@ -1,0 +1,33 @@
+package types
+
+type BatchResp struct {
+	SuccessCount int64 `json:"success_count"`
+}
+
+type DeletesUploadFileReq struct {
+	FilePaths []string `json:"file_paths,optional"` // 文件路径
+}
+
+type FileInfoVO struct {
+	FilePath  string `json:"file_path"`  // 文件路径
+	FileName  string `json:"file_name"`  // 文件名称
+	FileType  string `json:"file_type"`  // 文件类型
+	FileSize  int64  `json:"file_size"`  // 文件大小
+	FileUrl   string `json:"file_url"`   // 上传路径
+	UpdatedAt int64  `json:"updated_at"` // 更新时间
+}
+
+type ListUploadFileReq struct {
+	FilePath string `json:"file_path,optional"` // 文件路径
+	Limit    int64  `json:"limit,optional"`     // 限制
+}
+
+type MultiUploadFileReq struct {
+	Files    []interface{} `form:"files,optional"`     // 文件列表
+	FilePath string        `form:"file_path,optional"` // 文件路径
+}
+
+type UploadFileReq struct {
+	File     interface{} `form:"file,optional"`      // 文件
+	FilePath string      `form:"file_path,optional"` // 文件路径
+}

@@ -1,0 +1,158 @@
+name: Docker Build and Push on Branches
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - feature/**  # 监听 master 和所有 feature 分支
+
+# 添加权限配置
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-blog-rpc:
+    runs-on: ubuntu-latest
+    # 设置环境变量
+    env:
+      BUILD_CONTEXT: blog-gozero
+      BUILD_DOCKERFILE: blog-gozero/Dockerfile-blog-rpc
+      IMAGE_NAME: blog-rpc
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整的 Git 历史记录以提取 hash
+
+      - name: List files in current directory
+        run: |
+          echo "Contents of current directory:"
+          ls -al  # 列出所有文件（包括隐藏文件）
+
+      - name: Extract branch name and commit hash
+        id: vars
+        run: |
+          # 提取分支名称（移除 refs/heads/ 前缀）
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${BRANCH_NAME//\//-}  # 替换斜杠为短横线（防止 feature/xxx 在镜像名中报错）
+          # 提取前 7 位 commit hash
+          SHORT_SHA=${GITHUB_SHA::7}
+          IMAGE_TAG=${BRANCH_NAME}-${SHORT_SHA}
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.BUILD_DOCKERFILE }} ${{ env.BUILD_CONTEXT }} 
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+  build-blog-api:
+    runs-on: ubuntu-latest
+    # 设置环境变量
+    env:
+      BUILD_CONTEXT: blog-gozero
+      BUILD_DOCKERFILE: blog-gozero/Dockerfile-blog-api
+      IMAGE_NAME: blog-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整的 Git 历史记录以提取 hash
+
+      - name: List files in current directory
+        run: |
+          echo "Contents of current directory:"
+          ls -al  # 列出所有文件（包括隐藏文件）
+
+      - name: Extract branch name and commit hash
+        id: vars
+        run: |
+          # 提取分支名称（移除 refs/heads/ 前缀）
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${BRANCH_NAME//\//-}  # 替换斜杠为短横线（防止 feature/xxx 在镜像名中报错）
+          # 提取前 7 位 commit hash
+          SHORT_SHA=${GITHUB_SHA::7}
+          IMAGE_TAG=${BRANCH_NAME}-${SHORT_SHA}
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.BUILD_DOCKERFILE }} ${{ env.BUILD_CONTEXT }} 
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+  build-admin-api:
+    runs-on: ubuntu-latest
+    # 设置环境变量
+    env:
+      BUILD_CONTEXT: blog-gozero
+      BUILD_DOCKERFILE: blog-gozero/Dockerfile-admin-api
+      IMAGE_NAME: admin-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整的 Git 历史记录以提取 hash
+
+      - name: List files in current directory
+        run: |
+          echo "Contents of current directory:"
+          ls -al  # 列出所有文件（包括隐藏文件）
+
+      - name: Extract branch name and commit hash
+        id: vars
+        run: |
+          # 提取分支名称（移除 refs/heads/ 前缀）
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${BRANCH_NAME//\//-}  # 替换斜杠为短横线（防止 feature/xxx 在镜像名中报错）
+          # 提取前 7 位 commit hash
+          SHORT_SHA=${GITHUB_SHA::7}
+          IMAGE_TAG=${BRANCH_NAME}-${SHORT_SHA}
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.BUILD_DOCKERFILE }} ${{ env.BUILD_CONTEXT }} 
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}

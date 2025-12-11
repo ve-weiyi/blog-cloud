@@ -1,0 +1,43 @@
+filebeat.inputs:
+  - type: filestream
+    enabled: true
+    paths:
+      - /app/runtime/*/log/*.log
+    parsers:
+      - ndjson:
+          target: ""                    # 解析到根级别
+          overwrite_keys: true          # 覆盖已存在字段
+          add_error_key: true           # 添加错误标记
+
+# 添加这个处理器部分
+processors:
+  - rename:
+      fields:
+        - from: "span"        # 原始的冲突字段
+          to: "span_id"       # 新的字段名
+        - from: "trace"       # 原始的trace字段
+          to: "trace_id"      # 新的trace_id字段名
+      ignore_missing: true    # 如果span字段不存在也不报错
+      fail_on_error: false    # 如果重命名失败也不中断处理
+
+
+# 设置自定义索引模板
+setup.template.enabled: true
+setup.template.name: "gozero-logs"
+setup.template.pattern: "gozero-logs-*"
+setup.template.overwrite: true
+
+# 禁用ILM
+setup.ilm.enabled: false
+
+#### 输出到 Elasticsearch
+output.elasticsearch:
+  hosts: [ "elasticsearch:9200" ]
+  index: "gozero-logs-%{+yyyy.MM.dd}"      # 定义索引名称格式，按日期滚动
+
+# 设置为 debug 模式以便查看处理日志
+logging.level: info
+
+## 只启用控制台输出（调试用）
+#output.console:
+#  pretty: true

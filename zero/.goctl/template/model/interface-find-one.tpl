@@ -1,5 +1,0 @@
-First(ctx context.Context, conditions string, args ...interface{}) (out *{{.upperStartCamelObject}},err error)
-FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64,err error)
-FindALL(ctx context.Context, conditions string, args ...interface{}) (out []*{{.upperStartCamelObject}},err error)
-FindList(ctx context.Context, limit int, offset int, sorts string, conditions string, args ...interface{}) (out []*{{.upperStartCamelObject}},err error)
-FindOne(ctx context.Context, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) (*{{.upperStartCamelObject}}, error)

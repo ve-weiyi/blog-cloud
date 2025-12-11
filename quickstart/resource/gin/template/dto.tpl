@@ -1,7 +1,0 @@
-package dto
-
-import (
-
-)
-
-{{.Types}}

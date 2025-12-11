@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 # 三节点 kafka（KRaft模式）
 volumes:

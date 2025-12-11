@@ -1,0 +1,33 @@
+package types
+
+type AlbumBackVO struct {
+	Id         int64  `json:"id,optional"` // 主键
+	AlbumName  string `json:"album_name"`  // 相册名
+	AlbumDesc  string `json:"album_desc"`  // 相册描述
+	AlbumCover string `json:"album_cover"` // 相册封面
+	IsDelete   int64  `json:"is_delete"`   // 是否删除
+	Status     int64  `json:"status"`      // 状态值 1公开 2私密
+	CreatedAt  int64  `json:"created_at"`  // 创建时间
+	UpdatedAt  int64  `json:"updated_at"`  // 更新时间
+	PhotoCount int64  `json:"photo_count"` // 照片数量
+}
+
+type AlbumNewReq struct {
+	Id         int64  `json:"id,optional"` // 主键
+	AlbumName  string `json:"album_name"`  // 相册名
+	AlbumDesc  string `json:"album_desc"`  // 相册描述
+	AlbumCover string `json:"album_cover"` // 相册封面
+	IsDelete   int64  `json:"is_delete"`   // 是否删除
+	Status     int64  `json:"status"`      // 状态值 1公开 2私密
+}
+
+type AlbumQuery struct {
+	PageQuery
+	AlbumName string `json:"album_name,optional"` // 相册名
+	IsDelete  int64  `json:"is_delete,optional"`  // 是否删除
+}
+
+type PreDeleteAlbumReq struct {
+	Ids      []int64 `json:"ids"`       // 主键
+	IsDelete int64   `json:"is_delete"` // 是否删除
+}

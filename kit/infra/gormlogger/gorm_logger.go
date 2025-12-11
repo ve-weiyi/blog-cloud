@@ -19,8 +19,15 @@ func AddSkip(skip int) Option {
 	}
 }
 
+func SkipKey(key string) Option {
+	return func(w *GormWriter) {
+		w.skipKey = key
+	}
+}
+
 type GormWriter struct {
 	addSkip int
+	skipKey string
 	l       logger.Writer
 }
 
@@ -52,12 +59,9 @@ var genSourceDir string = "gen"
 func (w *GormWriter) FileWithLineNum() string {
 	// the second caller usually from gorm internal, so set i start from 2
 	for i := 5; i < 15; i++ {
-		_, ff, _, ok := runtime.Caller(i)
-		if ok && (!strings.HasPrefix(ff, gormSourceDir)) {
-			_, file, line, ok := runtime.Caller(i + w.addSkip)
-			if ok {
-				return fmt.Sprintf("%v:%v", file, strconv.FormatInt(int64(line), 10))
-			}
+		_, file, line, ok := runtime.Caller(i)
+		if ok && (!strings.Contains(file, w.skipKey)) && (!strings.Contains(file, gormSourceDir)) {
+			return fmt.Sprintf("%v:%v", file, strconv.FormatInt(int64(line), 10))
 		}
 	}
 	return ""

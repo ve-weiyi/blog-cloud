@@ -1,0 +1,24 @@
+package types
+
+type FriendBackVO struct {
+	Id          int64  `json:"id,optional"`  // id
+	LinkName    string `json:"link_name"`    // 链接名
+	LinkAvatar  string `json:"link_avatar"`  // 链接头像
+	LinkAddress string `json:"link_address"` // 链接地址
+	LinkIntro   string `json:"link_intro"`   // 链接介绍
+	CreatedAt   int64  `json:"created_at"`   // 创建时间
+	UpdatedAt   int64  `json:"updated_at"`   // 更新时间
+}
+
+type FriendNewReq struct {
+	Id          int64  `json:"id,optional"`  // id
+	LinkName    string `json:"link_name"`    // 链接名
+	LinkAvatar  string `json:"link_avatar"`  // 链接头像
+	LinkAddress string `json:"link_address"` // 链接地址
+	LinkIntro   string `json:"link_intro"`   // 链接介绍
+}
+
+type FriendQuery struct {
+	PageQuery
+	LinkName string `json:"link_name,optional"` // 链接名
+}

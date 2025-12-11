@@ -1,0 +1,66 @@
+syntax = "v1"
+
+type RestHeader {
+    HeaderCountry string `header:"Country,optional"`
+    HeaderLanguage string `header:"Language,optional"`
+    HeaderTimezone string `header:"Timezone,optional"`
+    HeaderAppName string `header:"App-name,optional"`
+    HeaderTimestamp string `header:"Timestamp,optional"`
+    HeaderTerminalId string `header:"Terminal-Id,optional"`
+    HeaderXTsToken string `header:"X-Ts-Token,optional"`
+    HeaderUid string `header:"Uid,optional"`
+    HeaderToken string `header:"Token,optional"`
+    HeaderAuthorization string `header:"Authorization,optional"`
+}
+
+type (
+    EmptyReq{
+    }
+    IdReq {
+        Id int64 `json:"id"`
+    }
+    IdsReq {
+        Ids []int64 `json:"ids"`
+    }
+    PageQuery {
+        Page int64 `json:"page,optional"`          // 当前页码
+        PageSize int64 `json:"page_size,optional"` // 每页数量
+        Sorts []string `json:"sorts,optional"`     // 排序
+    }
+)
+
+type (
+    EmptyResp{
+    }
+    BatchResp {
+        SuccessCount int64 `json:"success_count"`
+    }
+    PageResp {
+        Page int64 `json:"page"`
+        PageSize int64 `json:"page_size"`
+        Total int64 `json:"total"`
+        List interface{} `json:"list"`
+    }
+    Response {
+        Code int `json:"code"`
+        Msg string `json:"msg"`
+        Data interface{} `json:"data"`
+        TraceId string `json:"trace_id"`
+    }
+)
+
+type (
+    UserInfoVO {
+        UserId string `json:"user_id"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar"`
+        Nickname string `json:"nickname"`
+        UserInfoExt
+    }
+    UserInfoExt {
+        Gender int64 `json:"gender,optional"`    // 性别 0未知 1男 2女
+        Intro string `json:"intro,optional"`     // 简介
+        Website string `json:"website,optional"` // 网站
+    }
+)
+

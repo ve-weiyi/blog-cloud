@@ -1,4 +1,3 @@
-version: "3.9"
 
 volumes:
   rancher:
@@ -12,8 +11,10 @@ services:
     volumes:
       - rancher:/var/lib/rancher
     ports:
-      - 80:80
-      - 443:443
+      - 9080:80
+      - 9443:443
     environment:
       - TZ=Asia/Shanghai
       - CATTLE_BOOTSTRAP_PASSWORD=admin123456
+      # rancher和集群都是使用docker部署在本地的，所以这里使用host.docker.internal让rancher访问宿主机的docker
+      - CATTLE_SERVER_URL=https://host.docker.internal:9443

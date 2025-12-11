@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-generator
+  labels:
+    app: log-generator
+    test: fluent-bit
+spec:
+  containers:
+    - name: log-generator
+      image: busybox:1.35
+      args:
+        - /bin/sh
+        - -c
+        - |
+          i=0
+          while true; do
+            echo "$(date -Iseconds) - INFO - Counter: $i - This is a test log message from the log generator pod"
+            echo "$(date -Iseconds) - ERROR - Something went wrong! Error code: $((i % 10))"
+            echo "$(date -Iseconds) - DEBUG - Detailed information: pod=$(hostname), namespace=elastic-system"
+            i=$((i+1))
+            sleep 5
+          done
+          
+          

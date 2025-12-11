@@ -76,6 +76,19 @@ func (rs *CaptchaHolder) GetCodeCaptcha(key string) (code string, err error) {
 	return randomInt, nil
 }
 
+func (rs *CaptchaHolder) GetMathImageCaptcha(height int, width int) (string, string, string, error) {
+	if height == 0 {
+		height = rs.DefaultHeight
+	}
+	if width == 0 {
+		width = rs.DefaultWidth
+	}
+	driver := base64Captcha.NewDriverMath(height, width, 0, 0, nil, nil, nil)
+
+	c := base64Captcha.NewCaptcha(driver, rs.store)
+	return c.Generate()
+}
+
 func (rs *CaptchaHolder) GetImageCaptcha(CaptchaType string, height int, width int, length int) (string, string, error) {
 	var driver base64Captcha.Driver
 

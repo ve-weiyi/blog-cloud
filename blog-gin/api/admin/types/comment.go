@@ -1,0 +1,13 @@
+package types
+
+type CommentQuery struct {
+	PageQuery
+	Avatar   string `json:"avatar,optional"` // 用户头像
+	IsReview int64  `json:"is_review,optional"`
+	Type     int64  `json:"type,optional"` // 评论类型 1.文章 2.友链 3.说说
+}
+
+type CommentReviewReq struct {
+	Ids      []int64 `json:"ids,optional"`
+	IsReview int64   `json:"is_review,optional"`
+}

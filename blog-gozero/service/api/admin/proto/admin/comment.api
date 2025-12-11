@@ -1,0 +1,52 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+    // 后台评论
+    CommentBackVO {
+        Id int64 `json:"id"`                           // 评论ID
+        Type int64 `json:"type"`                       // 评论类型 1.文章 2.友链 3.说说
+        TopicTitle string `json:"topic_title"`         // 评论主题
+        UserId string `json:"user_id"`                 // 用户ID
+        ReplyUserId string `json:"reply_user_id"`      // 回复用户ID
+        CommentContent string `json:"comment_content"` // 评论内容
+        IsReview int64 `json:"is_review"`              // 是否审核 0.未审核 1.已审核
+        CreatedAt int64 `json:"created_at"`            // 创建时间
+        User *UserInfoVO `json:"user"`                 // 用户信息
+        ReplyUser *UserInfoVO `json:"reply_user"`      // 回复用户信息
+    }
+        // 创建评论
+    CommentReviewReq {
+        Ids []int64 `json:"ids,optional"`
+        IsReview int64 `json:"is_review,optional"`
+    }
+    CommentQuery {
+        PageQuery
+        Avatar string `json:"avatar,optional"` // 用户头像
+        IsReview int64 `json:"is_review,optional"`
+        Type int64 `json:"type,optional"`      // 评论类型 1.文章 2.友链 3.说说
+    }
+)
+
+@server(
+    tags: "评论管理"
+    prefix:     /admin-api/v1
+    group: comment
+    authType: apiKey
+    middleware: AdminToken,Permission,OperationLog
+)
+service admin-api {
+    @doc "查询评论列表(后台)"
+    @handler FindCommentBackList
+    post /comment/find_comment_back_list (CommentQuery) returns (PageResp)
+
+    @doc "更新评论审核状态"
+    @handler UpdateCommentReview
+    put /comment/update_comment_review (CommentReviewReq) returns (BatchResp)
+
+    @doc "删除评论"
+    @handler DeletesComment
+    delete /comment/deletes_comment (IdsReq) returns (BatchResp)
+}
+

@@ -13,7 +13,7 @@ import (
 // Gitee授权登录
 // https://gitee.com/api/v5/oauth_doc#/
 type AuthGitee struct {
-	Config *oauth.AuthConfig
+	Config *oauth.OauthConfig
 
 	Name string // 第三方名称
 
@@ -23,7 +23,7 @@ type AuthGitee struct {
 	UserInfoUrl     string // 获取用户信息URL
 }
 
-func NewAuthGitee(conf *oauth.AuthConfig) *AuthGitee {
+func NewAuthGitee(conf *oauth.OauthConfig) *AuthGitee {
 	return &AuthGitee{
 		Config:         conf,
 		Name:           "feishu",
@@ -38,9 +38,9 @@ func (a *AuthGitee) GetName() string {
 }
 
 // 1. 获取第三方登录地址（获取授权码code）
-func (a *AuthGitee) GetAuthorizeUrl(state string) string {
+func (a *AuthGitee) GetAuthLoginUrl(state string) string {
 
-	url := httpx.NewClient(
+	url := httpx.NewRequest(
 		"GET",
 		a.AuthorizeUrl,
 		httpx.WithParams(map[string]string{
@@ -55,7 +55,7 @@ func (a *AuthGitee) GetAuthorizeUrl(state string) string {
 }
 
 // 获取用户信息
-func (a *AuthGitee) GetUserOpenInfo(code string) (resp *oauth.UserResult, err error) {
+func (a *AuthGitee) GetAuthUserInfo(code string) (resp *oauth.UserResult, err error) {
 	token, err := a.GetAccessToken(code)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (a *AuthGitee) GetUserOpenInfo(code string) (resp *oauth.UserResult, err er
 // 获取用户授权凭证
 func (a *AuthGitee) GetAccessToken(code string) (resp *Token, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"POST",
 		a.AccessTokenUrl,
 		httpx.WithHeaders(map[string]string{
@@ -100,7 +100,7 @@ func (a *AuthGitee) GetAccessToken(code string) (resp *Token, err error) {
 			"redirect_uri":  a.Config.RedirectUri,
 			"grant_type":    "authorization_code",
 		}),
-	).DoRequest()
+	).Do()
 
 	if err != nil {
 		return nil, err
@@ -118,14 +118,14 @@ func (a *AuthGitee) GetAccessToken(code string) (resp *Token, err error) {
 
 func (a *AuthGitee) GetUserInfo(accessToken string) (resp *Userinfo, err error) {
 
-	body, err := httpx.NewClient(
+	body, err := httpx.NewRequest(
 		"GET",
 		a.UserInfoUrl,
 		httpx.WithHeaders(map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", accessToken),
 			"Content-Type":  "application/json; charset=utf-8",
 		}),
-	).DoRequest()
+	).Do()
 
 	if err != nil {
 		return nil, err

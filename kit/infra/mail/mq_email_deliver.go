@@ -15,17 +15,18 @@ type MqEmailDeliver struct {
 	Subscriber mq.MessageSubscriber
 }
 
-func NewMqEmailDeliver(deliver *EmailDeliver, pb mq.MessagePublisher, sb mq.MessageSubscriber) *MqEmailDeliver {
-	return &MqEmailDeliver{
-		Deliver:    deliver,
+func NewMqEmailDeliver(cfg *EmailConfig, pb mq.MessagePublisher, sb mq.MessageSubscriber) *MqEmailDeliver {
+	deliver := &MqEmailDeliver{
+		Deliver:    NewEmailDeliver(cfg),
 		Publisher:  pb,
 		Subscriber: sb,
 	}
+
+	return deliver
 }
 
 func (m *MqEmailDeliver) DeliveryEmail(msg *EmailMessage) error {
-	ms := m.Publisher
-	if ms == nil {
+	if m.Publisher == nil {
 		return fmt.Errorf("mq publisher is nil")
 	}
 
@@ -36,7 +37,7 @@ func (m *MqEmailDeliver) DeliveryEmail(msg *EmailMessage) error {
 	}
 
 	// 发送邮件
-	err = ms.PublishMessage(nil, jb)
+	err = m.Publisher.PublishMessage(nil, jb)
 	if err != nil {
 		return err
 	}
@@ -44,10 +45,7 @@ func (m *MqEmailDeliver) DeliveryEmail(msg *EmailMessage) error {
 }
 
 func (m *MqEmailDeliver) SubscribeEmail() {
-	ms := m.Subscriber
-	deliver := m.Deliver
-
-	if ms == nil {
+	if m.Subscriber == nil {
 		return
 	}
 
@@ -61,7 +59,7 @@ func (m *MqEmailDeliver) SubscribeEmail() {
 		}
 
 		// 发送邮件
-		err = deliver.DeliveryEmail(&msg)
+		err = m.Deliver.DeliveryEmail(&msg)
 		if err != nil {
 			return err
 		}
@@ -70,6 +68,6 @@ func (m *MqEmailDeliver) SubscribeEmail() {
 	}
 
 	// 订阅消息队列，发送邮件
-	ms.SubscribeMessage(handler)
+	m.Subscriber.SubscribeMessage(handler)
 	return
 }

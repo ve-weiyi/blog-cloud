@@ -60,14 +60,19 @@ func GetIpInfoByBaidu(ip string) (*BaiduLocation, error) {
 	}
 }
 
-func GetIpSourceByBaidu(ip string) (string, error) {
-	if strings.HasPrefix(ip, "localhost") || strings.HasPrefix(ip, "127.0.0.1") {
-		return "本机地址", nil
+func GetIpSourceByBaidu(ip string) string {
+	if strings.HasPrefix(ip, "localhost") || strings.HasPrefix(ip, "127.0.0.1") || strings.HasPrefix(ip, "[::1]") {
+		return "本机地址"
+	}
+
+	if strings.Contains(ip, ":") {
+		ip = strings.Split(ip, ":")[0]
 	}
 
 	info, err := GetIpInfoByBaidu(ip)
 	if err != nil {
-		return "", err
+		return "未知ip"
 	}
-	return info.Location, nil
+
+	return info.Location
 }

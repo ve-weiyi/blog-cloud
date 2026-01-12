@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zeromicro/go-zero/tools/goctl/api/parser"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 )
 
 const API_PATH = "../../../blog-gozero/service/api/blog/proto/blog.api"

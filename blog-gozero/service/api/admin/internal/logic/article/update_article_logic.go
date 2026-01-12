@@ -25,8 +25,8 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 	}
 }
 
-func (l *UpdateArticleLogic) UpdateArticle(req *types.ArticleNewReq) (resp *types.ArticleBackVO, err error) {
-	in := &articlerpc.ArticleNewReq{
+func (l *UpdateArticleLogic) UpdateArticle(req *types.NewArticleReq) (resp *types.ArticleBackVO, err error) {
+	in := &articlerpc.NewArticleReq{
 		Id:             req.Id,
 		UserId:         "",
 		ArticleCover:   req.ArticleCover,

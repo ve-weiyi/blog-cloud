@@ -30,7 +30,7 @@ func (l *DeletesCategoryLogic) DeletesCategory(req *types.IdsReq) (resp *types.B
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ArticleRpc.DeleteCategory(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.DeletesCategory(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

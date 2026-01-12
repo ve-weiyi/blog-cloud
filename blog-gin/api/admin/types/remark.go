@@ -1,12 +1,12 @@
 package types
 
-type RemarkQuery struct {
+type QueryRemarkReq struct {
 	PageQuery
-	Nickname string `json:"nickname,optional"`  // 昵称
-	IsReview int64  `json:"is_review,optional"` // 是否审核
+	UserId string `json:"user_id,optional"` // 用户ID
+	Status int64  `json:"status,optional"`  // 状态
 }
 
-type RemarkReviewReq struct {
-	Ids      []int64 `json:"ids,optional"`
-	IsReview int64   `json:"is_review"` // 是否审核
+type UpdateRemarkStatusReq struct {
+	Ids    []int64 `json:"ids,optional"`
+	Status int64   `json:"status"` // 状态
 }

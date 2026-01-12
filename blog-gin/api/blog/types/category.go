@@ -1,6 +1,6 @@
 package types
 
-type CategoryQueryReq struct {
+type QueryCategoryReq struct {
 	PageQuery
 	CategoryName string `json:"category_name,optional"` // 分类名
 }

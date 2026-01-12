@@ -5,7 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/responsex"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/responsex"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/logic/role"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -14,7 +14,7 @@ import (
 // 分页获取角色列表
 func FindRoleListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.RoleQuery
+		var req types.QueryRoleReq
 		if err := httpx.Parse(r, &req); err != nil {
 			responsex.Response(r, w, nil, err)
 			return

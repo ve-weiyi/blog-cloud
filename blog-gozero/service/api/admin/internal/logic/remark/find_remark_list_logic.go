@@ -26,13 +26,15 @@ func NewFindRemarkListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fi
 	}
 }
 
-func (l *FindRemarkListLogic) FindRemarkList(req *types.RemarkQuery) (resp *types.PageResp, err error) {
+func (l *FindRemarkListLogic) FindRemarkList(req *types.QueryRemarkReq) (resp *types.PageResp, err error) {
 	in := &messagerpc.FindRemarkListReq{
 		Paginate: &messagerpc.PageReq{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
 		},
+		UserId: req.UserId,
+		Status: req.Status,
 	}
 
 	out, err := l.svcCtx.MessageRpc.FindRemarkList(l.ctx, in)
@@ -40,21 +42,43 @@ func (l *FindRemarkListLogic) FindRemarkList(req *types.RemarkQuery) (resp *type
 		return nil, err
 	}
 
-	var uids []string
-	for _, v := range out.List {
-		uids = append(uids, v.UserId)
-	}
-
 	// 获取用户信息
-	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	usm, err := apiutils.BatchQuery(out.List,
+		func(v *messagerpc.RemarkDetailsResp) string {
+			return v.UserId
+		},
+		func(ids []string) (map[string]*types.UserInfoVO, error) {
+			return apiutils.GetUserInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	// 查询访客信息
+	vsm, err := apiutils.BatchQuery(out.List,
+		func(v *messagerpc.RemarkDetailsResp) string {
+			return v.TerminalId
+		},
+		func(ids []string) (map[string]*types.ClientInfoVO, error) {
+			return apiutils.GetVisitorInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	var list []*types.RemarkBackVO
 	for _, v := range out.List {
-		m := ConvertRemarkTypes(v, usm)
-		list = append(list, m)
+		list = append(list, &types.RemarkBackVO{
+			Id:             v.Id,
+			UserId:         v.UserId,
+			MessageContent: v.MessageContent,
+			Status:         v.Status,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+			UserInfo:       usm[v.UserId],
+			ClientInfo:     vsm[v.TerminalId],
+		})
 	}
 
 	resp = &types.PageResp{}
@@ -63,28 +87,4 @@ func (l *FindRemarkListLogic) FindRemarkList(req *types.RemarkQuery) (resp *type
 	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertRemarkTypes(in *messagerpc.RemarkDetailsResp, usm map[string]*types.UserInfoVO) (out *types.RemarkBackVO) {
-	out = &types.RemarkBackVO{
-		Id:             in.Id,
-		UserId:         in.UserId,
-		MessageContent: in.MessageContent,
-		IpAddress:      in.IpAddress,
-		IpSource:       in.IpSource,
-		Time:           0,
-		IsReview:       in.IsReview,
-		CreatedAt:      in.CreatedAt,
-		UpdatedAt:      in.UpdatedAt,
-	}
-
-	// 用户信息
-	if in.UserId != "" {
-		user, ok := usm[in.UserId]
-		if ok && user != nil {
-			out.User = user
-		}
-	}
-
-	return
 }

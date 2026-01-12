@@ -25,8 +25,8 @@ func NewUpdatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdatePageLogic) UpdatePage(req *types.PageNewReq) (resp *types.PageBackVO, err error) {
-	in := &resourcerpc.PageNewReq{
+func (l *UpdatePageLogic) UpdatePage(req *types.NewPageReq) (resp *types.PageBackVO, err error) {
+	in := &resourcerpc.NewPageReq{
 		Id:             req.Id,
 		PageName:       req.PageName,
 		PageLabel:      req.PageLabel,

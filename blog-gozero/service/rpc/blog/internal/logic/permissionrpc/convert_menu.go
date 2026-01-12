@@ -1,14 +1,14 @@
 package permissionrpclogic
 
 import (
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/permissionrpc"
 )
 
-func convertMenuIn(in *permissionrpc.MenuNewReq) (out *model.TMenu) {
+func convertMenuIn(in *permissionrpc.NewMenuReq) (out *model.TMenu) {
 	out = &model.TMenu{
 		Id:         in.Id,
 		ParentId:   in.ParentId,

@@ -2,6 +2,8 @@ package initialize
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -10,7 +12,6 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/config"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/gormlogger"
 )
 
 func ConnectGorm(c config.MysqlConf) (*gorm.DB, error) {
@@ -19,7 +20,7 @@ func ConnectGorm(c config.MysqlConf) (*gorm.DB, error) {
 	var lg logger.Interface
 	// 跟随gorm的日志输出格式
 	lg = logger.New(
-		gormlogger.NewGormWriter(),
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
 			SlowThreshold:             500 * time.Millisecond, // 慢 SQL 阈值，超过会提前结束
 			LogLevel:                  logger.Info,

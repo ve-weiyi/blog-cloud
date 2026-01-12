@@ -6,7 +6,7 @@ import (
 
 	"github.com/zeromicro/go-zero/tools/goctl/util"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 	"github.com/ve-weiyi/ve-blog-golang/tools/parserx/apiparser/aspec"
 )
 

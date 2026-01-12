@@ -49,7 +49,7 @@ message PhotoDetailsResp {
   int64 updated_at = 8;// 更新时间
 }
 
-message PhotoNewReq {
+message NewPhotoReq {
   int64 id = 1;// 主键
   int64 album_id = 2;// 相册id
   string photo_name = 3;// 照片名
@@ -74,7 +74,7 @@ message FindPhotoListResp {
   repeated PhotoDetailsResp list = 2;
 }
 
-message AlbumNewReq {
+message NewAlbumReq {
   int64 id = 1;// 主键
   string album_name = 2;// 相册名
   string album_desc = 3;// 相册描述
@@ -112,7 +112,7 @@ message FindAlbumListResp {
 }
 
 /************** blog 页面管理 **************/
-message PageNewReq {
+message NewPageReq {
   int64 id = 1;// 页面id
   string page_name = 2;// 页面名
   string page_label = 3;// 页面标签
@@ -145,37 +145,37 @@ message FindPageListResp {
 
 service ResourceRpc {
   // 创建照片
-  rpc AddPhoto(PhotoNewReq) returns(PhotoDetailsResp);
+  rpc AddPhoto(NewPhotoReq) returns(PhotoDetailsResp);
   // 更新照片
-  rpc UpdatePhoto(PhotoNewReq) returns(PhotoDetailsResp);
+  rpc UpdatePhoto(NewPhotoReq) returns(PhotoDetailsResp);
   // 更新照片删除状态
   rpc UpdatePhotoDelete(UpdatePhotoDeleteReq) returns(BatchResp);
   // 删除照片
-  rpc DeletePhoto(IdsReq) returns(BatchResp);
+  rpc DeletesPhoto(IdsReq) returns(BatchResp);
   // 查询照片列表
   rpc FindPhotoList(FindPhotoListReq) returns(FindPhotoListResp);
 
 
   // 创建相册
-  rpc AddAlbum(AlbumNewReq) returns(AlbumDetailsResp);
+  rpc AddAlbum(NewAlbumReq) returns(AlbumDetailsResp);
   // 更新相册
-  rpc UpdateAlbum(AlbumNewReq) returns(AlbumDetailsResp);
+  rpc UpdateAlbum(NewAlbumReq) returns(AlbumDetailsResp);
   // 更新相册删除状态
   rpc UpdateAlbumDelete(UpdateAlbumDeleteReq) returns(BatchResp);
   // 获取相册
   rpc GetAlbum(IdReq) returns(AlbumDetailsResp);
   // 删除相册
-  rpc DeleteAlbum(IdsReq) returns(BatchResp);
+  rpc DeletesAlbum(IdsReq) returns(BatchResp);
   // 查询相册列表
   rpc FindAlbumList(FindAlbumListReq) returns(FindAlbumListResp);
 
 
   // 创建页面
-  rpc AddPage(PageNewReq) returns(PageDetailsResp);
+  rpc AddPage(NewPageReq) returns(PageDetailsResp);
   // 更新页面
-  rpc UpdatePage(PageNewReq) returns(PageDetailsResp);
+  rpc UpdatePage(NewPageReq) returns(PageDetailsResp);
   // 删除页面
-  rpc DeletePage(IdsReq) returns(BatchResp);
+  rpc DeletesPage(IdsReq) returns(BatchResp);
   // 查询页面列表
   rpc FindPageList(FindPageListReq) returns(FindPageListResp);
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/tools/goctl/model/sql/parser"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/filex"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/filex"
 )
 
 // 从sql文件解析Table

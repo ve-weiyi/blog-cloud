@@ -5,7 +5,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/quickstart/invent"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/quickstart/gotplgen"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -57,8 +57,8 @@ func (l *ExportArticleListLogic) ExportArticleList(req *types.IdsReq) (resp *typ
 func (l *ExportArticleListLogic) exportArticle(a *types.ArticleBackVO) (err error) {
 	fn := path.Join("./runtime/article", a.ArticleTitle+".md")
 
-	ac := invent.TemplateMeta{
-		Mode:           invent.ModeCreateOrReplace,
+	ac := gotplgen.TemplateMeta{
+		Mode:           gotplgen.ModeCreateOrReplace,
 		CodeOutPath:    fn,
 		TemplateString: articleTemplate,
 		FunMap:         nil,

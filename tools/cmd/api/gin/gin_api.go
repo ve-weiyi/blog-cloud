@@ -52,17 +52,7 @@ func runApi(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = generateRoutes(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
-	if err != nil {
-		return err
-	}
-
-	err = generateRouters(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
-	if err != nil {
-		return err
-	}
-
-	err = generateHandlers(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
+	err = generateTypes(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs)
 	if err != nil {
 		return err
 	}
@@ -72,7 +62,17 @@ func runApi(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = generateTypes(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs)
+	err = generateHandlers(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
+	if err != nil {
+		return err
+	}
+
+	err = generateRouters(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
+	if err != nil {
+		return err
+	}
+
+	err = generateRoutes(sp, apiFlags.TplPath, apiFlags.OutPath, apiFlags.NameAs, apiFlags.ContextPackage)
 	if err != nil {
 		return err
 	}

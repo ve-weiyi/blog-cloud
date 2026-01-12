@@ -5,15 +5,13 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oss"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/oss"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/cryptox"
 )
 
 type MultiUploadFileLogic struct {
@@ -32,8 +30,6 @@ func NewMultiUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *M
 }
 
 func (l *MultiUploadFileLogic) MultiUploadFile(req *types.MultiUploadFileReq, r *http.Request) (resp []*types.FileInfoVO, err error) {
-	uid := cast.ToString(l.ctx.Value(restx.HeaderUid))
-
 	// 获取文件切片
 	files := r.MultipartForm.File["files"]
 	for _, h := range files {
@@ -47,17 +43,16 @@ func (l *MultiUploadFileLogic) MultiUploadFile(req *types.MultiUploadFileReq, r 
 			return nil, err
 		}
 
-		in := &syslogrpc.UploadLogNewReq{
-			UserId:   uid,
+		in := &syslogrpc.NewFileLogReq{
 			FilePath: req.FilePath,
 			FileName: h.Filename,
 			FileType: filepath.Ext(h.Filename),
 			FileSize: h.Size,
-			FileMd5:  crypto.Md5v(h.Filename, ""),
+			FileMd5:  cryptox.Md5v(h.Filename, ""),
 			FileUrl:  up,
 		}
 
-		out, err := l.svcCtx.SyslogRpc.AddUploadLog(l.ctx, in)
+		out, err := l.svcCtx.SyslogRpc.AddFileLog(l.ctx, in)
 		if err != nil {
 			return nil, err
 		}

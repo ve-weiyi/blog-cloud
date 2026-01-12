@@ -45,7 +45,6 @@ func (l *UpdateCommentLogic) UpdateComment(in *messagerpc.UpdateCommentReq) (*me
 	// 更新评论
 	comment.CommentContent = in.CommentContent
 	comment.Status = in.Status
-	comment.IsReview = l.svcCtx.Config.DefaultCommentReviewStatus
 	_, err = l.svcCtx.TCommentModel.Save(l.ctx, comment)
 	if err != nil {
 		return nil, err

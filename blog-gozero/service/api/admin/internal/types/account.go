@@ -3,7 +3,7 @@
 
 package types
 
-type AccountQuery struct {
+type QueryAccountReq struct {
 	PageQuery
 	Username string   `json:"username,optional"`
 	Nickname string   `json:"nickname,optional"`

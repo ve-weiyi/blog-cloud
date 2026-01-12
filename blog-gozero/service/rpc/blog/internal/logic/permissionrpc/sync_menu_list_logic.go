@@ -49,7 +49,7 @@ func (l *SyncMenuListLogic) syncMenuList(in *permissionrpc.SyncMenuListReq) {
 	return
 }
 
-func (l *SyncMenuListLogic) InsertMenu(ctx context.Context, item *permissionrpc.MenuNewReq) (err error) {
+func (l *SyncMenuListLogic) InsertMenu(ctx context.Context, item *permissionrpc.NewMenuReq) (err error) {
 	// 已存在则跳过
 	parent, _ := l.svcCtx.TMenuModel.FindOneByPath(ctx, item.Path)
 	if parent == nil {

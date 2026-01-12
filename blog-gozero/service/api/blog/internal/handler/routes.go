@@ -39,84 +39,78 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 获取相册列表
-					Method:  http.MethodPost,
-					Path:    "/album/find_album_list",
-					Handler: album.FindAlbumListHandler(serverCtx),
-				},
-				{
-					// 获取相册下的照片列表
-					Method:  http.MethodPost,
-					Path:    "/album/find_photo_list",
-					Handler: album.FindPhotoListHandler(serverCtx),
-				},
-				{
-					// 获取相册
-					Method:  http.MethodPost,
-					Path:    "/album/get_album",
-					Handler: album.GetAlbumHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				// 获取相册列表
+				Method:  http.MethodPost,
+				Path:    "/album/find_album_list",
+				Handler: album.FindAlbumListHandler(serverCtx),
+			},
+			{
+				// 获取相册下的照片列表
+				Method:  http.MethodPost,
+				Path:    "/album/find_photo_list",
+				Handler: album.FindPhotoListHandler(serverCtx),
+			},
+			{
+				// 获取相册
+				Method:  http.MethodPost,
+				Path:    "/album/get_album",
+				Handler: album.GetAlbumHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 文章归档(时间轴)
+				Method:  http.MethodPost,
+				Path:    "/article/find_article_archives",
+				Handler: article.FindArticleArchivesHandler(serverCtx),
+			},
+			{
+				// 通过分类获取文章列表
+				Method:  http.MethodPost,
+				Path:    "/article/find_article_classify_category",
+				Handler: article.FindArticleClassifyCategoryHandler(serverCtx),
+			},
+			{
+				// 通过标签获取文章列表
+				Method:  http.MethodPost,
+				Path:    "/article/find_article_classify_tag",
+				Handler: article.FindArticleClassifyTagHandler(serverCtx),
+			},
+			{
+				// 获取首页文章列表
+				Method:  http.MethodPost,
+				Path:    "/article/find_article_home_list",
+				Handler: article.FindArticleHomeListHandler(serverCtx),
+			},
+			{
+				// 获取首页推荐文章列表
+				Method:  http.MethodPost,
+				Path:    "/article/find_article_recommend",
+				Handler: article.FindArticleRecommendHandler(serverCtx),
+			},
+			{
+				// 获取文章详情
+				Method:  http.MethodPost,
+				Path:    "/article/get_article_details",
+				Handler: article.GetArticleDetailsHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/blog-api/v1"),
 	)
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 文章归档(时间轴)
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_archives",
-					Handler: article.FindArticleArchivesHandler(serverCtx),
-				},
-				{
-					// 通过分类获取文章列表
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_classify_category",
-					Handler: article.FindArticleClassifyCategoryHandler(serverCtx),
-				},
-				{
-					// 通过标签获取文章列表
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_classify_tag",
-					Handler: article.FindArticleClassifyTagHandler(serverCtx),
-				},
-				{
-					// 获取文章详情
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_details",
-					Handler: article.GetArticleDetailsHandler(serverCtx),
-				},
-				{
-					// 获取首页文章列表
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_home_list",
-					Handler: article.FindArticleHomeListHandler(serverCtx),
-				},
-				{
-					// 获取首页推荐文章列表
-					Method:  http.MethodPost,
-					Path:    "/article/get_article_recommend",
-					Handler: article.FindArticleRecommendHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken, serverCtx.UserToken},
+			[]rest.Middleware{serverCtx.UserToken},
 			[]rest.Route{
 				{
 					// 点赞文章
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/article/like_article",
 					Handler: article.LikeArticleHandler(serverCtx),
 				},
@@ -128,10 +122,76 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// 获取游客身份信息
+				// 获取客户端信息
 				Method:  http.MethodGet,
-				Path:    "/get_tourist_info",
-				Handler: auth.GetTouristInfoHandler(serverCtx),
+				Path:    "/get_client_info",
+				Handler: auth.GetClientInfoHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 邮箱登录
+				Method:  http.MethodPost,
+				Path:    "/email_login",
+				Handler: auth.EmailLoginHandler(serverCtx),
+			},
+			{
+				// 获取验证码
+				Method:  http.MethodPost,
+				Path:    "/get_captcha_code",
+				Handler: auth.GetCaptchaCodeHandler(serverCtx),
+			},
+			{
+				// 第三方登录授权地址
+				Method:  http.MethodPost,
+				Path:    "/get_oauth_authorize_url",
+				Handler: auth.GetOauthAuthorizeUrlHandler(serverCtx),
+			},
+			{
+				// 登录
+				Method:  http.MethodPost,
+				Path:    "/login",
+				Handler: auth.LoginHandler(serverCtx),
+			},
+			{
+				// 手机登录
+				Method:  http.MethodPost,
+				Path:    "/phone_login",
+				Handler: auth.PhoneLoginHandler(serverCtx),
+			},
+			{
+				// 注册
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: auth.RegisterHandler(serverCtx),
+			},
+			{
+				// 重置密码
+				Method:  http.MethodPost,
+				Path:    "/reset_password",
+				Handler: auth.ResetPasswordHandler(serverCtx),
+			},
+			{
+				// 发送邮件验证码
+				Method:  http.MethodPost,
+				Path:    "/send_email_verify_code",
+				Handler: auth.SendEmailVerifyCodeHandler(serverCtx),
+			},
+			{
+				// 发送手机验证码
+				Method:  http.MethodPost,
+				Path:    "/send_phone_verify_code",
+				Handler: auth.SendPhoneVerifyCodeHandler(serverCtx),
+			},
+			{
+				// 第三方登录
+				Method:  http.MethodPost,
+				Path:    "/third_login",
+				Handler: auth.ThirdLoginHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/blog-api/v1"),
@@ -139,76 +199,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 邮箱登录
-					Method:  http.MethodPost,
-					Path:    "/email_login",
-					Handler: auth.EmailLoginHandler(serverCtx),
-				},
-				{
-					// 获取验证码
-					Method:  http.MethodPost,
-					Path:    "/get_captcha_code",
-					Handler: auth.GetCaptchaCodeHandler(serverCtx),
-				},
-				{
-					// 第三方登录授权地址
-					Method:  http.MethodPost,
-					Path:    "/get_oauth_authorize_url",
-					Handler: auth.GetOauthAuthorizeUrlHandler(serverCtx),
-				},
-				{
-					// 登录
-					Method:  http.MethodPost,
-					Path:    "/login",
-					Handler: auth.LoginHandler(serverCtx),
-				},
-				{
-					// 手机登录
-					Method:  http.MethodPost,
-					Path:    "/phone_login",
-					Handler: auth.PhoneLoginHandler(serverCtx),
-				},
-				{
-					// 注册
-					Method:  http.MethodPost,
-					Path:    "/register",
-					Handler: auth.RegisterHandler(serverCtx),
-				},
-				{
-					// 重置密码
-					Method:  http.MethodPost,
-					Path:    "/reset_password",
-					Handler: auth.ResetPasswordHandler(serverCtx),
-				},
-				{
-					// 发送邮件验证码
-					Method:  http.MethodPost,
-					Path:    "/send_email_verify_code",
-					Handler: auth.SendEmailVerifyCodeHandler(serverCtx),
-				},
-				{
-					// 发送手机验证码
-					Method:  http.MethodPost,
-					Path:    "/send_phone_verify_code",
-					Handler: auth.SendPhoneVerifyCodeHandler(serverCtx),
-				},
-				{
-					// 第三方登录
-					Method:  http.MethodPost,
-					Path:    "/third_login",
-					Handler: auth.ThirdLoginHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken, serverCtx.UserToken},
+			[]rest.Middleware{serverCtx.UserToken},
 			[]rest.Route{
 				{
 					// 注销
@@ -218,7 +209,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 登出
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/logout",
 					Handler: auth.LogoutHandler(serverCtx),
 				},
@@ -228,50 +219,44 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取文章分类列表
-					Method:  http.MethodPost,
-					Path:    "/category/find_category_list",
-					Handler: category.FindCategoryListHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				// 分页获取文章分类列表
+				Method:  http.MethodPost,
+				Path:    "/category/find_category_list",
+				Handler: category.FindCategoryListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 查询评论列表
+				Method:  http.MethodPost,
+				Path:    "/comment/find_comment_list",
+				Handler: comment.FindCommentListHandler(serverCtx),
+			},
+			{
+				// 查询最新评论回复列表
+				Method:  http.MethodPost,
+				Path:    "/comment/find_comment_recent_list",
+				Handler: comment.FindCommentRecentListHandler(serverCtx),
+			},
+			{
+				// 查询评论回复列表
+				Method:  http.MethodPost,
+				Path:    "/comment/find_comment_reply_list",
+				Handler: comment.FindCommentReplyListHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/blog-api/v1"),
 	)
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 查询评论列表
-					Method:  http.MethodPost,
-					Path:    "/comment/find_comment_list",
-					Handler: comment.FindCommentListHandler(serverCtx),
-				},
-				{
-					// 查询最新评论回复列表
-					Method:  http.MethodPost,
-					Path:    "/comment/find_comment_recent_list",
-					Handler: comment.FindCommentRecentListHandler(serverCtx),
-				},
-				{
-					// 查询评论回复列表
-					Method:  http.MethodPost,
-					Path:    "/comment/find_comment_reply_list",
-					Handler: comment.FindCommentReplyListHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken, serverCtx.UserToken},
+			[]rest.Middleware{serverCtx.UserToken},
 			[]rest.Route{
 				{
 					// 创建评论
@@ -281,13 +266,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 点赞评论
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/comment/like_comment",
 					Handler: comment.LikeCommentHandler(serverCtx),
 				},
 				{
 					// 更新评论
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/comment/update_comment",
 					Handler: comment.UpdateCommentHandler(serverCtx),
 				},
@@ -297,143 +282,122 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取友链列表
-					Method:  http.MethodPost,
-					Path:    "/friend_link/find_friend_list",
-					Handler: friend.FindFriendListHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				// 分页获取友链列表
+				Method:  http.MethodPost,
+				Path:    "/friend/find_friend_list",
+				Handler: friend.FindFriendListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 分页获取页面列表
+				Method:  http.MethodPost,
+				Path:    "/page/find_page_list",
+				Handler: page.FindPageListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 分页获取留言列表
+				Method:  http.MethodPost,
+				Path:    "/remark/find_remark_list",
+				Handler: remark.FindRemarkListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 创建留言
+				Method:  http.MethodPost,
+				Path:    "/remark/add_remark",
+				Handler: remark.AddRemarkHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 分页获取标签列表
+				Method:  http.MethodPost,
+				Path:    "/tag/find_tag_list",
+				Handler: tag.FindTagListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 分页获取说说列表
+				Method:  http.MethodPost,
+				Path:    "/talk/find_talk_list",
+				Handler: talk.FindTalkListHandler(serverCtx),
+			},
+			{
+				// 查询说说
+				Method:  http.MethodPost,
+				Path:    "/talk/get_talk",
+				Handler: talk.GetTalkHandler(serverCtx),
+			},
+			{
+				// 点赞说说
+				Method:  http.MethodPut,
+				Path:    "/talk/like_talk",
+				Handler: talk.LikeTalkHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/blog-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除文件列表
+				Method:  http.MethodDelete,
+				Path:    "/upload/deletes_upload_file",
+				Handler: upload.DeletesUploadFileHandler(serverCtx),
+			},
+			{
+				// 获取文件列表
+				Method:  http.MethodPost,
+				Path:    "/upload/list_upload_file",
+				Handler: upload.ListUploadFileHandler(serverCtx),
+			},
+			{
+				// 上传文件列表
+				Method:  http.MethodPost,
+				Path:    "/upload/multi_upload_file",
+				Handler: upload.MultiUploadFileHandler(serverCtx),
+			},
+			{
+				// 上传文件
+				Method:  http.MethodPost,
+				Path:    "/upload/upload_file",
+				Handler: upload.UploadFileHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/blog-api/v1"),
 	)
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取页面列表
-					Method:  http.MethodPost,
-					Path:    "/page/find_page_list",
-					Handler: page.FindPageListHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取留言列表
-					Method:  http.MethodPost,
-					Path:    "/remark/find_remark_list",
-					Handler: remark.FindRemarkListHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 创建留言
-					Method:  http.MethodPost,
-					Path:    "/remark/add_remark",
-					Handler: remark.AddRemarkHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取标签列表
-					Method:  http.MethodPost,
-					Path:    "/tag/find_tag_list",
-					Handler: tag.FindTagListHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 分页获取说说列表
-					Method:  http.MethodPost,
-					Path:    "/talk/find_talk_list",
-					Handler: talk.FindTalkListHandler(serverCtx),
-				},
-				{
-					// 查询说说
-					Method:  http.MethodPost,
-					Path:    "/talk/get_talk",
-					Handler: talk.GetTalkHandler(serverCtx),
-				},
-				{
-					// 点赞说说
-					Method:  http.MethodPut,
-					Path:    "/talk/like_talk",
-					Handler: talk.LikeTalkHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 删除文件列表
-					Method:  http.MethodDelete,
-					Path:    "/upload/deletes_upload_file",
-					Handler: upload.DeletesUploadFileHandler(serverCtx),
-				},
-				{
-					// 获取文件列表
-					Method:  http.MethodPost,
-					Path:    "/upload/list_upload_file",
-					Handler: upload.ListUploadFileHandler(serverCtx),
-				},
-				{
-					// 上传文件列表
-					Method:  http.MethodPost,
-					Path:    "/upload/multi_upload_file",
-					Handler: upload.MultiUploadFileHandler(serverCtx),
-				},
-				{
-					// 上传文件
-					Method:  http.MethodPost,
-					Path:    "/upload/upload_file",
-					Handler: upload.UploadFileHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/blog-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken, serverCtx.UserToken},
+			[]rest.Middleware{serverCtx.UserToken},
 			[]rest.Route{
 				{
 					// 删除用户绑定第三方平台账号
@@ -495,23 +459,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.TerminalToken},
-			[]rest.Route{
-				{
-					// 获取博客前台首页信息
-					Method:  http.MethodGet,
-					Path:    "/blog",
-					Handler: website.GetBlogHomeInfoHandler(serverCtx),
-				},
-				{
-					// 获取关于我的信息
-					Method:  http.MethodGet,
-					Path:    "/blog/about_me",
-					Handler: website.GetAboutMeHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				// 获取博客前台首页信息
+				Method:  http.MethodGet,
+				Path:    "/blog",
+				Handler: website.GetBlogHomeInfoHandler(serverCtx),
+			},
+			{
+				// 获取关于我的信息
+				Method:  http.MethodGet,
+				Path:    "/blog/about_me",
+				Handler: website.GetAboutMeHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/blog-api/v1"),
 	)
 

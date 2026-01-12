@@ -18,10 +18,9 @@ func NewWebsiteRouter(svcCtx *svctx.ServiceContext) *WebsiteRouter {
 
 func (s *WebsiteRouter) Register(r *gin.RouterGroup) {
 	// Website
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewWebsiteController(s.svcCtx)
 		// 获取博客前台首页信息

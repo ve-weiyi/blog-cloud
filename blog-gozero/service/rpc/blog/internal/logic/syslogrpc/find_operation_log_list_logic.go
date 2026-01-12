@@ -69,8 +69,6 @@ func convertOperationLogOut(in *model.TOperationLog) (out *syslogrpc.OperationLo
 		Id:             in.Id,
 		UserId:         in.UserId,
 		TerminalId:     in.TerminalId,
-		IpAddress:      in.IpAddress,
-		IpSource:       in.IpSource,
 		OptModule:      in.OptModule,
 		OptDesc:        in.OptDesc,
 		RequestUri:     in.RequestUri,

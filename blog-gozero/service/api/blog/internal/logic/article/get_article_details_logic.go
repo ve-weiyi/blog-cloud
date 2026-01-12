@@ -79,7 +79,7 @@ func (l *GetArticleDetailsLogic) GetArticleDetails(req *types.IdReq) (resp *type
 		resp.NewestArticleList = append(resp.NewestArticleList, ConvertArticlePreviewTypes(v))
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "文章详情",
 	})
 	if err != nil {

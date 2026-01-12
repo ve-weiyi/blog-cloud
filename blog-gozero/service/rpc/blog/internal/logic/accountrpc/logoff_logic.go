@@ -7,7 +7,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizcode"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +32,7 @@ func (l *LogoffLogic) Logoff(in *accountrpc.LogoffReq) (*accountrpc.EmptyResp, e
 	// 验证用户是否存在
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, err.Error())
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, err.Error())
 	}
 
 	err = l.svcCtx.Gorm.Transaction(func(tx *gorm.DB) error {

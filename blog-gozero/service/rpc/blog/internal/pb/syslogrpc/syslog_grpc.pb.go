@@ -33,9 +33,9 @@ const (
 	SyslogRpc_AddOperationLog_FullMethodName      = "/syslogrpc.SyslogRpc/AddOperationLog"
 	SyslogRpc_DeletesOperationLog_FullMethodName  = "/syslogrpc.SyslogRpc/DeletesOperationLog"
 	SyslogRpc_FindOperationLogList_FullMethodName = "/syslogrpc.SyslogRpc/FindOperationLogList"
-	SyslogRpc_AddUploadLog_FullMethodName         = "/syslogrpc.SyslogRpc/AddUploadLog"
-	SyslogRpc_DeletesUploadLog_FullMethodName     = "/syslogrpc.SyslogRpc/DeletesUploadLog"
-	SyslogRpc_FindUploadLogList_FullMethodName    = "/syslogrpc.SyslogRpc/FindUploadLogList"
+	SyslogRpc_AddFileLog_FullMethodName           = "/syslogrpc.SyslogRpc/AddFileLog"
+	SyslogRpc_DeletesFileLog_FullMethodName       = "/syslogrpc.SyslogRpc/DeletesFileLog"
+	SyslogRpc_FindFileLogList_FullMethodName      = "/syslogrpc.SyslogRpc/FindFileLogList"
 )
 
 // SyslogRpcClient is the client API for SyslogRpc service.
@@ -43,7 +43,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SyslogRpcClient interface {
 	// 创建登录记录
-	AddLoginLog(ctx context.Context, in *LoginLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error)
+	AddLoginLog(ctx context.Context, in *NewLoginLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
 	// 更新登录记录
 	AddLogoutLog(ctx context.Context, in *AddLogoutLogReq, opts ...grpc.CallOption) (*AddLogoutLogResp, error)
 	// 批量删除登录记录
@@ -51,23 +51,23 @@ type SyslogRpcClient interface {
 	// 查询登录记录列表
 	FindLoginLogList(ctx context.Context, in *FindLoginLogListReq, opts ...grpc.CallOption) (*FindLoginLogListResp, error)
 	// 创建访问记录
-	AddVisitLog(ctx context.Context, in *VisitLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error)
+	AddVisitLog(ctx context.Context, in *NewVisitLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
 	// 批量删除访问记录
 	DeletesVisitLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询操作访问列表
 	FindVisitLogList(ctx context.Context, in *FindVisitLogListReq, opts ...grpc.CallOption) (*FindVisitLogListResp, error)
 	// 创建操作记录
-	AddOperationLog(ctx context.Context, in *OperationLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error)
+	AddOperationLog(ctx context.Context, in *NewOperationLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
 	// 批量删除操作记录
 	DeletesOperationLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询操作记录列表
 	FindOperationLogList(ctx context.Context, in *FindOperationLogListReq, opts ...grpc.CallOption) (*FindOperationLogListResp, error)
-	// 创建上传记录
-	AddUploadLog(ctx context.Context, in *UploadLogNewReq, opts ...grpc.CallOption) (*UploadLogDetailsResp, error)
-	// 批量删除上传记录
-	DeletesUploadLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
-	// 查询上传记录列表
-	FindUploadLogList(ctx context.Context, in *FindUploadLogListReq, opts ...grpc.CallOption) (*FindUploadLogListResp, error)
+	// 创建文件记录
+	AddFileLog(ctx context.Context, in *NewFileLogReq, opts ...grpc.CallOption) (*FileLogDetailsResp, error)
+	// 批量删除文件记录
+	DeletesFileLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	// 查询文件记录列表
+	FindFileLogList(ctx context.Context, in *FindFileLogListReq, opts ...grpc.CallOption) (*FindFileLogListResp, error)
 }
 
 type syslogRpcClient struct {
@@ -78,7 +78,7 @@ func NewSyslogRpcClient(cc grpc.ClientConnInterface) SyslogRpcClient {
 	return &syslogRpcClient{cc}
 }
 
-func (c *syslogRpcClient) AddLoginLog(ctx context.Context, in *LoginLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (c *syslogRpcClient) AddLoginLog(ctx context.Context, in *NewLoginLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
 	out := new(EmptyResp)
 	err := c.cc.Invoke(ctx, SyslogRpc_AddLoginLog_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -114,7 +114,7 @@ func (c *syslogRpcClient) FindLoginLogList(ctx context.Context, in *FindLoginLog
 	return out, nil
 }
 
-func (c *syslogRpcClient) AddVisitLog(ctx context.Context, in *VisitLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (c *syslogRpcClient) AddVisitLog(ctx context.Context, in *NewVisitLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
 	out := new(EmptyResp)
 	err := c.cc.Invoke(ctx, SyslogRpc_AddVisitLog_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -141,7 +141,7 @@ func (c *syslogRpcClient) FindVisitLogList(ctx context.Context, in *FindVisitLog
 	return out, nil
 }
 
-func (c *syslogRpcClient) AddOperationLog(ctx context.Context, in *OperationLogNewReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (c *syslogRpcClient) AddOperationLog(ctx context.Context, in *NewOperationLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
 	out := new(EmptyResp)
 	err := c.cc.Invoke(ctx, SyslogRpc_AddOperationLog_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -168,27 +168,27 @@ func (c *syslogRpcClient) FindOperationLogList(ctx context.Context, in *FindOper
 	return out, nil
 }
 
-func (c *syslogRpcClient) AddUploadLog(ctx context.Context, in *UploadLogNewReq, opts ...grpc.CallOption) (*UploadLogDetailsResp, error) {
-	out := new(UploadLogDetailsResp)
-	err := c.cc.Invoke(ctx, SyslogRpc_AddUploadLog_FullMethodName, in, out, opts...)
+func (c *syslogRpcClient) AddFileLog(ctx context.Context, in *NewFileLogReq, opts ...grpc.CallOption) (*FileLogDetailsResp, error) {
+	out := new(FileLogDetailsResp)
+	err := c.cc.Invoke(ctx, SyslogRpc_AddFileLog_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *syslogRpcClient) DeletesUploadLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *syslogRpcClient) DeletesFileLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
-	err := c.cc.Invoke(ctx, SyslogRpc_DeletesUploadLog_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, SyslogRpc_DeletesFileLog_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *syslogRpcClient) FindUploadLogList(ctx context.Context, in *FindUploadLogListReq, opts ...grpc.CallOption) (*FindUploadLogListResp, error) {
-	out := new(FindUploadLogListResp)
-	err := c.cc.Invoke(ctx, SyslogRpc_FindUploadLogList_FullMethodName, in, out, opts...)
+func (c *syslogRpcClient) FindFileLogList(ctx context.Context, in *FindFileLogListReq, opts ...grpc.CallOption) (*FindFileLogListResp, error) {
+	out := new(FindFileLogListResp)
+	err := c.cc.Invoke(ctx, SyslogRpc_FindFileLogList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (c *syslogRpcClient) FindUploadLogList(ctx context.Context, in *FindUploadL
 // for forward compatibility
 type SyslogRpcServer interface {
 	// 创建登录记录
-	AddLoginLog(context.Context, *LoginLogNewReq) (*EmptyResp, error)
+	AddLoginLog(context.Context, *NewLoginLogReq) (*EmptyResp, error)
 	// 更新登录记录
 	AddLogoutLog(context.Context, *AddLogoutLogReq) (*AddLogoutLogResp, error)
 	// 批量删除登录记录
@@ -208,23 +208,23 @@ type SyslogRpcServer interface {
 	// 查询登录记录列表
 	FindLoginLogList(context.Context, *FindLoginLogListReq) (*FindLoginLogListResp, error)
 	// 创建访问记录
-	AddVisitLog(context.Context, *VisitLogNewReq) (*EmptyResp, error)
+	AddVisitLog(context.Context, *NewVisitLogReq) (*EmptyResp, error)
 	// 批量删除访问记录
 	DeletesVisitLog(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询操作访问列表
 	FindVisitLogList(context.Context, *FindVisitLogListReq) (*FindVisitLogListResp, error)
 	// 创建操作记录
-	AddOperationLog(context.Context, *OperationLogNewReq) (*EmptyResp, error)
+	AddOperationLog(context.Context, *NewOperationLogReq) (*EmptyResp, error)
 	// 批量删除操作记录
 	DeletesOperationLog(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询操作记录列表
 	FindOperationLogList(context.Context, *FindOperationLogListReq) (*FindOperationLogListResp, error)
-	// 创建上传记录
-	AddUploadLog(context.Context, *UploadLogNewReq) (*UploadLogDetailsResp, error)
-	// 批量删除上传记录
-	DeletesUploadLog(context.Context, *IdsReq) (*BatchResp, error)
-	// 查询上传记录列表
-	FindUploadLogList(context.Context, *FindUploadLogListReq) (*FindUploadLogListResp, error)
+	// 创建文件记录
+	AddFileLog(context.Context, *NewFileLogReq) (*FileLogDetailsResp, error)
+	// 批量删除文件记录
+	DeletesFileLog(context.Context, *IdsReq) (*BatchResp, error)
+	// 查询文件记录列表
+	FindFileLogList(context.Context, *FindFileLogListReq) (*FindFileLogListResp, error)
 	mustEmbedUnimplementedSyslogRpcServer()
 }
 
@@ -232,7 +232,7 @@ type SyslogRpcServer interface {
 type UnimplementedSyslogRpcServer struct {
 }
 
-func (UnimplementedSyslogRpcServer) AddLoginLog(context.Context, *LoginLogNewReq) (*EmptyResp, error) {
+func (UnimplementedSyslogRpcServer) AddLoginLog(context.Context, *NewLoginLogReq) (*EmptyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddLoginLog not implemented")
 }
 func (UnimplementedSyslogRpcServer) AddLogoutLog(context.Context, *AddLogoutLogReq) (*AddLogoutLogResp, error) {
@@ -244,7 +244,7 @@ func (UnimplementedSyslogRpcServer) DeletesLoginLog(context.Context, *IdsReq) (*
 func (UnimplementedSyslogRpcServer) FindLoginLogList(context.Context, *FindLoginLogListReq) (*FindLoginLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindLoginLogList not implemented")
 }
-func (UnimplementedSyslogRpcServer) AddVisitLog(context.Context, *VisitLogNewReq) (*EmptyResp, error) {
+func (UnimplementedSyslogRpcServer) AddVisitLog(context.Context, *NewVisitLogReq) (*EmptyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddVisitLog not implemented")
 }
 func (UnimplementedSyslogRpcServer) DeletesVisitLog(context.Context, *IdsReq) (*BatchResp, error) {
@@ -253,7 +253,7 @@ func (UnimplementedSyslogRpcServer) DeletesVisitLog(context.Context, *IdsReq) (*
 func (UnimplementedSyslogRpcServer) FindVisitLogList(context.Context, *FindVisitLogListReq) (*FindVisitLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindVisitLogList not implemented")
 }
-func (UnimplementedSyslogRpcServer) AddOperationLog(context.Context, *OperationLogNewReq) (*EmptyResp, error) {
+func (UnimplementedSyslogRpcServer) AddOperationLog(context.Context, *NewOperationLogReq) (*EmptyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddOperationLog not implemented")
 }
 func (UnimplementedSyslogRpcServer) DeletesOperationLog(context.Context, *IdsReq) (*BatchResp, error) {
@@ -262,14 +262,14 @@ func (UnimplementedSyslogRpcServer) DeletesOperationLog(context.Context, *IdsReq
 func (UnimplementedSyslogRpcServer) FindOperationLogList(context.Context, *FindOperationLogListReq) (*FindOperationLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindOperationLogList not implemented")
 }
-func (UnimplementedSyslogRpcServer) AddUploadLog(context.Context, *UploadLogNewReq) (*UploadLogDetailsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddUploadLog not implemented")
+func (UnimplementedSyslogRpcServer) AddFileLog(context.Context, *NewFileLogReq) (*FileLogDetailsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFileLog not implemented")
 }
-func (UnimplementedSyslogRpcServer) DeletesUploadLog(context.Context, *IdsReq) (*BatchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletesUploadLog not implemented")
+func (UnimplementedSyslogRpcServer) DeletesFileLog(context.Context, *IdsReq) (*BatchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletesFileLog not implemented")
 }
-func (UnimplementedSyslogRpcServer) FindUploadLogList(context.Context, *FindUploadLogListReq) (*FindUploadLogListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindUploadLogList not implemented")
+func (UnimplementedSyslogRpcServer) FindFileLogList(context.Context, *FindFileLogListReq) (*FindFileLogListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindFileLogList not implemented")
 }
 func (UnimplementedSyslogRpcServer) mustEmbedUnimplementedSyslogRpcServer() {}
 
@@ -285,7 +285,7 @@ func RegisterSyslogRpcServer(s grpc.ServiceRegistrar, srv SyslogRpcServer) {
 }
 
 func _SyslogRpc_AddLoginLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginLogNewReq)
+	in := new(NewLoginLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -297,7 +297,7 @@ func _SyslogRpc_AddLoginLog_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: SyslogRpc_AddLoginLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).AddLoginLog(ctx, req.(*LoginLogNewReq))
+		return srv.(SyslogRpcServer).AddLoginLog(ctx, req.(*NewLoginLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -357,7 +357,7 @@ func _SyslogRpc_FindLoginLogList_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _SyslogRpc_AddVisitLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VisitLogNewReq)
+	in := new(NewVisitLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -369,7 +369,7 @@ func _SyslogRpc_AddVisitLog_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: SyslogRpc_AddVisitLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).AddVisitLog(ctx, req.(*VisitLogNewReq))
+		return srv.(SyslogRpcServer).AddVisitLog(ctx, req.(*NewVisitLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -411,7 +411,7 @@ func _SyslogRpc_FindVisitLogList_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _SyslogRpc_AddOperationLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OperationLogNewReq)
+	in := new(NewOperationLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -423,7 +423,7 @@ func _SyslogRpc_AddOperationLog_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: SyslogRpc_AddOperationLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).AddOperationLog(ctx, req.(*OperationLogNewReq))
+		return srv.(SyslogRpcServer).AddOperationLog(ctx, req.(*NewOperationLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -464,56 +464,56 @@ func _SyslogRpc_FindOperationLogList_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogRpc_AddUploadLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadLogNewReq)
+func _SyslogRpc_AddFileLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewFileLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogRpcServer).AddUploadLog(ctx, in)
+		return srv.(SyslogRpcServer).AddFileLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogRpc_AddUploadLog_FullMethodName,
+		FullMethod: SyslogRpc_AddFileLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).AddUploadLog(ctx, req.(*UploadLogNewReq))
+		return srv.(SyslogRpcServer).AddFileLog(ctx, req.(*NewFileLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogRpc_DeletesUploadLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SyslogRpc_DeletesFileLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogRpcServer).DeletesUploadLog(ctx, in)
+		return srv.(SyslogRpcServer).DeletesFileLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogRpc_DeletesUploadLog_FullMethodName,
+		FullMethod: SyslogRpc_DeletesFileLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).DeletesUploadLog(ctx, req.(*IdsReq))
+		return srv.(SyslogRpcServer).DeletesFileLog(ctx, req.(*IdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogRpc_FindUploadLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FindUploadLogListReq)
+func _SyslogRpc_FindFileLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindFileLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogRpcServer).FindUploadLogList(ctx, in)
+		return srv.(SyslogRpcServer).FindFileLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogRpc_FindUploadLogList_FullMethodName,
+		FullMethod: SyslogRpc_FindFileLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogRpcServer).FindUploadLogList(ctx, req.(*FindUploadLogListReq))
+		return srv.(SyslogRpcServer).FindFileLogList(ctx, req.(*FindFileLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -566,16 +566,16 @@ var SyslogRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyslogRpc_FindOperationLogList_Handler,
 		},
 		{
-			MethodName: "AddUploadLog",
-			Handler:    _SyslogRpc_AddUploadLog_Handler,
+			MethodName: "AddFileLog",
+			Handler:    _SyslogRpc_AddFileLog_Handler,
 		},
 		{
-			MethodName: "DeletesUploadLog",
-			Handler:    _SyslogRpc_DeletesUploadLog_Handler,
+			MethodName: "DeletesFileLog",
+			Handler:    _SyslogRpc_DeletesFileLog_Handler,
 		},
 		{
-			MethodName: "FindUploadLogList",
-			Handler:    _SyslogRpc_FindUploadLogList_Handler,
+			MethodName: "FindFileLogList",
+			Handler:    _SyslogRpc_FindFileLogList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

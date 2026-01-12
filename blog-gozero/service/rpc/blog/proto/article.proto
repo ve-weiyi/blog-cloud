@@ -50,7 +50,7 @@ message PageResp {
 /************** article 相关 **************/
 
 // article结构体
-message ArticleNewReq {
+message NewArticleReq {
   int64 id = 1;// id
   string user_id = 2;// 作者
   //  int64 category_id = 3;// 文章分类
@@ -144,7 +144,7 @@ message FindLikeArticleResp{
   repeated int64 like_article_list = 1;
 }
 
-message CategoryNewReq {
+message NewCategoryReq {
   int64 id = 1;// id
   string category_name = 2;// 分类名
 }
@@ -174,7 +174,7 @@ message FindCategoryListResp {
   repeated CategoryDetailsResp list = 2;
 }
 
-message TagNewReq {
+message NewTagReq {
   int64 id = 1;// id
   string tag_name = 2;// 标签名
 }
@@ -242,15 +242,15 @@ service ArticleRpc {
   rpc VisitArticle(IdReq) returns(VisitArticleResp);
 
   // 创建文章
-  rpc AddArticle(ArticleNewReq) returns(ArticlePreview);
+  rpc AddArticle(NewArticleReq) returns(ArticlePreview);
   // 更新文章
-  rpc UpdateArticle(ArticleNewReq) returns(ArticlePreview);
+  rpc UpdateArticle(NewArticleReq) returns(ArticlePreview);
   // 更新文章删除
   rpc UpdateArticleDelete(UpdateArticleDeleteReq) returns(ArticlePreview);
   // 更新文章置顶
   rpc UpdateArticleTop(UpdateArticleTopReq) returns(ArticlePreview);
   // 删除文章
-  rpc DeleteArticle(IdsReq) returns(BatchResp);
+  rpc DeletesArticle(IdsReq) returns(BatchResp);
   // 查询文章
   rpc GetArticle(IdReq) returns(ArticleDetailsResp);
   // 查询关联文章
@@ -267,24 +267,24 @@ service ArticleRpc {
   rpc FindUserLikeArticle(UserIdReq) returns(FindLikeArticleResp);
 
   // 创建文章分类
-  rpc AddCategory(CategoryNewReq) returns(CategoryPreviewResp);
+  rpc AddCategory(NewCategoryReq) returns(CategoryPreviewResp);
   // 更新文章分类
-  rpc UpdateCategory(CategoryNewReq) returns(CategoryPreviewResp);
+  rpc UpdateCategory(NewCategoryReq) returns(CategoryPreviewResp);
   // 查询文章分类
   rpc GetCategory(IdReq) returns(CategoryDetailsResp);
   // 删除文章分类
-  rpc DeleteCategory(IdsReq) returns(BatchResp);
+  rpc DeletesCategory(IdsReq) returns(BatchResp);
   // 查询文章分类列表
   rpc FindCategoryList(FindCategoryListReq) returns(FindCategoryListResp);
 
   // 创建标签
-  rpc AddTag(TagNewReq) returns(TagPreviewResp);
+  rpc AddTag(NewTagReq) returns(TagPreviewResp);
   // 更新标签
-  rpc UpdateTag(TagNewReq) returns(TagPreviewResp);
+  rpc UpdateTag(NewTagReq) returns(TagPreviewResp);
   // 查询标签
   rpc GetTag(IdReq) returns(TagDetailsResp);
   // 删除标签
-  rpc DeleteTag(IdsReq) returns(BatchResp);
+  rpc DeletesTag(IdsReq) returns(BatchResp);
   // 查询标签列表
   rpc FindTagList(FindTagListReq) returns(FindTagListResp);
 }

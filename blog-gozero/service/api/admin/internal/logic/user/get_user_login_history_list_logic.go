@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -29,14 +29,14 @@ func NewGetUserLoginHistoryListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *GetUserLoginHistoryListLogic) GetUserLoginHistoryList(req *types.UserLoginHistoryQuery) (resp *types.PageResp, err error) {
+func (l *GetUserLoginHistoryListLogic) GetUserLoginHistoryList(req *types.QueryUserLoginHistoryReq) (resp *types.PageResp, err error) {
 	in := &syslogrpc.FindLoginLogListReq{
 		Paginate: &syslogrpc.PageReq{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
 		},
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 
 	out, err := l.svcCtx.SyslogRpc.FindLoginLogList(l.ctx, in)
@@ -47,14 +47,13 @@ func (l *GetUserLoginHistoryListLogic) GetUserLoginHistoryList(req *types.UserLo
 	var list []*types.UserLoginHistory
 	for _, v := range out.List {
 		list = append(list, &types.UserLoginHistory{
-			Id:        v.Id,
-			LoginType: v.LoginType,
-			Os:        v.Os,
-			Browser:   v.Browser,
-			IpAddress: v.IpAddress,
-			IpSource:  v.IpSource,
-			LoginAt:   v.LoginAt,
-			LogoutAt:  v.LogoutAt,
+			Id:         v.Id,
+			UserId:     v.UserId,
+			TerminalId: v.TerminalId,
+			LoginType:  v.LoginType,
+			AppName:    v.AppName,
+			LoginAt:    v.LoginAt,
+			LogoutAt:   v.LogoutAt,
 		})
 	}
 

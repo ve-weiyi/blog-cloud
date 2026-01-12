@@ -18,10 +18,9 @@ func NewUploadRouter(svcCtx *svctx.ServiceContext) *UploadRouter {
 
 func (s *UploadRouter) Register(r *gin.RouterGroup) {
 	// Upload
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewUploadController(s.svcCtx)
 		// 删除文件列表

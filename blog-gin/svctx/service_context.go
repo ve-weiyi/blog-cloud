@@ -8,10 +8,10 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/middleware"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/config"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/middleware"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/initialize"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/jwtx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jwtx"
 )
 
 // 注册需要用到的gorm、redis、model

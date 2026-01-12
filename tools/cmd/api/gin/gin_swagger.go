@@ -52,17 +52,7 @@ func runSwagger(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = generateRoutes(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
-	if err != nil {
-		return err
-	}
-
-	err = generateRouters(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
-	if err != nil {
-		return err
-	}
-
-	err = generateHandlers(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
+	err = generateTypes(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs)
 	if err != nil {
 		return err
 	}
@@ -72,7 +62,17 @@ func runSwagger(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = generateTypes(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs)
+	err = generateHandlers(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
+	if err != nil {
+		return err
+	}
+
+	err = generateRouters(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
+	if err != nil {
+		return err
+	}
+
+	err = generateRoutes(sp, swagFlags.TplPath, swagFlags.OutPath, swagFlags.NameAs, swagFlags.ContextPackage)
 	if err != nil {
 		return err
 	}

@@ -25,7 +25,7 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 	}
 }
 
-func (l *UpdateCommentLogic) UpdateComment(req *types.UpdateCommentReq) (resp *types.Comment, err error) {
+func (l *UpdateCommentLogic) UpdateComment(req *types.UpdateCommentReq) (resp *types.EmptyResp, err error) {
 	in := &messagerpc.UpdateCommentReq{
 		Id:             req.Id,
 		ReplyUserId:    req.ReplyUserId,
@@ -33,11 +33,10 @@ func (l *UpdateCommentLogic) UpdateComment(req *types.UpdateCommentReq) (resp *t
 		Status:         req.Status,
 	}
 
-	out, err := l.svcCtx.MessageRpc.UpdateComment(l.ctx, in)
+	_, err = l.svcCtx.MessageRpc.UpdateComment(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertCommentTypes(out, nil)
 	return resp, nil
 }

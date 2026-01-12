@@ -11,7 +11,7 @@ WORKDIR /build
 
 COPY . .
 RUN go mod tidy
-RUN go get -u github.com/ve-weiyi/ve-blog-golang/kit
+RUN go get -u github.com/ve-weiyi/ve-blog-golang/pkg@latest
 RUN go build -o /app/blog service/rpc/blog/blog.go
 
 

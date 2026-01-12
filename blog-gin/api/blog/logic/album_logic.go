@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,14 +17,14 @@ func NewAlbumLogic(svcCtx *svctx.ServiceContext) *AlbumLogic {
 }
 
 // 获取相册列表
-func (s *AlbumLogic) FindAlbumList(reqCtx *request.Context, in *types.AlbumQueryReq) (out *types.PageResp, err error) {
+func (s *AlbumLogic) FindAlbumList(reqCtx *request.Context, in *types.QueryAlbumReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
 // 获取相册下的照片列表
-func (s *AlbumLogic) FindPhotoList(reqCtx *request.Context, in *types.PhotoQueryReq) (out *types.PageResp, err error) {
+func (s *AlbumLogic) FindPhotoList(reqCtx *request.Context, in *types.QueryPhotoReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

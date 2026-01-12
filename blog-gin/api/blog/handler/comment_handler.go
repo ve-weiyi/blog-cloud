@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewCommentController(svcCtx *svctx.ServiceContext) *CommentController {
 // @Summary		"查询评论列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CommentQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryCommentReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/comment/find_comment_list [POST]
 func (s *CommentController) FindCommentList(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *CommentController) FindCommentList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CommentQueryReq
+	var req *types.QueryCommentReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -53,7 +53,7 @@ func (s *CommentController) FindCommentList(c *gin.Context) {
 // @Summary		"查询最新评论回复列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CommentQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryCommentReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/comment/find_comment_recent_list [POST]
 func (s *CommentController) FindCommentRecentList(c *gin.Context) {
@@ -62,7 +62,7 @@ func (s *CommentController) FindCommentRecentList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CommentQueryReq
+	var req *types.QueryCommentReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *CommentController) FindCommentRecentList(c *gin.Context) {
 // @Summary		"查询评论回复列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CommentQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryCommentReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/comment/find_comment_reply_list [POST]
 func (s *CommentController) FindCommentReplyList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *CommentController) FindCommentReplyList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CommentQueryReq
+	var req *types.QueryCommentReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -111,8 +111,8 @@ func (s *CommentController) FindCommentReplyList(c *gin.Context) {
 // @Summary		"创建评论"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CommentNewReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.Comment}	"返回信息"
+// @Param		data	body		types.NewCommentReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
 // @Router		/blog-api/v1/comment/add_comment [POST]
 func (s *CommentController) AddComment(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
@@ -120,7 +120,7 @@ func (s *CommentController) AddComment(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CommentNewReq
+	var req *types.NewCommentReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -142,7 +142,7 @@ func (s *CommentController) AddComment(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.IdReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/blog-api/v1/comment/like_comment [POST]
+// @Router		/blog-api/v1/comment/like_comment [PUT]
 func (s *CommentController) LikeComment(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -170,8 +170,8 @@ func (s *CommentController) LikeComment(c *gin.Context) {
 // @accept		application/json
 // @Produce		application/json
 // @Param		data	body		types.UpdateCommentReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.Comment}	"返回信息"
-// @Router		/blog-api/v1/comment/update_comment [POST]
+// @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
+// @Router		/blog-api/v1/comment/update_comment [PUT]
 func (s *CommentController) UpdateComment(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

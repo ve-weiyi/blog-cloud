@@ -24,7 +24,7 @@ func NewUpdateAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Updat
 }
 
 // 更新相册
-func (l *UpdateAlbumLogic) UpdateAlbum(in *resourcerpc.AlbumNewReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (l *UpdateAlbumLogic) UpdateAlbum(in *resourcerpc.NewAlbumReq) (*resourcerpc.AlbumDetailsResp, error) {
 	entity := convertAlbumIn(in)
 
 	_, err := l.svcCtx.TAlbumModel.Save(l.ctx, entity)

@@ -38,7 +38,7 @@ func (m *VisitLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			}
 		}
 
-		op := &syslogrpc.VisitLogNewReq{
+		op := &syslogrpc.NewVisitLogReq{
 			PageName: module,
 		}
 

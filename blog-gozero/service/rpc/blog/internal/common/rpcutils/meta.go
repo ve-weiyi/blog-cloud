@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 )
 
 // 用户id
@@ -16,13 +16,13 @@ func GetUserIdFromCtx(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("metadata error")
 	}
 
-	if val, ok := md[restx.HeaderUid]; ok {
+	if val, ok := md[bizheader.HeaderUid]; ok {
 		if len(val) > 0 {
 			return val[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("missing rpc meta '%v'", restx.HeaderUid)
+	return "", fmt.Errorf("missing rpc meta '%v'", bizheader.HeaderUid)
 }
 
 // 游客id (即是用户的终端设备id)
@@ -32,13 +32,13 @@ func GetTerminalIdFromCtx(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("metadata error")
 	}
 
-	if val, ok := md[restx.HeaderXTerminalId]; ok {
+	if val, ok := md[bizheader.HeaderXTerminalId]; ok {
 		if len(val) > 0 {
 			return val[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("missing rpc meta '%v'", restx.HeaderXTerminalId)
+	return "", fmt.Errorf("missing rpc meta '%v'", bizheader.HeaderXTerminalId)
 }
 
 func GetAppNameFromCtx(ctx context.Context) (string, error) {
@@ -47,13 +47,13 @@ func GetAppNameFromCtx(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("metadata error")
 	}
 
-	if val, ok := md[restx.HeaderAppName]; ok {
+	if val, ok := md[bizheader.HeaderAppName]; ok {
 		if len(val) > 0 {
 			return val[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("missing rpc meta '%v'", restx.HeaderAppName)
+	return "", fmt.Errorf("missing rpc meta '%v'", bizheader.HeaderAppName)
 }
 
 func GetRemoteAgentFromCtx(ctx context.Context) (string, error) {
@@ -62,13 +62,13 @@ func GetRemoteAgentFromCtx(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("metadata error")
 	}
 
-	if val, ok := md[restx.HeaderRPCRemoteAgent]; ok {
+	if val, ok := md[bizheader.HeaderRPCRemoteAgent]; ok {
 		if len(val) > 0 {
 			return val[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("missing rpc meta '%v'", restx.HeaderRPCRemoteAgent)
+	return "", fmt.Errorf("missing rpc meta '%v'", bizheader.HeaderRPCRemoteAgent)
 }
 
 // 获取客户端IP地址
@@ -78,13 +78,13 @@ func GetRemoteIPFromCtx(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("metadata error")
 	}
 
-	if val, ok := md[restx.HeaderRPCRemoteIP]; ok {
+	if val, ok := md[bizheader.HeaderRPCRemoteIP]; ok {
 		if len(val) > 0 {
 			return val[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("missing rpc meta '%v'", restx.HeaderRPCRemoteIP)
+	return "", fmt.Errorf("missing rpc meta '%v'", bizheader.HeaderRPCRemoteIP)
 }
 
 // 获取服务端IP地址

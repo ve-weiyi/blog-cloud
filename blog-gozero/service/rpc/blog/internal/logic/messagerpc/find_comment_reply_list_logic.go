@@ -26,7 +26,25 @@ func NewFindCommentReplyListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 查询评论回复列表
 func (l *FindCommentReplyListLogic) FindCommentReplyList(in *messagerpc.FindCommentReplyListReq) (*messagerpc.FindCommentReplyListResp, error) {
-	page, size, sorts, conditions, params := convertCommentReplyQuery(in)
+	var opts []query.Option
+	if in.Paginate != nil {
+		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
+		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
+		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
+	}
+
+	if in.Type != 0 {
+		opts = append(opts, query.WithCondition("type = ?", in.Type))
+	}
+
+	if in.TopicId != 0 {
+		opts = append(opts, query.WithCondition("topic_id = ?", in.TopicId))
+	}
+
+	if in.ParentId >= 0 {
+		opts = append(opts, query.WithCondition("parent_id = ?", in.ParentId))
+	}
+	page, size, sorts, conditions, params := query.NewQueryBuilder(opts...).Build()
 
 	records, total, err := l.svcCtx.TCommentModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
@@ -46,27 +64,4 @@ func (l *FindCommentReplyListLogic) FindCommentReplyList(in *messagerpc.FindComm
 			Total:    total,
 		},
 	}, nil
-}
-
-func convertCommentReplyQuery(in *messagerpc.FindCommentReplyListReq) (page int, size int, sorts string, conditions string, params []any) {
-	var opts []query.Option
-	if in.Paginate != nil {
-		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
-		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
-		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
-	}
-
-	if in.ParentId != 0 {
-		opts = append(opts, query.WithCondition("parent_id = ?", in.ParentId))
-	}
-
-	if in.Type != 0 {
-		opts = append(opts, query.WithCondition("type = ?", in.Type))
-	}
-
-	if in.TopicId != 0 {
-		opts = append(opts, query.WithCondition("topic_id = ?", in.TopicId))
-	}
-
-	return query.NewQueryBuilder(opts...).Build()
 }

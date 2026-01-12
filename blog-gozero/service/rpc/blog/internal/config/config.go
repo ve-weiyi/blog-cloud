@@ -11,9 +11,6 @@ type Config struct {
 	RabbitMQConf   RabbitMQConf
 	EmailConf      EmailConf
 	ThirdPartyConf map[string]map[string]ThirdPartyInfo
-
-	DefaultCommentReviewStatus int64 `json:",default=1"` // 默认评论审核状态
-	DefaultRemarkReviewStatus  int64 `json:",default=1"` // 默认留言审核状态
 }
 
 // mysql数据库配置

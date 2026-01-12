@@ -3,47 +3,47 @@ syntax = "v1"
 import "base.api"
 
 type (
-	FriendNewReq {
-		Id int64 `json:"id,optional"`            // id
-		LinkName string `json:"link_name"`       // 链接名
-		LinkAvatar string `json:"link_avatar"`   // 链接头像
-		LinkAddress string `json:"link_address"` // 链接地址
-		LinkIntro string `json:"link_intro"`     // 链接介绍
-	}
 	FriendBackVO {
-		Id int64 `json:"id,optional"`            // id
-		LinkName string `json:"link_name"`       // 链接名
-		LinkAvatar string `json:"link_avatar"`   // 链接头像
+		Id          int64  `json:"id,optional"` // id
+		LinkName    string `json:"link_name"` // 链接名
+		LinkAvatar  string `json:"link_avatar"` // 链接头像
 		LinkAddress string `json:"link_address"` // 链接地址
-		LinkIntro string `json:"link_intro"`     // 链接介绍
-		CreatedAt int64 `json:"created_at"`      // 创建时间
-		UpdatedAt int64 `json:"updated_at"`      // 更新时间
+		LinkIntro   string `json:"link_intro"` // 链接介绍
+		CreatedAt   int64  `json:"created_at"` // 创建时间
+		UpdatedAt   int64  `json:"updated_at"` // 更新时间
 	}
-	FriendQuery {
+	NewFriendReq {
+		Id          int64  `json:"id,optional"` // id
+		LinkName    string `json:"link_name"` // 链接名
+		LinkAvatar  string `json:"link_avatar"` // 链接头像
+		LinkAddress string `json:"link_address"` // 链接地址
+		LinkIntro   string `json:"link_intro"` // 链接介绍
+	}
+	QueryFriendReq {
 		PageQuery
 		LinkName string `json:"link_name,optional"` // 链接名
 	}
 )
 
-@server(
-	tags: "友链管理"
+@server (
+	tags:       "友链管理"
 	prefix:     /admin-api/v1
-	group: friend
-	authType: apiKey
+	group:      friend
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "分页获取友链列表"
 	@handler FindFriendList
-	post /friend/find_friend_list (FriendQuery) returns (PageResp)
+	post /friend/find_friend_list (QueryFriendReq) returns (PageResp)
 
 	@doc "创建友链"
 	@handler AddFriend
-	post /friend/add_friend (FriendNewReq) returns (FriendBackVO)
+	post /friend/add_friend (NewFriendReq) returns (FriendBackVO)
 
 	@doc "更新友链"
 	@handler UpdateFriend
-	put /friend/update_friend (FriendNewReq) returns (FriendBackVO)
+	put /friend/update_friend (NewFriendReq) returns (FriendBackVO)
 
 	@doc "删除友链"
 	@handler DeletesFriend

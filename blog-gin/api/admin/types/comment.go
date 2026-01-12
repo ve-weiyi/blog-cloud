@@ -1,13 +1,13 @@
 package types
 
-type CommentQuery struct {
+type QueryCommentReq struct {
 	PageQuery
-	Avatar   string `json:"avatar,optional"` // 用户头像
-	IsReview int64  `json:"is_review,optional"`
-	Type     int64  `json:"type,optional"` // 评论类型 1.文章 2.友链 3.说说
+	UserId string `json:"user_id,optional"` // 用户ID
+	Status int64  `json:"status,optional"`  // 状态
+	Type   int64  `json:"type,optional"`    // 评论类型 1.文章 2.友链 3.说说
 }
 
-type CommentReviewReq struct {
-	Ids      []int64 `json:"ids,optional"`
-	IsReview int64   `json:"is_review,optional"`
+type UpdateCommentStatusReq struct {
+	Ids    []int64 `json:"ids,optional"`
+	Status int64   `json:"status"` // 状态
 }

@@ -3,7 +3,7 @@ package article
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
@@ -26,7 +26,7 @@ func NewFindArticleHomeListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *FindArticleHomeListLogic) FindArticleHomeList(req *types.ArticleHomeQueryReq) (resp *types.PageResp, err error) {
+func (l *FindArticleHomeListLogic) FindArticleHomeList(req *types.QueryArticleHomeReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindArticleListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -34,6 +34,7 @@ func (l *FindArticleHomeListLogic) FindArticleHomeList(req *types.ArticleHomeQue
 			Sorts:    req.Sorts,
 		},
 		ArticleTitle: req.ArticleTitle,
+		IsTop:        constant.ArticleIsTopALL,
 		IsDelete:     constant.ArticleIsDeleteNo,
 		Status:       constant.ArticleStatusPublic,
 	}

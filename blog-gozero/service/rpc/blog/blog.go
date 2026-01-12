@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/interceptorx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/interceptorx"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/config"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
@@ -19,8 +19,8 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/messagerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/permissionrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/resourcerpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/socialrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/talkrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/websiterpc"
 	accountrpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/accountrpc"
 	articlerpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/articlerpc"
@@ -28,11 +28,11 @@ import (
 	messagerpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/messagerpc"
 	permissionrpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/permissionrpc"
 	resourcerpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/resourcerpc"
+	socialrpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/socialrpc"
 	syslogrpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/syslogrpc"
-	talkrpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/talkrpc"
 	websiterpcServer "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/server/websiterpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/nacos"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/nacos"
 )
 
 var (
@@ -85,9 +85,9 @@ func main() {
 		accountrpc.RegisterAccountRpcServer(grpcServer, accountrpcServer.NewAccountRpcServer(ctx))
 		articlerpc.RegisterArticleRpcServer(grpcServer, articlerpcServer.NewArticleRpcServer(ctx))
 		permissionrpc.RegisterPermissionRpcServer(grpcServer, permissionrpcServer.NewPermissionRpcServer(ctx))
-		syslogrpc.RegisterSyslogRpcServer(grpcServer, syslogrpcServer.NewSyslogRpcServer(ctx))
 		messagerpc.RegisterMessageRpcServer(grpcServer, messagerpcServer.NewMessageRpcServer(ctx))
-		talkrpc.RegisterTalkRpcServer(grpcServer, talkrpcServer.NewTalkRpcServer(ctx))
+		socialrpc.RegisterSocialRpcServer(grpcServer, socialrpcServer.NewSocialRpcServer(ctx))
+		syslogrpc.RegisterSyslogRpcServer(grpcServer, syslogrpcServer.NewSyslogRpcServer(ctx))
 		websiterpc.RegisterWebsiteRpcServer(grpcServer, websiterpcServer.NewWebsiteRpcServer(ctx))
 		configrpc.RegisterConfigRpcServer(grpcServer, configrpcServer.NewConfigRpcServer(ctx))
 		resourcerpc.RegisterResourceRpcServer(grpcServer, resourcerpcServer.NewResourceRpcServer(ctx))

@@ -51,7 +51,8 @@ const (
 	AccountRpc_FindUserOnlineList_FullMethodName     = "/accountrpc.AccountRpc/FindUserOnlineList"
 	AccountRpc_AnalysisUser_FullMethodName           = "/accountrpc.AccountRpc/AnalysisUser"
 	AccountRpc_AnalysisUserAreas_FullMethodName      = "/accountrpc.AccountRpc/AnalysisUserAreas"
-	AccountRpc_GetTouristInfo_FullMethodName         = "/accountrpc.AccountRpc/GetTouristInfo"
+	AccountRpc_GetClientInfo_FullMethodName          = "/accountrpc.AccountRpc/GetClientInfo"
+	AccountRpc_FindVisitorList_FullMethodName        = "/accountrpc.AccountRpc/FindVisitorList"
 )
 
 // AccountRpcClient is the client API for AccountRpc service.
@@ -114,8 +115,10 @@ type AccountRpcClient interface {
 	AnalysisUser(ctx context.Context, in *AnalysisUserReq, opts ...grpc.CallOption) (*AnalysisUserResp, error)
 	// 查询用户分布区域
 	AnalysisUserAreas(ctx context.Context, in *AnalysisUserAreasReq, opts ...grpc.CallOption) (*AnalysisUserAreasResp, error)
-	// 获取游客身份
-	GetTouristInfo(ctx context.Context, in *GetTouristInfoReq, opts ...grpc.CallOption) (*GetTouristInfoResp, error)
+	// 获取客户端信息
+	GetClientInfo(ctx context.Context, in *GetClientInfoReq, opts ...grpc.CallOption) (*GetClientInfoResp, error)
+	// 查询游客信息
+	FindVisitorList(ctx context.Context, in *FindVisitorListReq, opts ...grpc.CallOption) (*FindVisitorListResp, error)
 }
 
 type accountRpcClient struct {
@@ -378,9 +381,18 @@ func (c *accountRpcClient) AnalysisUserAreas(ctx context.Context, in *AnalysisUs
 	return out, nil
 }
 
-func (c *accountRpcClient) GetTouristInfo(ctx context.Context, in *GetTouristInfoReq, opts ...grpc.CallOption) (*GetTouristInfoResp, error) {
-	out := new(GetTouristInfoResp)
-	err := c.cc.Invoke(ctx, AccountRpc_GetTouristInfo_FullMethodName, in, out, opts...)
+func (c *accountRpcClient) GetClientInfo(ctx context.Context, in *GetClientInfoReq, opts ...grpc.CallOption) (*GetClientInfoResp, error) {
+	out := new(GetClientInfoResp)
+	err := c.cc.Invoke(ctx, AccountRpc_GetClientInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountRpcClient) FindVisitorList(ctx context.Context, in *FindVisitorListReq, opts ...grpc.CallOption) (*FindVisitorListResp, error) {
+	out := new(FindVisitorListResp)
+	err := c.cc.Invoke(ctx, AccountRpc_FindVisitorList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -447,8 +459,10 @@ type AccountRpcServer interface {
 	AnalysisUser(context.Context, *AnalysisUserReq) (*AnalysisUserResp, error)
 	// 查询用户分布区域
 	AnalysisUserAreas(context.Context, *AnalysisUserAreasReq) (*AnalysisUserAreasResp, error)
-	// 获取游客身份
-	GetTouristInfo(context.Context, *GetTouristInfoReq) (*GetTouristInfoResp, error)
+	// 获取客户端信息
+	GetClientInfo(context.Context, *GetClientInfoReq) (*GetClientInfoResp, error)
+	// 查询游客信息
+	FindVisitorList(context.Context, *FindVisitorListReq) (*FindVisitorListResp, error)
 	mustEmbedUnimplementedAccountRpcServer()
 }
 
@@ -540,8 +554,11 @@ func (UnimplementedAccountRpcServer) AnalysisUser(context.Context, *AnalysisUser
 func (UnimplementedAccountRpcServer) AnalysisUserAreas(context.Context, *AnalysisUserAreasReq) (*AnalysisUserAreasResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AnalysisUserAreas not implemented")
 }
-func (UnimplementedAccountRpcServer) GetTouristInfo(context.Context, *GetTouristInfoReq) (*GetTouristInfoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTouristInfo not implemented")
+func (UnimplementedAccountRpcServer) GetClientInfo(context.Context, *GetClientInfoReq) (*GetClientInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClientInfo not implemented")
+}
+func (UnimplementedAccountRpcServer) FindVisitorList(context.Context, *FindVisitorListReq) (*FindVisitorListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindVisitorList not implemented")
 }
 func (UnimplementedAccountRpcServer) mustEmbedUnimplementedAccountRpcServer() {}
 
@@ -1060,20 +1077,38 @@ func _AccountRpc_AnalysisUserAreas_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountRpc_GetTouristInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTouristInfoReq)
+func _AccountRpc_GetClientInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClientInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountRpcServer).GetTouristInfo(ctx, in)
+		return srv.(AccountRpcServer).GetClientInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AccountRpc_GetTouristInfo_FullMethodName,
+		FullMethod: AccountRpc_GetClientInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountRpcServer).GetTouristInfo(ctx, req.(*GetTouristInfoReq))
+		return srv.(AccountRpcServer).GetClientInfo(ctx, req.(*GetClientInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountRpc_FindVisitorList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindVisitorListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountRpcServer).FindVisitorList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountRpc_FindVisitorList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountRpcServer).FindVisitorList(ctx, req.(*FindVisitorListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1198,8 +1233,12 @@ var AccountRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountRpc_AnalysisUserAreas_Handler,
 		},
 		{
-			MethodName: "GetTouristInfo",
-			Handler:    _AccountRpc_GetTouristInfo_Handler,
+			MethodName: "GetClientInfo",
+			Handler:    _AccountRpc_GetClientInfo_Handler,
+		},
+		{
+			MethodName: "FindVisitorList",
+			Handler:    _AccountRpc_FindVisitorList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

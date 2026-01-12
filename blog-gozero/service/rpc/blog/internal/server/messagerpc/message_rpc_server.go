@@ -41,22 +41,16 @@ func (s *MessageRpcServer) UpdateChat(ctx context.Context, in *messagerpc.Update
 	return l.UpdateChat(in)
 }
 
-// 更新聊天记录状态
-func (s *MessageRpcServer) UpdateChatStatus(ctx context.Context, in *messagerpc.UpdateChatStatusReq) (*messagerpc.ChatDetailsResp, error) {
-	l := messagerpclogic.NewUpdateChatStatusLogic(ctx, s.svcCtx)
-	return l.UpdateChatStatus(in)
+// 查询聊天记录
+func (s *MessageRpcServer) GetChat(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.ChatDetailsResp, error) {
+	l := messagerpclogic.NewGetChatLogic(ctx, s.svcCtx)
+	return l.GetChat(in)
 }
 
 // 删除聊天记录
 func (s *MessageRpcServer) DeletesChat(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
 	l := messagerpclogic.NewDeletesChatLogic(ctx, s.svcCtx)
 	return l.DeletesChat(in)
-}
-
-// 查询聊天记录
-func (s *MessageRpcServer) GetChat(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.ChatDetailsResp, error) {
-	l := messagerpclogic.NewGetChatLogic(ctx, s.svcCtx)
-	return l.GetChat(in)
 }
 
 // 查询聊天记录列表
@@ -66,21 +60,15 @@ func (s *MessageRpcServer) FindChatList(ctx context.Context, in *messagerpc.Find
 }
 
 // 创建留言
-func (s *MessageRpcServer) AddRemark(ctx context.Context, in *messagerpc.RemarkNewReq) (*messagerpc.RemarkDetailsResp, error) {
+func (s *MessageRpcServer) AddRemark(ctx context.Context, in *messagerpc.AddRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
 	l := messagerpclogic.NewAddRemarkLogic(ctx, s.svcCtx)
 	return l.AddRemark(in)
 }
 
 // 更新留言
-func (s *MessageRpcServer) UpdateRemark(ctx context.Context, in *messagerpc.RemarkUpdateReq) (*messagerpc.RemarkDetailsResp, error) {
+func (s *MessageRpcServer) UpdateRemark(ctx context.Context, in *messagerpc.UpdateRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
 	l := messagerpclogic.NewUpdateRemarkLogic(ctx, s.svcCtx)
 	return l.UpdateRemark(in)
-}
-
-// 删除留言
-func (s *MessageRpcServer) DeletesRemark(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
-	l := messagerpclogic.NewDeletesRemarkLogic(ctx, s.svcCtx)
-	return l.DeletesRemark(in)
 }
 
 // 查询留言
@@ -89,28 +77,28 @@ func (s *MessageRpcServer) GetRemark(ctx context.Context, in *messagerpc.IdReq) 
 	return l.GetRemark(in)
 }
 
+// 删除留言
+func (s *MessageRpcServer) DeletesRemark(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+	l := messagerpclogic.NewDeletesRemarkLogic(ctx, s.svcCtx)
+	return l.DeletesRemark(in)
+}
+
 // 查询留言列表
 func (s *MessageRpcServer) FindRemarkList(ctx context.Context, in *messagerpc.FindRemarkListReq) (*messagerpc.FindRemarkListResp, error) {
 	l := messagerpclogic.NewFindRemarkListLogic(ctx, s.svcCtx)
 	return l.FindRemarkList(in)
 }
 
-// 更新留言审核状态
-func (s *MessageRpcServer) UpdateRemarkReview(ctx context.Context, in *messagerpc.UpdateRemarkReviewReq) (*messagerpc.BatchResp, error) {
-	l := messagerpclogic.NewUpdateRemarkReviewLogic(ctx, s.svcCtx)
-	return l.UpdateRemarkReview(in)
+// 更新留言状态
+func (s *MessageRpcServer) UpdateRemarkStatus(ctx context.Context, in *messagerpc.UpdateRemarkStatusReq) (*messagerpc.BatchResp, error) {
+	l := messagerpclogic.NewUpdateRemarkStatusLogic(ctx, s.svcCtx)
+	return l.UpdateRemarkStatus(in)
 }
 
 // 创建评论
-func (s *MessageRpcServer) AddComment(ctx context.Context, in *messagerpc.CommentNewReq) (*messagerpc.CommentDetailsResp, error) {
+func (s *MessageRpcServer) AddComment(ctx context.Context, in *messagerpc.AddCommentReq) (*messagerpc.CommentDetailsResp, error) {
 	l := messagerpclogic.NewAddCommentLogic(ctx, s.svcCtx)
 	return l.AddComment(in)
-}
-
-// 删除评论
-func (s *MessageRpcServer) DeletesComment(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
-	l := messagerpclogic.NewDeletesCommentLogic(ctx, s.svcCtx)
-	return l.DeletesComment(in)
 }
 
 // 更新评论
@@ -123,6 +111,12 @@ func (s *MessageRpcServer) UpdateComment(ctx context.Context, in *messagerpc.Upd
 func (s *MessageRpcServer) GetComment(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.CommentDetailsResp, error) {
 	l := messagerpclogic.NewGetCommentLogic(ctx, s.svcCtx)
 	return l.GetComment(in)
+}
+
+// 删除评论
+func (s *MessageRpcServer) DeletesComment(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+	l := messagerpclogic.NewDeletesCommentLogic(ctx, s.svcCtx)
+	return l.DeletesComment(in)
 }
 
 // 查询评论列表
@@ -143,16 +137,10 @@ func (s *MessageRpcServer) FindCommentReplyCounts(ctx context.Context, in *messa
 	return l.FindCommentReplyCounts(in)
 }
 
-// 更新评论审核状态
-func (s *MessageRpcServer) UpdateCommentReview(ctx context.Context, in *messagerpc.UpdateCommentReviewReq) (*messagerpc.BatchResp, error) {
-	l := messagerpclogic.NewUpdateCommentReviewLogic(ctx, s.svcCtx)
-	return l.UpdateCommentReview(in)
-}
-
-// 更新评论
-func (s *MessageRpcServer) UpdateCommentContent(ctx context.Context, in *messagerpc.UpdateCommentContentReq) (*messagerpc.CommentDetailsResp, error) {
-	l := messagerpclogic.NewUpdateCommentContentLogic(ctx, s.svcCtx)
-	return l.UpdateCommentContent(in)
+// 更新评论状态
+func (s *MessageRpcServer) UpdateCommentStatus(ctx context.Context, in *messagerpc.UpdateCommentStatusReq) (*messagerpc.BatchResp, error) {
+	l := messagerpclogic.NewUpdateCommentStatusLogic(ctx, s.svcCtx)
+	return l.UpdateCommentStatus(in)
 }
 
 // 点赞评论

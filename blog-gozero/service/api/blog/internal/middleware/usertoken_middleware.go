@@ -6,10 +6,11 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/responsex"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/tokenx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/responsex"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/tokenx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizcode"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizerr"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 )
 
 type UserTokenMiddleware struct {
@@ -28,23 +29,23 @@ func (m *UserTokenMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		var token string
 		var uid string
 
-		uid = r.Header.Get(restx.HeaderUid)
-		token = r.Header.Get(restx.HeaderToken)
+		uid = r.Header.Get(bizheader.HeaderUid)
+		token = r.Header.Get(bizheader.HeaderToken)
 
 		// 请求头缺少参数
 		if uid == "" {
-			responsex.Response(r, w, nil, bizerr.NewBizError(bizerr.CodeInvalidParam, fmt.Sprintf("request header field '%v' is missing", restx.HeaderUid)))
+			responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeInvalidParam, fmt.Sprintf("request header field '%v' is missing", bizheader.HeaderUid)))
 			return
 		}
 
 		if token == "" {
-			responsex.Response(r, w, nil, bizerr.NewBizError(bizerr.CodeInvalidParam, fmt.Sprintf("request header field '%v' is missing", restx.HeaderToken)))
+			responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeInvalidParam, fmt.Sprintf("request header field '%v' is missing", bizheader.HeaderToken)))
 			return
 		}
 
 		err := m.verifier.VerifyToken(r.Context(), token, uid)
 		if err != nil {
-			responsex.Response(r, w, nil, bizerr.NewBizError(bizerr.CodeUserLoginExpired, err.Error()))
+			responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeUserLoginExpired, err.Error()))
 			return
 		}
 

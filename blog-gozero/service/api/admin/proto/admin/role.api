@@ -3,82 +3,82 @@ syntax = "v1"
 import "base.api"
 
 type (
-    // 角色
-    RoleNewReq {
-        Id int64 `json:"id,optional"`              // 主键id
-        ParentId int64 `json:"parent_id,optional"` // 父角色id
-        RoleKey string `json:"role_key"`           // 角色名
-        RoleLabel string `json:"role_label"`       // 角色标签
-        RoleComment string `json:"role_comment"`   // 角色备注
-        IsDisable int64 `json:"is_disable"`        // 是否禁用  0否 1是
-        IsDefault int64 `json:"is_default"`        // 是否默认角色 0否 1是
-    }
-    RoleBackVO {
-        Id int64 `json:"id,optional"`            // 主键id
-        ParentId int64 `json:"parent_id"`        // 父角色id
-        RoleKey string `json:"role_key"`         // 角色名
-        RoleLabel string `json:"role_label"`     // 角色标签
-        RoleComment string `json:"role_comment"` // 角色备注
-        IsDisable int64 `json:"is_disable"`      // 是否禁用  0否 1是
-        IsDefault int64 `json:"is_default"`      // 是否默认角色 0否 1是
-        CreatedAt int64 `json:"created_at"`      // 创建时间
-        UpdatedAt int64 `json:"updated_at"`      // 更新时间
-    }
-    RoleResourcesResp {
-        RoleId int64 `json:"role_id"`
-        ApiIds []int64 `json:"api_ids"`
-        MenuIds []int64 `json:"menu_ids"`
-    }
-    UpdateRoleApisReq {
-        RoleId int64 `json:"role_id"`
-        ApiIds []int64 `json:"api_ids"`
-    }
-    UpdateRoleMenusReq {
-        RoleId int64 `json:"role_id"`
-        MenuIds []int64 `json:"menu_ids"`
-    }
-    RoleQuery {
-        PageQuery
-        RoleKey string `json:"role_key,optional"`     // 角色名
-        RoleLabel string `json:"role_label,optional"` // 角色标签
-        IsDisable int64 `json:"is_disable,optional"`  // 是否禁用  0否 1是
-    }
+	// 角色
+	RoleBackVO {
+		Id          int64  `json:"id,optional"` // 主键id
+		ParentId    int64  `json:"parent_id"` // 父角色id
+		RoleKey     string `json:"role_key"` // 角色名
+		RoleLabel   string `json:"role_label"` // 角色标签
+		RoleComment string `json:"role_comment"` // 角色备注
+		IsDisable   int64  `json:"is_disable"` // 是否禁用  0否 1是
+		IsDefault   int64  `json:"is_default"` // 是否默认角色 0否 1是
+		CreatedAt   int64  `json:"created_at"` // 创建时间
+		UpdatedAt   int64  `json:"updated_at"` // 更新时间
+	}
+	NewRoleReq {
+		Id          int64  `json:"id,optional"` // 主键id
+		ParentId    int64  `json:"parent_id,optional"` // 父角色id
+		RoleKey     string `json:"role_key"` // 角色名
+		RoleLabel   string `json:"role_label"` // 角色标签
+		RoleComment string `json:"role_comment"` // 角色备注
+		IsDisable   int64  `json:"is_disable"` // 是否禁用  0否 1是
+		IsDefault   int64  `json:"is_default"` // 是否默认角色 0否 1是
+	}
+	RoleResourcesResp {
+		RoleId  int64   `json:"role_id"`
+		ApiIds  []int64 `json:"api_ids"`
+		MenuIds []int64 `json:"menu_ids"`
+	}
+	UpdateRoleApisReq {
+		RoleId int64   `json:"role_id"`
+		ApiIds []int64 `json:"api_ids"`
+	}
+	UpdateRoleMenusReq {
+		RoleId  int64   `json:"role_id"`
+		MenuIds []int64 `json:"menu_ids"`
+	}
+	QueryRoleReq {
+		PageQuery
+		RoleKey   string `json:"role_key,optional"` // 角色名
+		RoleLabel string `json:"role_label,optional"` // 角色标签
+		IsDisable int64  `json:"is_disable,optional"` // 是否禁用  0否 1是
+	}
 )
 
-@server(
-    tags: "角色管理"
-    prefix:     /admin-api/v1
-    group: role
-    authType: apiKey
-    middleware: AdminToken,Permission,OperationLog
+@server (
+	tags:       "角色管理"
+	prefix:     /admin-api/v1
+	group:      role
+	authType:   apiKey
+	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
-    @doc "分页获取角色列表"
-    @handler FindRoleList
-    post /role/find_role_list (RoleQuery) returns (PageResp)
+	@doc "分页获取角色列表"
+	@handler FindRoleList
+	post /role/find_role_list (QueryRoleReq) returns (PageResp)
 
-    @doc "获取角色资源列表"
-    @handler FindRoleResources
-    post /role/find_role_resources (IdReq) returns (RoleResourcesResp)
+	@doc "获取角色资源列表"
+	@handler FindRoleResources
+	post /role/find_role_resources (IdReq) returns (RoleResourcesResp)
 
-    @doc "创建角色"
-    @handler AddRole
-    post /role/add_role (RoleNewReq) returns (RoleBackVO)
+	@doc "创建角色"
+	@handler AddRole
+	post /role/add_role (NewRoleReq) returns (RoleBackVO)
 
-    @doc "更新角色"
-    @handler UpdateRole
-    put /role/update_role (RoleNewReq) returns (RoleBackVO)
+	@doc "更新角色"
+	@handler UpdateRole
+	put /role/update_role (NewRoleReq) returns (RoleBackVO)
 
-    @doc "删除角色"
-    @handler DeletesRole
-    post /role/deletes_role (IdsReq) returns (BatchResp)
+	@doc "删除角色"
+	@handler DeletesRole
+	delete /role/deletes_role (IdsReq) returns (BatchResp)
 
-    @doc "更新角色菜单权限"
-    @handler UpdateRoleMenus
-    post /role/update_role_menus (UpdateRoleMenusReq) returns (EmptyResp)
+	@doc "更新角色菜单权限"
+	@handler UpdateRoleMenus
+	put /role/update_role_menus (UpdateRoleMenusReq) returns (EmptyResp)
 
-    @doc "更新角色接口权限"
-    @handler UpdateRoleApis
-    post /role/update_role_apis (UpdateRoleApisReq) returns (EmptyResp)
+	@doc "更新角色接口权限"
+	@handler UpdateRoleApis
+	put /role/update_role_apis (UpdateRoleApisReq) returns (EmptyResp)
 }
 

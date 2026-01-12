@@ -30,7 +30,7 @@ func (l *DeleteArticleLogic) DeleteArticle(req *types.IdReq) (resp *types.BatchR
 		Ids: []int64{req.Id},
 	}
 
-	out, err := l.svcCtx.ArticleRpc.DeleteArticle(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.DeletesArticle(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

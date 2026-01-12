@@ -25,8 +25,8 @@ func NewAddCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCa
 	}
 }
 
-func (l *AddCategoryLogic) AddCategory(req *types.CategoryNewReq) (resp *types.CategoryBackVO, err error) {
-	in := &articlerpc.CategoryNewReq{
+func (l *AddCategoryLogic) AddCategory(req *types.NewCategoryReq) (resp *types.CategoryBackVO, err error) {
+	in := &articlerpc.NewCategoryReq{
 		Id:           req.Id,
 		CategoryName: req.CategoryName,
 	}

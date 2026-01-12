@@ -31,6 +31,6 @@ func (s *RemarkRouter) Register(r *gin.RouterGroup) {
 		// 分页获取留言列表
 		group.POST("/remark/find_remark_list", h.FindRemarkList)
 		// 更新留言
-		group.PUT("/remark/update_remark_review", h.UpdateRemarkReview)
+		group.PUT("/remark/update_remark_review", h.UpdateRemarkStatus)
 	}
 }

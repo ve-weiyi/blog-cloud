@@ -3,7 +3,7 @@ package menu
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -27,7 +27,7 @@ func NewAddMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMenuLo
 	}
 }
 
-func (l *AddMenuLogic) AddMenu(req *types.MenuNewReq) (resp *types.MenuBackVO, err error) {
+func (l *AddMenuLogic) AddMenu(req *types.NewMenuReq) (resp *types.MenuBackVO, err error) {
 	in := ConvertMenuPb(req)
 	out, err := l.svcCtx.PermissionRpc.AddMenu(l.ctx, in)
 	if err != nil {
@@ -38,15 +38,15 @@ func (l *AddMenuLogic) AddMenu(req *types.MenuNewReq) (resp *types.MenuBackVO, e
 	return resp, nil
 }
 
-func ConvertMenuPb(in *types.MenuNewReq) (out *permissionrpc.MenuNewReq) {
-	var children []*permissionrpc.MenuNewReq
+func ConvertMenuPb(in *types.NewMenuReq) (out *permissionrpc.NewMenuReq) {
+	var children []*permissionrpc.NewMenuReq
 	if in.Children != nil {
 		for _, v := range in.Children {
 			children = append(children, ConvertMenuPb(v))
 		}
 	}
 
-	out = &permissionrpc.MenuNewReq{
+	out = &permissionrpc.NewMenuReq{
 		Id:        in.Id,
 		ParentId:  in.ParentId,
 		Path:      in.Path,

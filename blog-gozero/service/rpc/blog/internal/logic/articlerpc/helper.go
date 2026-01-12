@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 )
@@ -27,7 +27,7 @@ func NewArticleHelperLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Art
 	}
 }
 
-func convertCategoryIn(in *articlerpc.CategoryNewReq) (out *model.TCategory) {
+func convertCategoryIn(in *articlerpc.NewCategoryReq) (out *model.TCategory) {
 	out = &model.TCategory{
 		Id:           in.Id,
 		CategoryName: in.CategoryName,
@@ -36,7 +36,7 @@ func convertCategoryIn(in *articlerpc.CategoryNewReq) (out *model.TCategory) {
 	return out
 }
 
-func convertTagIn(in *articlerpc.TagNewReq) (out *model.TTag) {
+func convertTagIn(in *articlerpc.NewTagReq) (out *model.TTag) {
 	out = &model.TTag{
 		Id:      in.Id,
 		TagName: in.TagName,
@@ -217,16 +217,16 @@ func (l *ArticleHelperLogic) convertArticleQuery(in *articlerpc.FindArticleListR
 		opts = append(opts, query.WithCondition("id in (?)", in.Ids))
 	}
 
-	if in.Status != 0 {
-		opts = append(opts, query.WithCondition("status = ?", in.Status))
-	}
-
-	if in.IsTop != 0 {
+	if in.IsTop >= 0 {
 		opts = append(opts, query.WithCondition("is_top = ?", in.IsTop))
 	}
 
-	if in.IsDelete != 0 {
+	if in.IsDelete >= 0 {
 		opts = append(opts, query.WithCondition("is_delete = ?", in.IsDelete))
+	}
+
+	if in.Status != 0 {
+		opts = append(opts, query.WithCondition("status = ?", in.Status))
 	}
 
 	if in.ArticleType != 0 {

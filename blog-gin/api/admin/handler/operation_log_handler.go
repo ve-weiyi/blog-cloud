@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -53,7 +53,7 @@ func (s *OperationLogController) DeletesOperationLog(c *gin.Context) {
 // @Summary		"分页获取操作记录列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.OperationLogQuery		true	"请求参数"
+// @Param		data	body		types.QueryOperationLogReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/operation_log/find_operation_log_list [POST]
 func (s *OperationLogController) FindOperationLogList(c *gin.Context) {
@@ -62,7 +62,7 @@ func (s *OperationLogController) FindOperationLogList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.OperationLogQuery
+	var req *types.QueryOperationLogReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

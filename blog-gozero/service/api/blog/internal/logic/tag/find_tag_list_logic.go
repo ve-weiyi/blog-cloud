@@ -26,7 +26,7 @@ func NewFindTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindT
 	}
 }
 
-func (l *FindTagListLogic) FindTagList(req *types.TagQueryReq) (resp *types.PageResp, err error) {
+func (l *FindTagListLogic) FindTagList(req *types.QueryTagReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindTagListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -50,7 +50,7 @@ func (l *FindTagListLogic) FindTagList(req *types.TagQueryReq) (resp *types.Page
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "标签",
 	})
 	if err != nil {

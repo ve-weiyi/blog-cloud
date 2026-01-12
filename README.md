@@ -146,25 +146,33 @@ ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go �
 
 ```
 ve-blog-golang/
-├── blog-gin/              # Gin 框架实现（示例参考）
+├── blog-gin/              # Gin 框架实现（单体架构参考）
 ├── blog-gozero/           # Go-Zero 微服务实现（主要实现）
-│   ├── service/
-│   │   ├── api/          # API 网关层
-│   │   │   ├── blog/     # 前台接口服务
-│   │   │   └── admin/    # 后台接口服务
-│   │   └── rpc/          # RPC 服务层
-│   │       └── blog/     # 业务逻辑服务
-│   ├── model/            # 数据模型
-│   └── common/           # 公共模块
-├── kit/                   # 通用工具包
-│   ├── utils/            # 工具函数
-│   ├── middleware/       # 中间件
-│   └── infra/            # 基础设施
+│   ├── common/           # 业务常量和配置
+│   ├── infra/            # 基础设施层
+│   │   ├── interceptorx/ # gRPC 拦截器
+│   │   └── middlewarex/  # HTTP 中间件
+│   └── service/
+│       ├── api/          # API 网关层
+│       │   ├── admin/    # 后台管理服务
+│       │   └── blog/     # 前台博客服务
+│       ├── model/        # 数据模型层（Gorm Models）
+│       └── rpc/          # RPC 服务层
+│           └── blog/     # 核心业务逻辑服务
+├── pkg/                   # 公共工具包（可独立使用）
+│   ├── infra/            # 业务基础设施
+│   ├── kit/              # 技术组件和中间件
+│   ├── plugins/          # 功能插件
+│   │   ├── ai/           # AI 集成
+│   │   ├── knife4j/      # API 文档增强
+│   │   └── music/        # 音乐播放器
+│   └── utils/            # 工具函数库
 ├── stompws/              # WebSocket 聊天室（Stomp 协议）
 ├── tools/                # 代码生成工具
 └── deploy/               # 部署配置文件
     ├── docker/           # Docker 配置
-    └── k8s/              # Kubernetes 配置
+    ├── docker-compose/   # Docker Compose 容器编排
+    └── kubernetes/       # Kubernetes 配置
 ```
 
 ## ⚙️ 环境要求

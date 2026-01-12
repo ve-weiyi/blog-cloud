@@ -131,8 +131,8 @@ message User {
   string info = 7;// 用户信息
   int64 status = 8;
   string register_type = 9;
-  string ip_address = 10;// ip host
-  string ip_source = 11;// ip 源
+  string ip_address = 10;// IP 地址
+  string ip_source = 11;// IP 归属地
   int64 created_at = 12;
   int64 updated_at = 13;
 }
@@ -147,8 +147,8 @@ message UserInfoResp {
   string info = 7;// 用户信息
   int64 status = 8;
   string register_type = 9;
-  string ip_address = 10;// ip host
-  string ip_source = 11;// ip 源
+  string ip_address = 10;// IP 地址
+  string ip_source = 11;// IP 归属地
   int64 created_at = 12;
   int64 updated_at = 13;
   repeated UserRoleLabel roles = 16;
@@ -259,10 +259,34 @@ message UserArea {
   int64 count = 2; // 数量
 }
 
-message GetTouristInfoReq{
+message VisitorInfo{
+  int64 id = 1;                 // 游客ID
+  string terminal_id = 2;       // 终端标识
+  string os = 3;                // 操作系统
+  string browser = 4;           // 浏览器
+  string ip_address = 5;        // IP地址
+  string ip_source = 6;         // IP归属地
+  int64 created_at = 7;         // 创建时间
+  int64 updated_at = 8;         // 更新时间
 }
-message GetTouristInfoResp {
-  string tourist_id = 1;
+
+message GetClientInfoReq{
+
+}
+message GetClientInfoResp {
+  VisitorInfo visitor = 1;
+}
+
+message FindVisitorListReq{
+  PageReq paginate = 1;    // 分页参数
+  string terminal_id = 2;
+  repeated string terminal_ids = 3;
+  string ip_source = 4;
+}
+
+message FindVisitorListResp{
+  PageResp pagination = 1; // 分页信息
+  repeated VisitorInfo list = 2;
 }
 
 service AccountRpc {
@@ -335,7 +359,8 @@ service AccountRpc {
   // 查询用户分布区域
   rpc AnalysisUserAreas(AnalysisUserAreasReq) returns(AnalysisUserAreasResp);
 
-  // 获取游客身份
-  rpc GetTouristInfo(GetTouristInfoReq) returns(GetTouristInfoResp);
-
+  // 获取客户端信息
+  rpc GetClientInfo(GetClientInfoReq) returns(GetClientInfoResp);
+  // 查询游客信息
+  rpc FindVisitorList(FindVisitorListReq) returns(FindVisitorListResp);
 }

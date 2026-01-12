@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/spf13/cast"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,21 +34,21 @@ func NewGetUserLikeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 func (l *GetUserLikeLogic) GetUserLike(req *types.EmptyReq) (resp *types.UserLikeResp, err error) {
 
 	articles, err := l.svcCtx.ArticleRpc.FindUserLikeArticle(l.ctx, &articlerpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	comments, err := l.svcCtx.MessageRpc.FindUserLikeComment(l.ctx, &messagerpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	talks, err := l.svcCtx.TalkRpc.FindUserLikeTalk(l.ctx, &talkrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+	talks, err := l.svcCtx.SocialRpc.FindUserLikeTalk(l.ctx, &socialrpc.UserIdReq{
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	})
 	if err != nil {
 		return nil, err

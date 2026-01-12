@@ -47,7 +47,7 @@ type (
 		OriginalUrl    string    `json:"original_url" gorm:"column:original_url"`       // 原文链接
 		IsTop          int64     `json:"is_top" gorm:"column:is_top"`                   // 是否置顶 0否 1是
 		IsDelete       int64     `json:"is_delete" gorm:"column:is_delete"`             // 是否删除  0否 1是
-		Status         int64     `json:"status" gorm:"column:status"`                   // 状态值 1公开 2私密 3评论可见
+		Status         int64     `json:"status" gorm:"column:status"`                   // 状态值 1公开 2私密 3草稿 4评论可见
 		LikeCount      int64     `json:"like_count" gorm:"column:like_count"`           // 点赞数
 		ViewCount      int64     `json:"view_count" gorm:"column:view_count"`           // 查看数
 		CreatedAt      time.Time `json:"created_at" gorm:"column:created_at"`           // 发表时间

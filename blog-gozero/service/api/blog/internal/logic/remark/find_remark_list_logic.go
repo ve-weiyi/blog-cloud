@@ -27,7 +27,7 @@ func NewFindRemarkListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fi
 	}
 }
 
-func (l *FindRemarkListLogic) FindRemarkList(req *types.RemarkQueryReq) (resp *types.PageResp, err error) {
+func (l *FindRemarkListLogic) FindRemarkList(req *types.QueryRemarkReq) (resp *types.PageResp, err error) {
 	in := &messagerpc.FindRemarkListReq{
 		Paginate: &messagerpc.PageReq{
 			Page:     req.Page,
@@ -40,23 +40,35 @@ func (l *FindRemarkListLogic) FindRemarkList(req *types.RemarkQueryReq) (resp *t
 		return nil, err
 	}
 
-	var uids []string
-	for _, v := range out.List {
-		uids = append(uids, v.UserId)
-	}
-
 	// 查询用户信息
-	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	usm, err := apiutils.BatchQuery(out.List,
+		func(v *messagerpc.RemarkDetailsResp) string {
+			return v.UserId
+		},
+		func(ids []string) (map[string]*types.UserInfoVO, error) {
+			return apiutils.GetUserInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	list := make([]*types.Remark, 0)
 	for _, v := range out.List {
-		list = append(list, ConvertRemarkTypes(v, usm))
+		m := &types.Remark{
+			Id:             v.Id,
+			UserId:         v.UserId,
+			TerminalId:     v.TerminalId,
+			MessageContent: v.MessageContent,
+			Status:         v.Status,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+			UserInfo:       usm[v.UserId],
+		}
+		list = append(list, m)
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "留言",
 	})
 	if err != nil {

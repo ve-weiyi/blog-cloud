@@ -6,7 +6,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/resourcerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +26,7 @@ func NewAddPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPageLo
 }
 
 // 创建页面
-func (l *AddPageLogic) AddPage(in *resourcerpc.PageNewReq) (*resourcerpc.PageDetailsResp, error) {
+func (l *AddPageLogic) AddPage(in *resourcerpc.NewPageReq) (*resourcerpc.PageDetailsResp, error) {
 	entity := convertPageIn(in)
 
 	_, err := l.svcCtx.TPageModel.Insert(l.ctx, entity)
@@ -37,7 +37,7 @@ func (l *AddPageLogic) AddPage(in *resourcerpc.PageNewReq) (*resourcerpc.PageDet
 	return convertPageOut(entity), nil
 }
 
-func convertPageIn(in *resourcerpc.PageNewReq) (out *model.TPage) {
+func convertPageIn(in *resourcerpc.NewPageReq) (out *model.TPage) {
 	out = &model.TPage{
 		Id:             in.Id,
 		PageName:       in.PageName,

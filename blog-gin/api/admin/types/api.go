@@ -13,7 +13,7 @@ type ApiBackVO struct {
 	Children  []*ApiBackVO `json:"children"`
 }
 
-type ApiNewReq struct {
+type NewApiReq struct {
 	Id        int64  `json:"id,optional"`         // 主键id
 	ParentId  int64  `json:"parent_id"`           // 分组id
 	Name      string `json:"name"`                // api名称
@@ -23,7 +23,7 @@ type ApiNewReq struct {
 	IsDisable int64  `json:"is_disable,optional"` // 是否禁用 0否 1是
 }
 
-type ApiQuery struct {
+type QueryApiReq struct {
 	PageQuery
 	Name   string `json:"name,optional"`   // api名称
 	Path   string `json:"path,optional"`   // api路径

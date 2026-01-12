@@ -3,15 +3,16 @@ package accountrpclogic
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/mailtemplate"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/mailtemplate"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/mail"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/patternx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/tempx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizcode"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizerr"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/mail"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/patternx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/tempx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,7 +35,7 @@ func NewSendEmailVerifyCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *SendEmailVerifyCodeLogic) SendEmailVerifyCode(in *accountrpc.SendEmailVerifyCodeReq) (*accountrpc.EmptyResp, error) {
 	// 校验邮箱格式
 	if !patternx.IsValidEmail(in.Email) {
-		return nil, bizerr.NewBizError(bizerr.CodeInvalidParam, "邮箱格式不正确")
+		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 
 	// 验证用户是否存在
@@ -43,16 +44,16 @@ func (l *SendEmailVerifyCodeLogic) SendEmailVerifyCode(in *accountrpc.SendEmailV
 		// 用户已存在
 		exist, _ := l.svcCtx.TUserModel.FindOne(l.ctx, "email = ?", in.Email)
 		if exist != nil {
-			return nil, bizerr.NewBizError(bizerr.CodeUserAlreadyExist, "用户已存在")
+			return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "用户已存在")
 		}
 	case constant.CodeTypeResetPwd:
 		// 用户不存在
 		exist, _ := l.svcCtx.TUserModel.FindOne(l.ctx, "email = ?", in.Email)
 		if exist == nil {
-			return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, "用户不存在")
+			return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, "用户不存在")
 		}
 	default:
-		return nil, bizerr.NewBizError(bizerr.CodeInvalidParam, "验证码类型不正确")
+		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "验证码类型不正确")
 	}
 
 	// 发送验证码邮件

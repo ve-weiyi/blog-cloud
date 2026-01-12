@@ -30,35 +30,6 @@ message PageResp {
   int64 total = 3;     // 总数
 }
 
-/************** blog 友链管理 **************/
-message FriendNewReq {
-  int64 id = 1;// id
-  string link_name = 2;// 链接名
-  string link_avatar = 3;// 链接头像
-  string link_address = 4;// 链接地址
-  string link_intro = 5;// 链接介绍
-}
-
-message FriendDetailsResp {
-  int64 id = 1;// id
-  string link_name = 2;// 链接名
-  string link_avatar = 3;// 链接头像
-  string link_address = 4;// 链接地址
-  string link_intro = 5;// 链接介绍
-  int64 created_at = 6;// 创建时间
-  int64 updated_at = 7;// 更新时间
-}
-
-message FindFriendListReq {
-  PageReq paginate = 1;    // 分页参数
-  string link_name = 2;// 链接名
-}
-
-message FindFriendListResp {
-  PageResp pagination = 1; // 分页信息
-  repeated FriendDetailsResp list = 2;
-}
-
 /************** blog 网站管理 **************/
 
 message VisitDailyStatistics {
@@ -101,13 +72,4 @@ service WebsiteRpc {
   rpc AddVisit(AddVisitReq) returns(AddVisitResp);
   // 查询用户访问趋势
   rpc FindVisitTrend(FindVisitTrendReq) returns(FindVisitTrendResp);
-
-  // 创建友链
-  rpc AddFriend(FriendNewReq) returns(FriendDetailsResp);
-  // 更新友链
-  rpc UpdateFriend(FriendNewReq) returns(FriendDetailsResp);
-  // 删除友链
-  rpc DeleteFriend(IdsReq) returns(BatchResp);
-  // 查询友链列表
-  rpc FindFriendList(FindFriendListReq) returns(FindFriendListResp);
 }

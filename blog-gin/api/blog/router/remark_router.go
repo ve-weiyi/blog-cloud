@@ -18,20 +18,18 @@ func NewRemarkRouter(svcCtx *svctx.ServiceContext) *RemarkRouter {
 
 func (s *RemarkRouter) Register(r *gin.RouterGroup) {
 	// Remark
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewRemarkController(s.svcCtx)
 		// 分页获取留言列表
 		group.POST("/remark/find_remark_list", h.FindRemarkList)
 	}
 	// Remark
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewRemarkController(s.svcCtx)
 		// 创建留言

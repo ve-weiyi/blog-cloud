@@ -23,14 +23,13 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		group := r.Group("/blog-api/v1")
 
 		h := handler.NewAuthController(s.svcCtx)
-		// 获取游客身份信息
-		group.GET("/get_tourist_info", h.GetTouristInfo)
+		// 获取客户端信息
+		group.GET("/get_client_info", h.GetClientInfo)
 	}
 	// Auth
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewAuthController(s.svcCtx)
 		// 邮箱登录
@@ -55,16 +54,15 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		group.POST("/third_login", h.ThirdLogin)
 	}
 	// Auth
-	// [TerminalToken UserToken]
+	// [UserToken]
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 		group.Use(s.svcCtx.UserToken)
 
 		h := handler.NewAuthController(s.svcCtx)
 		// 注销
 		group.POST("/logoff", h.Logoff)
 		// 登出
-		group.POST("/logout", h.Logout)
+		group.GET("/logout", h.Logout)
 	}
 }

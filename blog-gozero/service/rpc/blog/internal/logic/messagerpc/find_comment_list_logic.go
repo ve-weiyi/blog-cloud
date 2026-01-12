@@ -27,7 +27,26 @@ func NewFindCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 
 // 分页获取评论列表
 func (l *FindCommentListLogic) FindCommentList(in *messagerpc.FindCommentListReq) (*messagerpc.FindCommentListResp, error) {
-	page, size, sorts, conditions, params := convertCommentQuery(in)
+	var opts []query.Option
+	if in.Paginate != nil {
+		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
+		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
+		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
+	}
+
+	if in.UserId != "" {
+		opts = append(opts, query.WithCondition("user_id = ?", in.UserId))
+	}
+
+	if in.Status >= 0 {
+		opts = append(opts, query.WithCondition("status = ?", in.Status))
+	}
+
+	if in.Type != 0 {
+		opts = append(opts, query.WithCondition("type = ?", in.Type))
+	}
+
+	page, size, sorts, conditions, params := query.NewQueryBuilder(opts...).Build()
 
 	records, total, err := l.svcCtx.TCommentModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
@@ -50,46 +69,20 @@ func (l *FindCommentListLogic) FindCommentList(in *messagerpc.FindCommentListReq
 	}, nil
 }
 
-func convertCommentQuery(in *messagerpc.FindCommentListReq) (page int, size int, sorts string, conditions string, params []any) {
-	var opts []query.Option
-	if in.Paginate != nil {
-		opts = append(opts, query.WithPage(int(in.Paginate.Page)))
-		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
-		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
-	}
-
-	if in.ParentId != 0 {
-		opts = append(opts, query.WithCondition("parent_id = ?", in.ParentId))
-	}
-
-	if in.Type != 0 {
-		opts = append(opts, query.WithCondition("type = ?", in.Type))
-	}
-
-	if in.TopicId != 0 {
-		opts = append(opts, query.WithCondition("topic_id = ?", in.TopicId))
-	}
-
-	return query.NewQueryBuilder(opts...).Build()
-}
-
 func convertCommentOut(in *model.TComment) (out *messagerpc.CommentDetailsResp) {
 	out = &messagerpc.CommentDetailsResp{
 		Id:             in.Id,
 		UserId:         in.UserId,
 		TopicId:        in.TopicId,
 		ParentId:       in.ParentId,
-		ReplyMsgId:     in.ReplyMsgId,
+		ReplyId:        in.ReplyId,
 		ReplyUserId:    in.ReplyUserId,
 		CommentContent: in.CommentContent,
 		Type:           in.Type,
 		Status:         in.Status,
-		IsReview:       in.IsReview,
 		CreatedAt:      in.CreatedAt.Unix(),
 		UpdatedAt:      in.UpdatedAt.Unix(),
 		LikeCount:      in.LikeCount,
-		IpAddress:      in.IpAddress,
-		IpSource:       in.IpSource,
 	}
 
 	return out

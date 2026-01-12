@@ -25,8 +25,8 @@ func NewAddPhotoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPhoto
 	}
 }
 
-func (l *AddPhotoLogic) AddPhoto(req *types.PhotoNewReq) (resp *types.PhotoBackVO, err error) {
-	in := &resourcerpc.PhotoNewReq{
+func (l *AddPhotoLogic) AddPhoto(req *types.NewPhotoReq) (resp *types.PhotoBackVO, err error) {
+	in := &resourcerpc.NewPhotoReq{
 		Id:        req.Id,
 		AlbumId:   req.AlbumId,
 		PhotoName: req.PhotoName,

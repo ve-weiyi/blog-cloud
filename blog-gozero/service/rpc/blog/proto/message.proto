@@ -46,51 +46,43 @@ message ChatDetailsResp {
   string user_id = 2;// 用户id
   string terminal_id = 3;// 设备id
   string ip_address = 4;// ip地址
-  string ip_source = 5;// ip来源
-  string nickname = 6 ;// 昵称
+  string ip_source = 5;// ip归属地
+  string nickname = 6;// 昵称
   string avatar = 7;// 头像
   string type = 8;// 类型
   string content = 9;// 聊天内容
-  int64 status = 10;// 状态:0正常 1编辑 2撤回 3删除
-  int64 created_at = 12;// 创建时间
-  int64 updated_at = 13;// 更新时间
+  int64 status = 10;// 状态
+  int64 created_at = 11;// 创建时间
+  int64 updated_at = 12;// 更新时间
 }
 
 message AddChatReq {
-  string user_id = 2;// 用户id
-  string terminal_id = 3;// 设备id
-  string ip_address = 4;// ip地址
-  string ip_source = 5;// ip来源
-  string nickname = 6 ;// 昵称
-  string avatar = 7;// 头像
-  string type = 8;// 类型
-  string content = 9;// 聊天内容
-  int64 status = 10;// 状态:0正常 1编辑 2撤回 3删除
-  int64 created_at = 12;// 创建时间
-  int64 updated_at = 13;// 更新时间
+  string user_id = 1;// 用户id
+  string terminal_id = 2;// 设备id
+  string ip_address = 3;// ip地址
+  string ip_source = 4;// ip归属地
+  string nickname = 5;// 昵称
+  string avatar = 6;// 头像
+  string type = 7;// 类型
+  string content = 8;// 聊天内容
+  int64 status = 9;// 状态
 }
 
 message UpdateChatReq{
-  int64 id = 1; // 主键
-  string type = 6;// 类型
-  string content = 7;// 聊天内容
-  int64 status = 8;// 状态:0正常 1编辑 2撤回 3删除
-  int64 updated_at = 13;// 更新时间
-}
-
-message UpdateChatStatusReq{
-  int64 id = 1; // 主键
-  int64 status = 8;// 状态:0正常 1编辑 2撤回 3删除
+  int64 id = 1;// 主键
+  string type = 2;// 类型
+  string content = 3;// 聊天内容
+  int64 status = 4;// 状态
 }
 
 message FindChatListReq {
-  int64 after = 101;
-  int64 before = 102;
-  int64 limit = 103;
-  string user_id = 2;// 用户id
-  string type = 6;// 类型
-  string content = 7;// 聊天内容
-  int64 status = 8;// 状态:0正常 1编辑 2撤回 3删除
+  int64 after = 1;
+  int64 before = 2;
+  int64 limit = 3;
+  string user_id = 4;// 用户id
+  string type = 5;// 类型
+  string content = 6;// 聊天内容
+  int64 status = 7;// 状态
 }
 
 message FindChatListResp {
@@ -99,13 +91,14 @@ message FindChatListResp {
 }
 
 /************** blog 留言 **************/
-message RemarkNewReq {
-  string message_content = 4;// 留言内容
+message AddRemarkReq {
+  string message_content = 1;// 留言内容
 }
 
-message RemarkUpdateReq {
+message UpdateRemarkReq {
   int64 id = 1;// 主键id
-  int64 is_review = 8;// 是否审核
+  string message_content = 4;// 留言内容
+  int64 status = 5; // 状态
 }
 
 message RemarkDetailsResp {
@@ -113,17 +106,15 @@ message RemarkDetailsResp {
   string user_id = 2;// 用户id
   string terminal_id = 3;// 终端id
   string message_content = 4;// 留言内容
-  string ip_address = 5;// 用户ip
-  string ip_source = 6;// 用户地址
-  int64 is_review = 8;// 是否审核
+  int64 status = 5; // 状态
   int64 created_at = 9;// 发布时间
   int64 updated_at = 10;// 更新时间
 }
 
 message FindRemarkListReq {
   PageReq paginate = 1;    // 分页参数
-  string nickname = 2;// 昵称
-  int64 is_review = 3;// 是否审核
+  string user_id = 2;// 用户ID
+  int64 status = 4;// 状态
 }
 
 message FindRemarkListResp {
@@ -131,70 +122,54 @@ message FindRemarkListResp {
   repeated RemarkDetailsResp list = 2;
 }
 
-message UpdateRemarkReviewReq{
+message UpdateRemarkStatusReq{
   repeated int64 ids = 1;// 主键
-  int64 is_review = 2;// 是否审核
+int64 status = 2;// 状态
 }
 /************** blog 消息管理 **************/
-message CommentNewReq {
-  int64 topic_id = 3;// 主题id
-  int64 parent_id = 4;// 父评论id
-  int64 reply_msg_id = 5; // 会话id
-  string reply_user_id = 6; // 评论回复用户id
-  string comment_content = 7;// 评论内容
-  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
-  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
+message AddCommentReq {
+  int64 topic_id = 1;// 主题id
+  int64 parent_id = 2;// 父评论id
+  int64 reply_id = 3;// 回复评论id
+  string reply_user_id = 4;// 评论回复用户id
+  string comment_content = 5;// 评论内容
+  int64 type = 6;// 评论类型
+  int64 status = 7;// 状态
 }
 
 message UpdateCommentReq {
   int64 id = 1;// 主键
-  string reply_user_id = 6; // 评论回复用户id
-  string comment_content = 7;// 评论内容
-  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
+  string reply_user_id = 2;// 评论回复用户id
+  string comment_content = 3;// 评论内容
+  int64 status = 4;// 状态
 }
 
 message CommentDetailsResp {
   int64 id = 1;// 主键
   string user_id = 2;// 评论用户id
-  int64 topic_id = 3;// 主题id
-  int64 parent_id = 4;// 父评论id
-  int64 reply_msg_id = 5; // 会话id
-  string reply_user_id = 6; // 评论回复用户id
-  string comment_content = 7;// 评论内容
-  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
-  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
-  int64 is_review = 10;// 是否审核
-  int64 created_at = 11;// 评论时间
-  int64 updated_at = 12;// 更新时间
-  int64 like_count = 13;// 点赞数
-  string ip_address = 14;// ip地址 127.0.0.1
-  string ip_source = 15;// ip来源
+  string terminal_id = 3;// 终端id
+  int64 topic_id = 4;// 主题id
+  int64 parent_id = 5;// 父评论id
+  int64 reply_id = 6;// 回复评论id
+  string reply_user_id = 7;// 评论回复用户id
+  string comment_content = 8;// 评论内容
+  int64 type = 9;// 评论类型
+  int64 status = 10;// 状态
+  int64 created_at = 12;// 评论时间
+  int64 updated_at = 13;// 更新时间
+  int64 like_count = 14;// 点赞数
 }
 
-message UpdateCommentReviewReq{
+message UpdateCommentStatusReq{
   repeated int64 ids = 1;// 主键
-  int64 is_review = 2;// 是否审核
-}
-
-message UpdateCommentContentReq {
-  int64 id = 1;// 主键
-  string user_id = 2;// 评论用户id
-  int64 topic_id = 3;// 主题id
-  int64 parent_id = 4;// 父评论id
-  int64 reply_msg_id = 5; // 会话id
-  string reply_user_id = 6; // 评论回复用户id
-  string comment_content = 7;// 评论内容
-  int64 type = 8;// 评论类型 1.文章 2.友链 3.说说
-  int64 status = 9;// 状态 0.正常 1.已编辑 2.已删除
-  int64 is_review = 10;// 是否审核
+int64 status = 2;// 状态
 }
 
 message FindCommentListReq {
   PageReq paginate = 1;    // 分页参数
-  int64 topic_id = 2;// 主题id
-  int64 parent_id = 3;// 父评论id
-  int64 reply_msg_id = 4; // 会话id
-  int64 type = 5;// 评论类型 1.文章 2.友链 3.说说
+  string user_id = 2;// 用户ID
+  int64 status = 3;// 状态
+  int64 type = 4;// 评论类型
 }
 
 message FindCommentListResp {
@@ -206,8 +181,8 @@ message FindCommentReplyListReq {
   PageReq paginate = 1;    // 分页参数
   int64 topic_id = 2;// 主题id
   int64 parent_id = 3;// 父评论id
-  int64 reply_msg_id = 4; // 会话id
-  int64 type = 5;// 评论类型 1.文章 2.友链 3.说说
+  int64 reply_id = 4;// 回复评论id
+  int64 type = 5;// 评论类型
 }
 
 message FindCommentReplyListResp {
@@ -242,37 +217,35 @@ service MessageRpc {
   rpc AddChat(AddChatReq) returns(ChatDetailsResp);
   // 更新聊天记录
   rpc UpdateChat(UpdateChatReq) returns(ChatDetailsResp);
-  // 更新聊天记录状态
-  rpc UpdateChatStatus(UpdateChatStatusReq) returns(ChatDetailsResp);
-  // 删除聊天记录
-  rpc DeletesChat(IdsReq) returns(BatchResp);
   // 查询聊天记录
   rpc GetChat(IdReq) returns(ChatDetailsResp);
+  // 删除聊天记录
+  rpc DeletesChat(IdsReq) returns(BatchResp);
   // 查询聊天记录列表
   rpc FindChatList(FindChatListReq) returns(FindChatListResp);
 
 
   // 创建留言
-  rpc AddRemark(RemarkNewReq) returns(RemarkDetailsResp);
+  rpc AddRemark(AddRemarkReq) returns(RemarkDetailsResp);
   // 更新留言
-  rpc UpdateRemark(RemarkUpdateReq) returns(RemarkDetailsResp);
-  // 删除留言
-  rpc DeletesRemark(IdsReq) returns(BatchResp);
+  rpc UpdateRemark(UpdateRemarkReq) returns(RemarkDetailsResp);
   // 查询留言
   rpc GetRemark(IdReq) returns(RemarkDetailsResp);
+  // 删除留言
+  rpc DeletesRemark(IdsReq) returns(BatchResp);
   // 查询留言列表
   rpc FindRemarkList(FindRemarkListReq) returns(FindRemarkListResp);
-  // 更新留言审核状态
-  rpc UpdateRemarkReview(UpdateRemarkReviewReq) returns(BatchResp);
+  // 更新留言状态
+  rpc UpdateRemarkStatus(UpdateRemarkStatusReq) returns(BatchResp);
 
   // 创建评论
-  rpc AddComment(CommentNewReq) returns(CommentDetailsResp);
-  // 删除评论
-  rpc DeletesComment(IdsReq) returns(BatchResp);
+  rpc AddComment(AddCommentReq) returns(CommentDetailsResp);
   // 更新评论
   rpc UpdateComment(UpdateCommentReq) returns(CommentDetailsResp);
   // 查询评论
   rpc GetComment(IdReq) returns(CommentDetailsResp);
+  // 删除评论
+  rpc DeletesComment(IdsReq) returns(BatchResp);
 
   // 查询评论列表
   rpc FindCommentList(FindCommentListReq) returns(FindCommentListResp);
@@ -281,10 +254,8 @@ service MessageRpc {
   // 查询评论回复数量
   rpc FindCommentReplyCounts(FindCommentReplyCountsReq) returns(FindCommentReplyCountsResp);
 
-  // 更新评论审核状态
-  rpc UpdateCommentReview(UpdateCommentReviewReq) returns(BatchResp);
-  // 更新评论
-  rpc UpdateCommentContent(UpdateCommentContentReq) returns(CommentDetailsResp);
+  // 更新评论状态
+  rpc UpdateCommentStatus(UpdateCommentStatusReq) returns(BatchResp);
 
   // 点赞评论
   rpc LikeComment(IdReq) returns(EmptyResp);

@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/quickstart/invent"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/quickstart/gotplgen"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 )
 
 type TsApiService struct {
@@ -60,7 +60,7 @@ func generateApiTs(sv TsApiService, tplPath string, outPath string, nameAs strin
 		return err
 	}
 
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 	for k, v := range sv.Groups {
 
 		mt := make(map[string]string)
@@ -89,8 +89,8 @@ func generateApiTs(sv TsApiService, tplPath string, outPath string, nameAs strin
 			return ims[i] < ims[j]
 		})
 
-		meta := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		meta := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, fmt.Sprintf("%s.ts", k)),
 			TemplateString: string(tpl),
 			FunMap: map[string]any{
@@ -130,8 +130,8 @@ func generateTypesTs(sv TsApiService, tplPath string, outPath string, nameAs str
 		return err
 	}
 
-	meta := invent.TemplateMeta{
-		Mode:           invent.ModeCreateOrReplace,
+	meta := gotplgen.TemplateMeta{
+		Mode:           gotplgen.ModeCreateOrReplace,
 		CodeOutPath:    o,
 		TemplateString: string(tpl),
 		FunMap: map[string]any{
@@ -154,8 +154,8 @@ func generatePermsTs(sv TsApiService, tplPath string, outPath string, nameAs str
 		return err
 	}
 
-	meta := invent.TemplateMeta{
-		Mode:           invent.ModeCreateOrReplace,
+	meta := gotplgen.TemplateMeta{
+		Mode:           gotplgen.ModeCreateOrReplace,
 		CodeOutPath:    o,
 		TemplateString: string(tpl),
 		FunMap:         nil,

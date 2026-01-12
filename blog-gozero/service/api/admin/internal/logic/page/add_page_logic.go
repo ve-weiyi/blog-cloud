@@ -25,8 +25,8 @@ func NewAddPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPageLo
 	}
 }
 
-func (l *AddPageLogic) AddPage(req *types.PageNewReq) (resp *types.PageBackVO, err error) {
-	in := &resourcerpc.PageNewReq{
+func (l *AddPageLogic) AddPage(req *types.NewPageReq) (resp *types.PageBackVO, err error) {
+	in := &resourcerpc.NewPageReq{
 		Id:             req.Id,
 		PageName:       req.PageName,
 		PageLabel:      req.PageLabel,

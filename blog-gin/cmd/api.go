@@ -12,7 +12,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/config"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/logz"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/logz"
 )
 
 // API命令参数

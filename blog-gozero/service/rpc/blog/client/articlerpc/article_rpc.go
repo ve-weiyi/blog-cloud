@@ -19,12 +19,10 @@ type (
 	ArticleCategory            = articlerpc.ArticleCategory
 	ArticleDailyStatistics     = articlerpc.ArticleDailyStatistics
 	ArticleDetailsResp         = articlerpc.ArticleDetailsResp
-	ArticleNewReq              = articlerpc.ArticleNewReq
 	ArticlePreview             = articlerpc.ArticlePreview
 	ArticleTag                 = articlerpc.ArticleTag
 	BatchResp                  = articlerpc.BatchResp
 	CategoryDetailsResp        = articlerpc.CategoryDetailsResp
-	CategoryNewReq             = articlerpc.CategoryNewReq
 	CategoryPreviewResp        = articlerpc.CategoryPreviewResp
 	CountResp                  = articlerpc.CountResp
 	EmptyResp                  = articlerpc.EmptyResp
@@ -39,10 +37,12 @@ type (
 	GetArticleRelationResp     = articlerpc.GetArticleRelationResp
 	IdReq                      = articlerpc.IdReq
 	IdsReq                     = articlerpc.IdsReq
+	NewArticleReq              = articlerpc.NewArticleReq
+	NewCategoryReq             = articlerpc.NewCategoryReq
+	NewTagReq                  = articlerpc.NewTagReq
 	PageReq                    = articlerpc.PageReq
 	PageResp                   = articlerpc.PageResp
 	TagDetailsResp             = articlerpc.TagDetailsResp
-	TagNewReq                  = articlerpc.TagNewReq
 	TagPreviewResp             = articlerpc.TagPreviewResp
 	UpdateArticleDeleteReq     = articlerpc.UpdateArticleDeleteReq
 	UpdateArticleTopReq        = articlerpc.UpdateArticleTopReq
@@ -55,15 +55,15 @@ type (
 		// 访问文章
 		VisitArticle(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*VisitArticleResp, error)
 		// 创建文章
-		AddArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error)
+		AddArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 		// 更新文章
-		UpdateArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error)
+		UpdateArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 		// 更新文章删除
 		UpdateArticleDelete(ctx context.Context, in *UpdateArticleDeleteReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 		// 更新文章置顶
 		UpdateArticleTop(ctx context.Context, in *UpdateArticleTopReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 		// 删除文章
-		DeleteArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 		// 查询文章
 		GetArticle(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*ArticleDetailsResp, error)
 		// 查询关联文章
@@ -77,23 +77,23 @@ type (
 		// 用户点赞的文章
 		FindUserLikeArticle(ctx context.Context, in *UserIdReq, opts ...grpc.CallOption) (*FindLikeArticleResp, error)
 		// 创建文章分类
-		AddCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
+		AddCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
 		// 更新文章分类
-		UpdateCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
+		UpdateCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
 		// 查询文章分类
 		GetCategory(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*CategoryDetailsResp, error)
 		// 删除文章分类
-		DeleteCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 		// 查询文章分类列表
 		FindCategoryList(ctx context.Context, in *FindCategoryListReq, opts ...grpc.CallOption) (*FindCategoryListResp, error)
 		// 创建标签
-		AddTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
+		AddTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
 		// 更新标签
-		UpdateTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
+		UpdateTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
 		// 查询标签
 		GetTag(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TagDetailsResp, error)
 		// 删除标签
-		DeleteTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 		// 查询标签列表
 		FindTagList(ctx context.Context, in *FindTagListReq, opts ...grpc.CallOption) (*FindTagListResp, error)
 	}
@@ -122,13 +122,13 @@ func (m *defaultArticleRpc) VisitArticle(ctx context.Context, in *IdReq, opts ..
 }
 
 // 创建文章
-func (m *defaultArticleRpc) AddArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
+func (m *defaultArticleRpc) AddArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.AddArticle(ctx, in, opts...)
 }
 
 // 更新文章
-func (m *defaultArticleRpc) UpdateArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
+func (m *defaultArticleRpc) UpdateArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.UpdateArticle(ctx, in, opts...)
 }
@@ -146,9 +146,9 @@ func (m *defaultArticleRpc) UpdateArticleTop(ctx context.Context, in *UpdateArti
 }
 
 // 删除文章
-func (m *defaultArticleRpc) DeleteArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultArticleRpc) DeletesArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
-	return client.DeleteArticle(ctx, in, opts...)
+	return client.DeletesArticle(ctx, in, opts...)
 }
 
 // 查询文章
@@ -188,13 +188,13 @@ func (m *defaultArticleRpc) FindUserLikeArticle(ctx context.Context, in *UserIdR
 }
 
 // 创建文章分类
-func (m *defaultArticleRpc) AddCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
+func (m *defaultArticleRpc) AddCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.AddCategory(ctx, in, opts...)
 }
 
 // 更新文章分类
-func (m *defaultArticleRpc) UpdateCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
+func (m *defaultArticleRpc) UpdateCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.UpdateCategory(ctx, in, opts...)
 }
@@ -206,9 +206,9 @@ func (m *defaultArticleRpc) GetCategory(ctx context.Context, in *IdReq, opts ...
 }
 
 // 删除文章分类
-func (m *defaultArticleRpc) DeleteCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultArticleRpc) DeletesCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
-	return client.DeleteCategory(ctx, in, opts...)
+	return client.DeletesCategory(ctx, in, opts...)
 }
 
 // 查询文章分类列表
@@ -218,13 +218,13 @@ func (m *defaultArticleRpc) FindCategoryList(ctx context.Context, in *FindCatego
 }
 
 // 创建标签
-func (m *defaultArticleRpc) AddTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
+func (m *defaultArticleRpc) AddTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.AddTag(ctx, in, opts...)
 }
 
 // 更新标签
-func (m *defaultArticleRpc) UpdateTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
+func (m *defaultArticleRpc) UpdateTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
 	return client.UpdateTag(ctx, in, opts...)
 }
@@ -236,9 +236,9 @@ func (m *defaultArticleRpc) GetTag(ctx context.Context, in *IdReq, opts ...grpc.
 }
 
 // 删除标签
-func (m *defaultArticleRpc) DeleteTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultArticleRpc) DeletesTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	client := articlerpc.NewArticleRpcClient(m.cli.Conn())
-	return client.DeleteTag(ctx, in, opts...)
+	return client.DeletesTag(ctx, in, opts...)
 }
 
 // 查询标签列表

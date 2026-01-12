@@ -3,42 +3,42 @@ syntax = "v1"
 import "base.api"
 
 type (
-	CategoryNewReq {
-		Id int64 `json:"id,optional"`
-		CategoryName string `json:"category_name"` // 分类名
-	}
 	CategoryBackVO {
-		Id int64 `json:"id,optional"`
+		Id           int64  `json:"id,optional"`
 		CategoryName string `json:"category_name"` // 分类名
-		ArticleCount int64 `json:"article_count"`
-		CreatedAt int64 `json:"created_at"`        // 创建时间
-		UpdatedAt int64 `json:"updated_at"`        // 更新时间
+		ArticleCount int64  `json:"article_count"`
+		CreatedAt    int64  `json:"created_at"` // 创建时间
+		UpdatedAt    int64  `json:"updated_at"` // 更新时间
 	}
-	CategoryQuery {
+	NewCategoryReq {
+		Id           int64  `json:"id,optional"`
+		CategoryName string `json:"category_name"` // 分类名
+	}
+	QueryCategoryReq {
 		PageQuery
 		CategoryName string `json:"category_name,optional"` // 分类名
 	}
 )
 
-@server(
-	tags: "分类管理"
+@server (
+	tags:       "分类管理"
 	prefix:     /admin-api/v1
-	group: category
-	authType: apiKey
+	group:      category
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "分页获取文章分类列表"
 	@handler FindCategoryList
-	post /category/find_category_list (CategoryQuery) returns (PageResp)
+	post /category/find_category_list (QueryCategoryReq) returns (PageResp)
 
 	@doc "创建文章分类"
 	@handler AddCategory
-	post /category/add_category (CategoryNewReq) returns (CategoryBackVO)
+	post /category/add_category (NewCategoryReq) returns (CategoryBackVO)
 
 	@doc "更新文章分类"
 	@handler UpdateCategory
-	put /category/update_category (CategoryNewReq) returns (CategoryBackVO)
+	put /category/update_category (NewCategoryReq) returns (CategoryBackVO)
 
 	@doc "删除文章分类"
 	@handler DeletesCategory

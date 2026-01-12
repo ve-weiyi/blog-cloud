@@ -5,12 +5,13 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizcode"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizerr"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/cryptox"
 )
 
 type LoginLogic struct {
@@ -32,12 +33,12 @@ func (l *LoginLogic) Login(in *accountrpc.LoginReq) (*accountrpc.LoginResp, erro
 	// 验证用户是否存在
 	account, err := l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, "用户不存在")
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, "用户不存在")
 	}
 
 	// 验证密码是否正确
-	if !crypto.BcryptCheck(in.Password, account.Password) {
-		return nil, bizerr.NewBizError(bizerr.CodeUserPasswordError, "密码不正确")
+	if !cryptox.BcryptCheck(in.Password, account.Password) {
+		return nil, bizerr.NewBizError(bizcode.CodeUserPasswordError, "密码不正确")
 	}
 
 	return onLogin(l.ctx, l.svcCtx, account, constant.LoginTypeUsername)
@@ -46,7 +47,7 @@ func (l *LoginLogic) Login(in *accountrpc.LoginReq) (*accountrpc.LoginResp, erro
 func onLogin(ctx context.Context, svcCtx *svc.ServiceContext, user *model.TUser, loginType string) (resp *accountrpc.LoginResp, err error) {
 	// 判断用户是否被禁用
 	if user.Status == constant.UserStatusDisabled {
-		return nil, bizerr.NewBizError(bizerr.CodeUserDisabled, "用户已被禁用")
+		return nil, bizerr.NewBizError(bizcode.CodeUserDisabled, "用户已被禁用")
 	}
 
 	// 查找用户角色

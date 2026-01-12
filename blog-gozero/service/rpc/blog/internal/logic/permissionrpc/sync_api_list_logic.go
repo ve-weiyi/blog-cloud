@@ -49,7 +49,7 @@ func (l *SyncApiListLogic) syncApiList(in *permissionrpc.SyncApiListReq) {
 	return
 }
 
-func (l *SyncApiListLogic) InsertApi(ctx context.Context, item *permissionrpc.ApiNewReq) (err error) {
+func (l *SyncApiListLogic) InsertApi(ctx context.Context, item *permissionrpc.NewApiReq) (err error) {
 	// 已存在则跳过
 	parent, _ := l.svcCtx.TApiModel.FindOneByPathMethodName(ctx, item.Path, item.Method, item.Name)
 	if parent == nil {

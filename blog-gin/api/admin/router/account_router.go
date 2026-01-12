@@ -31,10 +31,10 @@ func (s *AccountRouter) Register(r *gin.RouterGroup) {
 		// 查询在线用户列表
 		group.POST("/account/find_account_online_list", h.FindAccountOnlineList)
 		// 修改用户密码
-		group.POST("/account/update_account_password", h.UpdateAccountPassword)
+		group.PUT("/account/update_account_password", h.UpdateAccountPassword)
 		// 修改用户角色
-		group.POST("/account/update_account_roles", h.UpdateAccountRoles)
+		group.PUT("/account/update_account_roles", h.UpdateAccountRoles)
 		// 修改用户状态
-		group.POST("/account/update_account_status", h.UpdateAccountStatus)
+		group.PUT("/account/update_account_status", h.UpdateAccountStatus)
 	}
 }

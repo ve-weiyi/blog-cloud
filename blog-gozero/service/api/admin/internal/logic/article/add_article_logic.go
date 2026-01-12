@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -29,10 +29,10 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 	}
 }
 
-func (l *AddArticleLogic) AddArticle(req *types.ArticleNewReq) (resp *types.ArticleBackVO, err error) {
-	in := &articlerpc.ArticleNewReq{
+func (l *AddArticleLogic) AddArticle(req *types.NewArticleReq) (resp *types.ArticleBackVO, err error) {
+	in := &articlerpc.NewArticleReq{
 		Id:             req.Id,
-		UserId:         cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId:         cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 		ArticleCover:   req.ArticleCover,
 		ArticleTitle:   req.ArticleTitle,
 		ArticleContent: req.ArticleContent,

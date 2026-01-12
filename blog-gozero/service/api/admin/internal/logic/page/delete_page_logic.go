@@ -30,7 +30,7 @@ func (l *DeletePageLogic) DeletePage(req *types.IdReq) (resp *types.BatchResp, e
 		Ids: []int64{req.Id},
 	}
 
-	out, err := l.svcCtx.ResourceRpc.DeletePage(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.DeletesPage(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

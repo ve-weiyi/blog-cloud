@@ -12,8 +12,8 @@ import (
 
 	"github.com/zeromicro/go-zero/tools/goctl/pkg/golang"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/quickstart/invent"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/quickstart/gotplgen"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 	"github.com/ve-weiyi/ve-blog-golang/tools/parserx/apiparser/aspec"
 )
 
@@ -36,7 +36,7 @@ type Route struct {
 type GroupType map[string]map[string]aspec.Type
 
 func generateHandlers(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage string) error {
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 
 	tpl, err := os.ReadFile(path.Join(tplPath, "handler.tpl"))
 	if err != nil {
@@ -49,8 +49,8 @@ func generateHandlers(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackag
 
 	for k, v := range groups {
 
-		m := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		m := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, "handler", fmt.Sprintf("%v_handler.go", k)),
 			TemplateString: string(tpl),
 			Data: map[string]any{
@@ -83,7 +83,7 @@ func generateHandlers(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackag
 }
 
 func generateLogics(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage string) error {
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 
 	tpl, err := os.ReadFile(path.Join(tplPath, "logic.tpl"))
 	if err != nil {
@@ -97,8 +97,8 @@ func generateLogics(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage 
 
 	for k, v := range groups {
 
-		m := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		m := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, "logic", fmt.Sprintf("%v_logic.go", k)),
 			TemplateString: string(tpl),
 			Data: map[string]any{
@@ -128,7 +128,7 @@ func generateLogics(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage 
 }
 
 func generateRouters(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage string) error {
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 
 	tpl, err := os.ReadFile(path.Join(tplPath, "router.tpl"))
 	if err != nil {
@@ -142,8 +142,8 @@ func generateRouters(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage
 
 	for k, v := range groups {
 
-		m := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		m := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, "router", fmt.Sprintf("%v_router.go", k)),
 			TemplateString: string(tpl),
 			Data: map[string]any{
@@ -172,7 +172,7 @@ func generateRouters(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage
 }
 
 func generateRoutes(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage string) error {
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 
 	tpl, err := os.ReadFile(path.Join(tplPath, "routes.tpl"))
 	if err != nil {
@@ -193,8 +193,8 @@ func generateRoutes(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage 
 		return gps[i] < gps[j]
 	})
 
-	m := invent.TemplateMeta{
-		Mode:           invent.ModeCreateOrReplace,
+	m := gotplgen.TemplateMeta{
+		Mode:           gotplgen.ModeCreateOrReplace,
 		CodeOutPath:    path.Join(outPath, "routes.go"),
 		TemplateString: string(tpl),
 		Data: map[string]any{
@@ -205,7 +205,7 @@ func generateRoutes(sp *aspec.ApiSpec, tplPath, outPath, nameAs, contextPackage 
 			},
 			"Groups": gps,
 		},
-		FunMap: invent.StdMapUtils,
+		FunMap: gotplgen.StdMapUtils,
 	}
 
 	metas = append(metas, m)
@@ -228,7 +228,7 @@ func generateTypes(sp *aspec.ApiSpec, tplPath, outPath, nameAs string) error {
 
 	groupTypes := GroupTypes(sp)
 
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 	for k, typeGroup := range groupTypes {
 		if len(typeGroup) == 0 {
 			continue
@@ -253,8 +253,8 @@ func generateTypes(sp *aspec.ApiSpec, tplPath, outPath, nameAs string) error {
 			types = append(types, val)
 		}
 
-		meta := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		meta := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, "types", fmt.Sprintf("%v.go", k)),
 			TemplateString: string(handlerTpl),
 			Data: map[string]any{

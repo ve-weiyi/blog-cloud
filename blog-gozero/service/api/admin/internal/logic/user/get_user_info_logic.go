@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -33,7 +33,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInfoResp, err error) {
-	userId := cast.ToString(l.ctx.Value(restx.HeaderUid))
+	userId := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
 	in := &accountrpc.UserIdReq{
 		UserId: userId,
 	}

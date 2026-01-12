@@ -3,15 +3,6 @@
 
 package types
 
-type ArticleArchivesQueryReq struct {
-	PageQuery
-}
-
-type ArticleClassifyQueryReq struct {
-	PageQuery
-	ClassifyName string `json:"classify_name,optional"` // 分类名
-}
-
 type ArticleDetails struct {
 	ArticleHome
 	Author               *UserInfoVO       `json:"author"`                 // 作者
@@ -21,7 +12,16 @@ type ArticleDetails struct {
 	NewestArticleList    []*ArticlePreview `json:"newest_article_list"`    // 最新文章列表
 }
 
-type ArticleHomeQueryReq struct {
+type QueryArticleArchivesReq struct {
+	PageQuery
+}
+
+type QueryArticleClassifyReq struct {
+	PageQuery
+	ClassifyName string `json:"classify_name,optional"` // 分类名
+}
+
+type QueryArticleHomeReq struct {
 	PageQuery
 	ArticleTitle string `json:"article_title,optional"` // 标题
 }

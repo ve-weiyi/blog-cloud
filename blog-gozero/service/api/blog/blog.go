@@ -1,20 +1,18 @@
 package main
 
 import (
-	_ "embed"
 	"flag"
 	"fmt"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/nacos"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/nacos"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/middlewarex"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/swagger"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/docs"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/middlewarex"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/config"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/handler"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/plugins"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 )
 
@@ -64,13 +62,15 @@ func main() {
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
 
-	ctx := svc.NewServiceContext(c)
-	swagger.RegisterHttpSwagHandler(server, "/blog-api/v1/swagger/", []byte(docs.Docs))
-
+	server.Use(middlewarex.NewCorsMiddleware().Handle)
 	server.Use(middlewarex.NewCtxMetaMiddleware().Handle)
 	server.Use(middlewarex.NewAntiReplyMiddleware().Handle)
+	server.Use(middlewarex.NewTerminalTokenMiddleware().Handle)
 
+	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+	plugins.RegisterPluginHandlers(server, ctx)
+
 	server.PrintRoutes()
 	//httpx.SetErrorHandler(func(err error) (int, interface{}) {
 	//	return http.StatusInternalServerError, err

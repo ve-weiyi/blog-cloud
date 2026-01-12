@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func (s *OperationLogLogic) DeletesOperationLog(reqCtx *request.Context, in *typ
 }
 
 // 分页获取操作记录列表
-func (s *OperationLogLogic) FindOperationLogList(reqCtx *request.Context, in *types.OperationLogQuery) (out *types.PageResp, err error) {
+func (s *OperationLogLogic) FindOperationLogList(reqCtx *request.Context, in *types.QueryOperationLogReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

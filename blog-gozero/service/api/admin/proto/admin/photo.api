@@ -3,61 +3,61 @@ syntax = "v1"
 import "base.api"
 
 type (
-	PhotoNewReq {
-		Id int64 `json:"id,optional"`        // 主键
-		AlbumId int64 `json:"album_id"`      // 相册id
-		PhotoName string `json:"photo_name"` // 照片名
-		PhotoDesc string `json:"photo_desc"` // 照片描述
-		PhotoSrc string `json:"photo_src"`   // 照片地址
-		IsDelete int64 `json:"is_delete"`    // 是否删除
-	}
 	PhotoBackVO {
-		Id int64 `json:"id,optional"`        // 主键
-		AlbumId int64 `json:"album_id"`      // 相册id
+		Id        int64  `json:"id,optional"` // 主键
+		AlbumId   int64  `json:"album_id"` // 相册id
 		PhotoName string `json:"photo_name"` // 照片名
 		PhotoDesc string `json:"photo_desc"` // 照片描述
-		PhotoSrc string `json:"photo_src"`   // 照片地址
-		IsDelete int64 `json:"is_delete"`    // 是否删除
-		CreatedAt int64 `json:"created_at"`  // 创建时间
-		UpdatedAt int64 `json:"updated_at"`  // 更新时间
+		PhotoSrc  string `json:"photo_src"` // 照片地址
+		IsDelete  int64  `json:"is_delete"` // 是否删除
+		CreatedAt int64  `json:"created_at"` // 创建时间
+		UpdatedAt int64  `json:"updated_at"` // 更新时间
 	}
-	PhotoQuery {
+	NewPhotoReq {
+		Id        int64  `json:"id,optional"` // 主键
+		AlbumId   int64  `json:"album_id"` // 相册id
+		PhotoName string `json:"photo_name"` // 照片名
+		PhotoDesc string `json:"photo_desc"` // 照片描述
+		PhotoSrc  string `json:"photo_src"` // 照片地址
+		IsDelete  int64  `json:"is_delete"` // 是否删除
+	}
+	QueryPhotoReq {
 		PageQuery
-		AlbumId int64 `json:"album_id,optional"`   // 相册id
+		AlbumId  int64 `json:"album_id,optional"` // 相册id
 		IsDelete int64 `json:"is_delete,optional"` // 是否删除
 	}
-	PreDeletePhotoReq {
-		Ids []int64 `json:"ids"`          // 主键
-		IsDelete int64 `json:"is_delete"` // 是否删除
+	UpdatePhotoDeleteReq {
+		Ids      []int64 `json:"ids"` // 主键
+		IsDelete int64   `json:"is_delete"` // 是否删除
 	}
 )
 
-@server(
-	tags: "照片管理"
+@server (
+	tags:       "照片管理"
 	prefix:     /admin-api/v1
-	group: photo
-	authType: apiKey
+	group:      photo
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "分页获取照片列表"
 	@handler FindPhotoList
-	post /photo/find_photo_list (PhotoQuery) returns (PageResp)
+	post /photo/find_photo_list (QueryPhotoReq) returns (PageResp)
 
 	@doc "创建照片"
 	@handler AddPhoto
-	post /photo/add_photo (PhotoNewReq) returns (PhotoBackVO)
+	post /photo/add_photo (NewPhotoReq) returns (PhotoBackVO)
 
 	@doc "更新照片"
 	@handler UpdatePhoto
-	put /photo/update_photo (PhotoNewReq) returns (PhotoBackVO)
+	put /photo/update_photo (NewPhotoReq) returns (PhotoBackVO)
 
 	@doc "删除照片"
 	@handler DeletesPhoto
 	delete /photo/deletes_photo (IdsReq) returns (BatchResp)
 
-	@doc "预删除照片"
-	@handler PreDeletePhoto
-	put /photo/pre_delete_photo (PreDeletePhotoReq) returns (BatchResp)
+	@doc "更新照片删除状态"
+	@handler UpdatePhotoDelete
+	put /photo/update_photo_delete (UpdatePhotoDeleteReq) returns (BatchResp)
 }
 

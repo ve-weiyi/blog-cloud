@@ -25,8 +25,8 @@ func NewAddTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTagLogi
 	}
 }
 
-func (l *AddTagLogic) AddTag(req *types.TagNewReq) (resp *types.TagBackVO, err error) {
-	in := &articlerpc.TagNewReq{
+func (l *AddTagLogic) AddTag(req *types.NewTagReq) (resp *types.TagBackVO, err error) {
+	in := &articlerpc.NewTagReq{
 		Id:      req.Id,
 		TagName: req.TagName,
 	}

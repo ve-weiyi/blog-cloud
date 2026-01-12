@@ -37,19 +37,17 @@ message PageResp {
 message LoginLogDetailsResp {
   int64 id = 1;
   string user_id = 2; // 用户id
-  string login_type = 3;// 登录类型
-  string app_name = 4;// 应用名称
-  string os = 5;// 操作系统
-  string browser = 6;// 浏览器
-  string ip_address = 7;// ip host
-  string ip_source = 8;// ip 源
-  int64 login_at = 9;// 登录时间
-  int64 logout_at = 10;// 登出时间
+  string terminal_id = 3;// 终端id
+  string login_type = 4;// 登录类型
+  string app_name = 5;// 应用名称
+  int64 login_at = 6;// 登录时间
+  int64 logout_at = 7;// 登出时间
 }
 
-message LoginLogNewReq {
+message NewLoginLogReq {
   string user_id = 2; // 用户id
-  string login_type = 3;// 登录类型
+  string terminal_id = 3;// 终端id
+  string login_type = 4;// 登录类型
 }
 
 message AddLogoutLogReq{
@@ -76,15 +74,11 @@ message VisitLogDetailsResp {
   string user_id = 2;// 用户id
   string terminal_id = 3;// 设备id
   string page_name = 4;// 访问页面
-  string ip_address = 5;// 操作ip
-  string ip_source = 6;// 操作地址
-  string os = 7;// 操作系统
-  string browser = 8;// 浏览器
   int64 created_at = 15;// 创建时间
   int64 updated_at = 16;// 更新时间
 }
 
-message VisitLogNewReq {
+message NewVisitLogReq {
   string page_name = 1;// 访问页面
 }
 
@@ -105,8 +99,6 @@ message OperationLogDetailsResp {
   int64 id = 1;// 主键id
   string user_id = 2;// 用户id
   string terminal_id = 3;// 设备id
-  string ip_address = 4;// 操作ip
-  string ip_source = 5;// 操作地址
   string opt_module = 6;// 操作模块
   string opt_desc = 7;// 操作描述
   string request_uri = 8;// 请求地址
@@ -119,11 +111,9 @@ message OperationLogDetailsResp {
   int64 updated_at = 16;// 更新时间
 }
 
-message OperationLogNewReq {
+message NewOperationLogReq {
   string user_id = 2;// 用户id
   string terminal_id = 3;// 设备id
-  string ip_address = 4;// 操作ip
-  string ip_source = 5;// 操作地址
   string opt_module = 6;// 操作模块
   string opt_desc = 7;// 操作描述
   string request_uri = 8;// 请求地址
@@ -146,45 +136,47 @@ message FindOperationLogListResp {
 
 
 /************** blog 上传日志管理 **************/
-message UploadLogNewReq {
+message NewFileLogReq {
   int64 id = 1;// id
   string user_id = 2;// 用户id
-  string file_path = 3;// 文件路径
-  string file_name = 4;// 文件名称
-  string file_type = 5;// 文件类型
-  int64 file_size = 6;// 文件大小
-  string file_md5 = 7;// 文件md5值
-  string file_url = 8;// 上传路径
+  string terminal_id = 3;// 终端id
+  string file_path = 4;// 文件路径
+  string file_name = 5;// 文件名称
+  string file_type = 6;// 文件类型
+  int64 file_size = 7;// 文件大小
+  string file_md5 = 8;// 文件md5值
+  string file_url = 9;// 上传路径
 }
 
-message UploadLogDetailsResp {
+message FileLogDetailsResp {
   int64 id = 1;// id
   string user_id = 2;// 用户id
-  string file_path = 3;// 文件路径
-  string file_name = 4;// 文件名称
-  string file_type = 5;// 文件类型
-  int64 file_size = 6;// 文件大小
-  string file_md5 = 7;// 文件md5值
-  string file_url = 8;// 上传路径
-  int64 created_at = 9;// 创建时间
-  int64 updated_at = 10;// 更新时间
+  string terminal_id = 3;// 终端id
+  string file_path = 4;// 文件路径
+  string file_name = 5;// 文件名称
+  string file_type = 6;// 文件类型
+  int64 file_size = 7;// 文件大小
+  string file_md5 = 8;// 文件md5值
+  string file_url = 9;// 上传路径
+  int64 created_at = 10;// 创建时间
+  int64 updated_at = 11;// 更新时间
 }
 
-message FindUploadLogListReq {
+message FindFileLogListReq {
   PageReq paginate = 1;    // 分页参数
   string file_path = 2;// 文件路径
   string file_name = 3;// 文件名称
   string file_type = 4;// 文件类型
 }
 
-message FindUploadLogListResp {
+message FindFileLogListResp {
   PageResp pagination = 1; // 分页信息
-  repeated UploadLogDetailsResp list = 2;
+  repeated FileLogDetailsResp list = 2;
 }
 
 service SyslogRpc {
   // 创建登录记录
-  rpc AddLoginLog(LoginLogNewReq) returns(EmptyResp);
+  rpc AddLoginLog(NewLoginLogReq) returns(EmptyResp);
   // 更新登录记录
   rpc AddLogoutLog(AddLogoutLogReq) returns(AddLogoutLogResp);
   // 批量删除登录记录
@@ -193,25 +185,25 @@ service SyslogRpc {
   rpc FindLoginLogList(FindLoginLogListReq) returns(FindLoginLogListResp);
 
   // 创建访问记录
-  rpc AddVisitLog(VisitLogNewReq) returns(EmptyResp);
+  rpc AddVisitLog(NewVisitLogReq) returns(EmptyResp);
   // 批量删除访问记录
   rpc DeletesVisitLog(IdsReq) returns(BatchResp);
   // 查询操作访问列表
   rpc FindVisitLogList(FindVisitLogListReq) returns(FindVisitLogListResp);
 
   // 创建操作记录
-  rpc AddOperationLog(OperationLogNewReq) returns(EmptyResp);
+  rpc AddOperationLog(NewOperationLogReq) returns(EmptyResp);
   // 批量删除操作记录
   rpc DeletesOperationLog(IdsReq) returns(BatchResp);
   // 查询操作记录列表
   rpc FindOperationLogList(FindOperationLogListReq) returns(FindOperationLogListResp);
 
 
-  // 创建上传记录
-  rpc AddUploadLog(UploadLogNewReq) returns(UploadLogDetailsResp);
-  // 批量删除上传记录
-  rpc DeletesUploadLog(IdsReq) returns(BatchResp);
-  // 查询上传记录列表
-  rpc FindUploadLogList(FindUploadLogListReq) returns(FindUploadLogListResp);
+  // 创建文件记录
+  rpc AddFileLog(NewFileLogReq) returns(FileLogDetailsResp);
+  // 批量删除文件记录
+  rpc DeletesFileLog(IdsReq) returns(BatchResp);
+  // 查询文件记录列表
+  rpc FindFileLogList(FindFileLogListReq) returns(FindFileLogListResp);
 
 }

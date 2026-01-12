@@ -1,0 +1,137 @@
+// 声明 proto 语法版本，固定值
+syntax = "proto3";
+
+// proto 包名
+package socialrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./socialrpc";
+
+//==================== 通用消息 ====================
+message EmptyResp {
+}
+
+message IdReq {
+  int64 id = 1;
+}
+
+message IdsReq {
+  repeated int64 ids = 1;
+}
+
+message UserIdReq {
+  string user_id = 1;
+}
+
+message BatchResp {
+  int64 success_count = 1;
+}
+
+// 分页请求
+message PageReq {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  repeated string sorts = 3; // 排序字段
+}
+
+// 分页响应
+message PageResp {
+  int64 page = 1;      // 页码
+  int64 page_size = 2; // 每页大小
+  int64 total = 3;     // 总数
+}
+
+/************** blog 友链管理 **************/
+message NewFriendReq {
+  int64 id = 1;// id
+  string link_name = 2;// 链接名
+  string link_avatar = 3;// 链接头像
+  string link_address = 4;// 链接地址
+  string link_intro = 5;// 链接介绍
+}
+
+message FriendDetailsResp {
+  int64 id = 1;// id
+  string link_name = 2;// 链接名
+  string link_avatar = 3;// 链接头像
+  string link_address = 4;// 链接地址
+  string link_intro = 5;// 链接介绍
+  int64 created_at = 6;// 创建时间
+  int64 updated_at = 7;// 更新时间
+}
+
+message FindFriendListReq {
+  PageReq paginate = 1;    // 分页参数
+  string link_name = 2;// 链接名
+}
+
+message FindFriendListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated FriendDetailsResp list = 2;
+}
+
+/************** blog 说说管理 **************/
+message NewTalkReq {
+  int64 id = 1;// 说说id
+  string user_id = 2;// 用户id
+  string content = 3;// 说说内容
+  repeated string img_list = 4;// 图片URL列表
+  int64 is_top = 5;// 是否置顶
+  int64 status = 6;// 状态 1.公开 2.私密
+}
+
+message TalkDetailsResp {
+  int64 id = 1;// 说说id
+  string user_id = 2;// 用户id
+  string content = 3;// 说说内容
+  repeated string img_list = 4;// 图片URL列表
+  int64 is_top = 5;// 是否置顶
+  int64 status = 6;// 状态 1.公开 2.私密
+  int64 created_at = 7;// 创建时间
+  int64 updated_at = 8;// 更新时间
+  int64 like_count = 9;// 点赞量
+  int64 comment_count = 10;// 评论量
+}
+
+message FindTalkListReq {
+  PageReq paginate = 1;    // 分页参数
+  int64 status = 2;// 状态 1.公开 2.私密
+}
+
+message FindTalkListResp {
+  PageResp pagination = 1; // 分页信息
+  repeated TalkDetailsResp list = 2;
+}
+
+message FindLikeTalkResp{
+  repeated int64 like_talk_list = 1;
+}
+
+service SocialRpc {
+  // 创建友链
+  rpc AddFriend(NewFriendReq) returns(FriendDetailsResp);
+  // 更新友链
+  rpc UpdateFriend(NewFriendReq) returns(FriendDetailsResp);
+  // 删除友链
+  rpc DeletesFriend(IdsReq) returns(BatchResp);
+  // 查询友链列表
+  rpc FindFriendList(FindFriendListReq) returns(FindFriendListResp);
+
+
+  // 创建说说
+  rpc AddTalk(NewTalkReq) returns(TalkDetailsResp);
+  // 更新说说
+  rpc UpdateTalk(NewTalkReq) returns(TalkDetailsResp);
+  // 删除说说
+  rpc DeletesTalk(IdsReq) returns(BatchResp);
+  // 查询说说
+  rpc GetTalk(IdReq) returns(TalkDetailsResp);
+  // 查询说说列表
+  rpc FindTalkList(FindTalkListReq) returns(FindTalkListResp);
+
+  // 点赞说说
+  rpc LikeTalk(IdReq) returns(EmptyResp);
+  // 用户点赞的说说
+  rpc FindUserLikeTalk(UserIdReq) returns(FindLikeTalkResp);
+}
+

@@ -30,7 +30,7 @@ func (l *DeletesMenuLogic) DeletesMenu(req *types.IdsReq) (resp *types.BatchResp
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.PermissionRpc.DeleteMenu(l.ctx, in)
+	out, err := l.svcCtx.PermissionRpc.DeletesMenu(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

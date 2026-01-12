@@ -24,7 +24,7 @@ func NewSyslogRpcServer(svcCtx *svc.ServiceContext) *SyslogRpcServer {
 }
 
 // 创建登录记录
-func (s *SyslogRpcServer) AddLoginLog(ctx context.Context, in *syslogrpc.LoginLogNewReq) (*syslogrpc.EmptyResp, error) {
+func (s *SyslogRpcServer) AddLoginLog(ctx context.Context, in *syslogrpc.NewLoginLogReq) (*syslogrpc.EmptyResp, error) {
 	l := syslogrpclogic.NewAddLoginLogLogic(ctx, s.svcCtx)
 	return l.AddLoginLog(in)
 }
@@ -48,7 +48,7 @@ func (s *SyslogRpcServer) FindLoginLogList(ctx context.Context, in *syslogrpc.Fi
 }
 
 // 创建访问记录
-func (s *SyslogRpcServer) AddVisitLog(ctx context.Context, in *syslogrpc.VisitLogNewReq) (*syslogrpc.EmptyResp, error) {
+func (s *SyslogRpcServer) AddVisitLog(ctx context.Context, in *syslogrpc.NewVisitLogReq) (*syslogrpc.EmptyResp, error) {
 	l := syslogrpclogic.NewAddVisitLogLogic(ctx, s.svcCtx)
 	return l.AddVisitLog(in)
 }
@@ -66,7 +66,7 @@ func (s *SyslogRpcServer) FindVisitLogList(ctx context.Context, in *syslogrpc.Fi
 }
 
 // 创建操作记录
-func (s *SyslogRpcServer) AddOperationLog(ctx context.Context, in *syslogrpc.OperationLogNewReq) (*syslogrpc.EmptyResp, error) {
+func (s *SyslogRpcServer) AddOperationLog(ctx context.Context, in *syslogrpc.NewOperationLogReq) (*syslogrpc.EmptyResp, error) {
 	l := syslogrpclogic.NewAddOperationLogLogic(ctx, s.svcCtx)
 	return l.AddOperationLog(in)
 }
@@ -83,20 +83,20 @@ func (s *SyslogRpcServer) FindOperationLogList(ctx context.Context, in *syslogrp
 	return l.FindOperationLogList(in)
 }
 
-// 创建上传记录
-func (s *SyslogRpcServer) AddUploadLog(ctx context.Context, in *syslogrpc.UploadLogNewReq) (*syslogrpc.UploadLogDetailsResp, error) {
-	l := syslogrpclogic.NewAddUploadLogLogic(ctx, s.svcCtx)
-	return l.AddUploadLog(in)
+// 创建文件记录
+func (s *SyslogRpcServer) AddFileLog(ctx context.Context, in *syslogrpc.NewFileLogReq) (*syslogrpc.FileLogDetailsResp, error) {
+	l := syslogrpclogic.NewAddFileLogLogic(ctx, s.svcCtx)
+	return l.AddFileLog(in)
 }
 
-// 批量删除上传记录
-func (s *SyslogRpcServer) DeletesUploadLog(ctx context.Context, in *syslogrpc.IdsReq) (*syslogrpc.BatchResp, error) {
-	l := syslogrpclogic.NewDeletesUploadLogLogic(ctx, s.svcCtx)
-	return l.DeletesUploadLog(in)
+// 批量删除文件记录
+func (s *SyslogRpcServer) DeletesFileLog(ctx context.Context, in *syslogrpc.IdsReq) (*syslogrpc.BatchResp, error) {
+	l := syslogrpclogic.NewDeletesFileLogLogic(ctx, s.svcCtx)
+	return l.DeletesFileLog(in)
 }
 
-// 查询上传记录列表
-func (s *SyslogRpcServer) FindUploadLogList(ctx context.Context, in *syslogrpc.FindUploadLogListReq) (*syslogrpc.FindUploadLogListResp, error) {
-	l := syslogrpclogic.NewFindUploadLogListLogic(ctx, s.svcCtx)
-	return l.FindUploadLogList(in)
+// 查询文件记录列表
+func (s *SyslogRpcServer) FindFileLogList(ctx context.Context, in *syslogrpc.FindFileLogListReq) (*syslogrpc.FindFileLogListResp, error) {
+	l := syslogrpclogic.NewFindFileLogListLogic(ctx, s.svcCtx)
+	return l.FindFileLogList(in)
 }

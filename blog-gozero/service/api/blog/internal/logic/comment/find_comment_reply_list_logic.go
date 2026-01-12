@@ -26,17 +26,17 @@ func NewFindCommentReplyListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-func (l *FindCommentReplyListLogic) FindCommentReplyList(req *types.CommentQueryReq) (resp *types.PageResp, err error) {
+func (l *FindCommentReplyListLogic) FindCommentReplyList(req *types.QueryCommentReq) (resp *types.PageResp, err error) {
 	in := &messagerpc.FindCommentReplyListReq{
 		Paginate: &messagerpc.PageReq{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
 		},
-		TopicId:    req.TopicId,
-		ParentId:   req.ParentId,
-		ReplyMsgId: 0,
-		Type:       req.Type,
+		TopicId:  req.TopicId,
+		ParentId: req.ParentId,
+		ReplyId:  0,
+		Type:     req.Type,
 	}
 
 	// 查找评论列表
@@ -45,22 +45,51 @@ func (l *FindCommentReplyListLogic) FindCommentReplyList(req *types.CommentQuery
 		return nil, err
 	}
 
-	var uids []string
-	for _, v := range out.List {
-		uids = append(uids, v.UserId)
-		uids = append(uids, v.ReplyUserId)
-	}
-
 	// 查询用户信息
-	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	usm, err := apiutils.BatchQueryMulti(out.List,
+		func(v *messagerpc.CommentDetailsResp) []string {
+			return []string{v.UserId, v.ReplyUserId}
+		},
+		func(ids []string) (map[string]*types.UserInfoVO, error) {
+			return apiutils.GetUserInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
 
+	// 查询访客信息
+	vsm, err := apiutils.BatchQuery(out.List,
+		func(v *messagerpc.CommentDetailsResp) string {
+			return v.TerminalId
+		},
+		func(ids []string) (map[string]*types.ClientInfoVO, error) {
+			return apiutils.GetVisitorInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
 	// 查找评论回复列表
 	list := make([]*types.CommentReply, 0)
 	for _, v := range out.List {
-		m := ConvertCommentReplyTypes(v, usm)
+		m := &types.CommentReply{
+			Id:             v.Id,
+			UserId:         v.UserId,
+			TerminalId:     v.TerminalId,
+			TopicId:        v.TopicId,
+			ParentId:       v.ParentId,
+			ReplyId:        v.ReplyId,
+			ReplyUserId:    v.ReplyUserId,
+			CommentContent: v.CommentContent,
+			Status:         v.Status,
+			Type:           v.Type,
+			CreatedAt:      v.CreatedAt,
+			LikeCount:      v.LikeCount,
+			ClientInfo:     vsm[v.TerminalId],
+			UserInfo:       usm[v.UserId],
+			ReplyUserInfo:  usm[v.ReplyUserId],
+		}
 		list = append(list, m)
 	}
 

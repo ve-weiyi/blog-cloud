@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-stomp/stomp/v3/frame"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/tokenx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/tokenx"
 	"github.com/ve-weiyi/ve-blog-golang/stompws/server/client"
 )
 
@@ -24,11 +24,15 @@ func NewSignAuthenticator(verifier tokenx.TokenHolder) *SignAuthenticator {
 func (a *SignAuthenticator) Authenticate(c *client.Client, f *frame.Frame) (string, string, error) {
 	login := f.Header.Get("login")
 	passcode := f.Header.Get("passcode")
-	clientId := f.Header.Get("client-id")
+	clientId := f.Header.Get("client")
+
+	if clientId == "" {
+		return "", "", fmt.Errorf("stomp auth failed: missing header: 'client'")
+	}
 
 	// 游客模式
-	if passcode == "" || login == "" {
-		return clientId, login, nil // 允许匿名用户
+	if login == "" && passcode == "" {
+		return clientId, login, nil
 	}
 
 	// token校验

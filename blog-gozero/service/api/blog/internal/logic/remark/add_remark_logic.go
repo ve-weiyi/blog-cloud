@@ -25,31 +25,15 @@ func NewAddRemarkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRema
 	}
 }
 
-func (l *AddRemarkLogic) AddRemark(req *types.RemarkNewReq) (resp *types.Remark, err error) {
-	in := &messagerpc.RemarkNewReq{
+func (l *AddRemarkLogic) AddRemark(req *types.NewRemarkReq) (resp *types.EmptyResp, err error) {
+	in := &messagerpc.AddRemarkReq{
 		MessageContent: req.MessageContent,
 	}
 
-	out, err := l.svcCtx.MessageRpc.AddRemark(l.ctx, in)
+	_, err = l.svcCtx.MessageRpc.AddRemark(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertRemarkTypes(out, nil)
 	return resp, nil
-}
-
-func ConvertRemarkTypes(req *messagerpc.RemarkDetailsResp, usm map[string]*types.UserInfoVO) (out *types.Remark) {
-	return &types.Remark{
-		Id:             req.Id,
-		UserId:         req.UserId,
-		TerminalId:     req.TerminalId,
-		MessageContent: req.MessageContent,
-		IpAddress:      req.IpAddress,
-		IpSource:       req.IpSource,
-		IsReview:       req.IsReview,
-		CreatedAt:      req.CreatedAt,
-		UpdatedAt:      req.UpdatedAt,
-		User:           usm[req.UserId],
-	}
 }

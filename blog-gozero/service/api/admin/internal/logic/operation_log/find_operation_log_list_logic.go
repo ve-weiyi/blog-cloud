@@ -26,7 +26,7 @@ func NewFindOperationLogListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-func (l *FindOperationLogListLogic) FindOperationLogList(req *types.OperationLogQuery) (resp *types.PageResp, err error) {
+func (l *FindOperationLogListLogic) FindOperationLogList(req *types.QueryOperationLogReq) (resp *types.PageResp, err error) {
 	in := &syslogrpc.FindOperationLogListReq{
 		Paginate: &syslogrpc.PageReq{
 			Page:     req.Page,
@@ -40,21 +40,51 @@ func (l *FindOperationLogListLogic) FindOperationLogList(req *types.OperationLog
 		return nil, err
 	}
 
-	var uids []string
-	for _, v := range out.List {
-		uids = append(uids, v.UserId)
+	// 获取用户信息
+	usm, err := apiutils.BatchQuery(out.List,
+		func(v *syslogrpc.OperationLogDetailsResp) string {
+			return v.UserId
+		},
+		func(ids []string) (map[string]*types.UserInfoVO, error) {
+			return apiutils.GetUserInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	// 获取用户信息
-	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	// 查询访客信息
+	vsm, err := apiutils.BatchQuery(out.List,
+		func(v *syslogrpc.OperationLogDetailsResp) string {
+			return v.TerminalId
+		},
+		func(ids []string) (map[string]*types.ClientInfoVO, error) {
+			return apiutils.GetVisitorInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	var list []*types.OperationLogBackVO
 	for _, v := range out.List {
-		m := ConvertOperationLogTypes(v, usm)
-		list = append(list, m)
+		list = append(list, &types.OperationLogBackVO{
+			Id:             v.Id,
+			UserId:         v.UserId,
+			TerminalId:     v.TerminalId,
+			OptModule:      v.OptModule,
+			OptDesc:        v.OptDesc,
+			RequestUri:     v.RequestUri,
+			RequestMethod:  v.RequestMethod,
+			RequestData:    v.RequestData,
+			ResponseData:   v.ResponseData,
+			ResponseStatus: v.ResponseStatus,
+			Cost:           v.Cost,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+			UserInfo:       usm[v.UserId],
+			ClientInfo:     vsm[v.TerminalId],
+		})
 	}
 
 	resp = &types.PageResp{}
@@ -63,34 +93,4 @@ func (l *FindOperationLogListLogic) FindOperationLogList(req *types.OperationLog
 	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertOperationLogTypes(in *syslogrpc.OperationLogDetailsResp, usm map[string]*types.UserInfoVO) (out *types.OperationLogBackVO) {
-
-	out = &types.OperationLogBackVO{
-		Id:             in.Id,
-		UserId:         in.UserId,
-		IpAddress:      in.IpAddress,
-		IpSource:       in.IpSource,
-		OptModule:      in.OptModule,
-		OptDesc:        in.OptDesc,
-		RequestUri:     in.RequestUri,
-		RequestMethod:  in.RequestMethod,
-		RequestData:    in.RequestData,
-		ResponseData:   in.ResponseData,
-		ResponseStatus: in.ResponseStatus,
-		Cost:           in.Cost,
-		CreatedAt:      in.CreatedAt,
-		UpdatedAt:      in.UpdatedAt,
-	}
-
-	// 用户信息
-	if in.UserId != "" {
-		user, ok := usm[in.UserId]
-		if ok && user != nil {
-			out.User = user
-		}
-	}
-
-	return out
 }

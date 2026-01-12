@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -27,7 +27,7 @@ func NewFindAccountListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 	}
 }
 
-func (l *FindAccountListLogic) FindAccountList(req *types.AccountQuery) (resp *types.PageResp, err error) {
+func (l *FindAccountListLogic) FindAccountList(req *types.QueryAccountReq) (resp *types.PageResp, err error) {
 	in := &accountrpc.FindUserListReq{
 		Paginate: &accountrpc.PageReq{
 			Page:     req.Page,

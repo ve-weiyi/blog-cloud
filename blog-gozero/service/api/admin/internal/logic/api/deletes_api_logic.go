@@ -30,7 +30,7 @@ func (l *DeletesApiLogic) DeletesApi(req *types.IdsReq) (resp *types.BatchResp, 
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.PermissionRpc.DeleteApi(l.ctx, in)
+	out, err := l.svcCtx.PermissionRpc.DeletesApi(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

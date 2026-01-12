@@ -1,11 +1,11 @@
 go 1.24.0
 
 use (
+	./tools
 	blog-gin
 	blog-gozero
-	kit
+	pkg
 	stompws
-	tools
 )
 
 // 初始化工作区
@@ -18,4 +18,4 @@ use (
 // go get -u all
 
 // 替换本地仓库
-// replace github.com/ve-weiyi/ve-blog-golang/kit => ./kit
+// replace github.com/ve-weiyi/ve-blog-golang/pkg => ./pkg

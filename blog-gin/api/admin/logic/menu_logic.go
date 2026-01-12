@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,14 +17,14 @@ func NewMenuLogic(svcCtx *svctx.ServiceContext) *MenuLogic {
 }
 
 // 创建菜单
-func (s *MenuLogic) AddMenu(reqCtx *request.Context, in *types.MenuNewReq) (out *types.MenuBackVO, err error) {
+func (s *MenuLogic) AddMenu(reqCtx *request.Context, in *types.NewMenuReq) (out *types.MenuBackVO, err error) {
 	// todo
 
 	return
 }
 
 // 清空菜单列表
-func (s *MenuLogic) CleanMenuList(reqCtx *request.Context, in *types.EmptyReq) (out *types.BatchResp, err error) {
+func (s *MenuLogic) CleanMenuList(reqCtx *request.Context, in *types.CleanMenuReq) (out *types.BatchResp, err error) {
 	// todo
 
 	return
@@ -38,7 +38,7 @@ func (s *MenuLogic) DeletesMenu(reqCtx *request.Context, in *types.IdsReq) (out 
 }
 
 // 分页获取菜单列表
-func (s *MenuLogic) FindMenuList(reqCtx *request.Context, in *types.MenuQuery) (out *types.PageResp, err error) {
+func (s *MenuLogic) FindMenuList(reqCtx *request.Context, in *types.QueryMenuReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -52,7 +52,7 @@ func (s *MenuLogic) SyncMenuList(reqCtx *request.Context, in *types.SyncMenuReq)
 }
 
 // 更新菜单
-func (s *MenuLogic) UpdateMenu(reqCtx *request.Context, in *types.MenuNewReq) (out *types.MenuBackVO, err error) {
+func (s *MenuLogic) UpdateMenu(reqCtx *request.Context, in *types.NewMenuReq) (out *types.MenuBackVO, err error) {
 	// todo
 
 	return

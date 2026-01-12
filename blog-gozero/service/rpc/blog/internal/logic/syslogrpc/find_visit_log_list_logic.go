@@ -78,10 +78,6 @@ func convertVisitLogOut(in *model.TVisitLog) (out *syslogrpc.VisitLogDetailsResp
 		UserId:     in.UserId,
 		TerminalId: in.TerminalId,
 		PageName:   in.PageName,
-		IpAddress:  in.IpAddress,
-		IpSource:   in.IpSource,
-		Os:         in.Os,
-		Browser:    in.Browser,
 		CreatedAt:  in.CreatedAt.Unix(),
 		UpdatedAt:  in.UpdatedAt.Unix(),
 	}

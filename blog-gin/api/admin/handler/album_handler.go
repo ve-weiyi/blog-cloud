@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewAlbumController(svcCtx *svctx.ServiceContext) *AlbumController {
 // @Summary		"创建相册"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AlbumNewReq		true	"请求参数"
+// @Param		data	body		types.NewAlbumReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.AlbumBackVO}	"返回信息"
 // @Router		/admin-api/v1/album/add_album [POST]
 func (s *AlbumController) AddAlbum(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *AlbumController) AddAlbum(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AlbumNewReq
+	var req *types.NewAlbumReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *AlbumController) DeletesAlbum(c *gin.Context) {
 // @Summary		"分页获取相册列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AlbumQuery		true	"请求参数"
+// @Param		data	body		types.QueryAlbumReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/album/find_album_list [POST]
 func (s *AlbumController) FindAlbumList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *AlbumController) FindAlbumList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AlbumQuery
+	var req *types.QueryAlbumReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -137,26 +137,26 @@ func (s *AlbumController) GetAlbum(c *gin.Context) {
 }
 
 // @Tags		Album
-// @Summary		"预删除相册"
+// @Summary		"更新相册"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PreDeleteAlbumReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
-// @Router		/admin-api/v1/album/pre_delete_album [POST]
-func (s *AlbumController) PreDeleteAlbum(c *gin.Context) {
+// @Param		data	body		types.NewAlbumReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.AlbumBackVO}	"返回信息"
+// @Router		/admin-api/v1/album/update_album [PUT]
+func (s *AlbumController) UpdateAlbum(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PreDeleteAlbumReq
+	var req *types.NewAlbumReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
 
-	data, err := logic.NewAlbumLogic(s.svcCtx).PreDeleteAlbum(reqCtx, req)
+	data, err := logic.NewAlbumLogic(s.svcCtx).UpdateAlbum(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
@@ -166,26 +166,26 @@ func (s *AlbumController) PreDeleteAlbum(c *gin.Context) {
 }
 
 // @Tags		Album
-// @Summary		"更新相册"
+// @Summary		"更新相册删除状态"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AlbumNewReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.AlbumBackVO}	"返回信息"
-// @Router		/admin-api/v1/album/update_album [PUT]
-func (s *AlbumController) UpdateAlbum(c *gin.Context) {
+// @Param		data	body		types.UpdateAlbumDeleteReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
+// @Router		/admin-api/v1/album/update_album_delete [PUT]
+func (s *AlbumController) UpdateAlbumDelete(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AlbumNewReq
+	var req *types.UpdateAlbumDeleteReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
 
-	data, err := logic.NewAlbumLogic(s.svcCtx).UpdateAlbum(reqCtx, req)
+	data, err := logic.NewAlbumLogic(s.svcCtx).UpdateAlbumDelete(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return

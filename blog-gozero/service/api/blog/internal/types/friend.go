@@ -3,6 +3,6 @@
 
 package types
 
-type FriendQueryReq struct {
+type QueryFriendReq struct {
 	PageQuery
 }

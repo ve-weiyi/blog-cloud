@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -38,7 +38,7 @@ func (s *UserLogic) GetUserInfo(reqCtx *request.Context, in *types.EmptyReq) (ou
 }
 
 // 查询用户登录历史
-func (s *UserLogic) GetUserLoginHistoryList(reqCtx *request.Context, in *types.UserLoginHistoryQuery) (out *types.PageResp, err error) {
+func (s *UserLogic) GetUserLoginHistoryList(reqCtx *request.Context, in *types.QueryUserLoginHistoryReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

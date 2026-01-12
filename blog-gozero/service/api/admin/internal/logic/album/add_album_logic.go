@@ -25,8 +25,8 @@ func NewAddAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddAlbum
 	}
 }
 
-func (l *AddAlbumLogic) AddAlbum(req *types.AlbumNewReq) (resp *types.AlbumBackVO, err error) {
-	in := &resourcerpc.AlbumNewReq{
+func (l *AddAlbumLogic) AddAlbum(req *types.NewAlbumReq) (resp *types.AlbumBackVO, err error) {
+	in := &resourcerpc.NewAlbumReq{
 		Id:         req.Id,
 		AlbumName:  req.AlbumName,
 		AlbumDesc:  req.AlbumDesc,

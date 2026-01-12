@@ -40,8 +40,6 @@ type (
 		Id             int64     `json:"id" gorm:"column:id"`                           // 主键id
 		UserId         string    `json:"user_id" gorm:"column:user_id"`                 // 用户id
 		TerminalId     string    `json:"terminal_id" gorm:"column:terminal_id"`         // 设备id
-		IpAddress      string    `json:"ip_address" gorm:"column:ip_address"`           // 操作ip
-		IpSource       string    `json:"ip_source" gorm:"column:ip_source"`             // 操作地址
 		OptModule      string    `json:"opt_module" gorm:"column:opt_module"`           // 操作模块
 		OptDesc        string    `json:"opt_desc" gorm:"column:opt_desc"`               // 操作描述
 		RequestUri     string    `json:"request_uri" gorm:"column:request_uri"`         // 请求地址

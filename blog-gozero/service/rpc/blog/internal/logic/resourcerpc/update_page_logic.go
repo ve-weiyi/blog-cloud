@@ -25,7 +25,7 @@ func NewUpdatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新页面
-func (l *UpdatePageLogic) UpdatePage(in *resourcerpc.PageNewReq) (*resourcerpc.PageDetailsResp, error) {
+func (l *UpdatePageLogic) UpdatePage(in *resourcerpc.NewPageReq) (*resourcerpc.PageDetailsResp, error) {
 	entity := convertPageIn(in)
 
 	_, err := l.svcCtx.TPageModel.Save(l.ctx, entity)

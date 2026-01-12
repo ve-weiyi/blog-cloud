@@ -18,6 +18,18 @@ type GetCaptchaCodeResp struct {
 	CaptchaCode   string `json:"captcha_code"`   // 验证码
 }
 
+type GetClientInfoReq struct {
+}
+
+type GetClientInfoResp struct {
+	Id         int64  `json:"id"`          // 访客唯一ID
+	TerminalId string `json:"terminal_id"` // 终端ID
+	Os         string `json:"os"`          // 操作系统
+	Browser    string `json:"browser"`     // 浏览器
+	IpAddress  string `json:"ip_address"`  // IP地址
+	IpSource   string `json:"ip_source"`   // IP归属地
+}
+
 type GetOauthAuthorizeUrlReq struct {
 	Platform string `json:"platform"`       // 平台
 	State    string `json:"state,optional"` // 状态
@@ -25,10 +37,6 @@ type GetOauthAuthorizeUrlReq struct {
 
 type GetOauthAuthorizeUrlResp struct {
 	AuthorizeUrl string `json:"authorize_url"` // 授权地址
-}
-
-type GetTouristInfoResp struct {
-	TouristId string `json:"tourist_id"` // 游客id
 }
 
 type LoginReq struct {

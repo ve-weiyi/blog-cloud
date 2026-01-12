@@ -7,7 +7,7 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/swaggo/swag"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 )
 
 func Test_Load(t *testing.T) {

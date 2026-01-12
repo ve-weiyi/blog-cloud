@@ -29,7 +29,7 @@ const (
 	ArticleRpc_UpdateArticle_FullMethodName          = "/articlerpc.ArticleRpc/UpdateArticle"
 	ArticleRpc_UpdateArticleDelete_FullMethodName    = "/articlerpc.ArticleRpc/UpdateArticleDelete"
 	ArticleRpc_UpdateArticleTop_FullMethodName       = "/articlerpc.ArticleRpc/UpdateArticleTop"
-	ArticleRpc_DeleteArticle_FullMethodName          = "/articlerpc.ArticleRpc/DeleteArticle"
+	ArticleRpc_DeletesArticle_FullMethodName         = "/articlerpc.ArticleRpc/DeletesArticle"
 	ArticleRpc_GetArticle_FullMethodName             = "/articlerpc.ArticleRpc/GetArticle"
 	ArticleRpc_GetArticleRelation_FullMethodName     = "/articlerpc.ArticleRpc/GetArticleRelation"
 	ArticleRpc_FindArticleList_FullMethodName        = "/articlerpc.ArticleRpc/FindArticleList"
@@ -39,12 +39,12 @@ const (
 	ArticleRpc_AddCategory_FullMethodName            = "/articlerpc.ArticleRpc/AddCategory"
 	ArticleRpc_UpdateCategory_FullMethodName         = "/articlerpc.ArticleRpc/UpdateCategory"
 	ArticleRpc_GetCategory_FullMethodName            = "/articlerpc.ArticleRpc/GetCategory"
-	ArticleRpc_DeleteCategory_FullMethodName         = "/articlerpc.ArticleRpc/DeleteCategory"
+	ArticleRpc_DeletesCategory_FullMethodName        = "/articlerpc.ArticleRpc/DeletesCategory"
 	ArticleRpc_FindCategoryList_FullMethodName       = "/articlerpc.ArticleRpc/FindCategoryList"
 	ArticleRpc_AddTag_FullMethodName                 = "/articlerpc.ArticleRpc/AddTag"
 	ArticleRpc_UpdateTag_FullMethodName              = "/articlerpc.ArticleRpc/UpdateTag"
 	ArticleRpc_GetTag_FullMethodName                 = "/articlerpc.ArticleRpc/GetTag"
-	ArticleRpc_DeleteTag_FullMethodName              = "/articlerpc.ArticleRpc/DeleteTag"
+	ArticleRpc_DeletesTag_FullMethodName             = "/articlerpc.ArticleRpc/DeletesTag"
 	ArticleRpc_FindTagList_FullMethodName            = "/articlerpc.ArticleRpc/FindTagList"
 )
 
@@ -57,15 +57,15 @@ type ArticleRpcClient interface {
 	// 访问文章
 	VisitArticle(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*VisitArticleResp, error)
 	// 创建文章
-	AddArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error)
+	AddArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 	// 更新文章
-	UpdateArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error)
+	UpdateArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 	// 更新文章删除
 	UpdateArticleDelete(ctx context.Context, in *UpdateArticleDeleteReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 	// 更新文章置顶
 	UpdateArticleTop(ctx context.Context, in *UpdateArticleTopReq, opts ...grpc.CallOption) (*ArticlePreview, error)
 	// 删除文章
-	DeleteArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询文章
 	GetArticle(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*ArticleDetailsResp, error)
 	// 查询关联文章
@@ -79,23 +79,23 @@ type ArticleRpcClient interface {
 	// 用户点赞的文章
 	FindUserLikeArticle(ctx context.Context, in *UserIdReq, opts ...grpc.CallOption) (*FindLikeArticleResp, error)
 	// 创建文章分类
-	AddCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
+	AddCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
 	// 更新文章分类
-	UpdateCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
+	UpdateCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error)
 	// 查询文章分类
 	GetCategory(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*CategoryDetailsResp, error)
 	// 删除文章分类
-	DeleteCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询文章分类列表
 	FindCategoryList(ctx context.Context, in *FindCategoryListReq, opts ...grpc.CallOption) (*FindCategoryListResp, error)
 	// 创建标签
-	AddTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
+	AddTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
 	// 更新标签
-	UpdateTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
+	UpdateTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error)
 	// 查询标签
 	GetTag(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TagDetailsResp, error)
 	// 删除标签
-	DeleteTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
 	// 查询标签列表
 	FindTagList(ctx context.Context, in *FindTagListReq, opts ...grpc.CallOption) (*FindTagListResp, error)
 }
@@ -126,7 +126,7 @@ func (c *articleRpcClient) VisitArticle(ctx context.Context, in *IdReq, opts ...
 	return out, nil
 }
 
-func (c *articleRpcClient) AddArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
+func (c *articleRpcClient) AddArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
 	out := new(ArticlePreview)
 	err := c.cc.Invoke(ctx, ArticleRpc_AddArticle_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -135,7 +135,7 @@ func (c *articleRpcClient) AddArticle(ctx context.Context, in *ArticleNewReq, op
 	return out, nil
 }
 
-func (c *articleRpcClient) UpdateArticle(ctx context.Context, in *ArticleNewReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
+func (c *articleRpcClient) UpdateArticle(ctx context.Context, in *NewArticleReq, opts ...grpc.CallOption) (*ArticlePreview, error) {
 	out := new(ArticlePreview)
 	err := c.cc.Invoke(ctx, ArticleRpc_UpdateArticle_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -162,9 +162,9 @@ func (c *articleRpcClient) UpdateArticleTop(ctx context.Context, in *UpdateArtic
 	return out, nil
 }
 
-func (c *articleRpcClient) DeleteArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *articleRpcClient) DeletesArticle(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
-	err := c.cc.Invoke(ctx, ArticleRpc_DeleteArticle_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, ArticleRpc_DeletesArticle_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (c *articleRpcClient) FindUserLikeArticle(ctx context.Context, in *UserIdRe
 	return out, nil
 }
 
-func (c *articleRpcClient) AddCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
+func (c *articleRpcClient) AddCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
 	out := new(CategoryPreviewResp)
 	err := c.cc.Invoke(ctx, ArticleRpc_AddCategory_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -234,7 +234,7 @@ func (c *articleRpcClient) AddCategory(ctx context.Context, in *CategoryNewReq, 
 	return out, nil
 }
 
-func (c *articleRpcClient) UpdateCategory(ctx context.Context, in *CategoryNewReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
+func (c *articleRpcClient) UpdateCategory(ctx context.Context, in *NewCategoryReq, opts ...grpc.CallOption) (*CategoryPreviewResp, error) {
 	out := new(CategoryPreviewResp)
 	err := c.cc.Invoke(ctx, ArticleRpc_UpdateCategory_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -252,9 +252,9 @@ func (c *articleRpcClient) GetCategory(ctx context.Context, in *IdReq, opts ...g
 	return out, nil
 }
 
-func (c *articleRpcClient) DeleteCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *articleRpcClient) DeletesCategory(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
-	err := c.cc.Invoke(ctx, ArticleRpc_DeleteCategory_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, ArticleRpc_DeletesCategory_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +270,7 @@ func (c *articleRpcClient) FindCategoryList(ctx context.Context, in *FindCategor
 	return out, nil
 }
 
-func (c *articleRpcClient) AddTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
+func (c *articleRpcClient) AddTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
 	out := new(TagPreviewResp)
 	err := c.cc.Invoke(ctx, ArticleRpc_AddTag_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -279,7 +279,7 @@ func (c *articleRpcClient) AddTag(ctx context.Context, in *TagNewReq, opts ...gr
 	return out, nil
 }
 
-func (c *articleRpcClient) UpdateTag(ctx context.Context, in *TagNewReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
+func (c *articleRpcClient) UpdateTag(ctx context.Context, in *NewTagReq, opts ...grpc.CallOption) (*TagPreviewResp, error) {
 	out := new(TagPreviewResp)
 	err := c.cc.Invoke(ctx, ArticleRpc_UpdateTag_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -297,9 +297,9 @@ func (c *articleRpcClient) GetTag(ctx context.Context, in *IdReq, opts ...grpc.C
 	return out, nil
 }
 
-func (c *articleRpcClient) DeleteTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (c *articleRpcClient) DeletesTag(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
 	out := new(BatchResp)
-	err := c.cc.Invoke(ctx, ArticleRpc_DeleteTag_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, ArticleRpc_DeletesTag_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -324,15 +324,15 @@ type ArticleRpcServer interface {
 	// 访问文章
 	VisitArticle(context.Context, *IdReq) (*VisitArticleResp, error)
 	// 创建文章
-	AddArticle(context.Context, *ArticleNewReq) (*ArticlePreview, error)
+	AddArticle(context.Context, *NewArticleReq) (*ArticlePreview, error)
 	// 更新文章
-	UpdateArticle(context.Context, *ArticleNewReq) (*ArticlePreview, error)
+	UpdateArticle(context.Context, *NewArticleReq) (*ArticlePreview, error)
 	// 更新文章删除
 	UpdateArticleDelete(context.Context, *UpdateArticleDeleteReq) (*ArticlePreview, error)
 	// 更新文章置顶
 	UpdateArticleTop(context.Context, *UpdateArticleTopReq) (*ArticlePreview, error)
 	// 删除文章
-	DeleteArticle(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesArticle(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询文章
 	GetArticle(context.Context, *IdReq) (*ArticleDetailsResp, error)
 	// 查询关联文章
@@ -346,23 +346,23 @@ type ArticleRpcServer interface {
 	// 用户点赞的文章
 	FindUserLikeArticle(context.Context, *UserIdReq) (*FindLikeArticleResp, error)
 	// 创建文章分类
-	AddCategory(context.Context, *CategoryNewReq) (*CategoryPreviewResp, error)
+	AddCategory(context.Context, *NewCategoryReq) (*CategoryPreviewResp, error)
 	// 更新文章分类
-	UpdateCategory(context.Context, *CategoryNewReq) (*CategoryPreviewResp, error)
+	UpdateCategory(context.Context, *NewCategoryReq) (*CategoryPreviewResp, error)
 	// 查询文章分类
 	GetCategory(context.Context, *IdReq) (*CategoryDetailsResp, error)
 	// 删除文章分类
-	DeleteCategory(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesCategory(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询文章分类列表
 	FindCategoryList(context.Context, *FindCategoryListReq) (*FindCategoryListResp, error)
 	// 创建标签
-	AddTag(context.Context, *TagNewReq) (*TagPreviewResp, error)
+	AddTag(context.Context, *NewTagReq) (*TagPreviewResp, error)
 	// 更新标签
-	UpdateTag(context.Context, *TagNewReq) (*TagPreviewResp, error)
+	UpdateTag(context.Context, *NewTagReq) (*TagPreviewResp, error)
 	// 查询标签
 	GetTag(context.Context, *IdReq) (*TagDetailsResp, error)
 	// 删除标签
-	DeleteTag(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesTag(context.Context, *IdsReq) (*BatchResp, error)
 	// 查询标签列表
 	FindTagList(context.Context, *FindTagListReq) (*FindTagListResp, error)
 	mustEmbedUnimplementedArticleRpcServer()
@@ -378,10 +378,10 @@ func (UnimplementedArticleRpcServer) AnalysisArticle(context.Context, *AnalysisA
 func (UnimplementedArticleRpcServer) VisitArticle(context.Context, *IdReq) (*VisitArticleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VisitArticle not implemented")
 }
-func (UnimplementedArticleRpcServer) AddArticle(context.Context, *ArticleNewReq) (*ArticlePreview, error) {
+func (UnimplementedArticleRpcServer) AddArticle(context.Context, *NewArticleReq) (*ArticlePreview, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddArticle not implemented")
 }
-func (UnimplementedArticleRpcServer) UpdateArticle(context.Context, *ArticleNewReq) (*ArticlePreview, error) {
+func (UnimplementedArticleRpcServer) UpdateArticle(context.Context, *NewArticleReq) (*ArticlePreview, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticle not implemented")
 }
 func (UnimplementedArticleRpcServer) UpdateArticleDelete(context.Context, *UpdateArticleDeleteReq) (*ArticlePreview, error) {
@@ -390,8 +390,8 @@ func (UnimplementedArticleRpcServer) UpdateArticleDelete(context.Context, *Updat
 func (UnimplementedArticleRpcServer) UpdateArticleTop(context.Context, *UpdateArticleTopReq) (*ArticlePreview, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticleTop not implemented")
 }
-func (UnimplementedArticleRpcServer) DeleteArticle(context.Context, *IdsReq) (*BatchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+func (UnimplementedArticleRpcServer) DeletesArticle(context.Context, *IdsReq) (*BatchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletesArticle not implemented")
 }
 func (UnimplementedArticleRpcServer) GetArticle(context.Context, *IdReq) (*ArticleDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
@@ -411,32 +411,32 @@ func (UnimplementedArticleRpcServer) LikeArticle(context.Context, *IdReq) (*Empt
 func (UnimplementedArticleRpcServer) FindUserLikeArticle(context.Context, *UserIdReq) (*FindLikeArticleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUserLikeArticle not implemented")
 }
-func (UnimplementedArticleRpcServer) AddCategory(context.Context, *CategoryNewReq) (*CategoryPreviewResp, error) {
+func (UnimplementedArticleRpcServer) AddCategory(context.Context, *NewCategoryReq) (*CategoryPreviewResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCategory not implemented")
 }
-func (UnimplementedArticleRpcServer) UpdateCategory(context.Context, *CategoryNewReq) (*CategoryPreviewResp, error) {
+func (UnimplementedArticleRpcServer) UpdateCategory(context.Context, *NewCategoryReq) (*CategoryPreviewResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCategory not implemented")
 }
 func (UnimplementedArticleRpcServer) GetCategory(context.Context, *IdReq) (*CategoryDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
 }
-func (UnimplementedArticleRpcServer) DeleteCategory(context.Context, *IdsReq) (*BatchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
+func (UnimplementedArticleRpcServer) DeletesCategory(context.Context, *IdsReq) (*BatchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletesCategory not implemented")
 }
 func (UnimplementedArticleRpcServer) FindCategoryList(context.Context, *FindCategoryListReq) (*FindCategoryListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindCategoryList not implemented")
 }
-func (UnimplementedArticleRpcServer) AddTag(context.Context, *TagNewReq) (*TagPreviewResp, error) {
+func (UnimplementedArticleRpcServer) AddTag(context.Context, *NewTagReq) (*TagPreviewResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTag not implemented")
 }
-func (UnimplementedArticleRpcServer) UpdateTag(context.Context, *TagNewReq) (*TagPreviewResp, error) {
+func (UnimplementedArticleRpcServer) UpdateTag(context.Context, *NewTagReq) (*TagPreviewResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTag not implemented")
 }
 func (UnimplementedArticleRpcServer) GetTag(context.Context, *IdReq) (*TagDetailsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTag not implemented")
 }
-func (UnimplementedArticleRpcServer) DeleteTag(context.Context, *IdsReq) (*BatchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTag not implemented")
+func (UnimplementedArticleRpcServer) DeletesTag(context.Context, *IdsReq) (*BatchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletesTag not implemented")
 }
 func (UnimplementedArticleRpcServer) FindTagList(context.Context, *FindTagListReq) (*FindTagListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindTagList not implemented")
@@ -491,7 +491,7 @@ func _ArticleRpc_VisitArticle_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _ArticleRpc_AddArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ArticleNewReq)
+	in := new(NewArticleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -503,13 +503,13 @@ func _ArticleRpc_AddArticle_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: ArticleRpc_AddArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).AddArticle(ctx, req.(*ArticleNewReq))
+		return srv.(ArticleRpcServer).AddArticle(ctx, req.(*NewArticleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ArticleRpc_UpdateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ArticleNewReq)
+	in := new(NewArticleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -521,7 +521,7 @@ func _ArticleRpc_UpdateArticle_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ArticleRpc_UpdateArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).UpdateArticle(ctx, req.(*ArticleNewReq))
+		return srv.(ArticleRpcServer).UpdateArticle(ctx, req.(*NewArticleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -562,20 +562,20 @@ func _ArticleRpc_UpdateArticleTop_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ArticleRpc_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ArticleRpc_DeletesArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ArticleRpcServer).DeleteArticle(ctx, in)
+		return srv.(ArticleRpcServer).DeletesArticle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ArticleRpc_DeleteArticle_FullMethodName,
+		FullMethod: ArticleRpc_DeletesArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).DeleteArticle(ctx, req.(*IdsReq))
+		return srv.(ArticleRpcServer).DeletesArticle(ctx, req.(*IdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -689,7 +689,7 @@ func _ArticleRpc_FindUserLikeArticle_Handler(srv interface{}, ctx context.Contex
 }
 
 func _ArticleRpc_AddCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryNewReq)
+	in := new(NewCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -701,13 +701,13 @@ func _ArticleRpc_AddCategory_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: ArticleRpc_AddCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).AddCategory(ctx, req.(*CategoryNewReq))
+		return srv.(ArticleRpcServer).AddCategory(ctx, req.(*NewCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ArticleRpc_UpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryNewReq)
+	in := new(NewCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -719,7 +719,7 @@ func _ArticleRpc_UpdateCategory_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: ArticleRpc_UpdateCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).UpdateCategory(ctx, req.(*CategoryNewReq))
+		return srv.(ArticleRpcServer).UpdateCategory(ctx, req.(*NewCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -742,20 +742,20 @@ func _ArticleRpc_GetCategory_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ArticleRpc_DeleteCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ArticleRpc_DeletesCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ArticleRpcServer).DeleteCategory(ctx, in)
+		return srv.(ArticleRpcServer).DeletesCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ArticleRpc_DeleteCategory_FullMethodName,
+		FullMethod: ArticleRpc_DeletesCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).DeleteCategory(ctx, req.(*IdsReq))
+		return srv.(ArticleRpcServer).DeletesCategory(ctx, req.(*IdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -779,7 +779,7 @@ func _ArticleRpc_FindCategoryList_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _ArticleRpc_AddTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TagNewReq)
+	in := new(NewTagReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -791,13 +791,13 @@ func _ArticleRpc_AddTag_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: ArticleRpc_AddTag_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).AddTag(ctx, req.(*TagNewReq))
+		return srv.(ArticleRpcServer).AddTag(ctx, req.(*NewTagReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ArticleRpc_UpdateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TagNewReq)
+	in := new(NewTagReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -809,7 +809,7 @@ func _ArticleRpc_UpdateTag_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: ArticleRpc_UpdateTag_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).UpdateTag(ctx, req.(*TagNewReq))
+		return srv.(ArticleRpcServer).UpdateTag(ctx, req.(*NewTagReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -832,20 +832,20 @@ func _ArticleRpc_GetTag_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ArticleRpc_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ArticleRpc_DeletesTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ArticleRpcServer).DeleteTag(ctx, in)
+		return srv.(ArticleRpcServer).DeletesTag(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ArticleRpc_DeleteTag_FullMethodName,
+		FullMethod: ArticleRpc_DeletesTag_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticleRpcServer).DeleteTag(ctx, req.(*IdsReq))
+		return srv.(ArticleRpcServer).DeletesTag(ctx, req.(*IdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -900,8 +900,8 @@ var ArticleRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ArticleRpc_UpdateArticleTop_Handler,
 		},
 		{
-			MethodName: "DeleteArticle",
-			Handler:    _ArticleRpc_DeleteArticle_Handler,
+			MethodName: "DeletesArticle",
+			Handler:    _ArticleRpc_DeletesArticle_Handler,
 		},
 		{
 			MethodName: "GetArticle",
@@ -940,8 +940,8 @@ var ArticleRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ArticleRpc_GetCategory_Handler,
 		},
 		{
-			MethodName: "DeleteCategory",
-			Handler:    _ArticleRpc_DeleteCategory_Handler,
+			MethodName: "DeletesCategory",
+			Handler:    _ArticleRpc_DeletesCategory_Handler,
 		},
 		{
 			MethodName: "FindCategoryList",
@@ -960,8 +960,8 @@ var ArticleRpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ArticleRpc_GetTag_Handler,
 		},
 		{
-			MethodName: "DeleteTag",
-			Handler:    _ArticleRpc_DeleteTag_Handler,
+			MethodName: "DeletesTag",
+			Handler:    _ArticleRpc_DeletesTag_Handler,
 		},
 		{
 			MethodName: "FindTagList",

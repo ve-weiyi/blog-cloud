@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewTalkLogic(svcCtx *svctx.ServiceContext) *TalkLogic {
 }
 
 // 创建说说
-func (s *TalkLogic) AddTalk(reqCtx *request.Context, in *types.TalkNewReq) (out *types.TalkBackVO, err error) {
+func (s *TalkLogic) AddTalk(reqCtx *request.Context, in *types.NewTalkReq) (out *types.TalkBackVO, err error) {
 	// todo
 
 	return
@@ -31,7 +31,7 @@ func (s *TalkLogic) DeleteTalk(reqCtx *request.Context, in *types.IdReq) (out *t
 }
 
 // 分页获取说说列表
-func (s *TalkLogic) FindTalkList(reqCtx *request.Context, in *types.TalkQuery) (out *types.PageResp, err error) {
+func (s *TalkLogic) FindTalkList(reqCtx *request.Context, in *types.QueryTalkReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -45,7 +45,7 @@ func (s *TalkLogic) GetTalk(reqCtx *request.Context, in *types.IdReq) (out *type
 }
 
 // 更新说说
-func (s *TalkLogic) UpdateTalk(reqCtx *request.Context, in *types.TalkNewReq) (out *types.TalkBackVO, err error) {
+func (s *TalkLogic) UpdateTalk(reqCtx *request.Context, in *types.NewTalkReq) (out *types.TalkBackVO, err error) {
 	// todo
 
 	return

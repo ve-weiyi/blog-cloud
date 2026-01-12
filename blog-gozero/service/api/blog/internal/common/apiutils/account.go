@@ -6,7 +6,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 )
 
 func GetUserInfos(ctx context.Context, svcCtx *svc.ServiceContext, uids []string) (map[string]*types.UserInfoVO, error) {
@@ -40,4 +40,30 @@ func GetUserInfos(ctx context.Context, svcCtx *svc.ServiceContext, uids []string
 	}
 
 	return usm, err
+}
+
+func GetVisitorInfos(ctx context.Context, svcCtx *svc.ServiceContext, tids []string) (map[string]*types.ClientInfoVO, error) {
+	if len(tids) == 0 {
+		return nil, nil
+	}
+
+	vs, err := svcCtx.AccountRpc.FindVisitorList(ctx, &accountrpc.FindVisitorListReq{
+		TerminalIds: tids,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	vsm := make(map[string]*types.ClientInfoVO)
+	for _, v := range vs.List {
+		vsm[v.TerminalId] = &types.ClientInfoVO{
+			TerminalId: v.TerminalId,
+			Os:         v.Os,
+			Browser:    v.Browser,
+			IpAddress:  v.IpAddress,
+			IpSource:   v.IpSource,
+		}
+	}
+
+	return vsm, err
 }

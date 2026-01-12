@@ -25,7 +25,7 @@ func NewFindTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindT
 	}
 }
 
-func (l *FindTagListLogic) FindTagList(req *types.TagQuery) (resp *types.PageResp, err error) {
+func (l *FindTagListLogic) FindTagList(req *types.QueryTagReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindTagListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,

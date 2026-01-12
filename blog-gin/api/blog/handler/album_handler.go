@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewAlbumController(svcCtx *svctx.ServiceContext) *AlbumController {
 // @Summary		"获取相册列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AlbumQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryAlbumReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/album/find_album_list [POST]
 func (s *AlbumController) FindAlbumList(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *AlbumController) FindAlbumList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AlbumQueryReq
+	var req *types.QueryAlbumReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -53,7 +53,7 @@ func (s *AlbumController) FindAlbumList(c *gin.Context) {
 // @Summary		"获取相册下的照片列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PhotoQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryPhotoReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/album/find_photo_list [POST]
 func (s *AlbumController) FindPhotoList(c *gin.Context) {
@@ -62,7 +62,7 @@ func (s *AlbumController) FindPhotoList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PhotoQueryReq
+	var req *types.QueryPhotoReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

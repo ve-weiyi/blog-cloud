@@ -6,7 +6,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/permissionrpc"
 )
 
-func convertApiIn(in *permissionrpc.ApiNewReq) (out *model.TApi) {
+func convertApiIn(in *permissionrpc.NewApiReq) (out *model.TApi) {
 	out = &model.TApi{
 		Id:        in.Id,
 		ParentId:  in.ParentId,

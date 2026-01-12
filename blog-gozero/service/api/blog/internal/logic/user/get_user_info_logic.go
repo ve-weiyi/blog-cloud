@@ -5,14 +5,11 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
-
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,7 +31,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInfoResp, err error) {
 	in := &accountrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 
 	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, in)

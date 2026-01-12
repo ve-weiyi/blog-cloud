@@ -3,12 +3,12 @@ package friend
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindFriendListLogic struct {
@@ -26,15 +26,15 @@ func NewFindFriendListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fi
 	}
 }
 
-func (l *FindFriendListLogic) FindFriendList(req *types.FriendQueryReq) (resp *types.PageResp, err error) {
-	in := &websiterpc.FindFriendListReq{
-		Paginate: &websiterpc.PageReq{
+func (l *FindFriendListLogic) FindFriendList(req *types.QueryFriendReq) (resp *types.PageResp, err error) {
+	in := &socialrpc.FindFriendListReq{
+		Paginate: &socialrpc.PageReq{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
 		},
 	}
-	out, err := l.svcCtx.WebsiteRpc.FindFriendList(l.ctx, in)
+	out, err := l.svcCtx.SocialRpc.FindFriendList(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (l *FindFriendListLogic) FindFriendList(req *types.FriendQueryReq) (resp *t
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "友链",
 	})
 	if err != nil {

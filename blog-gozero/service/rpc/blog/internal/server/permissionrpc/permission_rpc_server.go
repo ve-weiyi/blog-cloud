@@ -24,21 +24,21 @@ func NewPermissionRpcServer(svcCtx *svc.ServiceContext) *PermissionRpcServer {
 }
 
 // 创建接口
-func (s *PermissionRpcServer) AddApi(ctx context.Context, in *permissionrpc.ApiNewReq) (*permissionrpc.ApiDetailsResp, error) {
+func (s *PermissionRpcServer) AddApi(ctx context.Context, in *permissionrpc.NewApiReq) (*permissionrpc.ApiDetailsResp, error) {
 	l := permissionrpclogic.NewAddApiLogic(ctx, s.svcCtx)
 	return l.AddApi(in)
 }
 
 // 更新接口
-func (s *PermissionRpcServer) UpdateApi(ctx context.Context, in *permissionrpc.ApiNewReq) (*permissionrpc.ApiDetailsResp, error) {
+func (s *PermissionRpcServer) UpdateApi(ctx context.Context, in *permissionrpc.NewApiReq) (*permissionrpc.ApiDetailsResp, error) {
 	l := permissionrpclogic.NewUpdateApiLogic(ctx, s.svcCtx)
 	return l.UpdateApi(in)
 }
 
 // 删除接口
-func (s *PermissionRpcServer) DeleteApi(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
-	l := permissionrpclogic.NewDeleteApiLogic(ctx, s.svcCtx)
-	return l.DeleteApi(in)
+func (s *PermissionRpcServer) DeletesApi(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
+	l := permissionrpclogic.NewDeletesApiLogic(ctx, s.svcCtx)
+	return l.DeletesApi(in)
 }
 
 // 查询接口列表
@@ -66,21 +66,21 @@ func (s *PermissionRpcServer) FindAllApi(ctx context.Context, in *permissionrpc.
 }
 
 // 创建菜单
-func (s *PermissionRpcServer) AddMenu(ctx context.Context, in *permissionrpc.MenuNewReq) (*permissionrpc.MenuDetailsResp, error) {
+func (s *PermissionRpcServer) AddMenu(ctx context.Context, in *permissionrpc.NewMenuReq) (*permissionrpc.MenuDetailsResp, error) {
 	l := permissionrpclogic.NewAddMenuLogic(ctx, s.svcCtx)
 	return l.AddMenu(in)
 }
 
 // 更新菜单
-func (s *PermissionRpcServer) UpdateMenu(ctx context.Context, in *permissionrpc.MenuNewReq) (*permissionrpc.MenuDetailsResp, error) {
+func (s *PermissionRpcServer) UpdateMenu(ctx context.Context, in *permissionrpc.NewMenuReq) (*permissionrpc.MenuDetailsResp, error) {
 	l := permissionrpclogic.NewUpdateMenuLogic(ctx, s.svcCtx)
 	return l.UpdateMenu(in)
 }
 
 // 删除菜单
-func (s *PermissionRpcServer) DeleteMenu(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
-	l := permissionrpclogic.NewDeleteMenuLogic(ctx, s.svcCtx)
-	return l.DeleteMenu(in)
+func (s *PermissionRpcServer) DeletesMenu(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
+	l := permissionrpclogic.NewDeletesMenuLogic(ctx, s.svcCtx)
+	return l.DeletesMenu(in)
 }
 
 // 查询菜单列表
@@ -108,21 +108,21 @@ func (s *PermissionRpcServer) FindAllMenu(ctx context.Context, in *permissionrpc
 }
 
 // 创建角色
-func (s *PermissionRpcServer) AddRole(ctx context.Context, in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetailsResp, error) {
+func (s *PermissionRpcServer) AddRole(ctx context.Context, in *permissionrpc.NewRoleReq) (*permissionrpc.RoleDetailsResp, error) {
 	l := permissionrpclogic.NewAddRoleLogic(ctx, s.svcCtx)
 	return l.AddRole(in)
 }
 
 // 更新角色
-func (s *PermissionRpcServer) UpdateRole(ctx context.Context, in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetailsResp, error) {
+func (s *PermissionRpcServer) UpdateRole(ctx context.Context, in *permissionrpc.NewRoleReq) (*permissionrpc.RoleDetailsResp, error) {
 	l := permissionrpclogic.NewUpdateRoleLogic(ctx, s.svcCtx)
 	return l.UpdateRole(in)
 }
 
 // 删除角色
-func (s *PermissionRpcServer) DeleteRole(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
-	l := permissionrpclogic.NewDeleteRoleLogic(ctx, s.svcCtx)
-	return l.DeleteRole(in)
+func (s *PermissionRpcServer) DeletesRole(ctx context.Context, in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
+	l := permissionrpclogic.NewDeletesRoleLogic(ctx, s.svcCtx)
+	return l.DeletesRole(in)
 }
 
 // 查询角色列表

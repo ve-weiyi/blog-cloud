@@ -6,7 +6,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/permissionrpc"
 )
 
-func convertRoleIn(in *permissionrpc.RoleNewReq) (out *model.TRole) {
+func convertRoleIn(in *permissionrpc.NewRoleReq) (out *model.TRole) {
 	out = &model.TRole{
 		Id:          in.Id,
 		ParentId:    in.ParentId,

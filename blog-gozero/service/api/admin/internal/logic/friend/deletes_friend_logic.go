@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,11 +26,11 @@ func NewDeletesFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeletesFriendLogic) DeletesFriend(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &websiterpc.IdsReq{
+	in := &socialrpc.IdsReq{
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.WebsiteRpc.DeleteFriend(l.ctx, in)
+	out, err := l.svcCtx.SocialRpc.DeletesFriend(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

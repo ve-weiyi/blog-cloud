@@ -25,7 +25,7 @@ func NewFindMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 	}
 }
 
-func (l *FindMenuListLogic) FindMenuList(req *types.MenuQuery) (resp *types.PageResp, err error) {
+func (l *FindMenuListLogic) FindMenuList(req *types.QueryMenuReq) (resp *types.PageResp, err error) {
 	in := &permissionrpc.FindMenuListReq{
 		Name:  req.Name,
 		Title: req.Title,

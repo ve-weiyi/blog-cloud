@@ -34,6 +34,15 @@ func (l *FindRemarkListLogic) FindRemarkList(in *messagerpc.FindRemarkListReq) (
 		opts = append(opts, query.WithSize(int(in.Paginate.PageSize)))
 		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
 	}
+
+	if in.UserId != "" {
+		opts = append(opts, query.WithCondition("user_id = ?", in.UserId))
+	}
+
+	if in.Status >= 0 {
+		opts = append(opts, query.WithCondition("status = ?", in.Status))
+	}
+
 	page, size, sorts, conditions, params := query.NewQueryBuilder(opts...).Build()
 	records, total, err := l.svcCtx.TRemarkModel.FindListAndTotal(l.ctx, page, size, sorts, conditions, params...)
 	if err != nil {
@@ -61,9 +70,7 @@ func convertRemarkOut(in *model.TRemark) (out *messagerpc.RemarkDetailsResp) {
 		UserId:         in.UserId,
 		TerminalId:     in.TerminalId,
 		MessageContent: in.MessageContent,
-		IpAddress:      in.IpAddress,
-		IpSource:       in.IpSource,
-		IsReview:       in.IsReview,
+		Status:         in.Status,
 		CreatedAt:      in.CreatedAt.Unix(),
 		UpdatedAt:      in.UpdatedAt.Unix(),
 	}

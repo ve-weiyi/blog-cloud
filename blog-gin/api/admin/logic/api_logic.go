@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewApiLogic(svcCtx *svctx.ServiceContext) *ApiLogic {
 }
 
 // 创建api路由
-func (s *ApiLogic) AddApi(reqCtx *request.Context, in *types.ApiNewReq) (out *types.ApiBackVO, err error) {
+func (s *ApiLogic) AddApi(reqCtx *request.Context, in *types.NewApiReq) (out *types.ApiBackVO, err error) {
 	// todo
 
 	return
@@ -38,7 +38,7 @@ func (s *ApiLogic) DeletesApi(reqCtx *request.Context, in *types.IdsReq) (out *t
 }
 
 // 分页获取api路由列表
-func (s *ApiLogic) FindApiList(reqCtx *request.Context, in *types.ApiQuery) (out *types.PageResp, err error) {
+func (s *ApiLogic) FindApiList(reqCtx *request.Context, in *types.QueryApiReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -52,7 +52,7 @@ func (s *ApiLogic) SyncApiList(reqCtx *request.Context, in *types.SyncApiReq) (o
 }
 
 // 更新api路由
-func (s *ApiLogic) UpdateApi(reqCtx *request.Context, in *types.ApiNewReq) (out *types.ApiBackVO, err error) {
+func (s *ApiLogic) UpdateApi(reqCtx *request.Context, in *types.NewApiReq) (out *types.ApiBackVO, err error) {
 	// todo
 
 	return

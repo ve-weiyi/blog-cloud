@@ -191,8 +191,14 @@ func (s *AccountRpcServer) AnalysisUserAreas(ctx context.Context, in *accountrpc
 	return l.AnalysisUserAreas(in)
 }
 
-// 获取游客身份
-func (s *AccountRpcServer) GetTouristInfo(ctx context.Context, in *accountrpc.GetTouristInfoReq) (*accountrpc.GetTouristInfoResp, error) {
-	l := accountrpclogic.NewGetTouristInfoLogic(ctx, s.svcCtx)
-	return l.GetTouristInfo(in)
+// 获取客户端信息
+func (s *AccountRpcServer) GetClientInfo(ctx context.Context, in *accountrpc.GetClientInfoReq) (*accountrpc.GetClientInfoResp, error) {
+	l := accountrpclogic.NewGetClientInfoLogic(ctx, s.svcCtx)
+	return l.GetClientInfo(in)
+}
+
+// 查询游客信息
+func (s *AccountRpcServer) FindVisitorList(ctx context.Context, in *accountrpc.FindVisitorListReq) (*accountrpc.FindVisitorListResp, error) {
+	l := accountrpclogic.NewFindVisitorListLogic(ctx, s.svcCtx)
+	return l.FindVisitorList(in)
 }

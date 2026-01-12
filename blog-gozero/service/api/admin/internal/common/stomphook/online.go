@@ -31,7 +31,7 @@ func (h *OnlineEventHook) OnDisconnect(server *client.StompHubServer, c *client.
 }
 
 func (h *OnlineEventHook) OnSubscribe(server *client.StompHubServer, c *client.Client, destination string, subscriptionId string) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("📢 User %s subscribed to %s", login, destination)
 
 	// 只在聊天频道发送加入消息

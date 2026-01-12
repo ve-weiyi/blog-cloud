@@ -38,18 +38,15 @@ type (
 
 	// 表字段定义
 	TLoginLog struct {
-		Id        int64        `json:"id" gorm:"column:id"`                 // id
-		UserId    string       `json:"user_id" gorm:"column:user_id"`       // 用户id
-		LoginType string       `json:"login_type" gorm:"column:login_type"` // 登录类型
-		AppName   string       `json:"app_name" gorm:"column:app_name"`     // app名称
-		Os        string       `json:"os" gorm:"column:os"`                 // 操作系统
-		Browser   string       `json:"browser" gorm:"column:browser"`       // 浏览器
-		IpAddress string       `json:"ip_address" gorm:"column:ip_address"` // ip host
-		IpSource  string       `json:"ip_source" gorm:"column:ip_source"`   // ip 源
-		LoginAt   time.Time    `json:"login_at" gorm:"column:login_at"`     // 登录时间
-		LogoutAt  sql.NullTime `json:"logout_at" gorm:"column:logout_at"`   // 登出时间
-		CreatedAt time.Time    `json:"created_at" gorm:"column:created_at"` // 创建时间
-		UpdatedAt time.Time    `json:"updated_at" gorm:"column:updated_at"` // 更新时间
+		Id         int64        `json:"id" gorm:"column:id"`                   // id
+		UserId     string       `json:"user_id" gorm:"column:user_id"`         // 用户id
+		TerminalId string       `json:"terminal_id" gorm:"column:terminal_id"` // 设备id
+		LoginType  string       `json:"login_type" gorm:"column:login_type"`   // 登录类型
+		AppName    string       `json:"app_name" gorm:"column:app_name"`       // app名称
+		LoginAt    time.Time    `json:"login_at" gorm:"column:login_at"`       // 登录时间
+		LogoutAt   sql.NullTime `json:"logout_at" gorm:"column:logout_at"`     // 登出时间
+		CreatedAt  time.Time    `json:"created_at" gorm:"column:created_at"`   // 创建时间
+		UpdatedAt  time.Time    `json:"updated_at" gorm:"column:updated_at"`   // 更新时间
 	}
 
 	// 接口实现

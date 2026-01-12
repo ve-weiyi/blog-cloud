@@ -3,7 +3,7 @@ package articlerpclogic
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
@@ -26,7 +26,7 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 }
 
 // 创建文章
-func (l *AddArticleLogic) AddArticle(in *articlerpc.ArticleNewReq) (*articlerpc.ArticlePreview, error) {
+func (l *AddArticleLogic) AddArticle(in *articlerpc.NewArticleReq) (*articlerpc.ArticlePreview, error) {
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
 
 	entity := &model.TArticle{

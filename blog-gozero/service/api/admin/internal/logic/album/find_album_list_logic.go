@@ -25,7 +25,7 @@ func NewFindAlbumListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 	}
 }
 
-func (l *FindAlbumListLogic) FindAlbumList(req *types.AlbumQuery) (resp *types.PageResp, err error) {
+func (l *FindAlbumListLogic) FindAlbumList(req *types.QueryAlbumReq) (resp *types.PageResp, err error) {
 	in := &resourcerpc.FindAlbumListReq{
 		Paginate: &resourcerpc.PageReq{
 			Page:     req.Page,

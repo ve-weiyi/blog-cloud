@@ -26,7 +26,7 @@ func NewFindCategoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQueryReq) (resp *types.PageResp, err error) {
+func (l *FindCategoryListLogic) FindCategoryList(req *types.QueryCategoryReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindCategoryListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -50,7 +50,7 @@ func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQueryReq) (r
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "分类",
 	})
 	if err != nil {

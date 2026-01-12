@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewRoleController(svcCtx *svctx.ServiceContext) *RoleController {
 // @Summary		"创建角色"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.RoleNewReq		true	"请求参数"
+// @Param		data	body		types.NewRoleReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.RoleBackVO}	"返回信息"
 // @Router		/admin-api/v1/role/add_role [POST]
 func (s *RoleController) AddRole(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *RoleController) AddRole(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.RoleNewReq
+	var req *types.NewRoleReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -55,7 +55,7 @@ func (s *RoleController) AddRole(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.IdsReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
-// @Router		/admin-api/v1/role/deletes_role [POST]
+// @Router		/admin-api/v1/role/deletes_role [DELETE]
 func (s *RoleController) DeletesRole(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -82,7 +82,7 @@ func (s *RoleController) DeletesRole(c *gin.Context) {
 // @Summary		"分页获取角色列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.RoleQuery		true	"请求参数"
+// @Param		data	body		types.QueryRoleReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/role/find_role_list [POST]
 func (s *RoleController) FindRoleList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *RoleController) FindRoleList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.RoleQuery
+	var req *types.QueryRoleReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -140,7 +140,7 @@ func (s *RoleController) FindRoleResources(c *gin.Context) {
 // @Summary		"更新角色"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.RoleNewReq		true	"请求参数"
+// @Param		data	body		types.NewRoleReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.RoleBackVO}	"返回信息"
 // @Router		/admin-api/v1/role/update_role [PUT]
 func (s *RoleController) UpdateRole(c *gin.Context) {
@@ -149,7 +149,7 @@ func (s *RoleController) UpdateRole(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.RoleNewReq
+	var req *types.NewRoleReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -171,7 +171,7 @@ func (s *RoleController) UpdateRole(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateRoleApisReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/role/update_role_apis [POST]
+// @Router		/admin-api/v1/role/update_role_apis [PUT]
 func (s *RoleController) UpdateRoleApis(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -200,7 +200,7 @@ func (s *RoleController) UpdateRoleApis(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateRoleMenusReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/role/update_role_menus [POST]
+// @Router		/admin-api/v1/role/update_role_menus [PUT]
 func (s *RoleController) UpdateRoleMenus(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"sort"
+	"strings"
 
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/spec"
@@ -42,17 +43,31 @@ func (l *SyncApiListLogic) SyncApiList(req *types.SyncApiReq) (resp *types.Batch
 	routes := getRoutes(sp)
 
 	// 分组
-	groups := make(map[string][]*permissionrpc.ApiNewReq)
+	groups := make(map[string][]*permissionrpc.NewApiReq)
 	for k, v := range routes {
 		for m, o := range v {
 			if o != nil {
-				child := &permissionrpc.ApiNewReq{
+				// 自动判断是否需要记录日志
+				var traceable int64 = 0
+				switch m {
+				case http.MethodPut:
+					traceable = 1
+				case http.MethodDelete:
+					traceable = 1
+				case http.MethodPost:
+					if !strings.Contains(k, "list") && !strings.Contains(k, "get") {
+						traceable = 1
+					}
+				default:
+					break
+				}
+				child := &permissionrpc.NewApiReq{
 					Id:        0,
 					ParentId:  0,
 					Path:      k,
 					Name:      o.Summary,
 					Method:    m,
-					Traceable: 0,
+					Traceable: traceable,
 					IsDisable: 0,
 					Children:  nil,
 				}
@@ -66,9 +81,9 @@ func (l *SyncApiListLogic) SyncApiList(req *types.SyncApiReq) (resp *types.Batch
 		}
 	}
 
-	var list []*permissionrpc.ApiNewReq
+	var list []*permissionrpc.NewApiReq
 	for g, children := range groups {
-		root := &permissionrpc.ApiNewReq{
+		root := &permissionrpc.NewApiReq{
 			Id:        0,
 			ParentId:  0,
 			Path:      g,

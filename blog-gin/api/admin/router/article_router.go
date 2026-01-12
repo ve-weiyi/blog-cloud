@@ -29,18 +29,18 @@ func (s *ArticleRouter) Register(r *gin.RouterGroup) {
 		// 添加文章
 		group.POST("/article/add_article", h.AddArticle)
 		// 删除文章
-		group.POST("/article/delete_article", h.DeleteArticle)
+		group.DELETE("/article/delete_article", h.DeleteArticle)
 		// 导出文章列表
 		group.POST("/article/export_article_list", h.ExportArticleList)
 		// 查询文章列表
 		group.POST("/article/find_article_list", h.FindArticleList)
 		// 查询文章
 		group.POST("/article/get_article", h.GetArticle)
-		// 回收文章
-		group.POST("/article/recycle_article", h.RecycleArticle)
-		// 置顶文章
-		group.POST("/article/top_article", h.TopArticle)
 		// 保存文章
-		group.POST("/article/update_article", h.UpdateArticle)
+		group.PUT("/article/update_article", h.UpdateArticle)
+		// 更新文章删除状态
+		group.PUT("/article/update_article_delete", h.UpdateArticleDelete)
+		// 更新文章置顶状态
+		group.PUT("/article/update_article_top", h.UpdateArticleTop)
 	}
 }

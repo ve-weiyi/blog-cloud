@@ -41,7 +41,7 @@ message PageResp {
 }
 
 /************** rbac 权限相关 **************/
-message ApiNewReq {
+message NewApiReq {
   int64 id = 1;// 主键id
   int64 parent_id = 2;// 分组id
   string path = 3;// api路径
@@ -49,7 +49,7 @@ message ApiNewReq {
   string method = 5;// api请求方法
   int64 traceable = 6;// 是否追溯操作记录 0需要，1是
   int64 is_disable = 7;// 是否禁用  0否 1是
-  repeated ApiNewReq children = 10;
+  repeated NewApiReq children = 10;
 }
 
 message ApiDetailsResp {
@@ -70,14 +70,14 @@ message FindApiListResp {
   repeated ApiDetailsResp list = 2;
 }
 
-message MenuNewReq {
+message NewMenuReq {
   int64 id = 1;// 主键
   int64 parent_id = 2;// 父id
   string path = 3;// 路由路径
   string name = 4;// 路由名称
   string component = 5;// 路由组件
   string redirect = 6;// 路由重定向
-  repeated MenuNewReq children = 10;
+  repeated NewMenuReq children = 10;
   MenuMeta meta = 11;
 }
 
@@ -113,11 +113,11 @@ message FindMenuListResp {
 }
 
 message SyncMenuListReq {
-  repeated MenuNewReq menus = 1;
+  repeated NewMenuReq menus = 1;
 }
 
 message SyncApiListReq {
-  repeated ApiNewReq apis = 1;
+  repeated NewApiReq apis = 1;
 }
 
 message CleanApiListReq {
@@ -126,7 +126,7 @@ message CleanApiListReq {
 message FindAllApiReq {
 }
 
-message RoleNewReq {
+message NewRoleReq {
   int64 id = 1;// 主键id
   int64 parent_id = 2;// 父角色id
   string role_key = 3;// 角色名
@@ -206,11 +206,11 @@ message FindAllMenuReq {
 
 service PermissionRpc {
   // 创建接口
-  rpc AddApi(ApiNewReq) returns(ApiDetailsResp);
+  rpc AddApi(NewApiReq) returns(ApiDetailsResp);
   // 更新接口
-  rpc UpdateApi(ApiNewReq) returns(ApiDetailsResp);
+  rpc UpdateApi(NewApiReq) returns(ApiDetailsResp);
   // 删除接口
-  rpc DeleteApi(IdsReq) returns(BatchResp);
+  rpc DeletesApi(IdsReq) returns(BatchResp);
   // 查询接口列表
   rpc FindApiList(FindApiListReq) returns(FindApiListResp);
   // 同步接口列表
@@ -221,11 +221,11 @@ service PermissionRpc {
   rpc FindAllApi(FindAllApiReq) returns(FindApiListResp);
 
   // 创建菜单
-  rpc AddMenu(MenuNewReq) returns(MenuDetailsResp);
+  rpc AddMenu(NewMenuReq) returns(MenuDetailsResp);
   // 更新菜单
-  rpc UpdateMenu(MenuNewReq) returns(MenuDetailsResp);
+  rpc UpdateMenu(NewMenuReq) returns(MenuDetailsResp);
   // 删除菜单
-  rpc DeleteMenu(IdsReq) returns(BatchResp);
+  rpc DeletesMenu(IdsReq) returns(BatchResp);
   // 查询菜单列表
   rpc FindMenuList(FindMenuListReq) returns(FindMenuListResp);
   // 同步菜单列表
@@ -237,11 +237,11 @@ service PermissionRpc {
 
 
   // 创建角色
-  rpc AddRole(RoleNewReq) returns(RoleDetailsResp);
+  rpc AddRole(NewRoleReq) returns(RoleDetailsResp);
   // 更新角色
-  rpc UpdateRole(RoleNewReq) returns(RoleDetailsResp);
+  rpc UpdateRole(NewRoleReq) returns(RoleDetailsResp);
   // 删除角色
-  rpc DeleteRole(IdsReq) returns(BatchResp);
+  rpc DeletesRole(IdsReq) returns(BatchResp);
   // 查询角色列表
   rpc FindRoleList(FindRoleListReq) returns(FindRoleListResp);
   // 查询所有角色

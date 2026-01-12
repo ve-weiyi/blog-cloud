@@ -3,7 +3,7 @@
 
 package types
 
-type VisitLogQuery struct {
+type QueryVisitLogReq struct {
 	PageQuery
 	UserId     string `json:"user_id,optional"`     // 用户id
 	TerminalId string `json:"terminal_id,optional"` // 终端id

@@ -30,7 +30,7 @@ func (l *DeletesAlbumLogic) DeletesAlbum(req *types.IdsReq) (resp *types.BatchRe
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ResourceRpc.DeleteAlbum(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.DeletesAlbum(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

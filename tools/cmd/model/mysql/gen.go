@@ -5,9 +5,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/quickstart/invent"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/filex"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/quickstart/gotplgen"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/filex"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 )
 
 type (
@@ -29,7 +29,7 @@ type (
 )
 
 func generateModel(models []*ModelData, tplPath string, outPath string, nameAs string) error {
-	var metas []invent.TemplateMeta
+	var metas []gotplgen.TemplateMeta
 
 	tpl, err := os.ReadFile(filex.ToAbs(tplPath))
 	if err != nil {
@@ -37,8 +37,8 @@ func generateModel(models []*ModelData, tplPath string, outPath string, nameAs s
 	}
 
 	for _, model := range models {
-		meta := invent.TemplateMeta{
-			Mode:           invent.ModeCreateOrReplace,
+		meta := gotplgen.TemplateMeta{
+			Mode:           gotplgen.ModeCreateOrReplace,
 			CodeOutPath:    path.Join(outPath, fmt.Sprintf(nameAs, model.TableName)),
 			TemplateString: string(tpl),
 			FunMap: map[string]any{

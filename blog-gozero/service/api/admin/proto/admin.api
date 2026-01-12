@@ -21,13 +21,14 @@ import "admin/upload.api"
 import "admin/login_log.api"
 import "admin/operation_log.api"
 import "admin/visit_log.api"
-import "admin/upload_log.api"
+import "admin/file_log.api"
+import "admin/visitor.api"
 import "admin/websocket.api"
 
 info (
 	title:                       "博客后台API"
 	description:                 "博客后台API接口文档"
-	version:                     "v3.5.1"
+	version:                     "v4.0.0"
 	contactName:                 "waynie.wei" // 技术支持联系人姓名
 	contactEmail:                "791422171@qq.com" // 联系人邮箱
 	contactURL:                  "https://github.com/ve-weiyi/ve-blog-golang" // 联系人相关链接
@@ -36,11 +37,11 @@ info (
 	licenseURL:                  "https://github.com/ve-weiyi/ve-blog-golang/main/LICENSE" // 许可证详情URL
 	consumes:                    "application/json" // 默认请求内容类型，可配置多个用逗号分隔
 	produces:                    "application/json" // 默认响应内容类型，可配置多个用逗号分隔
-	schemes:                     "https" // 支持协议(http/https/ws/wss)，可配置多个
-	host:                        "admin.veweiyi.com" // API服务主机地址(不带协议头)
+	schemes:                     "http,https,ws,wss" // 支持协议(http/https/ws/wss)，可配置多个
+	host:                        "" // API服务主机地址(不带协议头)
 	basePath:                    "" // API基础路径，所有接口都会添加此前缀
 	wrapCodeMsg:                 true
-    useDefinitions:              true
+	useDefinitions:              true
 	bizCodeEnumDescription:      "1001-未登录<br>1002-无权限操作"
 	securityDefinitionsFromJson: `{
 	  "AppName": {"type": "apiKey", "name": "App-Name", "in": "header", "description": "应用名称，用于标识调用方"},

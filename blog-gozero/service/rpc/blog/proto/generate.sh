@@ -1,4 +1,4 @@
-##!/bin/bash
+#!/bin/bash
 
 PROTO_DIR="."                 # Proto 文件所在目录
 OUTPUT_DIR="../internal/pb"   # 生成代码的输出目录
@@ -19,6 +19,6 @@ for file in "$PROTO_DIR"/*.proto; do
   fi
 done
 
-#goctl rpc protoc ./article.proto --go_out=../internal/pb --go-grpc_out=../internal/pb --zrpc_out=../ -m --style go_zero
-#rm -f ../etc/article.yaml
-#rm ../article.go
+#goctl rpc protoc ./message.proto --go_out=../internal/pb --go-grpc_out=../internal/pb --zrpc_out=../ -m --style go_zero
+#rm -f ../etc/message.yaml
+#rm ../message.go

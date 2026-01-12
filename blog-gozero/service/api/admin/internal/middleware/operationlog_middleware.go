@@ -12,13 +12,11 @@ import (
 	"github.com/go-openapi/spec"
 	"github.com/zeromicro/go-zero/core/collection"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/ipx"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 )
@@ -115,12 +113,6 @@ func (m *OperationLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc 
 		// 计算请求响应的耗时
 		cost := time.Since(start)
 
-		ip := httpx.GetRemoteAddr(r)
-		is := ipx.GetIpSourceByBaidu(ip)
-		if err != nil {
-			logx.Errorf("OperationLogMiddleware Handle GetIpInfoByBaidu err: %v", err)
-		}
-
 		var module, desc string
 		api := m.getApiSpec(r.URL.Path, r.Method)
 		if api != nil {
@@ -130,11 +122,9 @@ func (m *OperationLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc 
 			desc = api.OperationProps.Summary
 		}
 
-		op := &syslogrpc.OperationLogNewReq{
-			UserId:         r.Header.Get(restx.HeaderUid),
-			TerminalId:     r.Header.Get(restx.HeaderXTerminalId),
-			IpAddress:      ip,
-			IpSource:       is,
+		op := &syslogrpc.NewOperationLogReq{
+			UserId:         r.Header.Get(bizheader.HeaderUid),
+			TerminalId:     r.Header.Get(bizheader.HeaderXTerminalId),
 			OptModule:      module,
 			OptDesc:        desc,
 			RequestUri:     r.URL.Path,

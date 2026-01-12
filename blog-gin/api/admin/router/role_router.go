@@ -29,7 +29,7 @@ func (s *RoleRouter) Register(r *gin.RouterGroup) {
 		// 创建角色
 		group.POST("/role/add_role", h.AddRole)
 		// 删除角色
-		group.POST("/role/deletes_role", h.DeletesRole)
+		group.DELETE("/role/deletes_role", h.DeletesRole)
 		// 分页获取角色列表
 		group.POST("/role/find_role_list", h.FindRoleList)
 		// 获取角色资源列表
@@ -37,8 +37,8 @@ func (s *RoleRouter) Register(r *gin.RouterGroup) {
 		// 更新角色
 		group.PUT("/role/update_role", h.UpdateRole)
 		// 更新角色接口权限
-		group.POST("/role/update_role_apis", h.UpdateRoleApis)
+		group.PUT("/role/update_role_apis", h.UpdateRoleApis)
 		// 更新角色菜单权限
-		group.POST("/role/update_role_menus", h.UpdateRoleMenus)
+		group.PUT("/role/update_role_menus", h.UpdateRoleMenus)
 	}
 }

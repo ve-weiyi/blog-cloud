@@ -25,7 +25,7 @@ func NewAddAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddAlbum
 }
 
 // 创建相册
-func (l *AddAlbumLogic) AddAlbum(in *resourcerpc.AlbumNewReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (l *AddAlbumLogic) AddAlbum(in *resourcerpc.NewAlbumReq) (*resourcerpc.AlbumDetailsResp, error) {
 	entity := convertAlbumIn(in)
 
 	_, err := l.svcCtx.TAlbumModel.Insert(l.ctx, entity)
@@ -36,7 +36,7 @@ func (l *AddAlbumLogic) AddAlbum(in *resourcerpc.AlbumNewReq) (*resourcerpc.Albu
 	return convertAlbumOut(entity, nil), nil
 }
 
-func convertAlbumIn(in *resourcerpc.AlbumNewReq) (out *model.TAlbum) {
+func convertAlbumIn(in *resourcerpc.NewAlbumReq) (out *model.TAlbum) {
 	out = &model.TAlbum{
 		Id:         in.Id,
 		AlbumName:  in.AlbumName,

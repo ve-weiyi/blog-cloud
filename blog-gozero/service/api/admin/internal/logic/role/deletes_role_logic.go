@@ -30,7 +30,7 @@ func (l *DeletesRoleLogic) DeletesRole(req *types.IdsReq) (resp *types.BatchResp
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.PermissionRpc.DeleteRole(l.ctx, in)
+	out, err := l.svcCtx.PermissionRpc.DeletesRole(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

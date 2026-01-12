@@ -66,16 +66,13 @@ func convertLoginLogQuery(in *syslogrpc.FindLoginLogListReq) (page int, size int
 
 func convertLoginLogOut(in *model.TLoginLog) (out *syslogrpc.LoginLogDetailsResp) {
 	out = &syslogrpc.LoginLogDetailsResp{
-		Id:        in.Id,
-		UserId:    in.UserId,
-		LoginType: in.LoginType,
-		AppName:   in.AppName,
-		Os:        in.Os,
-		Browser:   in.Browser,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		LoginAt:   in.LoginAt.Unix(),
-		LogoutAt:  0,
+		Id:         in.Id,
+		UserId:     in.UserId,
+		TerminalId: in.TerminalId,
+		LoginType:  in.LoginType,
+		AppName:    in.AppName,
+		LoginAt:    in.LoginAt.Unix(),
+		LogoutAt:   0,
 	}
 
 	if in.LogoutAt.Valid {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewCategoryController(svcCtx *svctx.ServiceContext) *CategoryController {
 // @Summary		"创建文章分类"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CategoryNewReq		true	"请求参数"
+// @Param		data	body		types.NewCategoryReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.CategoryBackVO}	"返回信息"
 // @Router		/admin-api/v1/category/add_category [POST]
 func (s *CategoryController) AddCategory(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *CategoryController) AddCategory(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CategoryNewReq
+	var req *types.NewCategoryReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *CategoryController) DeletesCategory(c *gin.Context) {
 // @Summary		"分页获取文章分类列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CategoryQuery		true	"请求参数"
+// @Param		data	body		types.QueryCategoryReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/category/find_category_list [POST]
 func (s *CategoryController) FindCategoryList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *CategoryController) FindCategoryList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CategoryQuery
+	var req *types.QueryCategoryReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -111,7 +111,7 @@ func (s *CategoryController) FindCategoryList(c *gin.Context) {
 // @Summary		"更新文章分类"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.CategoryNewReq		true	"请求参数"
+// @Param		data	body		types.NewCategoryReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.CategoryBackVO}	"返回信息"
 // @Router		/admin-api/v1/category/update_category [PUT]
 func (s *CategoryController) UpdateCategory(c *gin.Context) {
@@ -120,7 +120,7 @@ func (s *CategoryController) UpdateCategory(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.CategoryNewReq
+	var req *types.NewCategoryReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

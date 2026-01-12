@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,8 +25,8 @@ func NewUpdateFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateFriendLogic) UpdateFriend(req *types.FriendNewReq) (resp *types.FriendBackVO, err error) {
-	in := &websiterpc.FriendNewReq{
+func (l *UpdateFriendLogic) UpdateFriend(req *types.NewFriendReq) (resp *types.FriendBackVO, err error) {
+	in := &socialrpc.NewFriendReq{
 		Id:          req.Id,
 		LinkName:    req.LinkName,
 		LinkAvatar:  req.LinkAvatar,
@@ -34,7 +34,7 @@ func (l *UpdateFriendLogic) UpdateFriend(req *types.FriendNewReq) (resp *types.F
 		LinkIntro:   req.LinkIntro,
 	}
 
-	out, err := l.svcCtx.WebsiteRpc.UpdateFriend(l.ctx, in)
+	out, err := l.svcCtx.SocialRpc.UpdateFriend(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

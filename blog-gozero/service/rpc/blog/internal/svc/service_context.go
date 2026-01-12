@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -14,15 +15,14 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/gormlogx"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/gormlogx"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/online"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/config"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/captcha"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/gormlogger"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/mail"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/mq/rabbitmqx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/captcha"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/mail"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/kit/mq/rabbitmqx"
 )
 
 type ServiceContext struct {
@@ -69,7 +69,7 @@ type ServiceContext struct {
 	TVisitLogModel     model.TVisitLogModel
 	TLoginLogModel     model.TLoginLogModel
 	TOperationLogModel model.TOperationLogModel
-	TUploadLogModel    model.TUploadLogModel
+	TFileLogModel      model.TFileLogModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -132,7 +132,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TVisitLogModel:        model.NewTVisitLogModel(db),
 		TLoginLogModel:        model.NewTLoginLogModel(db),
 		TOperationLogModel:    model.NewTOperationLogModel(db),
-		TUploadLogModel:       model.NewTUploadLogModel(db),
+		TFileLogModel:         model.NewTFileLogModel(db),
 	}
 }
 
@@ -143,7 +143,13 @@ func ConnectGorm(c config.MysqlConf, l logx.LogConf) (*gorm.DB, error) {
 	if l.Mode == "console" && l.Encoding == "plain" {
 		// 跟随gorm的日志输出格式
 		lg = logger.New(
-			gormlogger.NewGormWriter(gormlogger.SkipKey("model/")),
+			gormlogx.NewGormWriter(
+				log.New(os.Stdout, "\r\n", log.LstdFlags),
+				gormlogx.Config{
+					Skip: 2,
+					// 跳过 model/ 仓库层的行号，使用业务层的行号
+					SkipKeywords: []string{"/model", "/gorm"},
+				}),
 			logger.Config{
 				SlowThreshold:             500 * time.Millisecond, // 慢 SQL 阈值，超过会提前结束
 				LogLevel:                  logger.Info,

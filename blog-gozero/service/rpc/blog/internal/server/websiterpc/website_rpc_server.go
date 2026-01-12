@@ -40,27 +40,3 @@ func (s *WebsiteRpcServer) FindVisitTrend(ctx context.Context, in *websiterpc.Fi
 	l := websiterpclogic.NewFindVisitTrendLogic(ctx, s.svcCtx)
 	return l.FindVisitTrend(in)
 }
-
-// 创建友链
-func (s *WebsiteRpcServer) AddFriend(ctx context.Context, in *websiterpc.FriendNewReq) (*websiterpc.FriendDetailsResp, error) {
-	l := websiterpclogic.NewAddFriendLogic(ctx, s.svcCtx)
-	return l.AddFriend(in)
-}
-
-// 更新友链
-func (s *WebsiteRpcServer) UpdateFriend(ctx context.Context, in *websiterpc.FriendNewReq) (*websiterpc.FriendDetailsResp, error) {
-	l := websiterpclogic.NewUpdateFriendLogic(ctx, s.svcCtx)
-	return l.UpdateFriend(in)
-}
-
-// 删除友链
-func (s *WebsiteRpcServer) DeleteFriend(ctx context.Context, in *websiterpc.IdsReq) (*websiterpc.BatchResp, error) {
-	l := websiterpclogic.NewDeleteFriendLogic(ctx, s.svcCtx)
-	return l.DeleteFriend(in)
-}
-
-// 查询友链列表
-func (s *WebsiteRpcServer) FindFriendList(ctx context.Context, in *websiterpc.FindFriendListReq) (*websiterpc.FindFriendListResp, error) {
-	l := websiterpclogic.NewFindFriendListLogic(ctx, s.svcCtx)
-	return l.FindFriendList(in)
-}

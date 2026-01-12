@@ -25,8 +25,8 @@ func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 	}
 }
 
-func (l *UpdateCategoryLogic) UpdateCategory(req *types.CategoryNewReq) (resp *types.CategoryBackVO, err error) {
-	in := &articlerpc.CategoryNewReq{
+func (l *UpdateCategoryLogic) UpdateCategory(req *types.NewCategoryReq) (resp *types.CategoryBackVO, err error) {
+	in := &articlerpc.NewCategoryReq{
 		CategoryName: req.CategoryName,
 	}
 	out, err := l.svcCtx.ArticleRpc.UpdateCategory(l.ctx, in)

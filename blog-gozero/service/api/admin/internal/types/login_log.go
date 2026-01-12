@@ -3,7 +3,7 @@
 
 package types
 
-type LoginLogQuery struct {
+type QueryLoginLogReq struct {
 	PageQuery
 	UserId string `json:"user_id,optional"` // 用户id
 }

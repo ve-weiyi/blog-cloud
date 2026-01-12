@@ -28,12 +28,14 @@ type (
 	FindUserInfoListResp      = accountrpc.FindUserInfoListResp
 	FindUserListReq           = accountrpc.FindUserListReq
 	FindUserListResp          = accountrpc.FindUserListResp
+	FindVisitorListReq        = accountrpc.FindVisitorListReq
+	FindVisitorListResp       = accountrpc.FindVisitorListResp
 	GenerateCaptchaCodeReq    = accountrpc.GenerateCaptchaCodeReq
 	GenerateCaptchaCodeResp   = accountrpc.GenerateCaptchaCodeResp
+	GetClientInfoReq          = accountrpc.GetClientInfoReq
+	GetClientInfoResp         = accountrpc.GetClientInfoResp
 	GetOauthAuthorizeUrlReq   = accountrpc.GetOauthAuthorizeUrlReq
 	GetOauthAuthorizeUrlResp  = accountrpc.GetOauthAuthorizeUrlResp
-	GetTouristInfoReq         = accountrpc.GetTouristInfoReq
-	GetTouristInfoResp        = accountrpc.GetTouristInfoResp
 	GetUserOauthInfoResp      = accountrpc.GetUserOauthInfoResp
 	LoginReq                  = accountrpc.LoginReq
 	LoginResp                 = accountrpc.LoginResp
@@ -58,6 +60,7 @@ type (
 	UserInfoResp              = accountrpc.UserInfoResp
 	UserOauthInfo             = accountrpc.UserOauthInfo
 	UserRoleLabel             = accountrpc.UserRoleLabel
+	VisitorInfo               = accountrpc.VisitorInfo
 
 	AccountRpc interface {
 		// 登录
@@ -116,8 +119,10 @@ type (
 		AnalysisUser(ctx context.Context, in *AnalysisUserReq, opts ...grpc.CallOption) (*AnalysisUserResp, error)
 		// 查询用户分布区域
 		AnalysisUserAreas(ctx context.Context, in *AnalysisUserAreasReq, opts ...grpc.CallOption) (*AnalysisUserAreasResp, error)
-		// 获取游客身份
-		GetTouristInfo(ctx context.Context, in *GetTouristInfoReq, opts ...grpc.CallOption) (*GetTouristInfoResp, error)
+		// 获取客户端信息
+		GetClientInfo(ctx context.Context, in *GetClientInfoReq, opts ...grpc.CallOption) (*GetClientInfoResp, error)
+		// 查询游客信息
+		FindVisitorList(ctx context.Context, in *FindVisitorListReq, opts ...grpc.CallOption) (*FindVisitorListResp, error)
 	}
 
 	defaultAccountRpc struct {
@@ -299,8 +304,14 @@ func (m *defaultAccountRpc) AnalysisUserAreas(ctx context.Context, in *AnalysisU
 	return client.AnalysisUserAreas(ctx, in, opts...)
 }
 
-// 获取游客身份
-func (m *defaultAccountRpc) GetTouristInfo(ctx context.Context, in *GetTouristInfoReq, opts ...grpc.CallOption) (*GetTouristInfoResp, error) {
+// 获取客户端信息
+func (m *defaultAccountRpc) GetClientInfo(ctx context.Context, in *GetClientInfoReq, opts ...grpc.CallOption) (*GetClientInfoResp, error) {
 	client := accountrpc.NewAccountRpcClient(m.cli.Conn())
-	return client.GetTouristInfo(ctx, in, opts...)
+	return client.GetClientInfo(ctx, in, opts...)
+}
+
+// 查询游客信息
+func (m *defaultAccountRpc) FindVisitorList(ctx context.Context, in *FindVisitorListReq, opts ...grpc.CallOption) (*FindVisitorListResp, error) {
+	client := accountrpc.NewAccountRpcClient(m.cli.Conn())
+	return client.FindVisitorList(ctx, in, opts...)
 }

@@ -30,7 +30,7 @@ func (l *DeletesTagLogic) DeletesTag(req *types.IdsReq) (resp *types.BatchResp, 
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ArticleRpc.DeleteTag(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.DeletesTag(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

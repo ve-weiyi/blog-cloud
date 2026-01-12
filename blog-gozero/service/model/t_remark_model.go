@@ -41,10 +41,7 @@ type (
 		UserId         string    `json:"user_id" gorm:"column:user_id"`                 // 用户id
 		TerminalId     string    `json:"terminal_id" gorm:"column:terminal_id"`         // 终端id
 		MessageContent string    `json:"message_content" gorm:"column:message_content"` // 留言内容
-		IpAddress      string    `json:"ip_address" gorm:"column:ip_address"`           // 用户ip 127.0.0.1
-		IpSource       string    `json:"ip_source" gorm:"column:ip_source"`             // 用户地址 广东省深圳市
 		Status         int64     `json:"status" gorm:"column:status"`                   // 状态:0正常 1编辑 2撤回 3删除
-		IsReview       int64     `json:"is_review" gorm:"column:is_review"`             // 是否审核通过
 		CreatedAt      time.Time `json:"created_at" gorm:"column:created_at"`           // 发布时间
 		UpdatedAt      time.Time `json:"updated_at" gorm:"column:updated_at"`           // 更新时间
 	}

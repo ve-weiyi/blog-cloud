@@ -26,7 +26,7 @@ func NewFindAlbumListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 	}
 }
 
-func (l *FindAlbumListLogic) FindAlbumList(req *types.AlbumQueryReq) (resp *types.PageResp, err error) {
+func (l *FindAlbumListLogic) FindAlbumList(req *types.QueryAlbumReq) (resp *types.PageResp, err error) {
 	in := &resourcerpc.FindAlbumListReq{
 		Paginate: &resourcerpc.PageReq{
 			Page:     req.Page,
@@ -49,7 +49,7 @@ func (l *FindAlbumListLogic) FindAlbumList(req *types.AlbumQueryReq) (resp *type
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
 		PageName: "相册",
 	})
 	if err != nil {

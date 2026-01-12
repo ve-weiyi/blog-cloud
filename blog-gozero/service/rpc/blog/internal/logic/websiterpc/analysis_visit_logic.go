@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/websiterpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -100,7 +100,7 @@ func (l *AnalysisVisitLogic) getTodayPvCount(day string) int64 {
 func (l *AnalysisVisitLogic) getTotalUvCount() int64 {
 	key := rediskey.GetTotalUserViewCountKey()
 	// 获取总访客数
-	uvCount, err := l.svcCtx.Redis.SCard(l.ctx, key).Result()
+	uvCount, err := l.svcCtx.Redis.Get(l.ctx, key).Int64()
 	if err != nil {
 		l.Logger.Errorf("getTotalUvCount err: %v", err)
 		records, err := l.svcCtx.TVisitDailyStatsModel.FindALL(l.ctx, "visit_type = ?", constant.VisitTypeUv)
@@ -120,7 +120,7 @@ func (l *AnalysisVisitLogic) getTotalUvCount() int64 {
 func (l *AnalysisVisitLogic) getTotalPvCount() int64 {
 	key := rediskey.GetTotalPageViewCountKey()
 	// 获取总浏览量
-	pvCount, err := l.svcCtx.Redis.SCard(l.ctx, key).Result()
+	pvCount, err := l.svcCtx.Redis.Get(l.ctx, key).Int64()
 	if err != nil {
 		l.Logger.Errorf("getTotalPvCount err: %v", err)
 		records, err := l.svcCtx.TVisitDailyStatsModel.FindALL(l.ctx, "visit_type = ?", constant.VisitTypePv)

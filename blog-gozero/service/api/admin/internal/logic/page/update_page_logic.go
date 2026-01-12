@@ -25,8 +25,8 @@ func NewUpdatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdatePageLogic) UpdatePage(req *types.PageNewReq) (resp *types.PageBackVO, err error) {
-	in := &resourcerpc.PageNewReq{
+func (l *UpdatePageLogic) UpdatePage(req *types.NewPageReq) (resp *types.PageBackVO, err error) {
+	in := &resourcerpc.UpdatePageReq{
 		Id:             req.Id,
 		PageName:       req.PageName,
 		PageLabel:      req.PageLabel,
@@ -40,15 +40,5 @@ func (l *UpdatePageLogic) UpdatePage(req *types.PageNewReq) (resp *types.PageBac
 		return nil, err
 	}
 
-	resp = &types.PageBackVO{
-		Id:             out.Id,
-		PageName:       out.PageName,
-		PageLabel:      out.PageLabel,
-		PageCover:      out.PageCover,
-		IsCarousel:     out.IsCarousel,
-		CarouselCovers: out.CarouselCovers,
-		CreatedAt:      out.CreatedAt,
-		UpdatedAt:      out.UpdatedAt,
-	}
-	return resp, nil
+	return convertPageTypes(out.Page), nil
 }

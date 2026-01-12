@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,8 +25,8 @@ func NewAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFrie
 	}
 }
 
-func (l *AddFriendLogic) AddFriend(req *types.FriendNewReq) (resp *types.FriendBackVO, err error) {
-	in := &websiterpc.FriendNewReq{
+func (l *AddFriendLogic) AddFriend(req *types.NewFriendReq) (resp *types.FriendBackVO, err error) {
+	in := &socialrpc.AddFriendReq{
 		Id:          req.Id,
 		LinkName:    req.LinkName,
 		LinkAvatar:  req.LinkAvatar,
@@ -34,12 +34,16 @@ func (l *AddFriendLogic) AddFriend(req *types.FriendNewReq) (resp *types.FriendB
 		LinkIntro:   req.LinkIntro,
 	}
 
-	out, err := l.svcCtx.WebsiteRpc.AddFriend(l.ctx, in)
+	out, err := l.svcCtx.SocialRpc.AddFriend(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.FriendBackVO{
+	return convertFriendTypes(out.Friend), nil
+}
+
+func convertFriendTypes(out *socialrpc.Friend) *types.FriendBackVO {
+	return &types.FriendBackVO{
 		Id:          out.Id,
 		LinkName:    out.LinkName,
 		LinkAvatar:  out.LinkAvatar,
@@ -48,5 +52,4 @@ func (l *AddFriendLogic) AddFriend(req *types.FriendNewReq) (resp *types.FriendB
 		CreatedAt:   out.CreatedAt,
 		UpdatedAt:   out.UpdatedAt,
 	}
-	return resp, nil
 }

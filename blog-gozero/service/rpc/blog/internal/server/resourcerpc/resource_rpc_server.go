@@ -24,27 +24,27 @@ func NewResourceRpcServer(svcCtx *svc.ServiceContext) *ResourceRpcServer {
 }
 
 // 创建照片
-func (s *ResourceRpcServer) AddPhoto(ctx context.Context, in *resourcerpc.PhotoNewReq) (*resourcerpc.PhotoDetailsResp, error) {
+func (s *ResourceRpcServer) AddPhoto(ctx context.Context, in *resourcerpc.AddPhotoReq) (*resourcerpc.AddPhotoResp, error) {
 	l := resourcerpclogic.NewAddPhotoLogic(ctx, s.svcCtx)
 	return l.AddPhoto(in)
 }
 
 // 更新照片
-func (s *ResourceRpcServer) UpdatePhoto(ctx context.Context, in *resourcerpc.PhotoNewReq) (*resourcerpc.PhotoDetailsResp, error) {
+func (s *ResourceRpcServer) UpdatePhoto(ctx context.Context, in *resourcerpc.UpdatePhotoReq) (*resourcerpc.UpdatePhotoResp, error) {
 	l := resourcerpclogic.NewUpdatePhotoLogic(ctx, s.svcCtx)
 	return l.UpdatePhoto(in)
 }
 
 // 更新照片删除状态
-func (s *ResourceRpcServer) UpdatePhotoDelete(ctx context.Context, in *resourcerpc.UpdatePhotoDeleteReq) (*resourcerpc.BatchResp, error) {
+func (s *ResourceRpcServer) UpdatePhotoDelete(ctx context.Context, in *resourcerpc.UpdatePhotoDeleteReq) (*resourcerpc.UpdatePhotoDeleteResp, error) {
 	l := resourcerpclogic.NewUpdatePhotoDeleteLogic(ctx, s.svcCtx)
 	return l.UpdatePhotoDelete(in)
 }
 
 // 删除照片
-func (s *ResourceRpcServer) DeletePhoto(ctx context.Context, in *resourcerpc.IdsReq) (*resourcerpc.BatchResp, error) {
-	l := resourcerpclogic.NewDeletePhotoLogic(ctx, s.svcCtx)
-	return l.DeletePhoto(in)
+func (s *ResourceRpcServer) DeletesPhoto(ctx context.Context, in *resourcerpc.DeletesPhotoReq) (*resourcerpc.DeletesPhotoResp, error) {
+	l := resourcerpclogic.NewDeletesPhotoLogic(ctx, s.svcCtx)
+	return l.DeletesPhoto(in)
 }
 
 // 查询照片列表
@@ -54,33 +54,33 @@ func (s *ResourceRpcServer) FindPhotoList(ctx context.Context, in *resourcerpc.F
 }
 
 // 创建相册
-func (s *ResourceRpcServer) AddAlbum(ctx context.Context, in *resourcerpc.AlbumNewReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (s *ResourceRpcServer) AddAlbum(ctx context.Context, in *resourcerpc.AddAlbumReq) (*resourcerpc.AddAlbumResp, error) {
 	l := resourcerpclogic.NewAddAlbumLogic(ctx, s.svcCtx)
 	return l.AddAlbum(in)
 }
 
 // 更新相册
-func (s *ResourceRpcServer) UpdateAlbum(ctx context.Context, in *resourcerpc.AlbumNewReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (s *ResourceRpcServer) UpdateAlbum(ctx context.Context, in *resourcerpc.UpdateAlbumReq) (*resourcerpc.UpdateAlbumResp, error) {
 	l := resourcerpclogic.NewUpdateAlbumLogic(ctx, s.svcCtx)
 	return l.UpdateAlbum(in)
 }
 
 // 更新相册删除状态
-func (s *ResourceRpcServer) UpdateAlbumDelete(ctx context.Context, in *resourcerpc.UpdateAlbumDeleteReq) (*resourcerpc.BatchResp, error) {
+func (s *ResourceRpcServer) UpdateAlbumDelete(ctx context.Context, in *resourcerpc.UpdateAlbumDeleteReq) (*resourcerpc.UpdateAlbumDeleteResp, error) {
 	l := resourcerpclogic.NewUpdateAlbumDeleteLogic(ctx, s.svcCtx)
 	return l.UpdateAlbumDelete(in)
 }
 
 // 获取相册
-func (s *ResourceRpcServer) GetAlbum(ctx context.Context, in *resourcerpc.IdReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (s *ResourceRpcServer) GetAlbum(ctx context.Context, in *resourcerpc.GetAlbumReq) (*resourcerpc.GetAlbumResp, error) {
 	l := resourcerpclogic.NewGetAlbumLogic(ctx, s.svcCtx)
 	return l.GetAlbum(in)
 }
 
 // 删除相册
-func (s *ResourceRpcServer) DeleteAlbum(ctx context.Context, in *resourcerpc.IdsReq) (*resourcerpc.BatchResp, error) {
-	l := resourcerpclogic.NewDeleteAlbumLogic(ctx, s.svcCtx)
-	return l.DeleteAlbum(in)
+func (s *ResourceRpcServer) DeletesAlbum(ctx context.Context, in *resourcerpc.DeletesAlbumReq) (*resourcerpc.DeletesAlbumResp, error) {
+	l := resourcerpclogic.NewDeletesAlbumLogic(ctx, s.svcCtx)
+	return l.DeletesAlbum(in)
 }
 
 // 查询相册列表
@@ -90,21 +90,21 @@ func (s *ResourceRpcServer) FindAlbumList(ctx context.Context, in *resourcerpc.F
 }
 
 // 创建页面
-func (s *ResourceRpcServer) AddPage(ctx context.Context, in *resourcerpc.PageNewReq) (*resourcerpc.PageDetailsResp, error) {
+func (s *ResourceRpcServer) AddPage(ctx context.Context, in *resourcerpc.AddPageReq) (*resourcerpc.AddPageResp, error) {
 	l := resourcerpclogic.NewAddPageLogic(ctx, s.svcCtx)
 	return l.AddPage(in)
 }
 
 // 更新页面
-func (s *ResourceRpcServer) UpdatePage(ctx context.Context, in *resourcerpc.PageNewReq) (*resourcerpc.PageDetailsResp, error) {
+func (s *ResourceRpcServer) UpdatePage(ctx context.Context, in *resourcerpc.UpdatePageReq) (*resourcerpc.UpdatePageResp, error) {
 	l := resourcerpclogic.NewUpdatePageLogic(ctx, s.svcCtx)
 	return l.UpdatePage(in)
 }
 
 // 删除页面
-func (s *ResourceRpcServer) DeletePage(ctx context.Context, in *resourcerpc.IdsReq) (*resourcerpc.BatchResp, error) {
-	l := resourcerpclogic.NewDeletePageLogic(ctx, s.svcCtx)
-	return l.DeletePage(in)
+func (s *ResourceRpcServer) DeletesPage(ctx context.Context, in *resourcerpc.DeletesPageReq) (*resourcerpc.DeletesPageResp, error) {
+	l := resourcerpclogic.NewDeletesPageLogic(ctx, s.svcCtx)
+	return l.DeletesPage(in)
 }
 
 // 查询页面列表

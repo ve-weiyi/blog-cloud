@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizheader"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -30,8 +30,8 @@ func NewGetUserApisLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserApisLogic) GetUserApis(req *types.EmptyReq) (resp *types.UserApisResp, err error) {
-	in := &permissionrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+	in := &permissionrpc.FindUserApisReq{
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 
 	out, err := l.svcCtx.PermissionRpc.FindUserApis(l.ctx, in)
@@ -50,7 +50,7 @@ func (l *GetUserApisLogic) GetUserApis(req *types.EmptyReq) (resp *types.UserApi
 	return
 }
 
-func convertUserApi(req *permissionrpc.ApiDetailsResp) (out *types.UserApi) {
+func convertUserApi(req *permissionrpc.Api) (out *types.UserApi) {
 	children := make([]*types.UserApi, 0)
 	for _, v := range req.Children {
 		m := convertUserApi(v)

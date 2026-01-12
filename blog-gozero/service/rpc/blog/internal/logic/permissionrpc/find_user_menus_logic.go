@@ -24,7 +24,7 @@ func NewFindUserMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 }
 
 // 获取用户菜单权限
-func (l *FindUserMenusLogic) FindUserMenus(in *permissionrpc.UserIdReq) (*permissionrpc.FindMenuListResp, error) {
+func (l *FindUserMenusLogic) FindUserMenus(in *permissionrpc.FindUserMenusReq) (*permissionrpc.FindUserMenusResp, error) {
 	uid := in.UserId
 
 	// 查用户
@@ -61,10 +61,10 @@ func (l *FindUserMenusLogic) FindUserMenus(in *permissionrpc.UserIdReq) (*permis
 		return nil, err
 	}
 
-	var root permissionrpc.MenuDetailsResp
+	var root permissionrpc.Menu
 	root.Children = appendMenuChildren(&root, list)
 
-	out := &permissionrpc.FindMenuListResp{}
+	out := &permissionrpc.FindUserMenusResp{}
 	out.List = root.Children
 
 	return out, nil

@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,16 +24,16 @@ func NewArticleController(svcCtx *svctx.ServiceContext) *ArticleController {
 // @Summary		"文章归档(时间轴)"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.ArticleArchivesQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryArticleArchivesReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
-// @Router		/blog-api/v1/article/get_article_archives [POST]
+// @Router		/blog-api/v1/article/find_article_archives [POST]
 func (s *ArticleController) FindArticleArchives(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.ArticleArchivesQueryReq
+	var req *types.QueryArticleArchivesReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -53,16 +53,16 @@ func (s *ArticleController) FindArticleArchives(c *gin.Context) {
 // @Summary		"通过分类获取文章列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.ArticleClassifyQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryArticleClassifyReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
-// @Router		/blog-api/v1/article/get_article_classify_category [POST]
+// @Router		/blog-api/v1/article/find_article_classify_category [POST]
 func (s *ArticleController) FindArticleClassifyCategory(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.ArticleClassifyQueryReq
+	var req *types.QueryArticleClassifyReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,16 +82,16 @@ func (s *ArticleController) FindArticleClassifyCategory(c *gin.Context) {
 // @Summary		"通过标签获取文章列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.ArticleClassifyQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryArticleClassifyReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
-// @Router		/blog-api/v1/article/get_article_classify_tag [POST]
+// @Router		/blog-api/v1/article/find_article_classify_tag [POST]
 func (s *ArticleController) FindArticleClassifyTag(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.ArticleClassifyQueryReq
+	var req *types.QueryArticleClassifyReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -99,6 +99,64 @@ func (s *ArticleController) FindArticleClassifyTag(c *gin.Context) {
 	}
 
 	data, err := logic.NewArticleLogic(s.svcCtx).FindArticleClassifyTag(reqCtx, req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	response.ResponseOk(c, data)
+}
+
+// @Tags		Article
+// @Summary		"获取首页文章列表"
+// @accept		application/json
+// @Produce		application/json
+// @Param		data	body		types.QueryArticleHomeReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
+// @Router		/blog-api/v1/article/find_article_home_list [POST]
+func (s *ArticleController) FindArticleHomeList(c *gin.Context) {
+	reqCtx, err := request.ParseRequestContext(c)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+	var req *types.QueryArticleHomeReq
+	err = request.ShouldBind(c, &req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	data, err := logic.NewArticleLogic(s.svcCtx).FindArticleHomeList(reqCtx, req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	response.ResponseOk(c, data)
+}
+
+// @Tags		Article
+// @Summary		"获取首页推荐文章列表"
+// @accept		application/json
+// @Produce		application/json
+// @Param		data	body		types.EmptyReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
+// @Router		/blog-api/v1/article/find_article_recommend [POST]
+func (s *ArticleController) FindArticleRecommend(c *gin.Context) {
+	reqCtx, err := request.ParseRequestContext(c)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+	var req *types.EmptyReq
+	err = request.ShouldBind(c, &req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	data, err := logic.NewArticleLogic(s.svcCtx).FindArticleRecommend(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
@@ -137,70 +195,12 @@ func (s *ArticleController) GetArticleDetails(c *gin.Context) {
 }
 
 // @Tags		Article
-// @Summary		"获取首页文章列表"
-// @accept		application/json
-// @Produce		application/json
-// @Param		data	body		types.ArticleHomeQueryReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
-// @Router		/blog-api/v1/article/get_article_home_list [POST]
-func (s *ArticleController) FindArticleHomeList(c *gin.Context) {
-	reqCtx, err := request.ParseRequestContext(c)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-	var req *types.ArticleHomeQueryReq
-	err = request.ShouldBind(c, &req)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-
-	data, err := logic.NewArticleLogic(s.svcCtx).FindArticleHomeList(reqCtx, req)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-
-	response.ResponseOk(c, data)
-}
-
-// @Tags		Article
-// @Summary		"获取首页推荐文章列表"
-// @accept		application/json
-// @Produce		application/json
-// @Param		data	body		types.EmptyReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
-// @Router		/blog-api/v1/article/get_article_recommend [POST]
-func (s *ArticleController) FindArticleRecommend(c *gin.Context) {
-	reqCtx, err := request.ParseRequestContext(c)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-	var req *types.EmptyReq
-	err = request.ShouldBind(c, &req)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-
-	data, err := logic.NewArticleLogic(s.svcCtx).FindArticleRecommend(reqCtx, req)
-	if err != nil {
-		response.ResponseError(c, err)
-		return
-	}
-
-	response.ResponseOk(c, data)
-}
-
-// @Tags		Article
 // @Summary		"点赞文章"
 // @accept		application/json
 // @Produce		application/json
 // @Param		data	body		types.IdReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/blog-api/v1/article/like_article [POST]
+// @Router		/blog-api/v1/article/like_article [PUT]
 func (s *ArticleController) LikeArticle(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

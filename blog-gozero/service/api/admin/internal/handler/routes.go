@@ -13,6 +13,7 @@ import (
 	auth "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/auth"
 	category "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/category"
 	comment "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/comment"
+	file_log "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/file_log"
 	friend "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/friend"
 	login_log "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/login_log"
 	menu "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/menu"
@@ -24,9 +25,9 @@ import (
 	tag "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/tag"
 	talk "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/talk"
 	upload "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/upload"
-	upload_log "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/upload_log"
 	user "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/user"
 	visit_log "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/visit_log"
+	visitor "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/visitor"
 	website "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/website"
 	websocket "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/handler/websocket"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
@@ -65,19 +66,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 修改用户密码
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/account/update_account_password",
 					Handler: account.UpdateAccountPasswordHandler(serverCtx),
 				},
 				{
 					// 修改用户角色
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/account/update_account_roles",
 					Handler: account.UpdateAccountRolesHandler(serverCtx),
 				},
 				{
 					// 修改用户状态
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/account/update_account_status",
 					Handler: account.UpdateAccountStatusHandler(serverCtx),
 				},
@@ -115,16 +116,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: album.GetAlbumHandler(serverCtx),
 				},
 				{
-					// 预删除相册
-					Method:  http.MethodPost,
-					Path:    "/album/pre_delete_album",
-					Handler: album.PreDeleteAlbumHandler(serverCtx),
-				},
-				{
 					// 更新相册
 					Method:  http.MethodPut,
 					Path:    "/album/update_album",
 					Handler: album.UpdateAlbumHandler(serverCtx),
+				},
+				{
+					// 更新相册删除状态
+					Method:  http.MethodPut,
+					Path:    "/album/update_album_delete",
+					Handler: album.UpdateAlbumDeleteHandler(serverCtx),
 				},
 			}...,
 		),
@@ -188,7 +189,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 删除文章
-					Method:  http.MethodPost,
+					Method:  http.MethodDelete,
 					Path:    "/article/delete_article",
 					Handler: article.DeleteArticleHandler(serverCtx),
 				},
@@ -211,22 +212,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: article.GetArticleHandler(serverCtx),
 				},
 				{
-					// 回收文章
-					Method:  http.MethodPost,
-					Path:    "/article/recycle_article",
-					Handler: article.RecycleArticleHandler(serverCtx),
-				},
-				{
-					// 置顶文章
-					Method:  http.MethodPost,
-					Path:    "/article/top_article",
-					Handler: article.TopArticleHandler(serverCtx),
-				},
-				{
 					// 保存文章
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/article/update_article",
 					Handler: article.UpdateArticleHandler(serverCtx),
+				},
+				{
+					// 更新文章删除状态
+					Method:  http.MethodPut,
+					Path:    "/article/update_article_delete",
+					Handler: article.UpdateArticleDeleteHandler(serverCtx),
+				},
+				{
+					// 更新文章置顶状态
+					Method:  http.MethodPut,
+					Path:    "/article/update_article_top",
+					Handler: article.UpdateArticleTopHandler(serverCtx),
 				},
 			}...,
 		),
@@ -236,10 +237,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// 获取游客身份信息
+				// 获取客户端信息
 				Method:  http.MethodGet,
-				Path:    "/get_tourist_info",
-				Handler: auth.GetTouristInfoHandler(serverCtx),
+				Path:    "/get_client_info",
+				Handler: auth.GetClientInfoHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/admin-api/v1"),
@@ -276,6 +277,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/phone_login",
 				Handler: auth.PhoneLoginHandler(serverCtx),
+			},
+			{
+				// 刷新token
+				Method:  http.MethodPost,
+				Path:    "/refresh_token",
+				Handler: auth.RefreshTokenHandler(serverCtx),
 			},
 			{
 				// 注册
@@ -323,7 +330,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 登出
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/logout",
 					Handler: auth.LogoutHandler(serverCtx),
 				},
@@ -382,10 +389,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: comment.FindCommentBackListHandler(serverCtx),
 				},
 				{
-					// 更新评论审核状态
+					// 更新评论状态
 					Method:  http.MethodPut,
-					Path:    "/comment/update_comment_review",
-					Handler: comment.UpdateCommentReviewHandler(serverCtx),
+					Path:    "/comment/update_comment_status",
+					Handler: comment.UpdateCommentStatusHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/admin-api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
+			[]rest.Route{
+				{
+					// 删除文件日志
+					Method:  http.MethodDelete,
+					Path:    "/file_log/deletes_file_log",
+					Handler: file_log.DeletesFileLogHandler(serverCtx),
+				},
+				{
+					// 查询文件日志
+					Method:  http.MethodPost,
+					Path:    "/file_log/find_file_log_list",
+					Handler: file_log.FindFileLogListHandler(serverCtx),
 				},
 			}...,
 		),
@@ -430,16 +458,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
+					// 查询登录日志
+					Method:  http.MethodPost,
+					Path:    "/file_log/find_login_log_list",
+					Handler: login_log.FindLoginLogListHandler(serverCtx),
+				},
+				{
 					// 删除登录日志
 					Method:  http.MethodDelete,
 					Path:    "/login_log/deletes_login_log",
 					Handler: login_log.DeletesLoginLogHandler(serverCtx),
-				},
-				{
-					// 查询登录日志
-					Method:  http.MethodPost,
-					Path:    "/user/find_login_log_list",
-					Handler: login_log.FindLoginLogListHandler(serverCtx),
 				},
 			}...,
 		),
@@ -568,16 +596,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: photo.FindPhotoListHandler(serverCtx),
 				},
 				{
-					// 预删除照片
-					Method:  http.MethodPut,
-					Path:    "/photo/pre_delete_photo",
-					Handler: photo.PreDeletePhotoHandler(serverCtx),
-				},
-				{
 					// 更新照片
 					Method:  http.MethodPut,
 					Path:    "/photo/update_photo",
 					Handler: photo.UpdatePhotoHandler(serverCtx),
+				},
+				{
+					// 更新照片删除状态
+					Method:  http.MethodPut,
+					Path:    "/photo/update_photo_delete",
+					Handler: photo.UpdatePhotoDeleteHandler(serverCtx),
 				},
 			}...,
 		),
@@ -601,10 +629,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: remark.FindRemarkListHandler(serverCtx),
 				},
 				{
-					// 更新留言
+					// 更新留言状态
 					Method:  http.MethodPut,
-					Path:    "/remark/update_remark_review",
-					Handler: remark.UpdateRemarkReviewHandler(serverCtx),
+					Path:    "/remark/update_remark_status",
+					Handler: remark.UpdateRemarkStatusHandler(serverCtx),
 				},
 			}...,
 		),
@@ -623,7 +651,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 删除角色
-					Method:  http.MethodPost,
+					Method:  http.MethodDelete,
 					Path:    "/role/deletes_role",
 					Handler: role.DeletesRoleHandler(serverCtx),
 				},
@@ -647,13 +675,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 更新角色接口权限
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/role/update_role_apis",
 					Handler: role.UpdateRoleApisHandler(serverCtx),
 				},
 				{
 					// 更新角色菜单权限
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/role/update_role_menus",
 					Handler: role.UpdateRoleMenusHandler(serverCtx),
 				},
@@ -773,27 +801,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
-					// 删除登录日志
-					Method:  http.MethodDelete,
-					Path:    "/upload_log/deletes_upload_log",
-					Handler: upload_log.DeletesUploadLogHandler(serverCtx),
-				},
-				{
-					// 查询登录日志
-					Method:  http.MethodPost,
-					Path:    "/user/find_upload_log_list",
-					Handler: upload_log.FindUploadLogListHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/admin-api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
-			[]rest.Route{
-				{
 					// 删除用户绑定第三方平台账号
 					Method:  http.MethodPost,
 					Path:    "/user/delete_user_bind_third_party",
@@ -831,37 +838,37 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 修改用户头像
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_avatar",
 					Handler: user.UpdateUserAvatarHandler(serverCtx),
 				},
 				{
 					// 修改用户绑定邮箱
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_bind_email",
 					Handler: user.UpdateUserBindEmailHandler(serverCtx),
 				},
 				{
 					// 修改用户绑定手机号
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_bind_phone",
 					Handler: user.UpdateUserBindPhoneHandler(serverCtx),
 				},
 				{
 					// 修改用户绑定第三方平台账号
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_bind_third_party",
 					Handler: user.UpdateUserBindThirdPartyHandler(serverCtx),
 				},
 				{
 					// 修改用户信息
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_info",
 					Handler: user.UpdateUserInfoHandler(serverCtx),
 				},
 				{
 					// 修改用户密码
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/user/update_user_password",
 					Handler: user.UpdateUserPasswordHandler(serverCtx),
 				},
@@ -896,11 +903,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
-					// 获取用户分布地区
+					// 分页获取游客列表
 					Method:  http.MethodPost,
-					Path:    "/account/get_user_area_stats",
-					Handler: website.GetUserAreaStatsHandler(serverCtx),
+					Path:    "/visitor/find_visitor_list",
+					Handler: visitor.FindVisitorListHandler(serverCtx),
 				},
+			}...,
+		),
+		rest.WithPrefix("/admin-api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AdminToken, serverCtx.Permission, serverCtx.OperationLog},
+			[]rest.Route{
 				{
 					// 获取后台首页信息
 					Method:  http.MethodGet,
@@ -912,6 +928,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/admin/get_about_me",
 					Handler: website.GetAboutMeHandler(serverCtx),
+				},
+				{
+					// 获取服务器信息
+					Method:  http.MethodGet,
+					Path:    "/admin/get_system_state",
+					Handler: website.GetSystemStateHandler(serverCtx),
+				},
+				{
+					// 获取用户分布地区
+					Method:  http.MethodPost,
+					Path:    "/admin/get_user_area_stats",
+					Handler: website.GetUserAreaStatsHandler(serverCtx),
 				},
 				{
 					// 获取访客数据分析
@@ -930,12 +958,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/admin/get_website_config",
 					Handler: website.GetWebsiteConfigHandler(serverCtx),
-				},
-				{
-					// 获取服务器信息
-					Method:  http.MethodGet,
-					Path:    "/admin/system_state",
-					Handler: website.GetSystemStateHandler(serverCtx),
 				},
 				{
 					// 更新关于我的信息

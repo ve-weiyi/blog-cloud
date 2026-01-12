@@ -26,11 +26,11 @@ func NewDeletesPhotoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 func (l *DeletesPhotoLogic) DeletesPhoto(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &resourcerpc.IdsReq{
+	in := &resourcerpc.DeletesPhotoReq{
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ResourceRpc.DeletePhoto(l.ctx, in)
+	out, err := l.svcCtx.ResourceRpc.DeletesPhoto(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

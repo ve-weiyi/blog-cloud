@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewTagLogic(svcCtx *svctx.ServiceContext) *TagLogic {
 }
 
 // 分页获取标签列表
-func (s *TagLogic) FindTagList(reqCtx *request.Context, in *types.TagQueryReq) (out *types.PageResp, err error) {
+func (s *TagLogic) FindTagList(reqCtx *request.Context, in *types.QueryTagReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

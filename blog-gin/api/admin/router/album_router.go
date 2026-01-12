@@ -34,9 +34,9 @@ func (s *AlbumRouter) Register(r *gin.RouterGroup) {
 		group.POST("/album/find_album_list", h.FindAlbumList)
 		// 查询相册
 		group.POST("/album/get_album", h.GetAlbum)
-		// 预删除相册
-		group.POST("/album/pre_delete_album", h.PreDeleteAlbum)
 		// 更新相册
 		group.PUT("/album/update_album", h.UpdateAlbum)
+		// 更新相册删除状态
+		group.PUT("/album/update_album_delete", h.UpdateAlbumDelete)
 	}
 }

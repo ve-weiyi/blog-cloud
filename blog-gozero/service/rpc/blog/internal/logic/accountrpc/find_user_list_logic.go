@@ -95,8 +95,8 @@ func convertUserOut(in *model.TUser) (out *accountrpc.User) {
 		RegisterType: in.RegisterType,
 		IpAddress:    in.IpAddress,
 		IpSource:     in.IpSource,
-		CreatedAt:    in.CreatedAt.Unix(),
-		UpdatedAt:    in.UpdatedAt.Unix(),
+		CreatedAt:    in.CreatedAt.UnixMilli(),
+		UpdatedAt:    in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

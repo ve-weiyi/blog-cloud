@@ -25,15 +25,15 @@ func NewUpdateApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 	}
 }
 
-func (l *UpdateApiLogic) UpdateApi(req *types.ApiNewReq) (resp *types.ApiBackVO, err error) {
-	in := &permissionrpc.ApiNewReq{
+func (l *UpdateApiLogic) UpdateApi(req *types.NewApiReq) (resp *types.ApiBackVO, err error) {
+	in := &permissionrpc.UpdateApiReq{
 		Id:        req.Id,
 		ParentId:  req.ParentId,
 		Path:      req.Path,
 		Name:      req.Name,
 		Method:    req.Method,
 		Traceable: req.Traceable,
-		IsDisable: req.IsDisable,
+		Status:    req.Status,
 		Children:  nil,
 	}
 
@@ -42,5 +42,5 @@ func (l *UpdateApiLogic) UpdateApi(req *types.ApiNewReq) (resp *types.ApiBackVO,
 		return nil, err
 	}
 
-	return convertApiTypes(out), nil
+	return convertApiTypes(out.Api), nil
 }

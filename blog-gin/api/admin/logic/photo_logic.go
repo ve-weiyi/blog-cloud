@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewPhotoLogic(svcCtx *svctx.ServiceContext) *PhotoLogic {
 }
 
 // 创建照片
-func (s *PhotoLogic) AddPhoto(reqCtx *request.Context, in *types.PhotoNewReq) (out *types.PhotoBackVO, err error) {
+func (s *PhotoLogic) AddPhoto(reqCtx *request.Context, in *types.NewPhotoReq) (out *types.PhotoBackVO, err error) {
 	// todo
 
 	return
@@ -31,21 +31,21 @@ func (s *PhotoLogic) DeletesPhoto(reqCtx *request.Context, in *types.IdsReq) (ou
 }
 
 // 分页获取照片列表
-func (s *PhotoLogic) FindPhotoList(reqCtx *request.Context, in *types.PhotoQuery) (out *types.PageResp, err error) {
-	// todo
-
-	return
-}
-
-// 预删除照片
-func (s *PhotoLogic) PreDeletePhoto(reqCtx *request.Context, in *types.PreDeletePhotoReq) (out *types.BatchResp, err error) {
+func (s *PhotoLogic) FindPhotoList(reqCtx *request.Context, in *types.QueryPhotoReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
 // 更新照片
-func (s *PhotoLogic) UpdatePhoto(reqCtx *request.Context, in *types.PhotoNewReq) (out *types.PhotoBackVO, err error) {
+func (s *PhotoLogic) UpdatePhoto(reqCtx *request.Context, in *types.NewPhotoReq) (out *types.PhotoBackVO, err error) {
+	// todo
+
+	return
+}
+
+// 更新照片删除状态
+func (s *PhotoLogic) UpdatePhotoDelete(reqCtx *request.Context, in *types.UpdatePhotoDeleteReq) (out *types.BatchResp, err error) {
 	// todo
 
 	return

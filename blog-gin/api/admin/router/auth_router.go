@@ -23,8 +23,8 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		group := r.Group("/admin-api/v1")
 
 		h := handler.NewAuthController(s.svcCtx)
-		// 获取游客身份信息
-		group.GET("/get_tourist_info", h.GetTouristInfo)
+		// 获取客户端信息
+		group.GET("/get_client_info", h.GetClientInfo)
 	}
 	// Auth
 	// []
@@ -42,6 +42,8 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		group.POST("/login", h.Login)
 		// 手机登录
 		group.POST("/phone_login", h.PhoneLogin)
+		// 刷新token
+		group.POST("/refresh_token", h.RefreshToken)
 		// 注册
 		group.POST("/register", h.Register)
 		// 重置密码
@@ -63,6 +65,6 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		// 注销
 		group.POST("/logoff", h.Logoff)
 		// 登出
-		group.POST("/logout", h.Logout)
+		group.GET("/logout", h.Logout)
 	}
 }

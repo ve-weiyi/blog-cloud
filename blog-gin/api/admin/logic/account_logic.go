@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,14 +17,14 @@ func NewAccountLogic(svcCtx *svctx.ServiceContext) *AccountLogic {
 }
 
 // 查询用户列表
-func (s *AccountLogic) FindAccountList(reqCtx *request.Context, in *types.AccountQuery) (out *types.PageResp, err error) {
+func (s *AccountLogic) FindAccountList(reqCtx *request.Context, in *types.QueryAccountReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
 // 查询在线用户列表
-func (s *AccountLogic) FindAccountOnlineList(reqCtx *request.Context, in *types.AccountQuery) (out *types.PageResp, err error) {
+func (s *AccountLogic) FindAccountOnlineList(reqCtx *request.Context, in *types.QueryAccountReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

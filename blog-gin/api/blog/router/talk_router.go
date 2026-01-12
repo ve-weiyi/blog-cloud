@@ -18,10 +18,9 @@ func NewTalkRouter(svcCtx *svctx.ServiceContext) *TalkRouter {
 
 func (s *TalkRouter) Register(r *gin.RouterGroup) {
 	// Talk
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewTalkController(s.svcCtx)
 		// 分页获取说说列表

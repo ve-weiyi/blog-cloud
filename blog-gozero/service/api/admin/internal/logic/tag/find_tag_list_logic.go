@@ -25,7 +25,7 @@ func NewFindTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindT
 	}
 }
 
-func (l *FindTagListLogic) FindTagList(req *types.TagQuery) (resp *types.PageResp, err error) {
+func (l *FindTagListLogic) FindTagList(req *types.QueryTagReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindTagListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -42,13 +42,7 @@ func (l *FindTagListLogic) FindTagList(req *types.TagQuery) (resp *types.PageRes
 
 	var list []*types.TagBackVO
 	for _, v := range out.List {
-		list = append(list, &types.TagBackVO{
-			Id:           v.Id,
-			TagName:      v.TagName,
-			ArticleCount: v.ArticleCount,
-			CreatedAt:    v.CreatedAt,
-			UpdatedAt:    v.UpdatedAt,
-		})
+		list = append(list, convertTagDetailsTypes(v))
 	}
 
 	resp = &types.PageResp{}

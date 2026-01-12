@@ -3,6 +3,6 @@
 
 package types
 
-type OperationLogQuery struct {
+type QueryOperationLogReq struct {
 	PageQuery
 }

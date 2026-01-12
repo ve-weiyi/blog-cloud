@@ -26,7 +26,7 @@ func NewDeletesRemarkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeletesRemarkLogic) DeletesRemark(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &messagerpc.IdsReq{
+	in := &messagerpc.DeletesRemarkReq{
 		Ids: req.Ids,
 	}
 

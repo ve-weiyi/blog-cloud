@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewPageLogic(svcCtx *svctx.ServiceContext) *PageLogic {
 }
 
 // 分页获取页面列表
-func (s *PageLogic) FindPageList(reqCtx *request.Context, in *types.PageQueryReq) (out *types.PageResp, err error) {
+func (s *PageLogic) FindPageList(reqCtx *request.Context, in *types.QueryPageReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

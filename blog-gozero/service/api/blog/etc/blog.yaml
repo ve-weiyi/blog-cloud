@@ -31,6 +31,11 @@ RedisConf:
   port: "6379"
   password: redis7914
 
+AiProxyConf:
+  api_host: https://api.chatanywhere.tech
+  api_key: xxxx
+  model: gpt-3.5-turbo
+
 # etcd模式
 #BlogRpcConf:
 #  Etcd:

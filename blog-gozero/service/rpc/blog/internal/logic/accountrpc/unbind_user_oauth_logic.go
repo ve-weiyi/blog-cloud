@@ -26,7 +26,7 @@ func NewUnbindUserOauthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 // 解绑第三方账号
-func (l *UnbindUserOauthLogic) UnbindUserOauth(in *accountrpc.UnbindUserOauthReq) (*accountrpc.EmptyResp, error) {
+func (l *UnbindUserOauthLogic) UnbindUserOauth(in *accountrpc.UnbindUserOauthReq) (*accountrpc.UnbindUserOauthResp, error) {
 	// 查找当前用户是否存在
 	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
@@ -45,5 +45,5 @@ func (l *UnbindUserOauthLogic) UnbindUserOauth(in *accountrpc.UnbindUserOauthReq
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.UnbindUserOauthResp{}, nil
 }

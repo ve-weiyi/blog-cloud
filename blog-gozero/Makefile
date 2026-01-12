@@ -32,15 +32,15 @@ docker-down:
 
 # 启动 RPC 服务（开发模式）
 run-rpc:
-	go run service/rpc/blog/blog.go -f service/rpc/blog/etc/blog-rpc.yaml
+	go run service/rpc/blog/blog.go -f service/rpc/blog/etc/blog.yaml
 
 # 启动博客前台服务（开发模式）
 run-blog:
-	go run service/api/blog/blog.go -f service/api/blog/etc/blog-api.yaml
+	go run service/api/blog/blog.go -f service/api/blog/etc/blog.yaml
 
 # 启动管理后台服务（开发模式）
 run-admin:
-	go run service/api/admin/admin.go -f service/api/admin/etc/admin-api.yaml
+	go run service/api/admin/admin.go -f service/api/admin/etc/admin.yaml
 
 # 启动所有服务（需要在不同终端运行）
 run-all:

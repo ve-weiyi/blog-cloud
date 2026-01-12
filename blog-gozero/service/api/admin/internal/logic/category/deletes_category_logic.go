@@ -26,11 +26,11 @@ func NewDeletesCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DeletesCategoryLogic) DeletesCategory(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &articlerpc.IdsReq{
+	in := &articlerpc.DeletesCategoryReq{
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ArticleRpc.DeleteCategory(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.DeletesCategory(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

@@ -26,7 +26,7 @@ func NewGetArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArt
 }
 
 func (l *GetArticleLogic) GetArticle(req *types.IdReq) (resp *types.ArticleBackVO, err error) {
-	in := &articlerpc.IdReq{
+	in := &articlerpc.GetArticleReq{
 		Id: req.Id,
 	}
 
@@ -35,6 +35,5 @@ func (l *GetArticleLogic) GetArticle(req *types.IdReq) (resp *types.ArticleBackV
 		return nil, err
 	}
 
-	resp = ConvertArticleTypes(out)
-	return resp, nil
+	return convertArticleTypes(out.Article), nil
 }

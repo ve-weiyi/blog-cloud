@@ -18,10 +18,9 @@ func NewUserRouter(svcCtx *svctx.ServiceContext) *UserRouter {
 
 func (s *UserRouter) Register(r *gin.RouterGroup) {
 	// User
-	// [TerminalToken UserToken]
+	// [UserToken]
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 		group.Use(s.svcCtx.UserToken)
 
 		h := handler.NewUserController(s.svcCtx)

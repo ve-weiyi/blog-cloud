@@ -25,7 +25,7 @@ func NewFindArticleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 	}
 }
 
-func (l *FindArticleListLogic) FindArticleList(req *types.ArticleQuery) (resp *types.PageResp, err error) {
+func (l *FindArticleListLogic) FindArticleList(req *types.QueryArticleReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindArticleListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -48,7 +48,7 @@ func (l *FindArticleListLogic) FindArticleList(req *types.ArticleQuery) (resp *t
 
 	var list []*types.ArticleBackVO
 	for _, v := range out.List {
-		m := ConvertArticleTypes(v)
+		m := convertArticleTypes(v)
 		list = append(list, m)
 	}
 

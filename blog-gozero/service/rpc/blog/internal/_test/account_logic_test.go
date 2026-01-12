@@ -1,18 +1,25 @@
 package _test_test
 
 import (
+	"context"
 	"log"
 	"testing"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/tracex"
+	"go.opentelemetry.io/otel/sdk/trace"
+
 	accountrpclogic "github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/logic/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 )
 
 func TestGetUserAreasAnalysis(t *testing.T) {
+	// context注入traceID
+	ctx := context.Background()
+	tracer := trace.NewTracerProvider().Tracer("test")
+	ctx, span := tracer.Start(ctx, "trace")
+	defer span.End()
+
 	tsc := svc.NewTestServiceContext()
-	ctx := tracex.NewRandomTraceContext()
 	in := &accountrpc.AnalysisUserReq{
 		UserType: 1,
 	}

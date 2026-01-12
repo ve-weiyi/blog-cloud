@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewArticleLogic(svcCtx *svctx.ServiceContext) *ArticleLogic {
 }
 
 // 添加文章
-func (s *ArticleLogic) AddArticle(reqCtx *request.Context, in *types.ArticleNewReq) (out *types.ArticleBackVO, err error) {
+func (s *ArticleLogic) AddArticle(reqCtx *request.Context, in *types.NewArticleReq) (out *types.ArticleBackVO, err error) {
 	// todo
 
 	return
@@ -38,7 +38,7 @@ func (s *ArticleLogic) ExportArticleList(reqCtx *request.Context, in *types.IdsR
 }
 
 // 查询文章列表
-func (s *ArticleLogic) FindArticleList(reqCtx *request.Context, in *types.ArticleQuery) (out *types.PageResp, err error) {
+func (s *ArticleLogic) FindArticleList(reqCtx *request.Context, in *types.QueryArticleReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -51,22 +51,22 @@ func (s *ArticleLogic) GetArticle(reqCtx *request.Context, in *types.IdReq) (out
 	return
 }
 
-// 回收文章
-func (s *ArticleLogic) RecycleArticle(reqCtx *request.Context, in *types.ArticleRecycleReq) (out *types.EmptyResp, err error) {
-	// todo
-
-	return
-}
-
-// 置顶文章
-func (s *ArticleLogic) TopArticle(reqCtx *request.Context, in *types.ArticleTopReq) (out *types.EmptyResp, err error) {
-	// todo
-
-	return
-}
-
 // 保存文章
-func (s *ArticleLogic) UpdateArticle(reqCtx *request.Context, in *types.ArticleNewReq) (out *types.ArticleBackVO, err error) {
+func (s *ArticleLogic) UpdateArticle(reqCtx *request.Context, in *types.NewArticleReq) (out *types.ArticleBackVO, err error) {
+	// todo
+
+	return
+}
+
+// 更新文章删除状态
+func (s *ArticleLogic) UpdateArticleDelete(reqCtx *request.Context, in *types.UpdateArticleDeleteReq) (out *types.EmptyResp, err error) {
+	// todo
+
+	return
+}
+
+// 更新文章置顶状态
+func (s *ArticleLogic) UpdateArticleTop(reqCtx *request.Context, in *types.UpdateArticleTopReq) (out *types.EmptyResp, err error) {
 	// todo
 
 	return

@@ -24,7 +24,7 @@ func NewFindUserApisLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 }
 
 // 获取用户接口权限
-func (l *FindUserApisLogic) FindUserApis(in *permissionrpc.UserIdReq) (*permissionrpc.FindApiListResp, error) {
+func (l *FindUserApisLogic) FindUserApis(in *permissionrpc.FindUserApisReq) (*permissionrpc.FindUserApisResp, error) {
 	uid := in.UserId
 
 	// 查用户
@@ -61,12 +61,12 @@ func (l *FindUserApisLogic) FindUserApis(in *permissionrpc.UserIdReq) (*permissi
 		return nil, err
 	}
 
-	var list []*permissionrpc.ApiDetailsResp
+	var list []*permissionrpc.Api
 	for _, v := range apis {
 		list = append(list, convertApiOut(v))
 	}
 
-	out := &permissionrpc.FindApiListResp{}
+	out := &permissionrpc.FindUserApisResp{}
 	out.List = list
 	return out, nil
 }

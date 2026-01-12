@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewAccountController(svcCtx *svctx.ServiceContext) *AccountController {
 // @Summary		"查询用户列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AccountQuery		true	"请求参数"
+// @Param		data	body		types.QueryAccountReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/account/find_account_list [POST]
 func (s *AccountController) FindAccountList(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *AccountController) FindAccountList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AccountQuery
+	var req *types.QueryAccountReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -53,7 +53,7 @@ func (s *AccountController) FindAccountList(c *gin.Context) {
 // @Summary		"查询在线用户列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.AccountQuery		true	"请求参数"
+// @Param		data	body		types.QueryAccountReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/account/find_account_online_list [POST]
 func (s *AccountController) FindAccountOnlineList(c *gin.Context) {
@@ -62,7 +62,7 @@ func (s *AccountController) FindAccountOnlineList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.AccountQuery
+	var req *types.QueryAccountReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -84,7 +84,7 @@ func (s *AccountController) FindAccountOnlineList(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateAccountPasswordReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/account/update_account_password [POST]
+// @Router		/admin-api/v1/account/update_account_password [PUT]
 func (s *AccountController) UpdateAccountPassword(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -113,7 +113,7 @@ func (s *AccountController) UpdateAccountPassword(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateAccountRolesReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/account/update_account_roles [POST]
+// @Router		/admin-api/v1/account/update_account_roles [PUT]
 func (s *AccountController) UpdateAccountRoles(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -142,7 +142,7 @@ func (s *AccountController) UpdateAccountRoles(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateAccountStatusReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/account/update_account_status [POST]
+// @Router		/admin-api/v1/account/update_account_status [PUT]
 func (s *AccountController) UpdateAccountStatus(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

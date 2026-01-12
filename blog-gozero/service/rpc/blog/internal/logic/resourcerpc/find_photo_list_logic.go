@@ -33,7 +33,7 @@ func (l *FindPhotoListLogic) FindPhotoList(in *resourcerpc.FindPhotoListReq) (*r
 		return nil, err
 	}
 
-	var list []*resourcerpc.PhotoDetailsResp
+	var list []*resourcerpc.Photo
 	for _, v := range records {
 		list = append(list, convertPhotoOut(v))
 	}
@@ -56,7 +56,7 @@ func convertPhotoQuery(in *resourcerpc.FindPhotoListReq) (page int, size int, so
 		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
 	}
 
-	if in.IsDelete != 0 {
+	if in.IsDelete >= 0 {
 		opts = append(opts, query.WithCondition("is_delete = ?", in.IsDelete))
 	}
 

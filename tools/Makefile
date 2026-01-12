@@ -54,7 +54,7 @@ gen-web-ts-api:
 	go run main.go web ts api \
 		-f ../blog-gozero/service/api/blog/proto/blog.api \
 		-t ./template/web/ts \
-		-o ./runtime/web/ts/blog \
+		-o ./runtime/web/ts/blog/api \
 		-n '%v.ts'
 
 # 使用swagger.json文件生成 TypeScript 代码
@@ -62,7 +62,7 @@ gen-web-ts-swagger:
 	go run main.go web ts swagger \
 		-f ../blog-gozero/service/api/blog/docs/blog.json \
 		-t ./template/web/ts \
-		-o ./runtime/web/ts/blog \
+		-o ./runtime/web/ts/blog/api \
 		-n '%v.ts'
 
 # 清理生成的代码

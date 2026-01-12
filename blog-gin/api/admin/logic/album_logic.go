@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewAlbumLogic(svcCtx *svctx.ServiceContext) *AlbumLogic {
 }
 
 // 创建相册
-func (s *AlbumLogic) AddAlbum(reqCtx *request.Context, in *types.AlbumNewReq) (out *types.AlbumBackVO, err error) {
+func (s *AlbumLogic) AddAlbum(reqCtx *request.Context, in *types.NewAlbumReq) (out *types.AlbumBackVO, err error) {
 	// todo
 
 	return
@@ -31,7 +31,7 @@ func (s *AlbumLogic) DeletesAlbum(reqCtx *request.Context, in *types.IdsReq) (ou
 }
 
 // 分页获取相册列表
-func (s *AlbumLogic) FindAlbumList(reqCtx *request.Context, in *types.AlbumQuery) (out *types.PageResp, err error) {
+func (s *AlbumLogic) FindAlbumList(reqCtx *request.Context, in *types.QueryAlbumReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -44,15 +44,15 @@ func (s *AlbumLogic) GetAlbum(reqCtx *request.Context, in *types.IdReq) (out *ty
 	return
 }
 
-// 预删除相册
-func (s *AlbumLogic) PreDeleteAlbum(reqCtx *request.Context, in *types.PreDeleteAlbumReq) (out *types.BatchResp, err error) {
+// 更新相册
+func (s *AlbumLogic) UpdateAlbum(reqCtx *request.Context, in *types.NewAlbumReq) (out *types.AlbumBackVO, err error) {
 	// todo
 
 	return
 }
 
-// 更新相册
-func (s *AlbumLogic) UpdateAlbum(reqCtx *request.Context, in *types.AlbumNewReq) (out *types.AlbumBackVO, err error) {
+// 更新相册删除状态
+func (s *AlbumLogic) UpdateAlbumDelete(reqCtx *request.Context, in *types.UpdateAlbumDeleteReq) (out *types.BatchResp, err error) {
 	// todo
 
 	return

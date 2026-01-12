@@ -24,17 +24,19 @@ func NewGetCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCa
 }
 
 // 查询文章分类
-func (l *GetCategoryLogic) GetCategory(in *articlerpc.IdReq) (*articlerpc.CategoryDetailsResp, error) {
+func (l *GetCategoryLogic) GetCategory(in *articlerpc.GetCategoryReq) (*articlerpc.GetCategoryResp, error) {
 	entity, err := l.svcCtx.TCategoryModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.CategoryDetailsResp{
-		Id:           entity.Id,
-		CategoryName: entity.CategoryName,
-		CreatedAt:    entity.CreatedAt.Unix(),
-		UpdatedAt:    entity.UpdatedAt.Unix(),
-		ArticleCount: 0,
+	return &articlerpc.GetCategoryResp{
+		Category: &articlerpc.CategoryDetails{
+			Id:           entity.Id,
+			CategoryName: entity.CategoryName,
+			CreatedAt:    entity.CreatedAt.UnixMilli(),
+			UpdatedAt:    entity.UpdatedAt.UnixMilli(),
+			ArticleCount: 0,
+		},
 	}, nil
 }

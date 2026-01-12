@@ -17,7 +17,7 @@ func (e *BizError) Details() string {
 	return fmt.Sprintf("code:%d, message:'%s'", e.Code, e.Message)
 }
 
-// NewBizError 创建一个新的API错误
+// NewBizError 创建一个新的业务错误
 func NewBizError(code int64, message string) *BizError {
 	return &BizError{
 		Code:    code,

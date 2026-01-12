@@ -22,7 +22,7 @@ func NewChatRoomEventHook() *ChatRoomEventHook {
 }
 
 func (h *ChatRoomEventHook) OnConnect(server *client.StompHubServer, c *client.Client) {
-	id, login, _ := c.GetClientInfo()
+	id, login, _, _ := c.GetClientInfo()
 	h.connectTime.Store(id, time.Now())
 
 	log.Printf("✅ User connected: %s (id: %s)", login, id)
@@ -32,7 +32,7 @@ func (h *ChatRoomEventHook) OnConnect(server *client.StompHubServer, c *client.C
 }
 
 func (h *ChatRoomEventHook) OnDisconnect(server *client.StompHubServer, c *client.Client) {
-	id, login, _ := c.GetClientInfo()
+	id, login, _, _ := c.GetClientInfo()
 
 	var duration time.Duration
 	if value, exists := h.connectTime.LoadAndDelete(id); exists {
@@ -47,7 +47,7 @@ func (h *ChatRoomEventHook) OnDisconnect(server *client.StompHubServer, c *clien
 }
 
 func (h *ChatRoomEventHook) OnSubscribe(server *client.StompHubServer, c *client.Client, destination string, subscriptionId string) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("📢 User %s subscribed to %s", login, destination)
 
 	// 只在聊天频道发送加入消息
@@ -59,7 +59,7 @@ func (h *ChatRoomEventHook) OnSubscribe(server *client.StompHubServer, c *client
 }
 
 func (h *ChatRoomEventHook) OnUnsubscribe(server *client.StompHubServer, c *client.Client, destination string, subscriptionId string) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("📤 User %s unsubscribed from %s", login, destination)
 
 	// 只在聊天频道发送离开消息
@@ -74,7 +74,7 @@ func (h *ChatRoomEventHook) OnUnsubscribe(server *client.StompHubServer, c *clie
 // /app/chat/{roomId} → /topic/chat/{roomId}
 // /app/private/{userId} → /queue/user/{userId}
 func (h *ChatRoomEventHook) OnSend(server *client.StompHubServer, c *client.Client, message *frame.Frame) bool {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	destination := message.Header.Get(frame.Destination)
 	msgContent := string(message.Body)
 
@@ -114,16 +114,16 @@ func (h *ChatRoomEventHook) OnSend(server *client.StompHubServer, c *client.Clie
 }
 
 func (h *ChatRoomEventHook) OnAck(c *client.Client, messageId string) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("✅ Message %s acknowledged by %s", messageId, login)
 }
 
 func (h *ChatRoomEventHook) OnNack(c *client.Client, messageId string) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("❌ Message %s rejected by %s", messageId, login)
 }
 
 func (h *ChatRoomEventHook) OnError(c *client.Client, err error) {
-	_, login, _ := c.GetClientInfo()
+	_, login, _, _ := c.GetClientInfo()
 	log.Printf("🚨 Error for user %s: %v", login, err)
 }

@@ -7,6 +7,10 @@ type DeleteUserBindThirdPartyReq struct {
 	Platform string `json:"platform"` // 平台
 }
 
+type QueryUserLoginHistoryReq struct {
+	PageQuery
+}
+
 type UpdateUserAvatarReq struct {
 	Avatar string `json:"avatar"` // 头像
 }
@@ -55,10 +59,6 @@ type UserInfoResp struct {
 	ThirdParty []*UserThirdPartyInfo `json:"third_party"`
 	Roles      []string              `json:"roles"`
 	Perms      []string              `json:"perms"`
-}
-
-type UserLoginHistoryQuery struct {
-	PageQuery
 }
 
 type UserMenusResp struct {

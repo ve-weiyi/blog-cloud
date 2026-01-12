@@ -35,7 +35,7 @@ func (l *FindArticleListLogic) FindArticleList(in *articlerpc.FindArticleListReq
 		return nil, err
 	}
 
-	list, err := helper.convertArticleDetailsResp(records)
+	list, err := helper.convertArticle(records)
 	if err != nil {
 		return nil, err
 	}

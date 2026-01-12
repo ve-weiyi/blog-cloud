@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewTalkController(svcCtx *svctx.ServiceContext) *TalkController {
 // @Summary		"创建说说"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.TalkNewReq		true	"请求参数"
+// @Param		data	body		types.NewTalkReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.TalkBackVO}	"返回信息"
 // @Router		/admin-api/v1/talk/add_talk [POST]
 func (s *TalkController) AddTalk(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *TalkController) AddTalk(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.TalkNewReq
+	var req *types.NewTalkReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *TalkController) DeleteTalk(c *gin.Context) {
 // @Summary		"分页获取说说列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.TalkQuery		true	"请求参数"
+// @Param		data	body		types.QueryTalkReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/talk/find_talk_list [POST]
 func (s *TalkController) FindTalkList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *TalkController) FindTalkList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.TalkQuery
+	var req *types.QueryTalkReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -140,7 +140,7 @@ func (s *TalkController) GetTalk(c *gin.Context) {
 // @Summary		"更新说说"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.TalkNewReq		true	"请求参数"
+// @Param		data	body		types.NewTalkReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.TalkBackVO}	"返回信息"
 // @Router		/admin-api/v1/talk/update_talk [PUT]
 func (s *TalkController) UpdateTalk(c *gin.Context) {
@@ -149,7 +149,7 @@ func (s *TalkController) UpdateTalk(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.TalkNewReq
+	var req *types.NewTalkReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

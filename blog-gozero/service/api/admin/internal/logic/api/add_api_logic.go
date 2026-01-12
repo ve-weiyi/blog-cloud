@@ -25,15 +25,15 @@ func NewAddApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddApiLogi
 	}
 }
 
-func (l *AddApiLogic) AddApi(req *types.ApiNewReq) (resp *types.ApiBackVO, err error) {
-	in := &permissionrpc.ApiNewReq{
+func (l *AddApiLogic) AddApi(req *types.NewApiReq) (resp *types.ApiBackVO, err error) {
+	in := &permissionrpc.AddApiReq{
 		Id:        req.Id,
 		ParentId:  req.ParentId,
 		Path:      req.Path,
 		Name:      req.Name,
 		Method:    req.Method,
 		Traceable: req.Traceable,
-		IsDisable: req.IsDisable,
+		Status:    req.Status,
 		Children:  nil,
 	}
 
@@ -42,10 +42,10 @@ func (l *AddApiLogic) AddApi(req *types.ApiNewReq) (resp *types.ApiBackVO, err e
 		return nil, err
 	}
 
-	return convertApiTypes(out), nil
+	return convertApiTypes(out.Api), nil
 }
 
-func convertApiTypes(req *permissionrpc.ApiDetailsResp) *types.ApiBackVO {
+func convertApiTypes(req *permissionrpc.Api) *types.ApiBackVO {
 
 	children := make([]*types.ApiBackVO, 0)
 	for _, v := range req.Children {
@@ -60,7 +60,7 @@ func convertApiTypes(req *permissionrpc.ApiDetailsResp) *types.ApiBackVO {
 		Path:      req.Path,
 		Method:    req.Method,
 		Traceable: req.Traceable,
-		IsDisable: req.IsDisable,
+		Status:    req.Status,
 		CreatedAt: req.CreatedAt,
 		UpdatedAt: req.UpdatedAt,
 		Children:  children,

@@ -26,7 +26,7 @@ func NewLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeC
 }
 
 func (l *LikeCommentLogic) LikeComment(req *types.IdReq) (resp *types.EmptyResp, err error) {
-	in := &messagerpc.IdReq{Id: req.Id}
+	in := &messagerpc.LikeCommentReq{Id: req.Id}
 
 	_, err = l.svcCtx.MessageRpc.LikeComment(l.ctx, in)
 	if err != nil {

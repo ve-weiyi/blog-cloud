@@ -26,7 +26,7 @@ func NewFindLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *FindLoginLogListLogic) FindLoginLogList(req *types.LoginLogQuery) (resp *types.PageResp, err error) {
+func (l *FindLoginLogListLogic) FindLoginLogList(req *types.QueryLoginLogReq) (resp *types.PageResp, err error) {
 	in := &syslogrpc.FindLoginLogListReq{
 		Paginate: &syslogrpc.PageReq{
 			Page:     req.Page,
@@ -41,21 +41,43 @@ func (l *FindLoginLogListLogic) FindLoginLogList(req *types.LoginLogQuery) (resp
 		return nil, err
 	}
 
-	var uids []string
-	for _, v := range out.List {
-		uids = append(uids, v.UserId)
-	}
-
 	// 查询用户信息
-	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
+	usm, err := apiutils.BatchQuery(out.List,
+		func(v *syslogrpc.LoginLog) string {
+			return v.UserId
+		},
+		func(ids []string) (map[string]*types.UserInfoVO, error) {
+			return apiutils.GetUserInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
-
+	// 查询访客信息
+	vsm, err := apiutils.BatchQuery(out.List,
+		func(v *syslogrpc.LoginLog) string {
+			return v.TerminalId
+		},
+		func(ids []string) (map[string]*types.ClientInfoVO, error) {
+			return apiutils.GetVisitorInfos(l.ctx, l.svcCtx, ids)
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
 	var list []*types.LoginLogBackVO
 	for _, v := range out.List {
-		m := ConvertLoginLogTypes(v, usm)
-		list = append(list, m)
+		list = append(list, &types.LoginLogBackVO{
+			Id:         v.Id,
+			UserId:     v.UserId,
+			TerminalId: v.TerminalId,
+			LoginType:  v.LoginType,
+			AppName:    v.AppName,
+			LoginAt:    v.LoginAt,
+			LogoutAt:   v.LogoutAt,
+			UserInfo:   usm[v.UserId],
+			ClientInfo: vsm[v.TerminalId],
+		})
 	}
 
 	resp = &types.PageResp{}
@@ -64,30 +86,4 @@ func (l *FindLoginLogListLogic) FindLoginLogList(req *types.LoginLogQuery) (resp
 	resp.Total = out.Pagination.Total
 	resp.List = list
 	return resp, nil
-}
-
-func ConvertLoginLogTypes(in *syslogrpc.LoginLogDetailsResp, usm map[string]*types.UserInfoVO) (out *types.LoginLogBackVO) {
-	out = &types.LoginLogBackVO{
-		Id:        in.Id,
-		UserId:    in.UserId,
-		LoginType: in.LoginType,
-		AppName:   in.AppName,
-		Os:        in.Os,
-		Browser:   in.Browser,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		LoginAt:   in.LoginAt,
-		LogoutAt:  in.LogoutAt,
-		User:      nil,
-	}
-
-	// 用户信息
-	if in.UserId != "" {
-		user, ok := usm[in.UserId]
-		if ok && user != nil {
-			out.User = user
-		}
-	}
-
-	return out
 }

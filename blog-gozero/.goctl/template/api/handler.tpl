@@ -1,6 +1,3 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl {{.version}}
-
 package {{.PkgName}}
 
 import (
@@ -8,7 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/responsex"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/responsex"
 	{{.ImportPackages}}
 )
 

@@ -15,7 +15,7 @@ type AlbumBackVO struct {
 	PhotoCount int64  `json:"photo_count"` // 照片数量
 }
 
-type AlbumNewReq struct {
+type NewAlbumReq struct {
 	Id         int64  `json:"id,optional"` // 主键
 	AlbumName  string `json:"album_name"`  // 相册名
 	AlbumDesc  string `json:"album_desc"`  // 相册描述
@@ -24,13 +24,13 @@ type AlbumNewReq struct {
 	Status     int64  `json:"status"`      // 状态值 1公开 2私密
 }
 
-type AlbumQuery struct {
+type QueryAlbumReq struct {
 	PageQuery
 	AlbumName string `json:"album_name,optional"` // 相册名
 	IsDelete  int64  `json:"is_delete,optional"`  // 是否删除
 }
 
-type PreDeleteAlbumReq struct {
+type UpdateAlbumDeleteReq struct {
 	Ids      []int64 `json:"ids"`       // 主键
 	IsDelete int64   `json:"is_delete"` // 是否删除
 }

@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewRemarkController(svcCtx *svctx.ServiceContext) *RemarkController {
 // @Summary		"分页获取留言列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.RemarkQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryRemarkReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/remark/find_remark_list [POST]
 func (s *RemarkController) FindRemarkList(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *RemarkController) FindRemarkList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.RemarkQueryReq
+	var req *types.QueryRemarkReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -53,8 +53,8 @@ func (s *RemarkController) FindRemarkList(c *gin.Context) {
 // @Summary		"创建留言"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.RemarkNewReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.Remark}	"返回信息"
+// @Param		data	body		types.NewRemarkReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
 // @Router		/blog-api/v1/remark/add_remark [POST]
 func (s *RemarkController) AddRemark(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
@@ -62,7 +62,7 @@ func (s *RemarkController) AddRemark(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.RemarkNewReq
+	var req *types.NewRemarkReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

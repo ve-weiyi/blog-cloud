@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func (s *VisitLogLogic) DeletesVisitLog(reqCtx *request.Context, in *types.IdsRe
 }
 
 // 分页获取操作记录列表
-func (s *VisitLogLogic) FindVisitLogList(reqCtx *request.Context, in *types.VisitLogQuery) (out *types.PageResp, err error) {
+func (s *VisitLogLogic) FindVisitLogList(reqCtx *request.Context, in *types.QueryVisitLogReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

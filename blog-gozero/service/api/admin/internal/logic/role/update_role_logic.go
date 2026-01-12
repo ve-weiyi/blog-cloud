@@ -25,14 +25,14 @@ func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateRoleLogic) UpdateRole(req *types.RoleNewReq) (resp *types.RoleBackVO, err error) {
-	in := &permissionrpc.RoleNewReq{
+func (l *UpdateRoleLogic) UpdateRole(req *types.NewRoleReq) (resp *types.RoleBackVO, err error) {
+	in := &permissionrpc.UpdateRoleReq{
 		Id:          req.Id,
 		ParentId:    req.ParentId,
 		RoleKey:     req.RoleKey,
 		RoleLabel:   req.RoleLabel,
 		RoleComment: req.RoleComment,
-		IsDisable:   req.IsDisable,
+		Status:      req.Status,
 		IsDefault:   req.IsDefault,
 	}
 
@@ -41,15 +41,5 @@ func (l *UpdateRoleLogic) UpdateRole(req *types.RoleNewReq) (resp *types.RoleBac
 		return nil, err
 	}
 
-	return &types.RoleBackVO{
-		Id:          out.Id,
-		ParentId:    out.ParentId,
-		RoleKey:     out.RoleKey,
-		RoleLabel:   out.RoleLabel,
-		RoleComment: out.RoleComment,
-		IsDisable:   out.IsDisable,
-		IsDefault:   out.IsDefault,
-		CreatedAt:   out.CreatedAt,
-		UpdatedAt:   out.UpdatedAt,
-	}, nil
+	return convertRoleTypes(out.Role), nil
 }

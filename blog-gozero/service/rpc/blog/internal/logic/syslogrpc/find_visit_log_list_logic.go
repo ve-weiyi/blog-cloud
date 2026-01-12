@@ -34,7 +34,7 @@ func (l *FindVisitLogListLogic) FindVisitLogList(in *syslogrpc.FindVisitLogListR
 		return nil, err
 	}
 
-	var list []*syslogrpc.VisitLogDetailsResp
+	var list []*syslogrpc.VisitLog
 	for _, v := range records {
 		list = append(list, convertVisitLogOut(v))
 	}
@@ -72,18 +72,14 @@ func convertVisitLogQuery(in *syslogrpc.FindVisitLogListReq) (page int, size int
 	return query.NewQueryBuilder(opts...).Build()
 }
 
-func convertVisitLogOut(in *model.TVisitLog) (out *syslogrpc.VisitLogDetailsResp) {
-	out = &syslogrpc.VisitLogDetailsResp{
+func convertVisitLogOut(in *model.TVisitLog) (out *syslogrpc.VisitLog) {
+	out = &syslogrpc.VisitLog{
 		Id:         in.Id,
 		UserId:     in.UserId,
 		TerminalId: in.TerminalId,
 		PageName:   in.PageName,
-		IpAddress:  in.IpAddress,
-		IpSource:   in.IpSource,
-		Os:         in.Os,
-		Browser:    in.Browser,
-		CreatedAt:  in.CreatedAt.Unix(),
-		UpdatedAt:  in.UpdatedAt.Unix(),
+		CreatedAt:  in.CreatedAt.UnixMilli(),
+		UpdatedAt:  in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

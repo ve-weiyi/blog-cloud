@@ -25,8 +25,8 @@ func NewAddPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPageLo
 	}
 }
 
-func (l *AddPageLogic) AddPage(req *types.PageNewReq) (resp *types.PageBackVO, err error) {
-	in := &resourcerpc.PageNewReq{
+func (l *AddPageLogic) AddPage(req *types.NewPageReq) (resp *types.PageBackVO, err error) {
+	in := &resourcerpc.AddPageReq{
 		Id:             req.Id,
 		PageName:       req.PageName,
 		PageLabel:      req.PageLabel,
@@ -40,7 +40,11 @@ func (l *AddPageLogic) AddPage(req *types.PageNewReq) (resp *types.PageBackVO, e
 		return nil, err
 	}
 
-	resp = &types.PageBackVO{
+	return convertPageTypes(out.Page), nil
+}
+
+func convertPageTypes(out *resourcerpc.Page) *types.PageBackVO {
+	return &types.PageBackVO{
 		Id:             out.Id,
 		PageName:       out.PageName,
 		PageLabel:      out.PageLabel,
@@ -50,5 +54,4 @@ func (l *AddPageLogic) AddPage(req *types.PageNewReq) (resp *types.PageBackVO, e
 		CreatedAt:      out.CreatedAt,
 		UpdatedAt:      out.UpdatedAt,
 	}
-	return resp, nil
 }

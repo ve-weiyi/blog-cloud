@@ -3,7 +3,7 @@ package websocket
 import (
 	"net/http"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/responsex"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/responsex"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/logic/websocket"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 )

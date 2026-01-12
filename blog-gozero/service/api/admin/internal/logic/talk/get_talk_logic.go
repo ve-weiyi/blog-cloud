@@ -5,7 +5,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,14 +26,14 @@ func NewGetTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTalkLo
 }
 
 func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.TalkBackVO, err error) {
-	in := &talkrpc.IdReq{
+	in := &socialrpc.GetTalkReq{
 		Id: req.Id,
 	}
-	out, err := l.svcCtx.TalkRpc.GetTalk(l.ctx, in)
+	out, err := l.svcCtx.SocialRpc.GetTalk(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertTalkTypes(out, nil)
+	resp = convertTalkTypes(out.Talk)
 	return resp, nil
 }

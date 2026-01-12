@@ -18,10 +18,9 @@ func NewPageRouter(svcCtx *svctx.ServiceContext) *PageRouter {
 
 func (s *PageRouter) Register(r *gin.RouterGroup) {
 	// Page
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewPageController(s.svcCtx)
 		// 分页获取页面列表

@@ -6,9 +6,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gorilla/websocket"
-
 	"github.com/go-stomp/stomp/v3/frame"
+	"github.com/gorilla/websocket"
 
 	"github.com/ve-weiyi/ve-blog-golang/stompws/logws"
 	"github.com/ve-weiyi/ve-blog-golang/stompws/server/queue"
@@ -16,8 +15,7 @@ import (
 )
 
 type StompHubServer struct {
-	clients    sync.Map // clientId -> *Client
-	onlineList sync.Map // username -> clientId
+	clients sync.Map // clientId -> *Client
 
 	topicManager  *topic.Manager
 	queueManager  *queue.Manager
@@ -90,9 +88,15 @@ func (s *StompHubServer) HandleWebSocket(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	ip := r.Header.Get("X-Forwarded-For")
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+
 	c := newClient(conn)
+	c.ip = ip
 	c.log = s.log
-	s.log.Infof("new connection from %s", conn.RemoteAddr())
+	s.log.Infof("new connection from %s", ip)
 
 	go c.readLoop()
 	go c.writeLoop(s)

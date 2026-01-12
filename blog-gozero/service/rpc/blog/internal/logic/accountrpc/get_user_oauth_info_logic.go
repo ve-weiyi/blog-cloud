@@ -24,7 +24,7 @@ func NewGetUserOauthInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 获取用户第三平台信息
-func (l *GetUserOauthInfoLogic) GetUserOauthInfo(in *accountrpc.UserIdReq) (*accountrpc.GetUserOauthInfoResp, error) {
+func (l *GetUserOauthInfoLogic) GetUserOauthInfo(in *accountrpc.GetUserOauthInfoReq) (*accountrpc.GetUserOauthInfoResp, error) {
 	oas, err := l.svcCtx.TUserOauthModel.FindALL(l.ctx, "user_id = ?", in.UserId)
 	if err != nil {
 		return nil, err
@@ -37,8 +37,8 @@ func (l *GetUserOauthInfoLogic) GetUserOauthInfo(in *accountrpc.UserIdReq) (*acc
 			OpenId:    v.OpenId,
 			Nickname:  v.Nickname,
 			Avatar:    v.Avatar,
-			CreatedAt: v.CreatedAt.Unix(),
-			UpdatedAt: v.UpdatedAt.Unix(),
+			CreatedAt: v.CreatedAt.UnixMilli(),
+			UpdatedAt: v.UpdatedAt.UnixMilli(),
 		})
 	}
 

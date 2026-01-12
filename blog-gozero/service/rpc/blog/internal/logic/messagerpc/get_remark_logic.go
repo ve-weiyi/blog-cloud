@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/messagerpc"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,11 +24,13 @@ func NewGetRemarkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRema
 }
 
 // 查询留言
-func (l *GetRemarkLogic) GetRemark(in *messagerpc.IdReq) (*messagerpc.RemarkDetailsResp, error) {
+func (l *GetRemarkLogic) GetRemark(in *messagerpc.GetRemarkReq) (*messagerpc.GetRemarkResp, error) {
 	entity, err := l.svcCtx.TRemarkModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertRemarkOut(entity), nil
+	return &messagerpc.GetRemarkResp{
+		Remark: convertRemarkOut(entity),
+	}, nil
 }

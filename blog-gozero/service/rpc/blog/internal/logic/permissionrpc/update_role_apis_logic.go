@@ -26,7 +26,7 @@ func NewUpdateRoleApisLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 // 更新角色资源
-func (l *UpdateRoleApisLogic) UpdateRoleApis(in *permissionrpc.UpdateRoleApisReq) (*permissionrpc.EmptyResp, error) {
+func (l *UpdateRoleApisLogic) UpdateRoleApis(in *permissionrpc.UpdateRoleApisReq) (*permissionrpc.UpdateRoleApisResp, error) {
 	// 删除
 	_, err := l.svcCtx.TRoleApiModel.Deletes(l.ctx, "role_id in (?)", in.RoleId)
 	if err != nil {
@@ -49,5 +49,5 @@ func (l *UpdateRoleApisLogic) UpdateRoleApis(in *permissionrpc.UpdateRoleApisReq
 		return nil, err
 	}
 
-	return &permissionrpc.EmptyResp{}, nil
+	return &permissionrpc.UpdateRoleApisResp{}, nil
 }

@@ -24,13 +24,37 @@ func NewUpdateMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新菜单
-func (l *UpdateMenuLogic) UpdateMenu(in *permissionrpc.MenuNewReq) (*permissionrpc.MenuDetailsResp, error) {
-	entity := convertMenuIn(in)
-
-	_, err := l.svcCtx.TMenuModel.Save(l.ctx, entity)
+func (l *UpdateMenuLogic) UpdateMenu(in *permissionrpc.UpdateMenuReq) (*permissionrpc.UpdateMenuResp, error) {
+	entity, err := l.svcCtx.TMenuModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertMenuOut(entity), nil
+	entity.ParentId = in.ParentId
+	entity.Path = in.Path
+	entity.Name = in.Name
+	entity.Component = in.Component
+	entity.Redirect = in.Redirect
+	// 更新 meta 信息
+	if in.Meta != nil {
+		entity.Type = in.Meta.Type
+		entity.Title = in.Meta.Title
+		entity.Icon = in.Meta.Icon
+		entity.Rank = in.Meta.Rank
+		entity.Perm = in.Meta.Perm
+		entity.Params = in.Meta.Params
+		entity.KeepAlive = in.Meta.KeepAlive
+		entity.AlwaysShow = in.Meta.AlwaysShow
+		entity.Visible = in.Meta.Visible
+		entity.Status = in.Meta.Status
+	}
+
+	_, err = l.svcCtx.TMenuModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionrpc.UpdateMenuResp{
+		Menu: convertMenuOut(entity),
+	}, nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizcode"
 	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,15 +28,15 @@ func NewLogoffLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoffLogi
 }
 
 // 注销
-func (l *LogoffLogic) Logoff(in *accountrpc.LogoffReq) (*accountrpc.EmptyResp, error) {
+func (l *LogoffLogic) Logoff(in *accountrpc.LogoffReq) (*accountrpc.LogoffResp, error) {
 	// 验证用户是否存在
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, err.Error())
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, err.Error())
 	}
 
 	err = l.svcCtx.Gorm.Transaction(func(tx *gorm.DB) error {
-		_, err = l.logoff(l.ctx, tx, user.UserId)
+		err = l.logoff(l.ctx, tx, user.UserId)
 		if err != nil {
 			return err
 		}
@@ -51,21 +52,21 @@ func (l *LogoffLogic) Logoff(in *accountrpc.LogoffReq) (*accountrpc.EmptyResp, e
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.LogoffResp{}, nil
 }
 
-func (l *LogoffLogic) logoff(ctx context.Context, tx *gorm.DB, uid string) (*accountrpc.EmptyResp, error) {
+func (l *LogoffLogic) logoff(ctx context.Context, tx *gorm.DB, uid string) error {
 	// 删除用户账号
 	_, err := l.svcCtx.TUserModel.WithTransaction(tx).Deletes(ctx, "user_id = ?", uid)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// 删除用户角色
 	_, err = l.svcCtx.TUserRoleModel.WithTransaction(tx).Deletes(ctx, "user_id = ?", uid)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return nil, nil
+	return nil
 }

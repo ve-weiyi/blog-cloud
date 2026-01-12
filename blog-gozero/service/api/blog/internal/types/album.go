@@ -10,10 +10,10 @@ type Album struct {
 	AlbumCover string `json:"album_cover"` // 相册封面
 }
 
-type AlbumQueryReq struct {
+type QueryAlbumReq struct {
 	PageQuery
 }
 
-type PhotoQueryReq struct {
+type QueryPhotoReq struct {
 	AlbumId int64 `json:"album_id"` // 相册ID
 }

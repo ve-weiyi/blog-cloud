@@ -3,11 +3,11 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindCategoryListLogic struct {
@@ -44,7 +44,7 @@ func (l *FindCategoryListLogic) FindCategoryList(in *articlerpc.FindCategoryList
 		return nil, err
 	}
 
-	list, err := helper.convertCategoryDetailsResp(records)
+	list, err := helper.convertCategory(records)
 	if err != nil {
 		return nil, err
 	}

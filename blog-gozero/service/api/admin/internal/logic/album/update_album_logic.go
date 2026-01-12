@@ -25,8 +25,8 @@ func NewUpdateAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Updat
 	}
 }
 
-func (l *UpdateAlbumLogic) UpdateAlbum(req *types.AlbumNewReq) (resp *types.AlbumBackVO, err error) {
-	in := &resourcerpc.AlbumNewReq{
+func (l *UpdateAlbumLogic) UpdateAlbum(req *types.NewAlbumReq) (resp *types.AlbumBackVO, err error) {
+	in := &resourcerpc.UpdateAlbumReq{
 		Id:         req.Id,
 		AlbumName:  req.AlbumName,
 		AlbumDesc:  req.AlbumDesc,
@@ -40,16 +40,5 @@ func (l *UpdateAlbumLogic) UpdateAlbum(req *types.AlbumNewReq) (resp *types.Albu
 		return nil, err
 	}
 
-	resp = &types.AlbumBackVO{
-		Id:         out.Id,
-		AlbumName:  out.AlbumName,
-		AlbumDesc:  out.AlbumDesc,
-		AlbumCover: out.AlbumCover,
-		IsDelete:   out.IsDelete,
-		Status:     out.Status,
-		CreatedAt:  out.CreatedAt,
-		UpdatedAt:  out.UpdatedAt,
-		PhotoCount: out.PhotoCount,
-	}
-	return resp, nil
+	return convertAlbumTypes(out.Album), nil
 }

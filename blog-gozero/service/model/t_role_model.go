@@ -42,8 +42,8 @@ type (
 		RoleKey     string    `json:"role_key" gorm:"column:role_key"`         // 角色标识
 		RoleLabel   string    `json:"role_label" gorm:"column:role_label"`     // 角色标签
 		RoleComment string    `json:"role_comment" gorm:"column:role_comment"` // 角色备注
-		IsDisable   int64     `json:"is_disable" gorm:"column:is_disable"`     // 是否禁用  0否 1是
 		IsDefault   int64     `json:"is_default" gorm:"column:is_default"`     // 是否默认角色 0否 1是
+		Status      int64     `json:"status" gorm:"column:status"`             // 状态  0正常 1禁用
 		CreatedAt   time.Time `json:"created_at" gorm:"column:created_at"`     // 创建时间
 		UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at"`     // 更新时间
 	}

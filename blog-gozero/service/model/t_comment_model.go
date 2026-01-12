@@ -39,16 +39,14 @@ type (
 	TComment struct {
 		Id             int64     `json:"id" gorm:"column:id"`                           // 主键
 		UserId         string    `json:"user_id" gorm:"column:user_id"`                 // 评论用户id
+		TerminalId     string    `json:"terminal_id" gorm:"column:terminal_id"`         // 设备id
 		TopicId        int64     `json:"topic_id" gorm:"column:topic_id"`               // 主题id
 		ParentId       int64     `json:"parent_id" gorm:"column:parent_id"`             // 父评论id
-		ReplyMsgId     int64     `json:"reply_msg_id" gorm:"column:reply_msg_id"`       // 回复评论id
+		ReplyId        int64     `json:"reply_id" gorm:"column:reply_id"`               // 回复评论id
 		ReplyUserId    string    `json:"reply_user_id" gorm:"column:reply_user_id"`     // 评论回复用户id
 		CommentContent string    `json:"comment_content" gorm:"column:comment_content"` // 评论内容
-		IpAddress      string    `json:"ip_address" gorm:"column:ip_address"`           // ip地址 127.0.01
-		IpSource       string    `json:"ip_source" gorm:"column:ip_source"`             // ip来源 广东省
 		Type           int64     `json:"type" gorm:"column:type"`                       // 评论类型 1.文章 2.友链 3.说说
 		Status         int64     `json:"status" gorm:"column:status"`                   // 状态 0.正常 1.已编辑 2.已删除
-		IsReview       int64     `json:"is_review" gorm:"column:is_review"`             // 是否审核通过
 		LikeCount      int64     `json:"like_count" gorm:"column:like_count"`           // 评论点赞数量
 		CreatedAt      time.Time `json:"created_at" gorm:"column:created_at"`           // 创建时间
 		UpdatedAt      time.Time `json:"updated_at" gorm:"column:updated_at"`           // 更新时间

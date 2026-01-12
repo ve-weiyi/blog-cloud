@@ -24,10 +24,9 @@ func NewNoAuthenticator() *NoAuthenticator {
 
 func (a *NoAuthenticator) Authenticate(c *Client, f *frame.Frame) (string, string, error) {
 	login := f.Header.Get(frame.Login)
-	clientId := c.conn.RemoteAddr().String()
-
-	if login == "" {
-		login = clientId
+	clientId := f.Header.Get("client")
+	if clientId == "" {
+		clientId = c.ip
 	}
 	return clientId, login, nil
 }
@@ -50,15 +49,21 @@ func NewPasswordAuthenticator() *PasswordAuthenticator {
 func (a *PasswordAuthenticator) Authenticate(c *Client, f *frame.Frame) (string, string, error) {
 	login := f.Header.Get(frame.Login)
 	passcode := f.Header.Get(frame.Passcode)
-	clientId := c.conn.RemoteAddr().String()
+	clientId := f.Header.Get("client")
 
 	if login == "" {
-		return clientId, clientId, nil // Allow anonymous
+		return "", "", fmt.Errorf("stomp auth failed: missing header: 'login'")
 	}
-
+	if passcode == "" {
+		return "", "", fmt.Errorf("stomp auth failed: missing header: 'passcode'")
+	}
 	expectedPasscode, exists := a.users[login]
 	if !exists || expectedPasscode != passcode {
 		return "", "", fmt.Errorf("authentication failed")
+	}
+
+	if clientId == "" {
+		clientId = c.ip
 	}
 
 	return clientId, login, nil

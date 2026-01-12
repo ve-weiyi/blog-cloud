@@ -28,14 +28,14 @@ func NewGetSystemStateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 func (l *GetSystemStateLogic) GetSystemState(req *types.EmptyReq) (resp *types.Server, err error) {
 	sv := types.Server{}
 
-	sv.Os = system.InitOS()
-	if sv.Cpu, err = system.InitCPU(); err != nil {
+	sv.Os = systemx.InitOS()
+	if sv.Cpu, err = systemx.InitCPU(); err != nil {
 		return &sv, err
 	}
-	if sv.Ram, err = system.InitRAM(); err != nil {
+	if sv.Ram, err = systemx.InitRAM(); err != nil {
 		return &sv, err
 	}
-	if sv.Disk, err = system.InitDisk(); err != nil {
+	if sv.Disk, err = systemx.InitDisk(); err != nil {
 		return &sv, err
 	}
 

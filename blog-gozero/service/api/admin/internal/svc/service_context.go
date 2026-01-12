@@ -10,8 +10,8 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/permissionx"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/tokenx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/permissionx"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/tokenx"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/docs"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/common/stomphook"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/config"
@@ -22,10 +22,10 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/messagerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/resourcerpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/socialrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/talkrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/websiterpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oss"
+	"github.com/ve-weiyi/ve-blog-golang/kit/kit/oss"
 	"github.com/ve-weiyi/ve-blog-golang/stompws/logws"
 	"github.com/ve-weiyi/ve-blog-golang/stompws/server/client"
 )
@@ -38,14 +38,14 @@ type ServiceContext struct {
 	ArticleRpc    articlerpc.ArticleRpc
 	MessageRpc    messagerpc.MessageRpc
 	ResourceRpc   resourcerpc.ResourceRpc
-	TalkRpc       talkrpc.TalkRpc
+	SocialRpc     socialrpc.SocialRpc
 	WebsiteRpc    websiterpc.WebsiteRpc
 	ConfigRpc     configrpc.ConfigRpc
 	SyslogRpc     syslogrpc.SyslogRpc
 
 	Redis            *redis.Redis
-	Uploader         oss.OSS
-	TokenHolder      tokenx.TokenHolder
+	Uploader         oss.Uploader
+	TokenManager     tokenx.TokenManager
 	PermissionHolder permissionx.PermissionHolder
 
 	StompHubServer *client.StompHubServer
@@ -66,7 +66,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	uploader := oss.NewQiniu(c.UploadConfig)
 
-	th := tokenx.NewJwtTokenHolder(c.Name, c.Name, rds)
+	th := tokenx.NewJwtTokenManager(
+		tokenx.NewRedisStore(rds, "admin:token:"),
+		c.Name,
+		c.Name,
+		2*3600,
+		7*24*3600,
+	)
 
 	doc, err := loads.Analyzed(json.RawMessage(docs.Docs), "")
 	if err != nil {
@@ -78,12 +84,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	articleRpc := articlerpc.NewArticleRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 	messageRpc := messagerpc.NewMessageRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 	resourceRpc := resourcerpc.NewResourceRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
-	talkRpc := talkrpc.NewTalkRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
+	talkRpc := socialrpc.NewSocialRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 	websiteRpc := websiterpc.NewWebsiteRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 	configRpc := configrpc.NewConfigRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 	syslogRpc := syslogrpc.NewSyslogRpc(zrpc.MustNewClient(c.BlogRpcConf, options...))
 
-	ph := permissionx.NewMemoryHolder(permissionRpc)
+	// 使用内存缓存角色-权限，单机部署可用。分布式部署可能出现权限会不同步
+	//ph := permissionx.NewMemoryHolder(permissionRpc)
+
+	// 允许所有操作，不校验权限
+	ph := permissionx.NewAllowAllHolder()
 	err = ph.LoadPolicy()
 	if err != nil {
 		logx.Infof("load permission policy fail: %v", err)
@@ -105,27 +115,26 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ArticleRpc:    articleRpc,
 		MessageRpc:    messageRpc,
 		ResourceRpc:   resourceRpc,
-		TalkRpc:       talkRpc,
+		SocialRpc:     talkRpc,
 		WebsiteRpc:    websiteRpc,
 		ConfigRpc:     configRpc,
 		SyslogRpc:     syslogRpc,
 
 		Redis:            rds,
 		Uploader:         uploader,
-		TokenHolder:      th,
+		TokenManager:     th,
 		PermissionHolder: ph,
 		StompHubServer:   hub,
 
-		AdminToken: middleware.NewAdminTokenMiddleware(th).Handle,
-		Permission: middleware.NewSimpleMiddleware().Handle, // 不使用接口权限控制
-		//Permission:       middleware.NewPermissionMiddleware(ph).Handle,
+		AdminToken:   middleware.NewAdminTokenMiddleware(th).Handle,
+		Permission:   middleware.NewPermissionMiddleware(ph).Handle,
 		OperationLog: middleware.NewOperationLogMiddleware(doc.Spec(), syslogRpc, permissionRpc).Handle,
 	}
 }
 
 func ConnectRedis(c config.RedisConf) (*redis.Redis, error) {
 	address := c.Host + ":" + c.Port
-	client, err := redis.NewRedis(redis.RedisConf{
+	redisClient, err := redis.NewRedis(redis.RedisConf{
 		Host: address,
 		Type: redis.NodeType,
 		Pass: c.Password,
@@ -136,5 +145,5 @@ func ConnectRedis(c config.RedisConf) (*redis.Redis, error) {
 		return nil, fmt.Errorf("redis 连接失败: %v", err)
 	}
 
-	return client, nil
+	return redisClient, nil
 }

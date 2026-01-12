@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizheader"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/admin/internal/types"
@@ -30,8 +30,8 @@ func NewGetUserMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetU
 }
 
 func (l *GetUserMenusLogic) GetUserMenus(req *types.EmptyReq) (resp *types.UserMenusResp, err error) {
-	in := &permissionrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+	in := &permissionrpc.FindUserMenusReq{
+		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 
 	out, err := l.svcCtx.PermissionRpc.FindUserMenus(l.ctx, in)
@@ -41,7 +41,7 @@ func (l *GetUserMenusLogic) GetUserMenus(req *types.EmptyReq) (resp *types.UserM
 
 	var list []*types.UserMenu
 	for _, v := range out.List {
-		list = append(list, ConvertUserMenuTypes(v))
+		list = append(list, convertUserMenuTypes(v))
 	}
 
 	resp = &types.UserMenusResp{}
@@ -49,11 +49,11 @@ func (l *GetUserMenusLogic) GetUserMenus(req *types.EmptyReq) (resp *types.UserM
 	return
 }
 
-func ConvertUserMenuTypes(in *permissionrpc.MenuDetailsResp) (out *types.UserMenu) {
+func convertUserMenuTypes(in *permissionrpc.Menu) (out *types.UserMenu) {
 	children := make([]*types.UserMenu, 0)
 	if in.Children != nil {
 		for _, v := range in.Children {
-			children = append(children, ConvertUserMenuTypes(v))
+			children = append(children, convertUserMenuTypes(v))
 		}
 	}
 
@@ -67,7 +67,7 @@ func ConvertUserMenuTypes(in *permissionrpc.MenuDetailsResp) (out *types.UserMen
 		Meta: types.UserMenuMeta{
 			Title:      in.Meta.Title,
 			Icon:       in.Meta.Icon,
-			Hidden:     in.Meta.IsHidden == 1,
+			Hidden:     in.Meta.Visible == 1,
 			AlwaysShow: in.Meta.AlwaysShow == 1,
 			Affix:      false,
 			KeepAlive:  false,

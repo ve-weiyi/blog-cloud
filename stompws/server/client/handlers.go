@@ -18,12 +18,6 @@ func (s *StompHubServer) handleConnect(c *Client, f *frame.Frame) {
 		return
 	}
 
-	if clientId == "" {
-		clientId = c.conn.RemoteAddr().String()
-	}
-	if login == "" {
-		login = clientId
-	}
 	c.id = clientId
 	c.login = login
 
@@ -60,9 +54,8 @@ func (s *StompHubServer) handleConnect(c *Client, f *frame.Frame) {
 
 	c.connected = true
 	s.clients.Store(c.id, c)
-	s.onlineList.Store(c.login, c.id)
 
-	s.log.Infof("client=%s user=%s: connected, version=%s, heartbeat=%s", c.id, c.login, version, formatHeartBeat(cy, cx))
+	s.log.Infof("client=%s login=%s: connected, version=%s, heartbeat=%s", c.id, c.login, version, formatHeartBeat(cy, cx))
 
 	response := frame.New(frame.CONNECTED,
 		frame.Version, version,
@@ -97,7 +90,6 @@ func (s *StompHubServer) cleanupClient(c *Client) {
 	c.txStore.Clear()
 
 	s.clients.Delete(c.id)
-	s.onlineList.Delete(c.login)
 
 	// 重新入队未确认的消息
 	for sub := c.subList.Get(); sub != nil; sub = c.subList.Get() {
@@ -116,7 +108,7 @@ func (s *StompHubServer) cleanupClient(c *Client) {
 		}
 	}
 
-	s.log.Infof("client=%s user=%s: disconnected", c.id, c.login)
+	s.log.Infof("client=%s login=%s: disconnected", c.id, c.login)
 
 	// Trigger OnDisconnect callback
 	for _, hook := range s.eventHooks {
@@ -153,7 +145,7 @@ func (s *StompHubServer) handleSubscribe(c *Client, f *frame.Frame) {
 		hook.OnSubscribe(s, c, dest, id)
 	}
 
-	s.log.Infof("client=%s user=%s: subscribed to %s (ack=%s)", c.id, c.login, dest, ack)
+	s.log.Infof("client=%s login=%s: subscribed to %s (ack=%s)", c.id, c.login, dest, ack)
 	s.sendReceipt(c, f)
 }
 
@@ -168,7 +160,7 @@ func (s *StompHubServer) handleUnsubscribe(c *Client, f *frame.Frame) {
 	delete(c.subscriptions, id)
 
 	s.UnsubscribeFromDestination(sub)
-	s.log.Infof("client=%s user=%s: unsubscribed from %s", c.id, c.login, sub.destination)
+	s.log.Infof("client=%s login=%s: unsubscribed from %s", c.id, c.login, sub.destination)
 
 	// 先发送 receipt
 	s.sendReceipt(c, f)
@@ -285,7 +277,7 @@ func (s *StompHubServer) handleBegin(c *Client, f *frame.Frame) {
 		return
 	}
 
-	s.log.Infof("client=%s user=%s: transaction %s begun", c.id, c.login, tx)
+	s.log.Infof("client=%s login=%s: transaction %s begun", c.id, c.login, tx)
 	s.sendReceipt(c, f)
 }
 
@@ -302,10 +294,10 @@ func (s *StompHubServer) handleCommit(c *Client, f *frame.Frame) {
 	})
 
 	if err != nil {
-		s.log.Errorf("client=%s user=%s: transaction %s commit failed: %v", c.id, c.login, tx, err)
+		s.log.Errorf("client=%s login=%s: transaction %s commit failed: %v", c.id, c.login, tx, err)
 		c.SendError(err.Error(), "")
 	} else {
-		s.log.Infof("client=%s user=%s: transaction %s committed", c.id, c.login, tx)
+		s.log.Infof("client=%s login=%s: transaction %s committed", c.id, c.login, tx)
 	}
 }
 
@@ -316,7 +308,7 @@ func (s *StompHubServer) handleAbort(c *Client, f *frame.Frame) {
 		return
 	}
 
-	s.log.Infof("client=%s user=%s: transaction %s aborted", c.id, c.login, tx)
+	s.log.Infof("client=%s login=%s: transaction %s aborted", c.id, c.login, tx)
 	s.sendReceipt(c, f)
 }
 

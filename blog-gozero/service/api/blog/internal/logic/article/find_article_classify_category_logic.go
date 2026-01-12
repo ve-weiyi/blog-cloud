@@ -3,7 +3,7 @@ package article
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
@@ -26,9 +26,10 @@ func NewFindArticleClassifyCategoryLogic(ctx context.Context, svcCtx *svc.Servic
 	}
 }
 
-func (l *FindArticleClassifyCategoryLogic) FindArticleClassifyCategory(req *types.ArticleClassifyQueryReq) (resp *types.PageResp, err error) {
+func (l *FindArticleClassifyCategoryLogic) FindArticleClassifyCategory(req *types.QueryArticleClassifyReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindArticleListReq{
 		CategoryName: req.ClassifyName,
+		IsTop:        constant.ArticleIsTopALL,
 		IsDelete:     constant.ArticleIsDeleteNo,
 		Status:       constant.ArticleStatusPublic,
 	}
@@ -40,7 +41,7 @@ func (l *FindArticleClassifyCategoryLogic) FindArticleClassifyCategory(req *type
 	list := make([]*types.ArticleHome, 0)
 	// 转换数据
 	for _, v := range out.List {
-		m := ConvertArticleHomeTypes(v)
+		m := convertArticleHomeTypes(v)
 		list = append(list, m)
 	}
 

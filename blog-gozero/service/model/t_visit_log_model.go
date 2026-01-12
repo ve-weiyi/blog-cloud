@@ -41,10 +41,6 @@ type (
 		UserId     string    `json:"user_id" gorm:"column:user_id"`         // 用户id
 		TerminalId string    `json:"terminal_id" gorm:"column:terminal_id"` // 设备id
 		PageName   string    `json:"page_name" gorm:"column:page_name"`     // 访问页面
-		IpAddress  string    `json:"ip_address" gorm:"column:ip_address"`   // 操作ip
-		IpSource   string    `json:"ip_source" gorm:"column:ip_source"`     // 操作地址
-		Os         string    `json:"os" gorm:"column:os"`                   // 操作系统
-		Browser    string    `json:"browser" gorm:"column:browser"`         // 浏览器
 		CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`   // 创建时间
 		UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`   // 更新时间
 	}

@@ -25,7 +25,7 @@ func NewGetAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAlbum
 }
 
 // 获取相册
-func (l *GetAlbumLogic) GetAlbum(in *resourcerpc.IdReq) (*resourcerpc.AlbumDetailsResp, error) {
+func (l *GetAlbumLogic) GetAlbum(in *resourcerpc.GetAlbumReq) (*resourcerpc.GetAlbumResp, error) {
 	entity, err := l.svcCtx.TAlbumModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -36,5 +36,7 @@ func (l *GetAlbumLogic) GetAlbum(in *resourcerpc.IdReq) (*resourcerpc.AlbumDetai
 		return nil, err
 	}
 
-	return convertAlbumOut(entity, cm), nil
+	return &resourcerpc.GetAlbumResp{
+		Album: convertAlbumOut(entity, cm),
+	}, nil
 }

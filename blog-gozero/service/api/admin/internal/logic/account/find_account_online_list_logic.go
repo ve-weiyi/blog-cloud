@@ -25,7 +25,7 @@ func NewFindAccountOnlineListLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
-func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.AccountQuery) (resp *types.PageResp, err error) {
+func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.QueryAccountReq) (resp *types.PageResp, err error) {
 	in := &accountrpc.FindUserListReq{
 		Paginate: &accountrpc.PageReq{
 			Page:     req.Page,
@@ -42,7 +42,7 @@ func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.AccountQue
 
 	var list []*types.UserInfoDetail
 	for _, v := range out.List {
-		m := ConvertUserInfoTypes(v)
+		m := convertUserInfoTypes(v)
 		list = append(list, m)
 	}
 

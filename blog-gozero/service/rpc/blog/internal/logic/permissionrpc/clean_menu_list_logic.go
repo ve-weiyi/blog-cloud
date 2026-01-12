@@ -24,13 +24,13 @@ func NewCleanMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cle
 }
 
 // 清空菜单列表
-func (l *CleanMenuListLogic) CleanMenuList(in *permissionrpc.CleanMenuListReq) (*permissionrpc.BatchResp, error) {
+func (l *CleanMenuListLogic) CleanMenuList(in *permissionrpc.CleanMenuListReq) (*permissionrpc.CleanMenuListResp, error) {
 	row, err := l.svcCtx.TMenuModel.Deletes(l.ctx, "1 = 1")
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.CleanMenuListResp{
 		SuccessCount: row,
 	}, nil
 }

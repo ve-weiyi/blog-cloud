@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizheader"
 
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/jsonconv"
 
@@ -33,36 +33,36 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInfoResp, err error) {
-	userId := cast.ToString(l.ctx.Value(restx.HeaderUid))
-	in := &accountrpc.UserIdReq{
-		UserId: userId,
-	}
-
-	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, in)
-	if err != nil {
-		return nil, err
-	}
-
-	thp, err := l.svcCtx.AccountRpc.GetUserOauthInfo(l.ctx, in)
-	if err != nil {
-		return nil, err
-	}
-
-	ur, err := l.svcCtx.PermissionRpc.FindUserRoles(l.ctx, &permissionrpc.UserIdReq{
+	userId := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
+	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, &accountrpc.GetUserInfoReq{
 		UserId: userId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	up, err := l.svcCtx.PermissionRpc.FindUserApis(l.ctx, &permissionrpc.UserIdReq{
+	thp, err := l.svcCtx.AccountRpc.GetUserOauthInfo(l.ctx, &accountrpc.GetUserOauthInfoReq{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ur, err := l.svcCtx.PermissionRpc.FindUserRoles(l.ctx, &permissionrpc.FindUserRolesReq{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	up, err := l.svcCtx.PermissionRpc.FindUserApis(l.ctx, &permissionrpc.FindUserApisReq{
 		UserId: userId,
 	})
 
-	return ConvertUserInfoTypes(info, thp, ur, up), nil
+	return convertUserInfoTypes(info.User, thp, ur, up), nil
 }
 
-func ConvertUserInfoTypes(in *accountrpc.UserInfoResp, thp *accountrpc.GetUserOauthInfoResp, ur *permissionrpc.FindRoleListResp, up *permissionrpc.FindApiListResp) (out *types.UserInfoResp) {
+func convertUserInfoTypes(in *accountrpc.UserInfo, thp *accountrpc.GetUserOauthInfoResp, ur *permissionrpc.FindUserRolesResp, up *permissionrpc.FindUserApisResp) (out *types.UserInfoResp) {
 	var info types.UserInfoExt
 	jsonconv.JsonToAny(in.Info, &info)
 

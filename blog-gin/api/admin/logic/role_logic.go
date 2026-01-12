@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewRoleLogic(svcCtx *svctx.ServiceContext) *RoleLogic {
 }
 
 // 创建角色
-func (s *RoleLogic) AddRole(reqCtx *request.Context, in *types.RoleNewReq) (out *types.RoleBackVO, err error) {
+func (s *RoleLogic) AddRole(reqCtx *request.Context, in *types.NewRoleReq) (out *types.RoleBackVO, err error) {
 	// todo
 
 	return
@@ -31,7 +31,7 @@ func (s *RoleLogic) DeletesRole(reqCtx *request.Context, in *types.IdsReq) (out 
 }
 
 // 分页获取角色列表
-func (s *RoleLogic) FindRoleList(reqCtx *request.Context, in *types.RoleQuery) (out *types.PageResp, err error) {
+func (s *RoleLogic) FindRoleList(reqCtx *request.Context, in *types.QueryRoleReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
@@ -45,7 +45,7 @@ func (s *RoleLogic) FindRoleResources(reqCtx *request.Context, in *types.IdReq) 
 }
 
 // 更新角色
-func (s *RoleLogic) UpdateRole(reqCtx *request.Context, in *types.RoleNewReq) (out *types.RoleBackVO, err error) {
+func (s *RoleLogic) UpdateRole(reqCtx *request.Context, in *types.NewRoleReq) (out *types.RoleBackVO, err error) {
 	// todo
 
 	return

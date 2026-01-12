@@ -87,7 +87,7 @@ func (l *GetAdminHomeInfoLogic) GetAdminHomeInfo(req *types.EmptyReq) (resp *typ
 
 	asm := make(map[string]int64)
 	for _, v := range archives.List {
-		date := time.Unix(v.CreatedAt, 0).Format(time.DateOnly)
+		date := time.UnixMilli(v.CreatedAt).Format(time.DateOnly)
 		if _, ok := asm[date]; ok {
 			asm[date]++
 		} else {

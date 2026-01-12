@@ -25,8 +25,8 @@ func NewUpdateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateT
 	}
 }
 
-func (l *UpdateTagLogic) UpdateTag(req *types.TagNewReq) (resp *types.TagBackVO, err error) {
-	in := &articlerpc.TagNewReq{
+func (l *UpdateTagLogic) UpdateTag(req *types.NewTagReq) (resp *types.TagBackVO, err error) {
+	in := &articlerpc.UpdateTagReq{
 		Id:      req.Id,
 		TagName: req.TagName,
 	}
@@ -36,12 +36,5 @@ func (l *UpdateTagLogic) UpdateTag(req *types.TagNewReq) (resp *types.TagBackVO,
 		return nil, err
 	}
 
-	resp = &types.TagBackVO{
-		Id:           out.Id,
-		TagName:      out.TagName,
-		ArticleCount: 0,
-		CreatedAt:    out.CreatedAt,
-		UpdatedAt:    out.UpdatedAt,
-	}
-	return resp, nil
+	return convertTagTypes(out.Tag), nil
 }

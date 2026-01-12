@@ -5,7 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/responsex"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/infra/responsex"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/logic/upload"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"

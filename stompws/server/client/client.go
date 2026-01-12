@@ -15,8 +15,9 @@ import (
 
 type Client struct {
 	conn          *websocket.Conn
-	id            string // client id. It is terminal id or ip address.
-	login         string // client login. It is username or userId.
+	id            string // id is usually client-id or terminal-id, and its default value is the ip.
+	login         string // login is usually user-id or username, and its default value is the ip.
+	ip            string // ip address.
 	version       string
 	subscriptions map[string]*Subscription
 	subList       *SubscriptionList
@@ -242,13 +243,6 @@ func (c *Client) allocateMessageId(f *frame.Frame, sub *Subscription) {
 }
 
 // GetClientInfo returns client information for use in callbacks
-func (c *Client) GetClientInfo() (id, username, version string) {
-	return c.id, c.login, c.version
-}
-
-func (c *Client) GetIpAddress() string {
-	if c.conn != nil {
-		return c.conn.RemoteAddr().String()
-	}
-	return ""
+func (c *Client) GetClientInfo() (id, login, ip, version string) {
+	return c.id, c.login, c.ip, c.version
 }

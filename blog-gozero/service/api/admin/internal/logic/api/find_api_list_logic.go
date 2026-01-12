@@ -25,7 +25,7 @@ func NewFindApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindA
 	}
 }
 
-func (l *FindApiListLogic) FindApiList(req *types.ApiQuery) (resp *types.PageResp, err error) {
+func (l *FindApiListLogic) FindApiList(req *types.QueryApiReq) (resp *types.PageResp, err error) {
 	in := &permissionrpc.FindApiListReq{
 		Name:   req.Name,
 		Path:   req.Path,

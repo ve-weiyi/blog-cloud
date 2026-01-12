@@ -3,52 +3,52 @@ syntax = "v1"
 import "base.api"
 
 type (
-    PageNewReq {
-        Id int64 `json:"id,optional"`                             // 页面id
-        PageName string `json:"page_name"`                        // 页面名
-        PageLabel string `json:"page_label"`                      // 页面标签
-        PageCover string `json:"page_cover"`                      // 页面封面
-        IsCarousel int64 `json:"is_carousel,optional"`            // 是否轮播
-        CarouselCovers []string `json:"carousel_covers,optional"` // 轮播封面
-    }
-    PageBackVO {
-        Id int64 `json:"id,optional"`                    // 页面id
-        PageName string `json:"page_name"`               // 页面名
-        PageLabel string `json:"page_label"`             // 页面标签
-        PageCover string `json:"page_cover"`             // 页面封面
-        IsCarousel int64 `json:"is_carousel"`            // 是否轮播
-        CarouselCovers []string `json:"carousel_covers"` // 轮播封面
-        CreatedAt int64 `json:"created_at"`              // 创建时间
-        UpdatedAt int64 `json:"updated_at"`              // 更新时间
-    }
-    PageQueryReq {
-        PageQuery
-        PageName string `json:"page_name,optional"` // 页面名
-    }
+	PageBackVO {
+		Id             int64    `json:"id,optional"` // 页面id
+		PageName       string   `json:"page_name"` // 页面名
+		PageLabel      string   `json:"page_label"` // 页面标签
+		PageCover      string   `json:"page_cover"` // 页面封面
+		IsCarousel     int64    `json:"is_carousel"` // 是否轮播
+		CarouselCovers []string `json:"carousel_covers"` // 轮播封面
+		CreatedAt      int64    `json:"created_at"` // 创建时间
+		UpdatedAt      int64    `json:"updated_at"` // 更新时间
+	}
+	NewPageReq {
+		Id             int64    `json:"id,optional"` // 页面id
+		PageName       string   `json:"page_name"` // 页面名
+		PageLabel      string   `json:"page_label"` // 页面标签
+		PageCover      string   `json:"page_cover"` // 页面封面
+		IsCarousel     int64    `json:"is_carousel,optional"` // 是否轮播
+		CarouselCovers []string `json:"carousel_covers,optional"` // 轮播封面
+	}
+	QueryPageReq {
+		PageQuery
+		PageName string `json:"page_name,optional"` // 页面名
+	}
 )
 
-@server(
-    tags: "页面管理"
-    prefix:     /admin-api/v1
-    group: page
-    authType: apiKey
-    middleware: AdminToken,Permission,OperationLog
+@server (
+	tags:       "页面管理"
+	prefix:     /admin-api/v1
+	group:      page
+	authType:   apiKey
+	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
-    @doc "分页获取页面列表"
-    @handler FindPageList
-    post /page/find_page_list (PageQueryReq) returns (PageResp)
+	@doc "分页获取页面列表"
+	@handler FindPageList
+	post /page/find_page_list (QueryPageReq) returns (PageResp)
 
-    @doc "创建页面"
-    @handler AddPage
-    post /page/add_page (PageNewReq) returns (PageBackVO)
+	@doc "创建页面"
+	@handler AddPage
+	post /page/add_page (NewPageReq) returns (PageBackVO)
 
-    @doc "更新页面"
-    @handler UpdatePage
-    put /page/update_page (PageNewReq) returns (PageBackVO)
+	@doc "更新页面"
+	@handler UpdatePage
+	put /page/update_page (NewPageReq) returns (PageBackVO)
 
-    @doc "删除页面"
-    @handler DeletePage
-    delete /page/delete_page (IdReq) returns (BatchResp)
+	@doc "删除页面"
+	@handler DeletePage
+	delete /page/delete_page (IdReq) returns (BatchResp)
 }
 

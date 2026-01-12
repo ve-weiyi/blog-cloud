@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -111,7 +111,7 @@ func (s *UserController) GetUserInfo(c *gin.Context) {
 // @Summary		"查询用户登录历史"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.UserLoginHistoryQuery		true	"请求参数"
+// @Param		data	body		types.QueryUserLoginHistoryReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/user/get_user_login_history_list [POST]
 func (s *UserController) GetUserLoginHistoryList(c *gin.Context) {
@@ -120,7 +120,7 @@ func (s *UserController) GetUserLoginHistoryList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.UserLoginHistoryQuery
+	var req *types.QueryUserLoginHistoryReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -200,7 +200,7 @@ func (s *UserController) GetUserRoles(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserAvatarReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_avatar [POST]
+// @Router		/admin-api/v1/user/update_user_avatar [PUT]
 func (s *UserController) UpdateUserAvatar(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -229,7 +229,7 @@ func (s *UserController) UpdateUserAvatar(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserBindEmailReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_bind_email [POST]
+// @Router		/admin-api/v1/user/update_user_bind_email [PUT]
 func (s *UserController) UpdateUserBindEmail(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -258,7 +258,7 @@ func (s *UserController) UpdateUserBindEmail(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserBindPhoneReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_bind_phone [POST]
+// @Router		/admin-api/v1/user/update_user_bind_phone [PUT]
 func (s *UserController) UpdateUserBindPhone(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -287,7 +287,7 @@ func (s *UserController) UpdateUserBindPhone(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserBindThirdPartyReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_bind_third_party [POST]
+// @Router		/admin-api/v1/user/update_user_bind_third_party [PUT]
 func (s *UserController) UpdateUserBindThirdParty(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -316,7 +316,7 @@ func (s *UserController) UpdateUserBindThirdParty(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserInfoReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_info [POST]
+// @Router		/admin-api/v1/user/update_user_info [PUT]
 func (s *UserController) UpdateUserInfo(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
@@ -345,7 +345,7 @@ func (s *UserController) UpdateUserInfo(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.UpdateUserPasswordReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/admin-api/v1/user/update_user_password [POST]
+// @Router		/admin-api/v1/user/update_user_password [PUT]
 func (s *UserController) UpdateUserPassword(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

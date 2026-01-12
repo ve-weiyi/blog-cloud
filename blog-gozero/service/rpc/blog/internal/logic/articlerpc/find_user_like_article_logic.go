@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -27,7 +27,7 @@ func NewFindUserLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 用户点赞的文章
-func (l *FindUserLikeArticleLogic) FindUserLikeArticle(in *articlerpc.UserIdReq) (*articlerpc.FindLikeArticleResp, error) {
+func (l *FindUserLikeArticleLogic) FindUserLikeArticle(in *articlerpc.FindUserLikeArticleReq) (*articlerpc.FindLikeArticleResp, error) {
 	uid := cast.ToString(in.UserId)
 	likeKey := rediskey.GetUserLikeArticleKey(uid)
 

@@ -3,6 +3,9 @@
 
 package types
 
+type CleanMenuReq struct {
+}
+
 type MenuBackVO struct {
 	Id        int64  `json:"id,optional"`        // 主键
 	ParentId  int64  `json:"parent_id,optional"` // 父id
@@ -16,7 +19,7 @@ type MenuBackVO struct {
 	UpdatedAt int64         `json:"updated_at"` // 更新时间
 }
 
-type MenuNewReq struct {
+type NewMenuReq struct {
 	Id        int64  `json:"id,optional"`        // 主键
 	ParentId  int64  `json:"parent_id,optional"` // 父id
 	Path      string `json:"path,optional"`      // 路由地址
@@ -24,15 +27,15 @@ type MenuNewReq struct {
 	Component string `json:"component,optional"` // Layout组件
 	Redirect  string `json:"redirect,optional"`  // 路由重定向
 	MenuMeta
-	Children []*MenuNewReq `json:"children,optional"`
+	Children []*NewMenuReq `json:"children,optional"`
 }
 
-type MenuQuery struct {
+type QueryMenuReq struct {
 	PageQuery
 	Name  string `json:"name,optional"`  // 路由名字
 	Title string `json:"title,optional"` // 菜单标题
 }
 
 type SyncMenuReq struct {
-	Menus []*MenuNewReq `json:"menus"`
+	Menus []*NewMenuReq `json:"menus"`
 }

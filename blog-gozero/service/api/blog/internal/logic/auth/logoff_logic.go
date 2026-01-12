@@ -6,13 +6,11 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/restx"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizheader"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,8 +31,9 @@ func NewLogoffLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoffLogi
 }
 
 func (l *LogoffLogic) Logoff(req *types.EmptyReq) (resp *types.EmptyResp, err error) {
+	uid := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
 	in := accountrpc.LogoffReq{
-		UserId: cast.ToString(l.ctx.Value(restx.HeaderUid)),
+		UserId: uid,
 	}
 
 	_, err = l.svcCtx.AccountRpc.Logoff(l.ctx, &in)
@@ -44,10 +43,12 @@ func (l *LogoffLogic) Logoff(req *types.EmptyReq) (resp *types.EmptyResp, err er
 
 	// 登录日志
 	_, err = l.svcCtx.SyslogRpc.AddLogoutLog(l.ctx, &syslogrpc.AddLogoutLogReq{
-		UserId:   cast.ToString(l.ctx.Value(restx.HeaderUid)),
-		LogoutAt: time.Now().Unix(),
+		UserId:   uid,
+		LogoutAt: time.Now().UnixMilli(),
 	})
 
-	l.svcCtx.TokenHolder.RemoveToken(l.ctx, cast.ToString(l.ctx.Value(restx.HeaderUid)))
+	// 撤销所有token
+	l.svcCtx.TokenManager.RevokeToken(uid, false) // 撤销 AccessToken
+	l.svcCtx.TokenManager.RevokeToken(uid, true)  // 撤销 RefreshToken
 	return &types.EmptyResp{}, nil
 }

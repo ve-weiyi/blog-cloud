@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewPageController(svcCtx *svctx.ServiceContext) *PageController {
 // @Summary		"分页获取页面列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PageQueryReq		true	"请求参数"
+// @Param		data	body		types.QueryPageReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/blog-api/v1/page/find_page_list [POST]
 func (s *PageController) FindPageList(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *PageController) FindPageList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PageQueryReq
+	var req *types.QueryPageReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)

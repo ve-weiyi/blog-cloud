@@ -3,7 +3,7 @@ package article
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
@@ -41,7 +41,7 @@ func (l *FindArticleRecommendLogic) FindArticleRecommend(req *types.EmptyReq) (r
 	list := make([]*types.ArticleHome, 0)
 	// 转换数据
 	for _, v := range out.List {
-		m := ConvertArticleHomeTypes(v)
+		m := convertArticleHomeTypes(v)
 		list = append(list, m)
 	}
 

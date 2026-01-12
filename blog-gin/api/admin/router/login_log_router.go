@@ -26,9 +26,9 @@ func (s *LoginLogRouter) Register(r *gin.RouterGroup) {
 		group.Use(s.svcCtx.OperationLog)
 
 		h := handler.NewLoginLogController(s.svcCtx)
+		// 查询登录日志
+		group.POST("/file_log/find_login_log_list", h.FindLoginLogList)
 		// 删除登录日志
 		group.DELETE("/login_log/deletes_login_log", h.DeletesLoginLog)
-		// 查询登录日志
-		group.POST("/user/find_login_log_list", h.FindLoginLogList)
 	}
 }

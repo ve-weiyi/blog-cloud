@@ -26,7 +26,7 @@ func NewDeletesVisitLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DeletesVisitLogLogic) DeletesVisitLog(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &syslogrpc.IdsReq{
+	in := &syslogrpc.DeletesVisitLogReq{
 		Ids: req.Ids,
 	}
 

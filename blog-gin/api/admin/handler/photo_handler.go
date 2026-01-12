@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,7 +24,7 @@ func NewPhotoController(svcCtx *svctx.ServiceContext) *PhotoController {
 // @Summary		"创建照片"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PhotoNewReq		true	"请求参数"
+// @Param		data	body		types.NewPhotoReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PhotoBackVO}	"返回信息"
 // @Router		/admin-api/v1/photo/add_photo [POST]
 func (s *PhotoController) AddPhoto(c *gin.Context) {
@@ -33,7 +33,7 @@ func (s *PhotoController) AddPhoto(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PhotoNewReq
+	var req *types.NewPhotoReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -82,7 +82,7 @@ func (s *PhotoController) DeletesPhoto(c *gin.Context) {
 // @Summary		"分页获取照片列表"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PhotoQuery		true	"请求参数"
+// @Param		data	body		types.QueryPhotoReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.PageResp}	"返回信息"
 // @Router		/admin-api/v1/photo/find_photo_list [POST]
 func (s *PhotoController) FindPhotoList(c *gin.Context) {
@@ -91,7 +91,7 @@ func (s *PhotoController) FindPhotoList(c *gin.Context) {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PhotoQuery
+	var req *types.QueryPhotoReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
@@ -108,26 +108,26 @@ func (s *PhotoController) FindPhotoList(c *gin.Context) {
 }
 
 // @Tags		Photo
-// @Summary		"预删除照片"
+// @Summary		"更新照片"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PreDeletePhotoReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
-// @Router		/admin-api/v1/photo/pre_delete_photo [PUT]
-func (s *PhotoController) PreDeletePhoto(c *gin.Context) {
+// @Param		data	body		types.NewPhotoReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.PhotoBackVO}	"返回信息"
+// @Router		/admin-api/v1/photo/update_photo [PUT]
+func (s *PhotoController) UpdatePhoto(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PreDeletePhotoReq
+	var req *types.NewPhotoReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
 
-	data, err := logic.NewPhotoLogic(s.svcCtx).PreDeletePhoto(reqCtx, req)
+	data, err := logic.NewPhotoLogic(s.svcCtx).UpdatePhoto(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
@@ -137,26 +137,26 @@ func (s *PhotoController) PreDeletePhoto(c *gin.Context) {
 }
 
 // @Tags		Photo
-// @Summary		"更新照片"
+// @Summary		"更新照片删除状态"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.PhotoNewReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.PhotoBackVO}	"返回信息"
-// @Router		/admin-api/v1/photo/update_photo [PUT]
-func (s *PhotoController) UpdatePhoto(c *gin.Context) {
+// @Param		data	body		types.UpdatePhotoDeleteReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
+// @Router		/admin-api/v1/photo/update_photo_delete [PUT]
+func (s *PhotoController) UpdatePhotoDelete(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.PhotoNewReq
+	var req *types.UpdatePhotoDeleteReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
 
-	data, err := logic.NewPhotoLogic(s.svcCtx).UpdatePhoto(reqCtx, req)
+	data, err := logic.NewPhotoLogic(s.svcCtx).UpdatePhotoDelete(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return

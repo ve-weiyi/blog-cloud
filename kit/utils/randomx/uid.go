@@ -1,4 +1,4 @@
-package random
+package randomx
 
 import (
 	"math/rand"
@@ -22,4 +22,18 @@ func GenerateQQNumber() string {
 		digits[i] = byte(rand.Intn(10)) + '0'
 	}
 	return string(digits)
+}
+
+// 生成指定长度的数字小写字母UID
+func GenerateUID(length int) string {
+	// 字符集：0-9 a-z
+	const chars = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+	// 生成随机字符串
+	result := make([]byte, length)
+	for i := 0; i < length; i++ {
+		result[i] = chars[rand.Intn(36)]
+	}
+
+	return string(result)
 }

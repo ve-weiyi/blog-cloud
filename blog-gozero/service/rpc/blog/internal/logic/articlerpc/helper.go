@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 )
@@ -27,7 +27,7 @@ func NewArticleHelperLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Art
 	}
 }
 
-func convertCategoryIn(in *articlerpc.CategoryNewReq) (out *model.TCategory) {
+func convertCategoryIn(in *articlerpc.AddCategoryReq) (out *model.TCategory) {
 	out = &model.TCategory{
 		Id:           in.Id,
 		CategoryName: in.CategoryName,
@@ -36,7 +36,7 @@ func convertCategoryIn(in *articlerpc.CategoryNewReq) (out *model.TCategory) {
 	return out
 }
 
-func convertTagIn(in *articlerpc.TagNewReq) (out *model.TTag) {
+func convertTagIn(in *articlerpc.AddTagReq) (out *model.TTag) {
 	out = &model.TTag{
 		Id:      in.Id,
 		TagName: in.TagName,
@@ -217,16 +217,16 @@ func (l *ArticleHelperLogic) convertArticleQuery(in *articlerpc.FindArticleListR
 		opts = append(opts, query.WithCondition("id in (?)", in.Ids))
 	}
 
-	if in.Status != 0 {
-		opts = append(opts, query.WithCondition("status = ?", in.Status))
-	}
-
-	if in.IsTop != 0 {
+	if in.IsTop >= 0 {
 		opts = append(opts, query.WithCondition("is_top = ?", in.IsTop))
 	}
 
-	if in.IsDelete != 0 {
+	if in.IsDelete >= 0 {
 		opts = append(opts, query.WithCondition("is_delete = ?", in.IsDelete))
+	}
+
+	if in.Status != 0 {
+		opts = append(opts, query.WithCondition("status = ?", in.Status))
 	}
 
 	if in.ArticleType != 0 {
@@ -266,14 +266,14 @@ func (l *ArticleHelperLogic) convertArticlePreviewOut(record *model.TArticle) (o
 		Id:           record.Id,
 		ArticleCover: record.ArticleCover,
 		ArticleTitle: record.ArticleTitle,
-		CreatedAt:    record.CreatedAt.Unix(),
+		CreatedAt:    record.CreatedAt.UnixMilli(),
 		LikeCount:    record.LikeCount,
 		ViewCount:    l.GetArticleViewCount(record.Id),
 	}
 	return out
 }
 
-func (l *ArticleHelperLogic) convertArticleDetailsResp(records []*model.TArticle) (out []*articlerpc.ArticleDetailsResp, err error) {
+func (l *ArticleHelperLogic) convertArticle(records []*model.TArticle) (out []*articlerpc.ArticleDetails, err error) {
 	acm, err := l.findCategoryGroupArticle(records)
 	if err != nil {
 		return nil, err
@@ -284,9 +284,9 @@ func (l *ArticleHelperLogic) convertArticleDetailsResp(records []*model.TArticle
 		return nil, err
 	}
 
-	var list []*articlerpc.ArticleDetailsResp
+	var list []*articlerpc.ArticleDetails
 	for _, entity := range records {
-		m := &articlerpc.ArticleDetailsResp{
+		m := &articlerpc.ArticleDetails{
 			Id:             entity.Id,
 			UserId:         entity.UserId,
 			CategoryId:     entity.CategoryId,
@@ -298,8 +298,8 @@ func (l *ArticleHelperLogic) convertArticleDetailsResp(records []*model.TArticle
 			IsTop:          entity.IsTop,
 			IsDelete:       entity.IsDelete,
 			Status:         entity.Status,
-			CreatedAt:      entity.CreatedAt.Unix(),
-			UpdatedAt:      entity.UpdatedAt.Unix(),
+			CreatedAt:      entity.CreatedAt.UnixMilli(),
+			UpdatedAt:      entity.UpdatedAt.UnixMilli(),
 			LikeCount:      entity.LikeCount,
 			ViewCount:      l.GetArticleViewCount(entity.Id),
 			Category:       nil,
@@ -330,21 +330,21 @@ func (l *ArticleHelperLogic) convertArticleDetailsResp(records []*model.TArticle
 	return list, nil
 }
 
-func (l *ArticleHelperLogic) convertCategoryDetailsResp(records []*model.TCategory) (out []*articlerpc.CategoryDetailsResp, err error) {
+func (l *ArticleHelperLogic) convertCategory(records []*model.TCategory) (out []*articlerpc.CategoryDetails, err error) {
 	acm, err := l.findArticleCountGroupCategory(records)
 	if err != nil {
 		return nil, err
 	}
 
-	var list []*articlerpc.CategoryDetailsResp
+	var list []*articlerpc.CategoryDetails
 	for _, entity := range records {
 
-		m := &articlerpc.CategoryDetailsResp{
+		m := &articlerpc.CategoryDetails{
 			Id:           entity.Id,
 			CategoryName: entity.CategoryName,
 			ArticleCount: 0,
-			CreatedAt:    entity.CreatedAt.Unix(),
-			UpdatedAt:    entity.UpdatedAt.Unix(),
+			CreatedAt:    entity.CreatedAt.UnixMilli(),
+			UpdatedAt:    entity.UpdatedAt.UnixMilli(),
 		}
 
 		if v, ok := acm[entity.Id]; ok {
@@ -357,20 +357,20 @@ func (l *ArticleHelperLogic) convertCategoryDetailsResp(records []*model.TCatego
 	return list, nil
 }
 
-func (l *ArticleHelperLogic) convertTagDetailsResp(records []*model.TTag) (out []*articlerpc.TagDetailsResp, err error) {
+func (l *ArticleHelperLogic) convertTag(records []*model.TTag) (out []*articlerpc.TagDetails, err error) {
 	acm, err := l.findArticleCountGroupTag(records)
 	if err != nil {
 		return nil, err
 	}
 
-	var list []*articlerpc.TagDetailsResp
+	var list []*articlerpc.TagDetails
 	for _, entity := range records {
-		m := &articlerpc.TagDetailsResp{
+		m := &articlerpc.TagDetails{
 			Id:           entity.Id,
 			TagName:      entity.TagName,
 			ArticleCount: 0,
-			CreatedAt:    entity.CreatedAt.Unix(),
-			UpdatedAt:    entity.UpdatedAt.Unix(),
+			CreatedAt:    entity.CreatedAt.UnixMilli(),
+			UpdatedAt:    entity.UpdatedAt.UnixMilli(),
 		}
 
 		if v, ok := acm[entity.Id]; ok {

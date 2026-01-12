@@ -3,11 +3,11 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/query"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FindTagListLogic struct {
@@ -45,7 +45,7 @@ func (l *FindTagListLogic) FindTagList(in *articlerpc.FindTagListReq) (*articler
 		return nil, err
 	}
 
-	list, err := helper.convertTagDetailsResp(records)
+	list, err := helper.convertTag(records)
 	if err != nil {
 		return nil, err
 	}

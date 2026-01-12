@@ -3,96 +3,96 @@ syntax = "v1"
 import "base.api"
 
 type (
-    // 新建文章
-    ArticleNewReq {
-        Id int64 `json:"id,optional"`                        // id
-        ArticleCover string `json:"article_cover"`           // 文章缩略图
-        ArticleTitle string `json:"article_title"`           // 标题
-        ArticleContent string `json:"article_content"`       // 内容
-        ArticleType int64 `json:"article_type"`              // 文章类型 1原创 2转载 3翻译
-        OriginalUrl string `json:"original_url"`             // 原文链接
-        IsTop int64 `json:"is_top"`                          // 是否置顶
-        Status int64 `json:"status"`                         // 状态值 1 公开 2 私密 3 草稿 4 已删除
-        CategoryName string `json:"category_name,optional"`  // 文章分类名
-        TagNameList []string `json:"tag_name_list,optional"` // 文章标签列表
-    }
-        // 后台文章
-    ArticleBackVO {
-        Id int64 `json:"id,optional"`                  // 文章ID
-        ArticleCover string `json:"article_cover"`     // 文章缩略图
-        ArticleTitle string `json:"article_title"`     // 标题
-        ArticleContent string `json:"article_content"` // 内容
-        ArticleType int64 `json:"article_type"`        // 文章类型 1原创 2转载 3翻译
-        OriginalUrl string `json:"original_url"`       // 原文链接
-        IsTop int64 `json:"is_top"`                    // 是否置顶
-        IsDelete int64 `json:"is_delete"`              // 是否删除
-        Status int64 `json:"status"`                   // 状态值 1 公开 2 私密 3 草稿 4 已删除
-        CreatedAt int64 `json:"created_at"`            // 发表时间
-        UpdatedAt int64 `json:"updated_at"`            // 更新时间
-        CategoryName string `json:"category_name"`     // 文章分类名
-        TagNameList []string `json:"tag_name_list"`    // 文章标签列表
-        LikeCount int64 `json:"like_count"`            // 点赞量
-        ViewsCount int64 `json:"views_count"`          // 浏览量
-    }
-    ArticleRecycleReq {
-        Id int64 `json:"id,optional"`     // 文章ID
-        IsDelete int64 `json:"is_delete"` // 是否删除
-    }
-    ArticleTopReq {
-        Id int64 `json:"id,optional"` // 文章ID
-        IsTop int64 `json:"is_top"`   // 是否置顶
-    }
-        // 分页查询
-    ArticleQuery {
-        PageQuery
-        ArticleTitle string `json:"article_title,optional"` // 标题
-        ArticleType int64 `json:"article_type,optional"`    // 文章类型 1原创 2转载 3翻译
-        IsTop int64 `json:"is_top,optional"`                // 是否置顶
-        IsDelete int64 `json:"is_delete,optional"`          // 是否删除
-        Status int64 `json:"status,optional"`               // 状态值 1 公开 2 私密 3 草稿 4 已删除
-        CategoryName string `json:"category_name,optional"` // 文章分类名
-        TagName string `json:"tag_name,optional"`
-    }
+	// 后台文章
+	ArticleBackVO {
+		Id             int64    `json:"id,optional"` // 文章ID
+		ArticleCover   string   `json:"article_cover"` // 文章缩略图
+		ArticleTitle   string   `json:"article_title"` // 标题
+		ArticleContent string   `json:"article_content"` // 内容
+		ArticleType    int64    `json:"article_type"` // 文章类型 1原创 2转载 3翻译
+		OriginalUrl    string   `json:"original_url"` // 原文链接
+		IsTop          int64    `json:"is_top"` // 是否置顶
+		IsDelete       int64    `json:"is_delete"` // 是否删除
+		Status         int64    `json:"status"` // 状态值 1 公开 2 私密 3 草稿 4 已删除
+		CreatedAt      int64    `json:"created_at"` // 发表时间
+		UpdatedAt      int64    `json:"updated_at"` // 更新时间
+		CategoryName   string   `json:"category_name"` // 文章分类名
+		TagNameList    []string `json:"tag_name_list"` // 文章标签列表
+		LikeCount      int64    `json:"like_count"` // 点赞量
+		ViewsCount     int64    `json:"views_count"` // 浏览量
+	}
+	// 新建文章
+	NewArticleReq {
+		Id             int64    `json:"id,optional"` // id
+		ArticleCover   string   `json:"article_cover"` // 文章缩略图
+		ArticleTitle   string   `json:"article_title"` // 标题
+		ArticleContent string   `json:"article_content"` // 内容
+		ArticleType    int64    `json:"article_type"` // 文章类型 1原创 2转载 3翻译
+		OriginalUrl    string   `json:"original_url"` // 原文链接
+		IsTop          int64    `json:"is_top"` // 是否置顶
+		Status         int64    `json:"status"` // 状态值 1 公开 2 私密 3 草稿 4 已删除
+		CategoryName   string   `json:"category_name,optional"` // 文章分类名
+		TagNameList    []string `json:"tag_name_list,optional"` // 文章标签列表
+	}
+	UpdateArticleDeleteReq {
+		Id       int64 `json:"id,optional"` // 文章ID
+		IsDelete int64 `json:"is_delete"` // 是否删除
+	}
+	UpdateArticleTopReq {
+		Id    int64 `json:"id,optional"` // 文章ID
+		IsTop int64 `json:"is_top"` // 是否置顶
+	}
+	// 分页查询
+	QueryArticleReq {
+		PageQuery
+		ArticleTitle string `json:"article_title,optional"` // 标题
+		ArticleType  int64  `json:"article_type,optional"` // 文章类型 1原创 2转载 3翻译
+		IsTop        int64  `json:"is_top,optional"` // 是否置顶
+		IsDelete     int64  `json:"is_delete,optional"` // 是否删除
+		Status       int64  `json:"status,optional"` // 状态值 1 公开 2 私密 3 草稿 4 已删除
+		CategoryName string `json:"category_name,optional"` // 文章分类名
+		TagName      string `json:"tag_name,optional"`
+	}
 )
 
-@server(
-    tags: "文章管理"
-    prefix:     /admin-api/v1
-    group: article
-    authType: apiKey
-    middleware: AdminToken,Permission,OperationLog
+@server (
+	tags:       "文章管理"
+	prefix:     /admin-api/v1
+	group:      article
+	authType:   apiKey
+	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
-    @doc "查询文章列表"
-    @handler FindArticleList
-    post /article/find_article_list (ArticleQuery) returns (PageResp)
+	@doc "查询文章列表"
+	@handler FindArticleList
+	post /article/find_article_list (QueryArticleReq) returns (PageResp)
 
-    @doc "导出文章列表"
-    @handler ExportArticleList
-    post /article/export_article_list (IdsReq) returns (EmptyResp)
+	@doc "导出文章列表"
+	@handler ExportArticleList
+	post /article/export_article_list (IdsReq) returns (EmptyResp)
 
-    @doc "查询文章"
-    @handler GetArticle
-    post /article/get_article (IdReq) returns (ArticleBackVO)
+	@doc "查询文章"
+	@handler GetArticle
+	post /article/get_article (IdReq) returns (ArticleBackVO)
 
-    @doc "添加文章"
-    @handler AddArticle
-    post /article/add_article (ArticleNewReq) returns (ArticleBackVO)
+	@doc "添加文章"
+	@handler AddArticle
+	post /article/add_article (NewArticleReq) returns (ArticleBackVO)
 
-    @doc "保存文章"
-    @handler UpdateArticle
-    post /article/update_article (ArticleNewReq) returns (ArticleBackVO)
+	@doc "保存文章"
+	@handler UpdateArticle
+	put /article/update_article (NewArticleReq) returns (ArticleBackVO)
 
-    @doc "删除文章"
-    @handler DeleteArticle
-    post /article/delete_article (IdReq) returns (BatchResp)
+	@doc "删除文章"
+	@handler DeleteArticle
+	delete /article/delete_article (IdReq) returns (BatchResp)
 
-    @doc "回收文章"
-    @handler RecycleArticle
-    post /article/recycle_article (ArticleRecycleReq) returns (EmptyResp)
+	@doc "更新文章删除状态"
+	@handler UpdateArticleDelete
+	put /article/update_article_delete (UpdateArticleDeleteReq) returns (EmptyResp)
 
-    @doc "置顶文章"
-    @handler TopArticle
-    post /article/top_article (ArticleTopReq) returns (EmptyResp)
+	@doc "更新文章置顶状态"
+	@handler UpdateArticleTop
+	put /article/update_article_top (UpdateArticleTopReq) returns (EmptyResp)
 }
 

@@ -24,20 +24,15 @@ func NewFindAllMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindA
 }
 
 // 查找所有菜单
-func (l *FindAllMenuLogic) FindAllMenu(in *permissionrpc.FindAllMenuReq) (*permissionrpc.FindMenuListResp, error) {
+func (l *FindAllMenuLogic) FindAllMenu(in *permissionrpc.FindAllMenuReq) (*permissionrpc.FindAllMenuResp, error) {
 	result, err := l.svcCtx.TMenuModel.FindALL(l.ctx, "")
 	if err != nil {
 		return nil, err
 	}
 
-	out := &permissionrpc.FindMenuListResp{}
+	out := &permissionrpc.FindAllMenuResp{}
 	for _, item := range result {
 		out.List = append(out.List, convertMenuOut(item))
-	}
-	out.Pagination = &permissionrpc.PageResp{
-		Page:     1,
-		PageSize: int64(len(result)),
-		Total:    int64(len(result)),
 	}
 
 	return out, nil

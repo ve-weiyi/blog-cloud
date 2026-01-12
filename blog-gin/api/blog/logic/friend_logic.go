@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewFriendLogic(svcCtx *svctx.ServiceContext) *FriendLogic {
 }
 
 // 分页获取友链列表
-func (s *FriendLogic) FindFriendList(reqCtx *request.Context, in *types.FriendQueryReq) (out *types.PageResp, err error) {
+func (s *FriendLogic) FindFriendList(reqCtx *request.Context, in *types.QueryFriendReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

@@ -34,19 +34,62 @@ type Category struct {
 	UpdatedAt    int64  `json:"updated_at"` // 更新时间
 }
 
+type ClientInfoVO struct {
+	TerminalId string `json:"terminal_id"` // 终端ID
+	Os         string `json:"os"`          // 操作系统
+	Browser    string `json:"browser"`     // 浏览器
+	IpAddress  string `json:"ip_address"`  // IP地址
+	IpSource   string `json:"ip_source"`   // IP归属地
+}
+
+type Comment struct {
+	Id               int64           `json:"id"`                 // 评论id
+	UserId           string          `json:"user_id"`            // 用户ID
+	TerminalId       string          `json:"terminal_id"`        // 终端id
+	TopicId          int64           `json:"topic_id"`           // 主题id
+	ParentId         int64           `json:"parent_id"`          // 父评论id
+	ReplyId          int64           `json:"reply_id"`           // 会话id
+	ReplyUserId      string          `json:"reply_user_id"`      // 被回复用户id
+	CommentContent   string          `json:"comment_content"`    // 评论内容
+	Status           int64           `json:"status"`             // 状态
+	Type             int64           `json:"type"`               // 评论类型 1.文章 2.友链 3.说说
+	CreatedAt        int64           `json:"created_at"`         // 评论时间
+	LikeCount        int64           `json:"like_count"`         // 点赞数
+	ClientInfo       *ClientInfoVO   `json:"client_info"`        // 客户端信息
+	UserInfo         *UserInfoVO     `json:"user_info"`          // 用户信息
+	ReplyUserInfo    *UserInfoVO     `json:"reply_user_info"`    // 回复用户信息
+	ReplyCount       int64           `json:"reply_count"`        // 回复量
+	CommentReplyList []*CommentReply `json:"comment_reply_list"` // 评论回复列表
+}
+
+type CommentRecent struct {
+	Id             int64         `json:"id"`              // 评论id
+	UserId         string        `json:"user_id"`         // 用户ID
+	TerminalId     string        `json:"terminal_id"`     // 终端id
+	ReplyUserId    string        `json:"reply_user_id"`   // 被回复用户id
+	CommentContent string        `json:"comment_content"` // 评论内容
+	Status         int64         `json:"status"`          // 状态
+	ClientInfo     *ClientInfoVO `json:"client_info"`     // 客户端信息
+	UserInfo       *UserInfoVO   `json:"user_info"`       // 用户信息
+	ReplyUserInfo  *UserInfoVO   `json:"reply_user_info"` // 回复用户信息
+}
+
 type CommentReply struct {
-	Id             int64       `json:"id"`              // 评论id
-	TopicId        int64       `json:"topic_id"`        // 主题id
-	ParentId       int64       `json:"parent_id"`       // 父评论id
-	ReplyMsgId     int64       `json:"reply_msg_id"`    // 会话id
-	UserId         string      `json:"user_id"`         // 用户id
-	ReplyUserId    string      `json:"reply_user_id"`   // 被回复用户id
-	CommentContent string      `json:"comment_content"` // 评论内容
-	Type           int64       `json:"type"`            // 评论类型 1.文章 2.友链 3.说说
-	CreatedAt      int64       `json:"created_at"`      // 评论时间
-	LikeCount      int64       `json:"like_count"`      // 点赞数
-	User           *UserInfoVO `json:"user"`            // 用户信息
-	ReplyUser      *UserInfoVO `json:"reply_user"`      // 被回复评论用户
+	Id             int64         `json:"id"`              // 评论id
+	UserId         string        `json:"user_id"`         // 用户ID
+	TerminalId     string        `json:"terminal_id"`     // 终端id
+	TopicId        int64         `json:"topic_id"`        // 主题id
+	ParentId       int64         `json:"parent_id"`       // 父评论id
+	ReplyId        int64         `json:"reply_id"`        // 会话id
+	ReplyUserId    string        `json:"reply_user_id"`   // 被回复用户id
+	CommentContent string        `json:"comment_content"` // 评论内容
+	Status         int64         `json:"status"`          // 状态
+	Type           int64         `json:"type"`            // 评论类型 1.文章 2.友链 3.说说
+	CreatedAt      int64         `json:"created_at"`      // 评论时间
+	LikeCount      int64         `json:"like_count"`      // 点赞数
+	ClientInfo     *ClientInfoVO `json:"client_info"`     // 客户端信息
+	UserInfo       *UserInfoVO   `json:"user_info"`       // 用户信息
+	ReplyUserInfo  *UserInfoVO   `json:"reply_user_info"` // 回复用户信息
 }
 
 type EmptyReq struct {
@@ -73,12 +116,6 @@ type IdsReq struct {
 	Ids []int64 `json:"ids"`
 }
 
-type MessageEvent struct {
-	Type      int64  `json:"type"`      // 消息类型
-	Data      string `json:"data"`      // 消息内容
-	Timestamp int64  `json:"timestamp"` // 消息时间戳
-}
-
 type Page struct {
 	Id         int64  `json:"id"`                   // 页面id
 	PageName   string `json:"page_name"`            // 页面名
@@ -90,9 +127,9 @@ type Page struct {
 }
 
 type PageQuery struct {
-	Page     int64    `json:"page,optional"`
-	PageSize int64    `json:"page_size,optional"`
-	Sorts    []string `json:"sorts,optional"`
+	Page     int64    `json:"page,optional"`             // 当前页码
+	PageSize int64    `json:"page_size,optional"`        // 每页数量
+	Sorts    []string `json:"sorts,optional,default=[]"` // 排序
 }
 
 type PageResp struct {
@@ -127,11 +164,15 @@ type PingResp struct {
 	RpcStatus   []string `json:"rpc_status"`
 }
 
-type Response struct {
-	Code    int         `json:"code"`
-	Msg     string      `json:"msg"`
-	Data    interface{} `json:"data"`
-	TraceId string      `json:"trace_id"`
+type Remark struct {
+	Id             int64       `json:"id,optional"`     // 主键id
+	UserId         string      `json:"user_id"`         // 用户id
+	TerminalId     string      `json:"terminal_id"`     // 终端id
+	MessageContent string      `json:"message_content"` // 留言内容
+	Status         int64       `json:"status"`          // 状态
+	CreatedAt      int64       `json:"created_at"`      // 发布时间
+	UpdatedAt      int64       `json:"updated_at"`      // 更新时间
+	UserInfo       *UserInfoVO `json:"user_info"`       // 用户信息
 }
 
 type RewardQrCode struct {
@@ -162,13 +203,12 @@ type ThirdPlatformInfo struct {
 }
 
 type Token struct {
-	UserId           string `json:"user_id"`            // 用户id
-	TokenType        string `json:"token_type"`         // token类型,Bearer
-	AccessToken      string `json:"access_token"`       // 访问token,过期时间较短。2h
-	ExpiresIn        int64  `json:"expires_in"`         // 访问token过期时间
-	RefreshToken     string `json:"refresh_token"`      // 刷新token,过期时间较长。30d
-	RefreshExpiresIn int64  `json:"refresh_expires_in"` // 刷新token过期时间
-	Scope            string `json:"scope"`              // 作用域
+	TokenType        string `json:"token_type"`         // Token 类型（如 "Bearer"）
+	AccessToken      string `json:"access_token"`       // 访问令牌：用于接口访问，有效期短
+	ExpiresIn        int64  `json:"expires_in"`         // AccessToken 有效期（秒），如 3600（1小时）
+	RefreshToken     string `json:"refresh_token"`      // 刷新令牌：仅用于刷新 AccessToken，有效期长
+	RefreshExpiresIn int64  `json:"refresh_expires_in"` // RefreshToken 有效期（秒），如 604800（7天）
+	RefreshExpiresAt int64  `json:"refresh_expires_at"` // RefreshToken 过期时间戳（秒）
 }
 
 type UserInfoExt struct {
@@ -178,10 +218,10 @@ type UserInfoExt struct {
 }
 
 type UserInfoVO struct {
-	UserId   string `json:"user_id"`
-	Username string `json:"username"`
-	Avatar   string `json:"avatar"`
-	Nickname string `json:"nickname"`
+	UserId   string `json:"user_id"`  // 用户ID
+	Username string `json:"username"` // 用户名
+	Avatar   string `json:"avatar"`   // 用户头像
+	Nickname string `json:"nickname"` // 用户昵称
 	UserInfoExt
 }
 
@@ -207,10 +247,11 @@ type WebsiteConfigVO struct {
 
 type WebsiteFeature struct {
 	IsChatRoom      int64 `json:"is_chat_room"`      // 是否开启聊天室
+	IsAiAssistant   int64 `json:"is_ai_assistant"`   // 是否开启AI助手
+	IsMusicPlayer   int64 `json:"is_music_player"`   // 是否开启音乐播放器
 	IsCommentReview int64 `json:"is_comment_review"` // 是否开启评论审核
 	IsEmailNotice   int64 `json:"is_email_notice"`   // 是否开启邮件通知
 	IsMessageReview int64 `json:"is_message_review"` // 是否开启留言审核
-	IsMusicPlayer   int64 `json:"is_music_player"`   // 是否开启音乐播放器
 	IsReward        int64 `json:"is_reward"`         // 是否开启打赏
 }
 

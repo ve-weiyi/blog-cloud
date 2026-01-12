@@ -5,8 +5,9 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizcode"
 	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/cryptox"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,20 +27,20 @@ func NewAdminResetUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 管理员重置用户密码
-func (l *AdminResetUserPasswordLogic) AdminResetUserPassword(in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.EmptyResp, error) {
+func (l *AdminResetUserPasswordLogic) AdminResetUserPassword(in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.AdminResetUserPasswordResp, error) {
 	// 验证用户是否存在
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, err.Error())
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, err.Error())
 	}
 
 	// 更新密码
-	user.Password = crypto.BcryptHash(in.Password)
+	user.Password = cryptox.BcryptHash(in.Password)
 
 	_, err = l.svcCtx.TUserModel.Save(l.ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.AdminResetUserPasswordResp{}, nil
 }

@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizcode"
 	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oauth"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
+	"github.com/ve-weiyi/ve-blog-golang/kit/kit/oauth"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/cryptox"
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/ipx"
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/randomx"
 
@@ -73,7 +73,7 @@ func (l *ThirdLoginLogic) ThirdLogin(in *accountrpc.ThirdLoginReq) (*accountrpc.
 	// 用户已经注册,查询用户信息
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, userOauth.UserId)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserNotExist, err.Error())
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, err.Error())
 	}
 
 	return onLogin(l.ctx, l.svcCtx, user, userOauth.Platform)
@@ -86,9 +86,9 @@ func (l *ThirdLoginLogic) oauthRegister(tx *gorm.DB, platform string, info *oaut
 
 	// 用户账号
 	user := &model.TUser{
-		UserId:       uuid.NewString(),
+		UserId:       randomx.GenerateUID(32),
 		Username:     generateUID(l.ctx, l.svcCtx, tx),
-		Password:     crypto.BcryptHash(info.EnName),
+		Password:     cryptox.BcryptHash(info.EnName),
 		Nickname:     info.NickName,
 		Avatar:       info.Avatar,
 		Email:        info.Email,
@@ -126,7 +126,7 @@ func (l *ThirdLoginLogic) oauthRegister(tx *gorm.DB, platform string, info *oaut
 
 // 生成唯一UID
 func generateUID(ctx context.Context, svcCtx *svc.ServiceContext, tx *gorm.DB) string {
-	uid := random.GenerateQQNumber()
+	uid := randomx.GenerateQQNumber()
 	user, _ := svcCtx.TUserModel.FindOneByUsername(ctx, uid)
 	if user != nil {
 		return generateUID(ctx, svcCtx, tx) // 如果用户已存在，继续生成新的UID

@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewTalkLogic(svcCtx *svctx.ServiceContext) *TalkLogic {
 }
 
 // 分页获取说说列表
-func (s *TalkLogic) FindTalkList(reqCtx *request.Context, in *types.TalkQueryReq) (out *types.PageResp, err error) {
+func (s *TalkLogic) FindTalkList(reqCtx *request.Context, in *types.QueryTalkReq) (out *types.PageResp, err error) {
 	// todo
 
 	return

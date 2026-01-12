@@ -28,28 +28,30 @@ func NewGetArticleDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetArticleDetailsLogic) GetArticleDetails(req *types.IdReq) (resp *types.ArticleDetails, err error) {
-	in := &articlerpc.IdReq{
-		Id: req.Id,
-	}
-
 	// 添加文章访问量
-	_, err = l.svcCtx.ArticleRpc.VisitArticle(l.ctx, in)
+	_, err = l.svcCtx.ArticleRpc.AddArticleVisits(l.ctx, &articlerpc.AddArticleVisitsReq{
+		Id: req.Id,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	out, err := l.svcCtx.ArticleRpc.GetArticle(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.GetArticle(l.ctx, &articlerpc.GetArticleReq{
+		Id: req.Id,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	// 查询关联文章
-	relation, err := l.svcCtx.ArticleRpc.GetArticleRelation(l.ctx, in)
+	relation, err := l.svcCtx.ArticleRpc.GetArticleRelation(l.ctx, &articlerpc.GetArticleRelationReq{
+		Id: req.Id,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	infos, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, []string{out.UserId})
+	infos, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, []string{out.Article.UserId})
 	if err != nil {
 		return nil, err
 	}
@@ -63,23 +65,23 @@ func (l *GetArticleDetailsLogic) GetArticleDetails(req *types.IdReq) (resp *type
 		NewestArticleList:    nil,
 	}
 
-	resp.Author = infos[out.UserId]
+	resp.Author = infos[out.Article.UserId]
 
-	resp.ArticleHome = *ConvertArticleHomeTypes(out)
+	resp.ArticleHome = *convertArticleHomeTypes(out.Article)
 
-	resp.LastArticle = ConvertArticlePreviewTypes(relation.Last)
+	resp.LastArticle = convertArticlePreviewTypes(relation.Last)
 
-	resp.NextArticle = ConvertArticlePreviewTypes(relation.Next)
+	resp.NextArticle = convertArticlePreviewTypes(relation.Next)
 
 	for _, v := range relation.Recommend {
-		resp.RecommendArticleList = append(resp.RecommendArticleList, ConvertArticlePreviewTypes(v))
+		resp.RecommendArticleList = append(resp.RecommendArticleList, convertArticlePreviewTypes(v))
 	}
 
 	for _, v := range relation.Newest {
-		resp.NewestArticleList = append(resp.NewestArticleList, ConvertArticlePreviewTypes(v))
+		resp.NewestArticleList = append(resp.NewestArticleList, convertArticlePreviewTypes(v))
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.VisitLogNewReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "文章详情",
 	})
 	if err != nil {

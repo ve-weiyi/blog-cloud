@@ -3,20 +3,21 @@ package accountrpclogic
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/global/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizcode"
 	"github.com/ve-weiyi/ve-blog-golang/kit/infra/biz/bizerr"
-	"github.com/ve-weiyi/ve-blog-golang/kit/utils/crypto"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/cryptox"
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/ipx"
 	"github.com/ve-weiyi/ve-blog-golang/kit/utils/patternx"
+	"github.com/ve-weiyi/ve-blog-golang/kit/utils/randomx"
 )
 
 type RegisterLogic struct {
@@ -34,22 +35,28 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 // 注册
-func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.LoginResp, error) {
+func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.RegisterResp, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Username) {
-		return nil, bizerr.NewBizError(bizerr.CodeInvalidParam, "邮箱格式不正确")
+	if !patternx.IsValidEmail(in.Email) {
+		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 
 	// 获取用户
 	exist, err := l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Username)
-	if exist != nil {
-		return nil, bizerr.NewBizError(bizerr.CodeUserAlreadyExist, "用户已存在")
+	if err == nil && exist != nil {
+		return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "用户名已被注册")
+	}
+
+	// 获取用户
+	exist, err = l.svcCtx.TUserModel.FindOne(l.ctx, "email = ?", in.Email)
+	if err == nil && exist != nil {
+		return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "邮箱已被注册")
 	}
 
 	// 验证code是否正确
-	key := rediskey.GetCaptchaKey(constant.CodeTypeRegister, in.Username)
+	key := rediskey.GetCaptchaKey(constant.CodeTypeRegister, in.Email)
 	if !l.svcCtx.CaptchaHolder.VerifyCaptcha(key, in.VerifyCode) {
-		return nil, bizerr.NewBizError(bizerr.CodeCaptchaVerify, "验证码错误")
+		return nil, bizerr.NewBizError(bizcode.CodeCaptchaVerify, "验证码错误")
 	}
 
 	var ua *model.TUser
@@ -66,12 +73,14 @@ func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.LoginR
 		return nil, err
 	}
 
-	resp := &accountrpc.LoginResp{
-		UserId:   user.UserId,
-		Username: user.Username,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
-		Info:     user.Info,
+	// 查找用户角色
+	rList, err := getUserRoles(l.ctx, l.svcCtx, user.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &accountrpc.RegisterResp{
+		User: convertUserInfoOut(user, rList),
 	}
 
 	return resp, nil
@@ -83,9 +92,9 @@ func (l *RegisterLogic) register(tx *gorm.DB, in *accountrpc.RegisterReq) (out *
 
 	// 邮箱注册
 	user := &model.TUser{
-		UserId:       uuid.NewString(),
+		UserId:       randomx.GenerateUID(32),
 		Username:     in.Username,
-		Password:     crypto.BcryptHash(in.Password),
+		Password:     cryptox.BcryptHash(in.Password),
 		Nickname:     in.Email,
 		Avatar:       "https://mms1.baidu.com/it/u=2815887849,1501151317&fm=253&app=138&f=JPEG",
 		Email:        in.Email,

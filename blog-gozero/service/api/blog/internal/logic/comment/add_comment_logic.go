@@ -25,21 +25,20 @@ func NewAddCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCom
 	}
 }
 
-func (l *AddCommentLogic) AddComment(req *types.CommentNewReq) (resp *types.Comment, err error) {
-	in := &messagerpc.CommentNewReq{
+func (l *AddCommentLogic) AddComment(req *types.NewCommentReq) (resp *types.EmptyResp, err error) {
+	in := &messagerpc.AddCommentReq{
 		ParentId:       req.ParentId,
 		TopicId:        req.TopicId,
-		ReplyMsgId:     req.ReplyMsgId,
+		ReplyId:        req.ReplyId,
 		ReplyUserId:    req.ReplyUserId,
 		CommentContent: req.CommentContent,
 		Type:           req.Type,
 		Status:         req.Status,
 	}
-	out, err := l.svcCtx.MessageRpc.AddComment(l.ctx, in)
+	_, err = l.svcCtx.MessageRpc.AddComment(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertCommentTypes(out, nil)
 	return resp, nil
 }

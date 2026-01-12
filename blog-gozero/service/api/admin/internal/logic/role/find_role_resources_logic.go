@@ -26,7 +26,7 @@ func NewFindRoleResourcesLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *FindRoleResourcesLogic) FindRoleResources(req *types.IdReq) (resp *types.RoleResourcesResp, err error) {
-	in := &permissionrpc.IdReq{
+	in := &permissionrpc.FindRoleResourcesReq{
 		Id: req.Id,
 	}
 	out, err := l.svcCtx.PermissionRpc.FindRoleResources(l.ctx, in)

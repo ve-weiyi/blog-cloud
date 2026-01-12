@@ -3,6 +3,7 @@ package permissionrpclogic
 import (
 	"context"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/permissionrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -24,7 +25,7 @@ func NewAddRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRoleLo
 }
 
 // 创建角色
-func (l *AddRoleLogic) AddRole(in *permissionrpc.RoleNewReq) (*permissionrpc.RoleDetailsResp, error) {
+func (l *AddRoleLogic) AddRole(in *permissionrpc.AddRoleReq) (*permissionrpc.AddRoleResp, error) {
 	entity := convertRoleIn(in)
 
 	_, err := l.svcCtx.TRoleModel.Insert(l.ctx, entity)
@@ -32,5 +33,37 @@ func (l *AddRoleLogic) AddRole(in *permissionrpc.RoleNewReq) (*permissionrpc.Rol
 		return nil, err
 	}
 
-	return convertRoleOut(entity), nil
+	return &permissionrpc.AddRoleResp{
+		Role: convertRoleOut(entity),
+	}, nil
+}
+
+func convertRoleIn(in *permissionrpc.AddRoleReq) (out *model.TRole) {
+	out = &model.TRole{
+		Id:          in.Id,
+		ParentId:    in.ParentId,
+		RoleKey:     in.RoleKey,
+		RoleLabel:   in.RoleLabel,
+		RoleComment: in.RoleComment,
+		Status:      in.Status,
+		IsDefault:   in.IsDefault,
+	}
+
+	return out
+}
+
+func convertRoleOut(in *model.TRole) (out *permissionrpc.Role) {
+	out = &permissionrpc.Role{
+		Id:          in.Id,
+		ParentId:    in.ParentId,
+		RoleKey:     in.RoleKey,
+		RoleLabel:   in.RoleLabel,
+		RoleComment: in.RoleComment,
+		Status:      in.Status,
+		IsDefault:   in.IsDefault,
+		CreatedAt:   in.CreatedAt.UnixMilli(),
+		UpdatedAt:   in.UpdatedAt.UnixMilli(),
+	}
+
+	return out
 }

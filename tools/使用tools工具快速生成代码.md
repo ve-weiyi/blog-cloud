@@ -2,6 +2,34 @@
 
 ve-blog-golang 项目的代码生成工具集，用于从 API 定义文件自动生成后端、前端和数据库模型代码，提高开发效率。
 
+## 目录结构
+
+```
+tools/
+├── cmd/                    # 命令行工具实现
+│   ├── api/               # API 代码生成命令
+│   │   └── gin/          # Gin 框架生成
+│   ├── model/             # Model 代码生成命令
+│   │   └── mysql/        # MySQL 模型生成
+│   └── web/               # Web 代码生成命令
+│       └── ts/           # TypeScript 生成
+├── parserx/               # 解析器
+│   ├── apiparser/         # API 文件解析器
+│   ├── dbparser/          # 数据库解析器
+│   └── swagparser/        # Swagger 解析器
+├── template/              # 代码模板
+│   ├── api/              # API 模板
+│   │   ├── gin/         # Gin 框架模板
+│   │   └── go-zero/     # Go-zero 框架模板
+│   ├── model/            # Model 模板
+│   └── web/              # Web 前端模板
+│       └── ts/          # TypeScript 模板
+├── testdata/              # 测试数据
+├── Makefile               # 构建脚本
+├── main.go                # 入口文件
+└── go.mod                 # 依赖管理
+```
+
 ## 功能概述
 
 | 功能         | 说明                                  | 生成内容                       |
@@ -9,6 +37,37 @@ ve-blog-golang 项目的代码生成工具集，用于从 API 定义文件自动
 | API 代码生成   | 从 `.api` 或 `swagger.json` 生成 Gin 代码 | types/logic/handler/router |
 | Model 代码生成 | 从数据库或 SQL 文件生成 GORM 模型              | 数据库模型文件                    |
 | Web 代码生成   | 从 `.api` 或 `swagger.json` 生成 TS 代码  | API 接口调用代码和类型定义            |
+
+
+## 命令结构
+
+```
+tools
+├── api                    # API 代码生成
+│   └── gin               # Gin 框架
+│       ├── api           # 从 .api 文件生成
+│       └── swagger       # 从 swagger.json 生成
+├── model                  # Model 代码生成
+│   └── mysql             # MySQL 数据库
+│       ├── ddl           # 从 SQL 文件生成
+│       └── dsn           # 从数据库连接生成
+└── web                    # Web 代码生成
+    └── ts                # TypeScript
+        ├── api           # 从 .api 文件生成
+        └── swagger       # 从 swagger.json 生成
+```
+
+## 命令参数说明
+
+| 参数   | 说明       | 示例                                                  |
+|------|----------|-----------------------------------------------------|
+| `-f` | 输入文件路径   | `../blog-gozero/service/api/blog/proto/blog.api`    |
+| `-t` | 模板目录路径   | `./template/api/gin`                                |
+| `-o` | 输出目录路径   | `../blog-gin/api/blog`                              |
+| `-n` | 输出文件名格式  | `%s.go` / `%v_model.go`                             |
+| `-c` | 上下文包路径   | `github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx` |
+| `-s` | SQL 文件路径 | `../blog-veweiyi-init.sql`                          |
+| `-u` | 数据库连接字符串 | `root:password@(host:3306)/database`                |
 
 ## 快速开始
 
@@ -90,73 +149,15 @@ go run main.go model mysql dsn \
 go run main.go web ts api \
   -f ../blog-gozero/service/api/blog/proto/blog.api \
   -t ./template/web/ts \
-  -o ./runtime/web/ts/blog \
+  -o ./runtime/web/ts/blog/api \
   -n '%v.ts'
 
 # 从 swagger.json 文件生成
 go run main.go web ts swagger \
   -f ../blog-gozero/service/api/blog/docs/blog.json \
   -t ./template/web/ts \
-  -o ./runtime/web/ts/blog \
+  -o ./runtime/web/ts/blog/api \
   -n '%v.ts'
-```
-
-## 命令结构
-
-```
-tools
-├── api                    # API 代码生成
-│   └── gin               # Gin 框架
-│       ├── api           # 从 .api 文件生成
-│       └── swagger       # 从 swagger.json 生成
-├── model                  # Model 代码生成
-│   └── mysql             # MySQL 数据库
-│       ├── ddl           # 从 SQL 文件生成
-│       └── dsn           # 从数据库连接生成
-└── web                    # Web 代码生成
-    └── ts                # TypeScript
-        ├── api           # 从 .api 文件生成
-        └── swagger       # 从 swagger.json 生成
-```
-
-## 命令参数说明
-
-| 参数   | 说明       | 示例                                                  |
-|------|----------|-----------------------------------------------------|
-| `-f` | 输入文件路径   | `../blog-gozero/service/api/blog/proto/blog.api`    |
-| `-t` | 模板目录路径   | `./template/api/gin`                                |
-| `-o` | 输出目录路径   | `../blog-gin/api/blog`                              |
-| `-n` | 输出文件名格式  | `%s.go` / `%v_model.go`                             |
-| `-c` | 上下文包路径   | `github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx` |
-| `-s` | SQL 文件路径 | `../blog-veweiyi-init.sql`                          |
-| `-u` | 数据库连接字符串 | `root:password@(host:3306)/database`                |
-
-## 目录结构
-
-```
-tools/
-├── cmd/                    # 命令行工具实现
-│   ├── api/               # API 代码生成命令
-│   │   └── gin/          # Gin 框架生成
-│   ├── model/             # Model 代码生成命令
-│   │   └── mysql/        # MySQL 模型生成
-│   └── web/               # Web 代码生成命令
-│       └── ts/           # TypeScript 生成
-├── parserx/               # 解析器
-│   ├── apiparser/         # API 文件解析器
-│   ├── dbparser/          # 数据库解析器
-│   └── swagparser/        # Swagger 解析器
-├── template/              # 代码模板
-│   ├── api/              # API 模板
-│   │   ├── gin/         # Gin 框架模板
-│   │   └── go-zero/     # Go-zero 框架模板
-│   ├── model/            # Model 模板
-│   └── web/              # Web 前端模板
-│       └── ts/          # TypeScript 模板
-├── testdata/              # 测试数据
-├── Makefile               # 构建脚本
-├── main.go                # 入口文件
-└── go.mod                 # 依赖管理
 ```
 
 ## 工作原理

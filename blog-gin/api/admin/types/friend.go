@@ -10,7 +10,7 @@ type FriendBackVO struct {
 	UpdatedAt   int64  `json:"updated_at"`   // 更新时间
 }
 
-type FriendNewReq struct {
+type NewFriendReq struct {
 	Id          int64  `json:"id,optional"`  // id
 	LinkName    string `json:"link_name"`    // 链接名
 	LinkAvatar  string `json:"link_avatar"`  // 链接头像
@@ -18,7 +18,7 @@ type FriendNewReq struct {
 	LinkIntro   string `json:"link_intro"`   // 链接介绍
 }
 
-type FriendQuery struct {
+type QueryFriendReq struct {
 	PageQuery
 	LinkName string `json:"link_name,optional"` // 链接名
 }

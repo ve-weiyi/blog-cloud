@@ -5,8 +5,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/logic"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/response"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/response"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -21,26 +21,26 @@ func NewAuthController(svcCtx *svctx.ServiceContext) *AuthController {
 }
 
 // @Tags		Auth
-// @Summary		"获取游客身份信息"
+// @Summary		"获取客户端信息"
 // @accept		application/json
 // @Produce		application/json
-// @Param		data	body		types.EmptyReq		true	"请求参数"
-// @Success		200		{object}	response.Body{data=types.GetTouristInfoResp}	"返回信息"
-// @Router		/blog-api/v1/get_tourist_info [GET]
-func (s *AuthController) GetTouristInfo(c *gin.Context) {
+// @Param		data	body		types.GetClientInfoReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.GetClientInfoResp}	"返回信息"
+// @Router		/blog-api/v1/get_client_info [GET]
+func (s *AuthController) GetClientInfo(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
-	var req *types.EmptyReq
+	var req *types.GetClientInfoReq
 	err = request.ShouldBind(c, &req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
 	}
 
-	data, err := logic.NewAuthLogic(s.svcCtx).GetTouristInfo(reqCtx, req)
+	data, err := logic.NewAuthLogic(s.svcCtx).GetClientInfo(reqCtx, req)
 	if err != nil {
 		response.ResponseError(c, err)
 		return
@@ -374,7 +374,7 @@ func (s *AuthController) Logoff(c *gin.Context) {
 // @Produce		application/json
 // @Param		data	body		types.EmptyReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.EmptyResp}	"返回信息"
-// @Router		/blog-api/v1/logout [POST]
+// @Router		/blog-api/v1/logout [GET]
 func (s *AuthController) Logout(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

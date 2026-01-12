@@ -34,7 +34,7 @@ func (l *FindLoginLogListLogic) FindLoginLogList(in *syslogrpc.FindLoginLogListR
 		return nil, err
 	}
 
-	var list []*syslogrpc.LoginLogDetailsResp
+	var list []*syslogrpc.LoginLog
 	for _, v := range records {
 		list = append(list, convertLoginLogOut(v))
 	}
@@ -64,22 +64,19 @@ func convertLoginLogQuery(in *syslogrpc.FindLoginLogListReq) (page int, size int
 	return query.NewQueryBuilder(opts...).Build()
 }
 
-func convertLoginLogOut(in *model.TLoginLog) (out *syslogrpc.LoginLogDetailsResp) {
-	out = &syslogrpc.LoginLogDetailsResp{
-		Id:        in.Id,
-		UserId:    in.UserId,
-		LoginType: in.LoginType,
-		AppName:   in.AppName,
-		Os:        in.Os,
-		Browser:   in.Browser,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		LoginAt:   in.LoginAt.Unix(),
-		LogoutAt:  0,
+func convertLoginLogOut(in *model.TLoginLog) (out *syslogrpc.LoginLog) {
+	out = &syslogrpc.LoginLog{
+		Id:         in.Id,
+		UserId:     in.UserId,
+		TerminalId: in.TerminalId,
+		LoginType:  in.LoginType,
+		AppName:    in.AppName,
+		LoginAt:    in.LoginAt.UnixMilli(),
+		LogoutAt:   0,
 	}
 
 	if in.LogoutAt.Valid {
-		out.LogoutAt = in.LogoutAt.Time.Unix()
+		out.LogoutAt = in.LogoutAt.Time.UnixMilli()
 	}
 
 	return out

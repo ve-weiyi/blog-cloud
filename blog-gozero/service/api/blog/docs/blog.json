@@ -6,7 +6,10 @@
     "application/json"
   ],
   "schemes": [
-    "https"
+    "http",
+    "https",
+    "ws",
+    "wss"
   ],
   "swagger": "2.0",
   "info": {
@@ -22,9 +25,8 @@
       "name": "MIT",
       "url": "https://github.com/ve-weiyi/ve-blog-golang/main/LICENSE"
     },
-    "version": "v3.5.1"
+    "version": "v4.0.0"
   },
-  "host": "blog.veweiyi.com",
   "basePath": "/",
   "paths": {
     "/blog-api/v1/album/find_album_list": {
@@ -54,7 +56,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AlbumQueryReq"
+              "$ref": "#/definitions/QueryAlbumReq"
             }
           }
         ],
@@ -110,7 +112,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/PhotoQueryReq"
+              "$ref": "#/definitions/QueryPhotoReq"
             }
           }
         ],
@@ -195,7 +197,7 @@
         }
       }
     },
-    "/blog-api/v1/article/get_article_archives": {
+    "/blog-api/v1/article/find_article_archives": {
       "post": {
         "security": [
           {
@@ -222,7 +224,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ArticleArchivesQueryReq"
+              "$ref": "#/definitions/QueryArticleArchivesReq"
             }
           }
         ],
@@ -251,7 +253,7 @@
         }
       }
     },
-    "/blog-api/v1/article/get_article_classify_category": {
+    "/blog-api/v1/article/find_article_classify_category": {
       "post": {
         "security": [
           {
@@ -278,7 +280,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ArticleClassifyQueryReq"
+              "$ref": "#/definitions/QueryArticleClassifyReq"
             }
           }
         ],
@@ -307,7 +309,7 @@
         }
       }
     },
-    "/blog-api/v1/article/get_article_classify_tag": {
+    "/blog-api/v1/article/find_article_classify_tag": {
       "post": {
         "security": [
           {
@@ -334,10 +336,112 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ArticleClassifyQueryReq"
+              "$ref": "#/definitions/QueryArticleClassifyReq"
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/PageResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog-api/v1/article/find_article_home_list": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文章"
+        ],
+        "summary": "获取首页文章列表",
+        "operationId": "articleFindArticleHomeList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QueryArticleHomeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/PageResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog-api/v1/article/find_article_recommend": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文章"
+        ],
+        "summary": "获取首页推荐文章列表",
+        "operationId": "articleFindArticleRecommend",
         "responses": {
           "200": {
             "description": "",
@@ -419,110 +523,8 @@
         }
       }
     },
-    "/blog-api/v1/article/get_article_home_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文章"
-        ],
-        "summary": "获取首页文章列表",
-        "operationId": "articleFindArticleHomeList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ArticleHomeQueryReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/blog-api/v1/article/get_article_recommend": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文章"
-        ],
-        "summary": "获取首页推荐文章列表",
-        "operationId": "articleFindArticleRecommend",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/blog-api/v1/article/like_article": {
-      "post": {
+      "put": {
         "security": [
           {
             "apiKey": []
@@ -542,16 +544,6 @@
         ],
         "summary": "点赞文章",
         "operationId": "articleLikeArticle",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/IdReq"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -690,7 +682,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CategoryQueryReq"
+              "$ref": "#/definitions/QueryCategoryReq"
             }
           }
         ],
@@ -746,7 +738,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CommentNewReq"
+              "$ref": "#/definitions/NewCommentReq"
             }
           }
         ],
@@ -762,7 +754,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/Comment"
+                  "$ref": "#/definitions/EmptyResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -802,7 +794,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CommentQueryReq"
+              "$ref": "#/definitions/QueryCommentReq"
             }
           }
         ],
@@ -858,7 +850,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CommentQueryReq"
+              "$ref": "#/definitions/QueryCommentReq"
             }
           }
         ],
@@ -914,7 +906,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CommentQueryReq"
+              "$ref": "#/definitions/QueryCommentReq"
             }
           }
         ],
@@ -944,7 +936,7 @@
       }
     },
     "/blog-api/v1/comment/like_comment": {
-      "post": {
+      "put": {
         "security": [
           {
             "apiKey": []
@@ -964,16 +956,6 @@
         ],
         "summary": "点赞评论",
         "operationId": "commentLikeComment",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/IdReq"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -1000,7 +982,7 @@
       }
     },
     "/blog-api/v1/comment/update_comment": {
-      "post": {
+      "put": {
         "security": [
           {
             "apiKey": []
@@ -1020,16 +1002,6 @@
         ],
         "summary": "更新评论",
         "operationId": "commentUpdateComment",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/UpdateCommentReq"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -1042,7 +1014,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/Comment"
+                  "$ref": "#/definitions/EmptyResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -1111,7 +1083,7 @@
         }
       }
     },
-    "/blog-api/v1/friend_link/find_friend_list": {
+    "/blog-api/v1/friend/find_friend_list": {
       "post": {
         "security": [
           {
@@ -1138,7 +1110,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/FriendQueryReq"
+              "$ref": "#/definitions/QueryFriendReq"
             }
           }
         ],
@@ -1223,6 +1195,44 @@
         }
       }
     },
+    "/blog-api/v1/get_client_info": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "登录认证"
+        ],
+        "summary": "获取客户端信息",
+        "operationId": "authGetClientInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/GetClientInfoResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/blog-api/v1/get_oauth_authorize_url": {
       "post": {
         "security": [
@@ -1267,44 +1277,6 @@
                 },
                 "data": {
                   "$ref": "#/definitions/GetOauthAuthorizeUrlResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/blog-api/v1/get_tourist_info": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "登录认证"
-        ],
-        "summary": "获取游客身份信息",
-        "operationId": "authGetTouristInfo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetTouristInfoResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -1390,7 +1362,7 @@
           "https"
         ],
         "tags": [
-          "认证"
+          "登录认证"
         ],
         "summary": "注销",
         "operationId": "authLogoff",
@@ -1420,14 +1392,11 @@
       }
     },
     "/blog-api/v1/logout": {
-      "post": {
+      "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "consumes": [
-          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -1436,7 +1405,7 @@
           "https"
         ],
         "tags": [
-          "认证"
+          "登录认证"
         ],
         "summary": "登出",
         "operationId": "authLogout",
@@ -1492,7 +1461,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/PageQueryReq"
+              "$ref": "#/definitions/QueryPageReq"
             }
           }
         ],
@@ -1695,7 +1664,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RemarkNewReq"
+              "$ref": "#/definitions/NewRemarkReq"
             }
           }
         ],
@@ -1711,7 +1680,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/Remark"
+                  "$ref": "#/definitions/EmptyResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -1751,7 +1720,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RemarkQueryReq"
+              "$ref": "#/definitions/QueryRemarkReq"
             }
           }
         ],
@@ -1975,7 +1944,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TagQueryReq"
+              "$ref": "#/definitions/QueryTagReq"
             }
           }
         ],
@@ -2031,7 +2000,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TalkQueryReq"
+              "$ref": "#/definitions/QueryTalkReq"
             }
           }
         ],
@@ -3008,61 +2977,6 @@
         }
       }
     },
-    "AlbumQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "ArticleArchivesQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "ArticleClassifyQueryReq": {
-      "type": "object",
-      "properties": {
-        "classify_name": {
-          "description": "分类名",
-          "type": "string"
-        },
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "ArticleDetails": {
       "type": "object",
       "required": [
@@ -3114,6 +3028,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -3125,12 +3040,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -3357,27 +3275,6 @@
         }
       }
     },
-    "ArticleHomeQueryReq": {
-      "type": "object",
-      "properties": {
-        "article_title": {
-          "description": "标题",
-          "type": "string"
-        },
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "ArticlePreview": {
       "type": "object",
       "required": [
@@ -3456,24 +3353,35 @@
         }
       }
     },
-    "CategoryQueryReq": {
+    "ClientInfoVO": {
       "type": "object",
+      "required": [
+        "terminal_id",
+        "os",
+        "browser",
+        "ip_address",
+        "ip_source"
+      ],
       "properties": {
-        "category_name": {
-          "description": "分类名",
+        "browser": {
+          "description": "浏览器",
           "type": "string"
         },
-        "page": {
-          "type": "integer"
+        "ip_address": {
+          "description": "IP地址",
+          "type": "string"
         },
-        "page_size": {
-          "type": "integer"
+        "ip_source": {
+          "description": "IP归属地",
+          "type": "string"
         },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "os": {
+          "description": "操作系统",
+          "type": "string"
+        },
+        "terminal_id": {
+          "description": "终端ID",
+          "type": "string"
         }
       }
     },
@@ -3481,21 +3389,58 @@
       "type": "object",
       "required": [
         "id",
+        "user_id",
+        "terminal_id",
         "topic_id",
         "parent_id",
-        "reply_msg_id",
-        "user_id",
+        "reply_id",
         "reply_user_id",
         "comment_content",
+        "status",
         "type",
         "created_at",
         "like_count",
-        "user",
-        "reply_user",
+        "client_info",
+        "user_info",
+        "reply_user_info",
         "reply_count",
         "comment_reply_list"
       ],
       "properties": {
+        "client_info": {
+          "description": "客户端信息",
+          "type": "object",
+          "required": [
+            "terminal_id",
+            "os",
+            "browser",
+            "ip_address",
+            "ip_source"
+          ],
+          "properties": {
+            "browser": {
+              "description": "浏览器",
+              "type": "string"
+            },
+            "ip_address": {
+              "description": "IP地址",
+              "type": "string"
+            },
+            "ip_source": {
+              "description": "IP归属地",
+              "type": "string"
+            },
+            "os": {
+              "description": "操作系统",
+              "type": "string"
+            },
+            "terminal_id": {
+              "description": "终端ID",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ClientInfoVO"
+        },
         "comment_content": {
           "description": "评论内容",
           "type": "string"
@@ -3527,61 +3472,16 @@
           "description": "回复量",
           "type": "integer"
         },
-        "reply_msg_id": {
+        "reply_id": {
           "description": "会话id",
           "type": "integer"
-        },
-        "reply_user": {
-          "description": "被回复评论用户",
-          "type": "object",
-          "required": [
-            "user_id",
-            "username",
-            "avatar",
-            "nickname"
-          ],
-          "properties": {
-            "avatar": {
-              "type": "string"
-            },
-            "gender": {
-              "description": "性别 0未知 1男 2女",
-              "type": "integer"
-            },
-            "intro": {
-              "description": "简介",
-              "type": "string"
-            },
-            "nickname": {
-              "type": "string"
-            },
-            "user_id": {
-              "type": "string"
-            },
-            "username": {
-              "type": "string"
-            },
-            "website": {
-              "description": "网站",
-              "type": "string"
-            }
-          },
-          "$ref": "#/definitions/UserInfoVO"
         },
         "reply_user_id": {
           "description": "被回复用户id",
           "type": "string"
         },
-        "topic_id": {
-          "description": "主题id",
-          "type": "integer"
-        },
-        "type": {
-          "description": "评论类型 1.文章 2.友链 3.说说",
-          "type": "integer"
-        },
-        "user": {
-          "description": "评论用户",
+        "reply_user_info": {
+          "description": "回复用户信息",
           "type": "object",
           "required": [
             "user_id",
@@ -3591,6 +3491,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -3602,12 +3503,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -3617,75 +3521,222 @@
           },
           "$ref": "#/definitions/UserInfoVO"
         },
-        "user_id": {
-          "description": "用户id",
+        "status": {
+          "description": "状态",
+          "type": "integer"
+        },
+        "terminal_id": {
+          "description": "终端id",
           "type": "string"
+        },
+        "topic_id": {
+          "description": "主题id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "评论类型 1.文章 2.友链 3.说说",
+          "type": "integer"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
+        },
+        "user_info": {
+          "description": "用户信息",
+          "type": "object",
+          "required": [
+            "user_id",
+            "username",
+            "avatar",
+            "nickname"
+          ],
+          "properties": {
+            "avatar": {
+              "description": "用户头像",
+              "type": "string"
+            },
+            "gender": {
+              "description": "性别 0未知 1男 2女",
+              "type": "integer"
+            },
+            "intro": {
+              "description": "简介",
+              "type": "string"
+            },
+            "nickname": {
+              "description": "用户昵称",
+              "type": "string"
+            },
+            "user_id": {
+              "description": "用户ID",
+              "type": "string"
+            },
+            "username": {
+              "description": "用户名",
+              "type": "string"
+            },
+            "website": {
+              "description": "网站",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/UserInfoVO"
         }
       }
     },
-    "CommentNewReq": {
+    "CommentRecent": {
       "type": "object",
       "required": [
+        "id",
+        "user_id",
+        "terminal_id",
+        "reply_user_id",
         "comment_content",
-        "type"
+        "status",
+        "client_info",
+        "user_info",
+        "reply_user_info"
       ],
       "properties": {
+        "client_info": {
+          "description": "客户端信息",
+          "type": "object",
+          "required": [
+            "terminal_id",
+            "os",
+            "browser",
+            "ip_address",
+            "ip_source"
+          ],
+          "properties": {
+            "browser": {
+              "description": "浏览器",
+              "type": "string"
+            },
+            "ip_address": {
+              "description": "IP地址",
+              "type": "string"
+            },
+            "ip_source": {
+              "description": "IP归属地",
+              "type": "string"
+            },
+            "os": {
+              "description": "操作系统",
+              "type": "string"
+            },
+            "terminal_id": {
+              "description": "终端ID",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ClientInfoVO"
+        },
         "comment_content": {
           "description": "评论内容",
           "type": "string"
         },
-        "parent_id": {
-          "description": "父评论id",
-          "type": "integer"
-        },
-        "reply_msg_id": {
-          "description": "会话id",
+        "id": {
+          "description": "评论id",
           "type": "integer"
         },
         "reply_user_id": {
-          "description": "回复用户id",
+          "description": "被回复用户id",
           "type": "string"
         },
+        "reply_user_info": {
+          "description": "回复用户信息",
+          "type": "object",
+          "required": [
+            "user_id",
+            "username",
+            "avatar",
+            "nickname"
+          ],
+          "properties": {
+            "avatar": {
+              "description": "用户头像",
+              "type": "string"
+            },
+            "gender": {
+              "description": "性别 0未知 1男 2女",
+              "type": "integer"
+            },
+            "intro": {
+              "description": "简介",
+              "type": "string"
+            },
+            "nickname": {
+              "description": "用户昵称",
+              "type": "string"
+            },
+            "user_id": {
+              "description": "用户ID",
+              "type": "string"
+            },
+            "username": {
+              "description": "用户名",
+              "type": "string"
+            },
+            "website": {
+              "description": "网站",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/UserInfoVO"
+        },
         "status": {
-          "description": "状态 0.正常 1.已编辑 2.已删除",
+          "description": "状态",
           "type": "integer"
         },
-        "topic_id": {
-          "description": "主题id",
-          "type": "integer"
+        "terminal_id": {
+          "description": "终端id",
+          "type": "string"
         },
-        "type": {
-          "description": "评论类型 1.文章 2.友链 3.说说",
-          "type": "integer"
-        }
-      }
-    },
-    "CommentQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
         },
-        "page_size": {
-          "type": "integer"
-        },
-        "parent_id": {
-          "description": "父评论id",
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "topic_id": {
-          "description": "主题id",
-          "type": "integer"
-        },
-        "type": {
-          "description": "评论类型 1.文章 2.友链 3.说说",
-          "type": "integer"
+        "user_info": {
+          "description": "用户信息",
+          "type": "object",
+          "required": [
+            "user_id",
+            "username",
+            "avatar",
+            "nickname"
+          ],
+          "properties": {
+            "avatar": {
+              "description": "用户头像",
+              "type": "string"
+            },
+            "gender": {
+              "description": "性别 0未知 1男 2女",
+              "type": "integer"
+            },
+            "intro": {
+              "description": "简介",
+              "type": "string"
+            },
+            "nickname": {
+              "description": "用户昵称",
+              "type": "string"
+            },
+            "user_id": {
+              "description": "用户ID",
+              "type": "string"
+            },
+            "username": {
+              "description": "用户名",
+              "type": "string"
+            },
+            "website": {
+              "description": "网站",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/UserInfoVO"
         }
       }
     },
@@ -3693,19 +3744,56 @@
       "type": "object",
       "required": [
         "id",
+        "user_id",
+        "terminal_id",
         "topic_id",
         "parent_id",
-        "reply_msg_id",
-        "user_id",
+        "reply_id",
         "reply_user_id",
         "comment_content",
+        "status",
         "type",
         "created_at",
         "like_count",
-        "user",
-        "reply_user"
+        "client_info",
+        "user_info",
+        "reply_user_info"
       ],
       "properties": {
+        "client_info": {
+          "description": "客户端信息",
+          "type": "object",
+          "required": [
+            "terminal_id",
+            "os",
+            "browser",
+            "ip_address",
+            "ip_source"
+          ],
+          "properties": {
+            "browser": {
+              "description": "浏览器",
+              "type": "string"
+            },
+            "ip_address": {
+              "description": "IP地址",
+              "type": "string"
+            },
+            "ip_source": {
+              "description": "IP归属地",
+              "type": "string"
+            },
+            "os": {
+              "description": "操作系统",
+              "type": "string"
+            },
+            "terminal_id": {
+              "description": "终端ID",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ClientInfoVO"
+        },
         "comment_content": {
           "description": "评论内容",
           "type": "string"
@@ -3726,12 +3814,16 @@
           "description": "父评论id",
           "type": "integer"
         },
-        "reply_msg_id": {
+        "reply_id": {
           "description": "会话id",
           "type": "integer"
         },
-        "reply_user": {
-          "description": "被回复评论用户",
+        "reply_user_id": {
+          "description": "被回复用户id",
+          "type": "string"
+        },
+        "reply_user_info": {
+          "description": "回复用户信息",
           "type": "object",
           "required": [
             "user_id",
@@ -3741,6 +3833,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -3752,12 +3845,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -3767,8 +3863,12 @@
           },
           "$ref": "#/definitions/UserInfoVO"
         },
-        "reply_user_id": {
-          "description": "被回复用户id",
+        "status": {
+          "description": "状态",
+          "type": "integer"
+        },
+        "terminal_id": {
+          "description": "终端id",
           "type": "string"
         },
         "topic_id": {
@@ -3779,7 +3879,11 @@
           "description": "评论类型 1.文章 2.友链 3.说说",
           "type": "integer"
         },
-        "user": {
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
+        },
+        "user_info": {
           "description": "用户信息",
           "type": "object",
           "required": [
@@ -3790,6 +3894,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -3801,12 +3906,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -3815,10 +3923,6 @@
             }
           },
           "$ref": "#/definitions/UserInfoVO"
-        },
-        "user_id": {
-          "description": "用户id",
-          "type": "string"
         }
       }
     },
@@ -3956,23 +4060,6 @@
         }
       }
     },
-    "FriendQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "GetAboutMeReq": {
       "type": "object"
     },
@@ -4094,13 +4181,18 @@
               "type": "object",
               "required": [
                 "is_chat_room",
+                "is_ai_assistant",
+                "is_music_player",
                 "is_comment_review",
                 "is_email_notice",
                 "is_message_review",
-                "is_music_player",
                 "is_reward"
               ],
               "properties": {
+                "is_ai_assistant": {
+                  "description": "是否开启AI助手",
+                  "type": "integer"
+                },
                 "is_chat_room": {
                   "description": "是否开启聊天室",
                   "type": "integer"
@@ -4216,6 +4308,46 @@
         }
       }
     },
+    "GetClientInfoReq": {
+      "type": "object"
+    },
+    "GetClientInfoResp": {
+      "type": "object",
+      "required": [
+        "id",
+        "terminal_id",
+        "os",
+        "browser",
+        "ip_address",
+        "ip_source"
+      ],
+      "properties": {
+        "browser": {
+          "description": "浏览器",
+          "type": "string"
+        },
+        "id": {
+          "description": "访客唯一ID",
+          "type": "integer"
+        },
+        "ip_address": {
+          "description": "IP地址",
+          "type": "string"
+        },
+        "ip_source": {
+          "description": "IP归属地",
+          "type": "string"
+        },
+        "os": {
+          "description": "操作系统",
+          "type": "string"
+        },
+        "terminal_id": {
+          "description": "终端ID",
+          "type": "string"
+        }
+      }
+    },
     "GetOauthAuthorizeUrlReq": {
       "type": "object",
       "required": [
@@ -4240,18 +4372,6 @@
       "properties": {
         "authorize_url": {
           "description": "授权地址",
-          "type": "string"
-        }
-      }
-    },
-    "GetTouristInfoResp": {
-      "type": "object",
-      "required": [
-        "tourist_id"
-      ],
-      "properties": {
-        "tourist_id": {
-          "description": "游客id",
           "type": "string"
         }
       }
@@ -4320,78 +4440,110 @@
     "LoginResp": {
       "type": "object",
       "required": [
+        "user_id",
+        "scope",
         "token"
       ],
       "properties": {
+        "scope": {
+          "description": "作用域",
+          "type": "string"
+        },
         "token": {
           "type": "object",
           "required": [
-            "user_id",
             "token_type",
             "access_token",
             "expires_in",
             "refresh_token",
             "refresh_expires_in",
-            "scope"
+            "refresh_expires_at"
           ],
           "properties": {
             "access_token": {
-              "description": "访问token,过期时间较短。2h",
+              "description": "访问令牌：用于接口访问，有效期短",
               "type": "string"
             },
             "expires_in": {
-              "description": "访问token过期时间",
+              "description": "AccessToken 有效期（秒），如 3600（1小时）",
+              "type": "integer"
+            },
+            "refresh_expires_at": {
+              "description": "RefreshToken 过期时间戳（秒）",
               "type": "integer"
             },
             "refresh_expires_in": {
-              "description": "刷新token过期时间",
+              "description": "RefreshToken 有效期（秒），如 604800（7天）",
               "type": "integer"
             },
             "refresh_token": {
-              "description": "刷新token,过期时间较长。30d",
-              "type": "string"
-            },
-            "scope": {
-              "description": "作用域",
+              "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
               "type": "string"
             },
             "token_type": {
-              "description": "token类型,Bearer",
-              "type": "string"
-            },
-            "user_id": {
-              "description": "用户id",
+              "description": "Token 类型（如 \"Bearer\"）",
               "type": "string"
             }
           },
           "$ref": "#/definitions/Token"
-        }
-      }
-    },
-    "MessageEvent": {
-      "type": "object",
-      "required": [
-        "type",
-        "data",
-        "timestamp"
-      ],
-      "properties": {
-        "data": {
-          "description": "消息内容",
+        },
+        "user_id": {
+          "description": "用户id",
           "type": "string"
-        },
-        "timestamp": {
-          "description": "消息时间戳",
-          "type": "integer"
-        },
-        "type": {
-          "description": "消息类型",
-          "type": "integer"
         }
       }
     },
     "MultiUploadFileReq": {
       "type": "object"
+    },
+    "NewCommentReq": {
+      "type": "object",
+      "required": [
+        "comment_content",
+        "type"
+      ],
+      "properties": {
+        "comment_content": {
+          "description": "评论内容",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "父评论id",
+          "type": "integer"
+        },
+        "reply_id": {
+          "description": "会话id",
+          "type": "integer"
+        },
+        "reply_user_id": {
+          "description": "回复用户id",
+          "type": "string"
+        },
+        "status": {
+          "description": "状态",
+          "type": "integer"
+        },
+        "topic_id": {
+          "description": "主题id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "评论类型 1.文章 2.友链 3.说说",
+          "type": "integer"
+        }
+      }
+    },
+    "NewRemarkReq": {
+      "type": "object",
+      "required": [
+        "message_content"
+      ],
+      "properties": {
+        "message_content": {
+          "description": "留言内容",
+          "type": "string"
+        }
+      }
     },
     "Page": {
       "type": "object",
@@ -4438,33 +4590,21 @@
       "type": "object",
       "properties": {
         "page": {
+          "description": "当前页码",
           "type": "integer"
         },
         "page_size": {
+          "description": "每页数量",
           "type": "integer"
         },
         "sorts": {
+          "description": "排序",
           "type": "array",
+          "default": "[]",
           "items": {
             "type": "string"
-          }
-        }
-      }
-    },
-    "PageQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          },
+          "example": "[]"
         }
       }
     },
@@ -4554,18 +4694,6 @@
         }
       }
     },
-    "PhotoQueryReq": {
-      "type": "object",
-      "required": [
-        "album_id"
-      ],
-      "properties": {
-        "album_id": {
-          "description": "相册ID",
-          "type": "integer"
-        }
-      }
-    },
     "PingReq": {
       "type": "object"
     },
@@ -4600,6 +4728,288 @@
         },
         "version": {
           "type": "string"
+        }
+      }
+    },
+    "QueryAlbumReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryArticleArchivesReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryArticleClassifyReq": {
+      "type": "object",
+      "properties": {
+        "classify_name": {
+          "description": "分类名",
+          "type": "string"
+        },
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryArticleHomeReq": {
+      "type": "object",
+      "properties": {
+        "article_title": {
+          "description": "标题",
+          "type": "string"
+        },
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryCategoryReq": {
+      "type": "object",
+      "properties": {
+        "category_name": {
+          "description": "分类名",
+          "type": "string"
+        },
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryCommentReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "父评论id",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        },
+        "topic_id": {
+          "description": "主题id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "评论类型 1.文章 2.友链 3.说说",
+          "type": "integer"
+        }
+      }
+    },
+    "QueryFriendReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryPageReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryPhotoReq": {
+      "type": "object",
+      "required": [
+        "album_id"
+      ],
+      "properties": {
+        "album_id": {
+          "description": "相册ID",
+          "type": "integer"
+        }
+      }
+    },
+    "QueryRemarkReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "QueryTagReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
+        },
+        "tag_name": {
+          "description": "标签名",
+          "type": "string"
+        }
+      }
+    },
+    "QueryTalkReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer"
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
         }
       }
     },
@@ -4639,12 +5049,10 @@
         "user_id",
         "terminal_id",
         "message_content",
-        "ip_address",
-        "ip_source",
-        "is_review",
+        "status",
         "created_at",
         "updated_at",
-        "user"
+        "user_info"
       ],
       "properties": {
         "created_at": {
@@ -4655,21 +5063,13 @@
           "description": "主键id",
           "type": "integer"
         },
-        "ip_address": {
-          "description": "用户ip",
-          "type": "string"
-        },
-        "ip_source": {
-          "description": "用户地址",
-          "type": "string"
-        },
-        "is_review": {
-          "description": "是否审核",
-          "type": "integer"
-        },
         "message_content": {
           "description": "留言内容",
           "type": "string"
+        },
+        "status": {
+          "description": "状态",
+          "type": "integer"
         },
         "terminal_id": {
           "description": "终端id",
@@ -4679,7 +5079,11 @@
           "description": "更新时间",
           "type": "integer"
         },
-        "user": {
+        "user_id": {
+          "description": "用户id",
+          "type": "string"
+        },
+        "user_info": {
           "description": "用户信息",
           "type": "object",
           "required": [
@@ -4690,6 +5094,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -4701,12 +5106,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -4715,39 +5123,6 @@
             }
           },
           "$ref": "#/definitions/UserInfoVO"
-        },
-        "user_id": {
-          "description": "用户id",
-          "type": "string"
-        }
-      }
-    },
-    "RemarkNewReq": {
-      "type": "object",
-      "required": [
-        "message_content"
-      ],
-      "properties": {
-        "message_content": {
-          "description": "留言内容",
-          "type": "string"
-        }
-      }
-    },
-    "RemarkQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -4772,27 +5147,6 @@
         },
         "verify_code": {
           "description": "验证码",
-          "type": "string"
-        }
-      }
-    },
-    "Response": {
-      "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "data",
-        "trace_id"
-      ],
-      "properties": {
-        "code": {
-          "type": "integer"
-        },
-        "data": {},
-        "msg": {
-          "type": "string"
-        },
-        "trace_id": {
           "type": "string"
         }
       }
@@ -4907,27 +5261,6 @@
         }
       }
     },
-    "TagQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "tag_name": {
-          "description": "标签名",
-          "type": "string"
-        }
-      }
-    },
     "Talk": {
       "type": "object",
       "required": [
@@ -4941,7 +5274,7 @@
         "comment_count",
         "created_at",
         "updated_at",
-        "user"
+        "user_info"
       ],
       "properties": {
         "comment_count": {
@@ -4983,7 +5316,11 @@
           "description": "更新时间",
           "type": "integer"
         },
-        "user": {
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
+        },
+        "user_info": {
           "description": "用户信息",
           "type": "object",
           "required": [
@@ -4994,6 +5331,7 @@
           ],
           "properties": {
             "avatar": {
+              "description": "用户头像",
               "type": "string"
             },
             "gender": {
@@ -5005,12 +5343,15 @@
               "type": "string"
             },
             "nickname": {
+              "description": "用户昵称",
               "type": "string"
             },
             "user_id": {
+              "description": "用户ID",
               "type": "string"
             },
             "username": {
+              "description": "用户名",
               "type": "string"
             },
             "website": {
@@ -5019,27 +5360,6 @@
             }
           },
           "$ref": "#/definitions/UserInfoVO"
-        },
-        "user_id": {
-          "description": "用户ID",
-          "type": "string"
-        }
-      }
-    },
-    "TalkQueryReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "sorts": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -5089,41 +5409,36 @@
     "Token": {
       "type": "object",
       "required": [
-        "user_id",
         "token_type",
         "access_token",
         "expires_in",
         "refresh_token",
         "refresh_expires_in",
-        "scope"
+        "refresh_expires_at"
       ],
       "properties": {
         "access_token": {
-          "description": "访问token,过期时间较短。2h",
+          "description": "访问令牌：用于接口访问，有效期短",
           "type": "string"
         },
         "expires_in": {
-          "description": "访问token过期时间",
+          "description": "AccessToken 有效期（秒），如 3600（1小时）",
+          "type": "integer"
+        },
+        "refresh_expires_at": {
+          "description": "RefreshToken 过期时间戳（秒）",
           "type": "integer"
         },
         "refresh_expires_in": {
-          "description": "刷新token过期时间",
+          "description": "RefreshToken 有效期（秒），如 604800（7天）",
           "type": "integer"
         },
         "refresh_token": {
-          "description": "刷新token,过期时间较长。30d",
-          "type": "string"
-        },
-        "scope": {
-          "description": "作用域",
+          "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
           "type": "string"
         },
         "token_type": {
-          "description": "token类型,Bearer",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "用户id",
+          "description": "Token 类型（如 \"Bearer\"）",
           "type": "string"
         }
       }
@@ -5148,7 +5463,7 @@
           "type": "string"
         },
         "status": {
-          "description": "状态 0.正常 1.已编辑 2.已删除",
+          "description": "状态",
           "type": "integer"
         }
       }
@@ -5362,6 +5677,7 @@
       ],
       "properties": {
         "avatar": {
+          "description": "用户头像",
           "type": "string"
         },
         "gender": {
@@ -5373,12 +5689,15 @@
           "type": "string"
         },
         "nickname": {
+          "description": "用户昵称",
           "type": "string"
         },
         "user_id": {
+          "description": "用户ID",
           "type": "string"
         },
         "username": {
+          "description": "用户名",
           "type": "string"
         },
         "website": {
@@ -5511,13 +5830,18 @@
           "type": "object",
           "required": [
             "is_chat_room",
+            "is_ai_assistant",
+            "is_music_player",
             "is_comment_review",
             "is_email_notice",
             "is_message_review",
-            "is_music_player",
             "is_reward"
           ],
           "properties": {
+            "is_ai_assistant": {
+              "description": "是否开启AI助手",
+              "type": "integer"
+            },
             "is_chat_room": {
               "description": "是否开启聊天室",
               "type": "integer"
@@ -5599,13 +5923,18 @@
       "type": "object",
       "required": [
         "is_chat_room",
+        "is_ai_assistant",
+        "is_music_player",
         "is_comment_review",
         "is_email_notice",
         "is_message_review",
-        "is_music_player",
         "is_reward"
       ],
       "properties": {
+        "is_ai_assistant": {
+          "description": "是否开启AI助手",
+          "type": "integer"
+        },
         "is_chat_room": {
           "description": "是否开启聊天室",
           "type": "integer"
@@ -5713,7 +6042,7 @@
       "in": "header"
     }
   },
-  "x-date": "2025-11-26 12:41:44",
+  "x-date": "2026-01-19 03:05:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

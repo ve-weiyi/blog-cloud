@@ -5,7 +5,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/articlerpc"
 )
 
-func ConvertArticleHomeTypes(in *articlerpc.ArticleDetailsResp) (out *types.ArticleHome) {
+func convertArticleHomeTypes(in *articlerpc.ArticleDetails) (out *types.ArticleHome) {
 	if in == nil {
 		return nil
 	}
@@ -35,7 +35,7 @@ func ConvertArticleHomeTypes(in *articlerpc.ArticleDetailsResp) (out *types.Arti
 	return
 }
 
-func ConvertArticlePreviewTypes(in *articlerpc.ArticlePreview) (out *types.ArticlePreview) {
+func convertArticlePreviewTypes(in *articlerpc.ArticlePreview) (out *types.ArticlePreview) {
 	if in == nil {
 		return nil
 	}

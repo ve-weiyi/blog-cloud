@@ -21,7 +21,7 @@ type ArticleBackVO struct {
 	ViewsCount     int64    `json:"views_count"`     // 浏览量
 }
 
-type ArticleNewReq struct {
+type NewArticleReq struct {
 	Id             int64    `json:"id,optional"`            // id
 	ArticleCover   string   `json:"article_cover"`          // 文章缩略图
 	ArticleTitle   string   `json:"article_title"`          // 标题
@@ -34,7 +34,7 @@ type ArticleNewReq struct {
 	TagNameList    []string `json:"tag_name_list,optional"` // 文章标签列表
 }
 
-type ArticleQuery struct {
+type QueryArticleReq struct {
 	PageQuery
 	ArticleTitle string `json:"article_title,optional"` // 标题
 	ArticleType  int64  `json:"article_type,optional"`  // 文章类型 1原创 2转载 3翻译
@@ -45,12 +45,12 @@ type ArticleQuery struct {
 	TagName      string `json:"tag_name,optional"`
 }
 
-type ArticleRecycleReq struct {
+type UpdateArticleDeleteReq struct {
 	Id       int64 `json:"id,optional"` // 文章ID
 	IsDelete int64 `json:"is_delete"`   // 是否删除
 }
 
-type ArticleTopReq struct {
+type UpdateArticleTopReq struct {
 	Id    int64 `json:"id,optional"` // 文章ID
 	IsTop int64 `json:"is_top"`      // 是否置顶
 }

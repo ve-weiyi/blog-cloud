@@ -52,8 +52,8 @@ type (
 		Params     string    `json:"params" gorm:"column:params"`           // 路由参数
 		KeepAlive  int64     `json:"keep_alive" gorm:"column:keep_alive"`   // 是否缓存
 		AlwaysShow int64     `json:"always_show" gorm:"column:always_show"` // 是否一直显示菜单
-		IsHidden   int64     `json:"is_hidden" gorm:"column:is_hidden"`     // 是否隐藏
-		IsDisable  int64     `json:"is_disable" gorm:"column:is_disable"`   // 是否禁用
+		Visible    int64     `json:"visible" gorm:"column:visible"`         // 菜单是否可见
+		Status     int64     `json:"status" gorm:"column:status"`           // 是否禁用
 		Extra      string    `json:"extra" gorm:"column:extra"`             // 菜单元数据
 		CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`   // 创建时间
 		UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`   // 更新时间

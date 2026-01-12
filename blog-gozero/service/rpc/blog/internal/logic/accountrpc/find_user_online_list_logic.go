@@ -69,7 +69,7 @@ func (l *FindUserOnlineListLogic) FindUserOnlineList(in *accountrpc.FindUserList
 		return nil, err
 	}
 
-	var list []*accountrpc.UserInfoResp
+	var list []*accountrpc.UserInfo
 	for _, item := range users {
 
 		var roles []*model.TRole

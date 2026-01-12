@@ -26,11 +26,11 @@ func NewDeletesTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeletesTagLogic) DeletesTag(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &articlerpc.IdsReq{
+	in := &articlerpc.DeletesTagReq{
 		Ids: req.Ids,
 	}
 
-	out, err := l.svcCtx.ArticleRpc.DeleteTag(l.ctx, in)
+	out, err := l.svcCtx.ArticleRpc.DeletesTag(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}

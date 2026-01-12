@@ -18,10 +18,9 @@ func NewTagRouter(svcCtx *svctx.ServiceContext) *TagRouter {
 
 func (s *TagRouter) Register(r *gin.RouterGroup) {
 	// Tag
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewTagController(s.svcCtx)
 		// 分页获取标签列表

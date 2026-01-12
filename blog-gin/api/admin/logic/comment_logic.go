@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -24,14 +24,14 @@ func (s *CommentLogic) DeletesComment(reqCtx *request.Context, in *types.IdsReq)
 }
 
 // 查询评论列表(后台)
-func (s *CommentLogic) FindCommentBackList(reqCtx *request.Context, in *types.CommentQuery) (out *types.PageResp, err error) {
+func (s *CommentLogic) FindCommentBackList(reqCtx *request.Context, in *types.QueryCommentReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
-// 更新评论审核状态
-func (s *CommentLogic) UpdateCommentReview(reqCtx *request.Context, in *types.CommentReviewReq) (out *types.BatchResp, err error) {
+// 更新评论状态
+func (s *CommentLogic) UpdateCommentStatus(reqCtx *request.Context, in *types.UpdateCommentStatusReq) (out *types.BatchResp, err error) {
 	// todo
 
 	return

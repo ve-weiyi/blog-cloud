@@ -24,11 +24,13 @@ func NewGetCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCom
 }
 
 // 查询评论
-func (l *GetCommentLogic) GetComment(in *messagerpc.IdReq) (*messagerpc.CommentDetailsResp, error) {
+func (l *GetCommentLogic) GetComment(in *messagerpc.GetCommentReq) (*messagerpc.GetCommentResp, error) {
 	entity, err := l.svcCtx.TCommentModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertCommentOut(entity), nil
+	return &messagerpc.GetCommentResp{
+		Comment: convertCommentOut(entity),
+	}, nil
 }

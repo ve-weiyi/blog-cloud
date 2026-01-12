@@ -1,5 +1,5 @@
 package types
 
-type PageQueryReq struct {
+type QueryPageReq struct {
 	PageQuery
 }

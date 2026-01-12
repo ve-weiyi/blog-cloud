@@ -3,42 +3,42 @@ syntax = "v1"
 import "base.api"
 
 type (
-	TagNewReq {
-		Id int64 `json:"id,optional"`
+	TagBackVO {
+		Id           int64  `json:"id,optional"` // 标签ID
+		TagName      string `json:"tag_name"` // 标签名
+		ArticleCount int64  `json:"article_count"` // 文章数量
+		CreatedAt    int64  `json:"created_at"` // 创建时间
+		UpdatedAt    int64  `json:"updated_at"` // 更新时间
+	}
+	NewTagReq {
+		Id      int64  `json:"id,optional"`
 		TagName string `json:"tag_name"` // 标签名
 	}
-	TagBackVO {
-		Id int64 `json:"id,optional"`             // 标签ID
-		TagName string `json:"tag_name"`          // 标签名
-		ArticleCount int64 `json:"article_count"` // 文章数量
-		CreatedAt int64 `json:"created_at"`       // 创建时间
-		UpdatedAt int64 `json:"updated_at"`       // 更新时间
-	}
-	TagQuery {
+	QueryTagReq {
 		PageQuery
 		TagName string `json:"tag_name,optional"` // 标签名
 	}
 )
 
-@server(
-	tags: "标签管理"
+@server (
+	tags:       "标签管理"
 	prefix:     /admin-api/v1
-	group: tag
-	authType: apiKey
+	group:      tag
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "分页获取标签列表"
 	@handler FindTagList
-	post /tag/find_tag_list (TagQuery) returns (PageResp)
+	post /tag/find_tag_list (QueryTagReq) returns (PageResp)
 
 	@doc "创建标签"
 	@handler AddTag
-	post /tag/add_tag (TagNewReq) returns (TagBackVO)
+	post /tag/add_tag (NewTagReq) returns (TagBackVO)
 
 	@doc "更新标签"
 	@handler UpdateTag
-	put /tag/update_tag (TagNewReq) returns (TagBackVO)
+	put /tag/update_tag (NewTagReq) returns (TagBackVO)
 
 	@doc "删除标签"
 	@handler DeletesTag

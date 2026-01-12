@@ -25,7 +25,7 @@ func NewFindCategoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQuery) (resp *types.PageResp, err error) {
+func (l *FindCategoryListLogic) FindCategoryList(req *types.QueryCategoryReq) (resp *types.PageResp, err error) {
 	in := &articlerpc.FindCategoryListReq{
 		Paginate: &articlerpc.PageReq{
 			Page:     req.Page,
@@ -42,13 +42,7 @@ func (l *FindCategoryListLogic) FindCategoryList(req *types.CategoryQuery) (resp
 
 	var list []*types.CategoryBackVO
 	for _, v := range out.List {
-		m := &types.CategoryBackVO{
-			Id:           v.Id,
-			CategoryName: v.CategoryName,
-			ArticleCount: v.ArticleCount,
-			CreatedAt:    v.CreatedAt,
-			UpdatedAt:    v.UpdatedAt,
-		}
+		m := convertCategoryDetailsTypes(v)
 		list = append(list, m)
 	}
 

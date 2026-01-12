@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -17,7 +17,7 @@ func NewPageLogic(svcCtx *svctx.ServiceContext) *PageLogic {
 }
 
 // 创建页面
-func (s *PageLogic) AddPage(reqCtx *request.Context, in *types.PageNewReq) (out *types.PageBackVO, err error) {
+func (s *PageLogic) AddPage(reqCtx *request.Context, in *types.NewPageReq) (out *types.PageBackVO, err error) {
 	// todo
 
 	return
@@ -31,14 +31,14 @@ func (s *PageLogic) DeletePage(reqCtx *request.Context, in *types.IdReq) (out *t
 }
 
 // 分页获取页面列表
-func (s *PageLogic) FindPageList(reqCtx *request.Context, in *types.PageQueryReq) (out *types.PageResp, err error) {
+func (s *PageLogic) FindPageList(reqCtx *request.Context, in *types.QueryPageReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
 // 更新页面
-func (s *PageLogic) UpdatePage(reqCtx *request.Context, in *types.PageNewReq) (out *types.PageBackVO, err error) {
+func (s *PageLogic) UpdatePage(reqCtx *request.Context, in *types.NewPageReq) (out *types.PageBackVO, err error) {
 	// todo
 
 	return

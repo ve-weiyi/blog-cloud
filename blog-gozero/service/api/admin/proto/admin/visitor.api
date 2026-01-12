@@ -1,0 +1,35 @@
+syntax = "v1"
+
+import "base.api"
+
+type (
+	VisitorBackVO {
+		Id         int64  `json:"id,optional"` // 主键id
+		TerminalId string `json:"terminal_id"` // 终端ID
+		Os         string `json:"os"` // 操作系统
+		Browser    string `json:"browser"` // 浏览器
+		IpAddress  string `json:"ip_address"` // IP地址
+		IpSource   string `json:"ip_source"` // IP归属地
+		CreatedAt  int64  `json:"created_at"` // 创建时间
+		UpdatedAt  int64  `json:"updated_at"` // 更新时间
+	}
+	QueryVisitorReq {
+		PageQuery
+		TerminalId string `json:"terminal_id,optional"` // 终端id
+		IpSource   string `json:"ip_source,optional"` // IP归属地
+	}
+)
+
+@server (
+	tags:       "游客管理"
+	prefix:     /admin-api/v1
+	group:      visitor
+	authType:   apiKey
+	middleware: AdminToken,Permission,OperationLog
+)
+service admin-api {
+	@doc "分页获取游客列表"
+	@handler FindVisitorList
+	post /visitor/find_visitor_list (QueryVisitorReq) returns (PageResp)
+}
+

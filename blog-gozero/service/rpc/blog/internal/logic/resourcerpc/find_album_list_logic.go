@@ -39,7 +39,7 @@ func (l *FindAlbumListLogic) FindAlbumList(in *resourcerpc.FindAlbumListReq) (*r
 		return nil, err
 	}
 
-	var list []*resourcerpc.AlbumDetailsResp
+	var list []*resourcerpc.Album
 	for _, v := range records {
 		list = append(list, convertAlbumOut(v, cm))
 	}
@@ -62,7 +62,7 @@ func convertAlbumQuery(in *resourcerpc.FindAlbumListReq) (page int, size int, so
 		opts = append(opts, query.WithSorts(in.Paginate.Sorts...))
 	}
 
-	if in.IsDelete != 0 {
+	if in.IsDelete >= 0 {
 		opts = append(opts, query.WithCondition("is_delete = ?", in.IsDelete))
 	}
 

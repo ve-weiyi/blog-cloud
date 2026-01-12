@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -16,15 +16,15 @@ func NewLoginLogLogic(svcCtx *svctx.ServiceContext) *LoginLogLogic {
 	}
 }
 
-// 删除登录日志
-func (s *LoginLogLogic) DeletesLoginLog(reqCtx *request.Context, in *types.IdsReq) (out *types.BatchResp, err error) {
+// 查询登录日志
+func (s *LoginLogLogic) FindLoginLogList(reqCtx *request.Context, in *types.QueryLoginLogReq) (out *types.PageResp, err error) {
 	// todo
 
 	return
 }
 
-// 查询登录日志
-func (s *LoginLogLogic) FindLoginLogList(reqCtx *request.Context, in *types.LoginLogQuery) (out *types.PageResp, err error) {
+// 删除登录日志
+func (s *LoginLogLogic) DeletesLoginLog(reqCtx *request.Context, in *types.IdsReq) (out *types.BatchResp, err error) {
 	// todo
 
 	return

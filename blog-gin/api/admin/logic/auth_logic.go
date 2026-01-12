@@ -2,7 +2,7 @@ package logic
 
 import (
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin/types"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/common/request"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/request"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 
@@ -16,8 +16,8 @@ func NewAuthLogic(svcCtx *svctx.ServiceContext) *AuthLogic {
 	}
 }
 
-// 获取游客身份信息
-func (s *AuthLogic) GetTouristInfo(reqCtx *request.Context, in *types.EmptyReq) (out *types.GetTouristInfoResp, err error) {
+// 获取客户端信息
+func (s *AuthLogic) GetClientInfo(reqCtx *request.Context, in *types.GetClientInfoReq) (out *types.GetClientInfoResp, err error) {
 	// todo
 
 	return
@@ -53,6 +53,13 @@ func (s *AuthLogic) Login(reqCtx *request.Context, in *types.LoginReq) (out *typ
 
 // 手机登录
 func (s *AuthLogic) PhoneLogin(reqCtx *request.Context, in *types.PhoneLoginReq) (out *types.LoginResp, err error) {
+	// todo
+
+	return
+}
+
+// 刷新token
+func (s *AuthLogic) RefreshToken(reqCtx *request.Context, in *types.RefreshTokenReq) (out *types.LoginResp, err error) {
 	// todo
 
 	return

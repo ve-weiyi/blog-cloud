@@ -18,10 +18,9 @@ func NewAlbumRouter(svcCtx *svctx.ServiceContext) *AlbumRouter {
 
 func (s *AlbumRouter) Register(r *gin.RouterGroup) {
 	// Album
-	// [TerminalToken]
+	// []
 	{
 		group := r.Group("/blog-api/v1")
-		group.Use(s.svcCtx.TerminalToken)
 
 		h := handler.NewAlbumController(s.svcCtx)
 		// 获取相册列表

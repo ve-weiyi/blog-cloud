@@ -32,9 +32,9 @@ func (s *PhotoRouter) Register(r *gin.RouterGroup) {
 		group.DELETE("/photo/deletes_photo", h.DeletesPhoto)
 		// 分页获取照片列表
 		group.POST("/photo/find_photo_list", h.FindPhotoList)
-		// 预删除照片
-		group.PUT("/photo/pre_delete_photo", h.PreDeletePhoto)
 		// 更新照片
 		group.PUT("/photo/update_photo", h.UpdatePhoto)
+		// 更新照片删除状态
+		group.PUT("/photo/update_photo_delete", h.UpdatePhotoDelete)
 	}
 }

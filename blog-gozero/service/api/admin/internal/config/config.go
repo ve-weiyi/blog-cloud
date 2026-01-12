@@ -4,7 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"github.com/ve-weiyi/ve-blog-golang/kit/infra/oss"
+	"github.com/ve-weiyi/ve-blog-golang/kit/kit/oss"
 )
 
 type Config struct {

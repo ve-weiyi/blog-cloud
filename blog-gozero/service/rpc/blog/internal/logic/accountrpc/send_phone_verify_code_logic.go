@@ -25,11 +25,11 @@ func NewSendPhoneVerifyCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 发送手机号验证码
-func (l *SendPhoneVerifyCodeLogic) SendPhoneVerifyCode(in *accountrpc.SendPhoneVerifyCodeReq) (*accountrpc.EmptyResp, error) {
+func (l *SendPhoneVerifyCodeLogic) SendPhoneVerifyCode(in *accountrpc.SendPhoneVerifyCodeReq) (*accountrpc.SendPhoneVerifyCodeResp, error) {
 	// todo
 	if in.Phone != "" {
 		return nil, fmt.Errorf("暂不支持手机号验证码")
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.SendPhoneVerifyCodeResp{}, nil
 }

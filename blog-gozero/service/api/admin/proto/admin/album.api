@@ -3,47 +3,47 @@ syntax = "v1"
 import "base.api"
 
 type (
-	AlbumNewReq {
-		Id int64 `json:"id,optional"`          // 主键
-		AlbumName string `json:"album_name"`   // 相册名
-		AlbumDesc string `json:"album_desc"`   // 相册描述
-		AlbumCover string `json:"album_cover"` // 相册封面
-		IsDelete int64 `json:"is_delete"`      // 是否删除
-		Status int64 `json:"status"`           // 状态值 1公开 2私密
-	}
 	AlbumBackVO {
-		Id int64 `json:"id,optional"`          // 主键
-		AlbumName string `json:"album_name"`   // 相册名
-		AlbumDesc string `json:"album_desc"`   // 相册描述
+		Id         int64  `json:"id,optional"` // 主键
+		AlbumName  string `json:"album_name"` // 相册名
+		AlbumDesc  string `json:"album_desc"` // 相册描述
 		AlbumCover string `json:"album_cover"` // 相册封面
-		IsDelete int64 `json:"is_delete"`      // 是否删除
-		Status int64 `json:"status"`           // 状态值 1公开 2私密
-		CreatedAt int64 `json:"created_at"`    // 创建时间
-		UpdatedAt int64 `json:"updated_at"`    // 更新时间
-		PhotoCount int64 `json:"photo_count"`  // 照片数量
+		IsDelete   int64  `json:"is_delete"` // 是否删除
+		Status     int64  `json:"status"` // 状态值 1公开 2私密
+		CreatedAt  int64  `json:"created_at"` // 创建时间
+		UpdatedAt  int64  `json:"updated_at"` // 更新时间
+		PhotoCount int64  `json:"photo_count"` // 照片数量
 	}
-	AlbumQuery {
+	NewAlbumReq {
+		Id         int64  `json:"id,optional"` // 主键
+		AlbumName  string `json:"album_name"` // 相册名
+		AlbumDesc  string `json:"album_desc"` // 相册描述
+		AlbumCover string `json:"album_cover"` // 相册封面
+		IsDelete   int64  `json:"is_delete"` // 是否删除
+		Status     int64  `json:"status"` // 状态值 1公开 2私密
+	}
+	QueryAlbumReq {
 		PageQuery
 		AlbumName string `json:"album_name,optional"` // 相册名
-		IsDelete int64 `json:"is_delete,optional"`    // 是否删除
+		IsDelete  int64  `json:"is_delete,optional"` // 是否删除
 	}
-	PreDeleteAlbumReq {
-		Ids []int64 `json:"ids"`          // 主键
-		IsDelete int64 `json:"is_delete"` // 是否删除
+	UpdateAlbumDeleteReq {
+		Ids      []int64 `json:"ids"` // 主键
+		IsDelete int64   `json:"is_delete"` // 是否删除
 	}
 )
 
-@server(
-	tags: "相册管理"
+@server (
+	tags:       "相册管理"
 	prefix:     /admin-api/v1
-	group: album
-	authType: apiKey
+	group:      album
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "分页获取相册列表"
 	@handler FindAlbumList
-	post /album/find_album_list (AlbumQuery) returns (PageResp)
+	post /album/find_album_list (QueryAlbumReq) returns (PageResp)
 
 	@doc "查询相册"
 	@handler GetAlbum
@@ -51,18 +51,18 @@ service admin-api {
 
 	@doc "创建相册"
 	@handler AddAlbum
-	post /album/add_album (AlbumNewReq) returns (AlbumBackVO)
+	post /album/add_album (NewAlbumReq) returns (AlbumBackVO)
 
 	@doc "更新相册"
 	@handler UpdateAlbum
-	put /album/update_album (AlbumNewReq) returns (AlbumBackVO)
+	put /album/update_album (NewAlbumReq) returns (AlbumBackVO)
 
 	@doc "删除相册"
 	@handler DeletesAlbum
 	delete /album/deletes_album (IdsReq) returns (BatchResp)
 
-	@doc "预删除相册"
-	@handler PreDeleteAlbum
-	post /album/pre_delete_album (PreDeleteAlbumReq) returns (BatchResp)
+	@doc "更新相册删除状态"
+	@handler UpdateAlbumDelete
+	put /album/update_album_delete (UpdateAlbumDeleteReq) returns (BatchResp)
 }
 

@@ -1,18 +1,9 @@
 syntax = "v1"
 
-type (
-    MessageEvent {
-        Type int64 `json:"type"`           // 消息类型
-        Data string `json:"data"`          // 消息内容
-        Timestamp int64 `json:"timestamp"` // 消息时间戳
-    }
-)
-
-@server(
-	tags: "WebSocket"
-	prefix:   /admin-api/v1
-	group: websocket
-	authType: apiKey
+@server (
+	tags:   "WebSocket"
+	prefix: /admin-api/v1
+	group:  websocket
 )
 service admin-api {
 	@doc "WebSocket消息"

@@ -5,7 +5,6 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/svc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/api/blog/internal/types"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/accountrpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 
@@ -38,20 +37,11 @@ func (l *EmailLoginLogic) EmailLogin(req *types.EmailLoginReq) (resp *types.Logi
 		return
 	}
 
-	tk, err := createToken(l.ctx, l.svcCtx, out)
-	if err != nil {
-		return
-	}
-
 	// 登录日志
-	_, err = l.svcCtx.SyslogRpc.AddLoginLog(l.ctx, &syslogrpc.LoginLogNewReq{
-		UserId:    out.UserId,
+	_, err = l.svcCtx.SyslogRpc.AddLoginLog(l.ctx, &syslogrpc.AddLoginLogReq{
+		UserId:    out.User.UserId,
 		LoginType: out.LoginType,
 	})
 
-	resp = &types.LoginResp{
-		Token: tk,
-	}
-
-	return
+	return onLogin(l.ctx, l.svcCtx, out)
 }

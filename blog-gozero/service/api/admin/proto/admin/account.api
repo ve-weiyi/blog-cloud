@@ -5,74 +5,74 @@ import "base.api"
 type (
 	UpdateAccountStatusReq {
 		UserId string `json:"user_id"`
-		Status int64 `json:"status"` // 状态: -1删除 0正常 1禁用
+		Status int64  `json:"status"` // 状态: -1删除 0正常 1禁用
 	}
 	UpdateAccountPasswordReq {
-		UserId string `json:"user_id"`
+		UserId   string `json:"user_id"`
 		Password string `json:"password"`
 	}
 	UpdateAccountRolesReq {
-		UserId string `json:"user_id"`
+		UserId  string  `json:"user_id"`
 		RoleIds []int64 `json:"role_ids"`
 	}
-	AccountQuery {
+	QueryAccountReq {
 		PageQuery
-		Username string `json:"username,optional"`
-		Nickname string `json:"nickname,optional"`
-		Email string `json:"email,optional"`
-		Phone string `json:"phone,optional"`
-		Status int64 `json:"status,optional"`       // 状态: -1删除 0正常 1禁用
-		UserIds []string `json:"user_ids,optional"` // 用户ID
+		Username string   `json:"username,optional"`
+		Nickname string   `json:"nickname,optional"`
+		Email    string   `json:"email,optional"`
+		Phone    string   `json:"phone,optional"`
+		Status   int64    `json:"status,optional"` // 状态: -1删除 0正常 1禁用
+		UserIds  []string `json:"user_ids,optional"` // 用户ID
 	}
 	UserRoleLabel {
-		RoleId int64 `json:"role_id"`
-		RoleKey string `json:"role_key"`
+		RoleId    int64  `json:"role_id"`
+		RoleKey   string `json:"role_key"`
 		RoleLabel string `json:"role_label"`
 	}
 	UserInfoDetail {
-		UserId string `json:"user_id"`             // 用户id
-		Username string `json:"username"`          // 用户名
-		Nickname string `json:"nickname"`          // 用户昵称
-		Avatar string `json:"avatar"`              // 用户头像
-		Email string `json:"email"`                // 用户邮箱
-		Phone string `json:"phone"`                // 用户手机号
-		Status int64 `json:"status"`               // 状态
+		UserId       string `json:"user_id"` // 用户id
+		Username     string `json:"username"` // 用户名
+		Nickname     string `json:"nickname"` // 用户昵称
+		Avatar       string `json:"avatar"` // 用户头像
+		Email        string `json:"email"` // 用户邮箱
+		Phone        string `json:"phone"` // 用户手机号
+		Status       int64  `json:"status"` // 状态
 		RegisterType string `json:"register_type"` // 注册方式
-		IpAddress string `json:"ip_address"`       // ip host
-		IpSource string `json:"ip_source"`         // ip 源
-		CreatedAt int64 `json:"created_at"`
-		UpdatedAt int64 `json:"updated_at"`
+		IpAddress    string `json:"ip_address"` // IP地址
+		IpSource     string `json:"ip_source"` // IP归属地
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
 		UserInfoExt
 		RoleLabels []*UserRoleLabel `json:"roles"`
 	}
 )
 
-@server(
-	tags: "用户管理"
+@server (
+	tags:       "用户管理"
 	prefix:     /admin-api/v1
-	group: account
-	authType: apiKey
+	group:      account
+	authType:   apiKey
 	middleware: AdminToken,Permission,OperationLog
 )
 service admin-api {
 	@doc "查询用户列表"
 	@handler FindAccountList
-	post /account/find_account_list (AccountQuery) returns (PageResp)
+	post /account/find_account_list (QueryAccountReq) returns (PageResp)
 
 	@doc "查询在线用户列表"
 	@handler FindAccountOnlineList
-	post /account/find_account_online_list (AccountQuery) returns (PageResp)
+	post /account/find_account_online_list (QueryAccountReq) returns (PageResp)
 
 	@doc "修改用户状态"
 	@handler UpdateAccountStatus
-	post /account/update_account_status (UpdateAccountStatusReq) returns (EmptyResp)
+	put /account/update_account_status (UpdateAccountStatusReq) returns (EmptyResp)
 
 	@doc "修改用户密码"
 	@handler UpdateAccountPassword
-	post /account/update_account_password (UpdateAccountPasswordReq) returns (EmptyResp)
+	put /account/update_account_password (UpdateAccountPasswordReq) returns (EmptyResp)
 
 	@doc "修改用户角色"
 	@handler UpdateAccountRoles
-	post /account/update_account_roles (UpdateAccountRolesReq) returns (EmptyResp)
+	put /account/update_account_roles (UpdateAccountRolesReq) returns (EmptyResp)
 }
 

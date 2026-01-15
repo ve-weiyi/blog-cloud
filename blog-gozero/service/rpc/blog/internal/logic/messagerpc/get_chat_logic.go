@@ -24,11 +24,13 @@ func NewGetChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetChatLo
 }
 
 // 查询聊天记录
-func (l *GetChatLogic) GetChat(in *messagerpc.IdReq) (*messagerpc.ChatDetailsResp, error) {
+func (l *GetChatLogic) GetChat(in *messagerpc.GetChatReq) (*messagerpc.GetChatResp, error) {
 	entity, err := l.svcCtx.TChatModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertChatOut(entity), nil
+	return &messagerpc.GetChatResp{
+		Chat: convertChatOut(entity),
+	}, nil
 }

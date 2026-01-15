@@ -279,6 +279,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: auth.PhoneLoginHandler(serverCtx),
 			},
 			{
+				// 刷新token
+				Method:  http.MethodPost,
+				Path:    "/refresh_token",
+				Handler: auth.RefreshTokenHandler(serverCtx),
+			},
+			{
 				// 注册
 				Method:  http.MethodPost,
 				Path:    "/register",
@@ -383,9 +389,9 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: comment.FindCommentBackListHandler(serverCtx),
 				},
 				{
-					// 更新评论审核状态
+					// 更新评论状态
 					Method:  http.MethodPut,
-					Path:    "/comment/update_comment_review",
+					Path:    "/comment/update_comment_status",
 					Handler: comment.UpdateCommentStatusHandler(serverCtx),
 				},
 			}...,
@@ -623,9 +629,9 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: remark.FindRemarkListHandler(serverCtx),
 				},
 				{
-					// 更新留言
+					// 更新留言状态
 					Method:  http.MethodPut,
-					Path:    "/remark/update_remark_review",
+					Path:    "/remark/update_remark_status",
 					Handler: remark.UpdateRemarkStatusHandler(serverCtx),
 				},
 			}...,

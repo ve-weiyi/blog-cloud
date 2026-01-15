@@ -42,13 +42,7 @@ func (l *FindCategoryListLogic) FindCategoryList(req *types.QueryCategoryReq) (r
 
 	var list []*types.CategoryBackVO
 	for _, v := range out.List {
-		m := &types.CategoryBackVO{
-			Id:           v.Id,
-			CategoryName: v.CategoryName,
-			ArticleCount: v.ArticleCount,
-			CreatedAt:    v.CreatedAt,
-			UpdatedAt:    v.UpdatedAt,
-		}
+		m := convertCategoryDetailsTypes(v)
 		list = append(list, m)
 	}
 

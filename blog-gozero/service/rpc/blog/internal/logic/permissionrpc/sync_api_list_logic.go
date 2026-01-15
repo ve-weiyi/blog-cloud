@@ -24,10 +24,10 @@ func NewSyncApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncA
 }
 
 // 同步接口列表
-func (l *SyncApiListLogic) SyncApiList(in *permissionrpc.SyncApiListReq) (*permissionrpc.BatchResp, error) {
+func (l *SyncApiListLogic) SyncApiList(in *permissionrpc.SyncApiListReq) (*permissionrpc.SyncApiListResp, error) {
 	go l.syncApiList(in)
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.SyncApiListResp{
 		SuccessCount: 0,
 	}, nil
 }
@@ -49,7 +49,7 @@ func (l *SyncApiListLogic) syncApiList(in *permissionrpc.SyncApiListReq) {
 	return
 }
 
-func (l *SyncApiListLogic) InsertApi(ctx context.Context, item *permissionrpc.NewApiReq) (err error) {
+func (l *SyncApiListLogic) InsertApi(ctx context.Context, item *permissionrpc.AddApiReq) (err error) {
 	// 已存在则跳过
 	parent, _ := l.svcCtx.TApiModel.FindOneByPathMethodName(ctx, item.Path, item.Method, item.Name)
 	if parent == nil {

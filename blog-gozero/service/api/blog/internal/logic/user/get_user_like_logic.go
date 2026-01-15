@@ -32,23 +32,23 @@ func NewGetUserLikeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserLikeLogic) GetUserLike(req *types.EmptyReq) (resp *types.UserLikeResp, err error) {
-
-	articles, err := l.svcCtx.ArticleRpc.FindUserLikeArticle(l.ctx, &articlerpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
+	uid := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
+	articles, err := l.svcCtx.ArticleRpc.FindUserLikeArticle(l.ctx, &articlerpc.FindUserLikeArticleReq{
+		UserId: uid,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	comments, err := l.svcCtx.MessageRpc.FindUserLikeComment(l.ctx, &messagerpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
+	comments, err := l.svcCtx.MessageRpc.FindUserLikeComment(l.ctx, &messagerpc.FindUserLikeCommentReq{
+		UserId: uid,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	talks, err := l.svcCtx.SocialRpc.FindUserLikeTalk(l.ctx, &socialrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
+	talks, err := l.svcCtx.SocialRpc.FindUserLikeTalk(l.ctx, &socialrpc.FindUserLikeTalkReq{
+		UserId: uid,
 	})
 	if err != nil {
 		return nil, err

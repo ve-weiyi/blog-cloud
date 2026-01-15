@@ -24,7 +24,7 @@ func NewDeletesAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 // 删除相册
-func (l *DeletesAlbumLogic) DeletesAlbum(in *resourcerpc.IdsReq) (*resourcerpc.BatchResp, error) {
+func (l *DeletesAlbumLogic) DeletesAlbum(in *resourcerpc.DeletesAlbumReq) (*resourcerpc.DeletesAlbumResp, error) {
 	rows, err := l.svcCtx.TAlbumModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (l *DeletesAlbumLogic) DeletesAlbum(in *resourcerpc.IdsReq) (*resourcerpc.B
 		return nil, err
 	}
 
-	return &resourcerpc.BatchResp{
+	return &resourcerpc.DeletesAlbumResp{
 		SuccessCount: rows,
 	}, nil
 }

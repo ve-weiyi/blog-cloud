@@ -26,7 +26,7 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 // 更新评论
-func (l *UpdateCommentLogic) UpdateComment(in *messagerpc.UpdateCommentReq) (*messagerpc.CommentDetailsResp, error) {
+func (l *UpdateCommentLogic) UpdateComment(in *messagerpc.UpdateCommentReq) (*messagerpc.UpdateCommentResp, error) {
 	uid, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -50,5 +50,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *messagerpc.UpdateCommentReq) (*me
 		return nil, err
 	}
 
-	return &messagerpc.CommentDetailsResp{}, nil
+	return &messagerpc.UpdateCommentResp{
+		Comment: convertCommentOut(comment),
+	}, nil
 }

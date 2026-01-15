@@ -26,7 +26,7 @@ func NewLikeTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeTalk
 }
 
 func (l *LikeTalkLogic) LikeTalk(req *types.IdReq) (resp *types.EmptyResp, err error) {
-	in := &socialrpc.IdReq{Id: req.Id}
+	in := &socialrpc.LikeTalkReq{Id: req.Id}
 
 	_, err = l.svcCtx.SocialRpc.LikeTalk(l.ctx, in)
 	if err != nil {

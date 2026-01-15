@@ -30,7 +30,7 @@ func (s *CommentRouter) Register(r *gin.RouterGroup) {
 		group.DELETE("/comment/deletes_comment", h.DeletesComment)
 		// 查询评论列表(后台)
 		group.POST("/comment/find_comment_back_list", h.FindCommentBackList)
-		// 更新评论审核状态
-		group.PUT("/comment/update_comment_review", h.UpdateCommentStatus)
+		// 更新评论状态
+		group.PUT("/comment/update_comment_status", h.UpdateCommentStatus)
 	}
 }

@@ -26,7 +26,7 @@ func NewDeleteTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeleteTalkLogic) DeleteTalk(req *types.IdReq) (resp *types.BatchResp, err error) {
-	in := &socialrpc.IdsReq{
+	in := &socialrpc.DeletesTalkReq{
 		Ids: []int64{req.Id},
 	}
 

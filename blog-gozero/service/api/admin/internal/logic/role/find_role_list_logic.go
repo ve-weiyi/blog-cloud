@@ -34,7 +34,7 @@ func (l *FindRoleListLogic) FindRoleList(req *types.QueryRoleReq) (resp *types.P
 		},
 		RoleKey:   req.RoleKey,
 		RoleLabel: req.RoleLabel,
-		IsDisable: req.IsDisable,
+		Status:    req.Status,
 	}
 
 	out, err := l.svcCtx.PermissionRpc.FindRoleList(l.ctx, in)
@@ -44,17 +44,7 @@ func (l *FindRoleListLogic) FindRoleList(req *types.QueryRoleReq) (resp *types.P
 
 	var list []*types.RoleBackVO
 	for _, v := range out.List {
-		list = append(list, &types.RoleBackVO{
-			Id:          v.Id,
-			ParentId:    v.ParentId,
-			RoleKey:     v.RoleKey,
-			RoleLabel:   v.RoleLabel,
-			RoleComment: v.RoleComment,
-			IsDisable:   v.IsDisable,
-			IsDefault:   v.IsDefault,
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-		})
+		list = append(list, convertRoleTypes(v))
 	}
 
 	resp = &types.PageResp{}

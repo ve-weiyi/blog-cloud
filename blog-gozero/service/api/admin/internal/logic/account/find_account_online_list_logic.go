@@ -42,7 +42,7 @@ func (l *FindAccountOnlineListLogic) FindAccountOnlineList(req *types.QueryAccou
 
 	var list []*types.UserInfoDetail
 	for _, v := range out.List {
-		m := ConvertUserInfoTypes(v)
+		m := convertUserInfoTypes(v)
 		list = append(list, m)
 	}
 

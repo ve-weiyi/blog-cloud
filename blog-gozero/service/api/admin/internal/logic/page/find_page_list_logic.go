@@ -42,16 +42,7 @@ func (l *FindPageListLogic) FindPageList(req *types.QueryPageReq) (resp *types.P
 
 	var list []*types.PageBackVO
 	for _, v := range out.List {
-		list = append(list, &types.PageBackVO{
-			Id:             v.Id,
-			PageName:       v.PageName,
-			PageLabel:      v.PageLabel,
-			PageCover:      v.PageCover,
-			IsCarousel:     v.IsCarousel,
-			CarouselCovers: v.CarouselCovers,
-			CreatedAt:      v.CreatedAt,
-			UpdatedAt:      v.UpdatedAt,
-		})
+		list = append(list, convertPageTypes(v))
 	}
 
 	resp = &types.PageResp{}

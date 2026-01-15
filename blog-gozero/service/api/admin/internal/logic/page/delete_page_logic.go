@@ -26,7 +26,7 @@ func NewDeletePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeletePageLogic) DeletePage(req *types.IdReq) (resp *types.BatchResp, err error) {
-	in := &resourcerpc.IdsReq{
+	in := &resourcerpc.DeletesPageReq{
 		Ids: []int64{req.Id},
 	}
 

@@ -30,7 +30,7 @@ func NewAddTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTalkLo
 }
 
 func (l *AddTalkLogic) AddTalk(req *types.NewTalkReq) (resp *types.TalkBackVO, err error) {
-	in := &socialrpc.NewTalkReq{
+	in := &socialrpc.AddTalkReq{
 		Id:      req.Id,
 		UserId:  cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 		Content: req.Content,
@@ -44,11 +44,11 @@ func (l *AddTalkLogic) AddTalk(req *types.NewTalkReq) (resp *types.TalkBackVO, e
 		return nil, err
 	}
 
-	resp = ConvertTalkTypes(out)
+	resp = convertTalkTypes(out.Talk)
 	return resp, nil
 }
 
-func ConvertTalkTypes(v *socialrpc.TalkDetailsResp) (out *types.TalkBackVO) {
+func convertTalkTypes(v *socialrpc.Talk) (out *types.TalkBackVO) {
 	out = &types.TalkBackVO{
 		Id:           v.Id,
 		UserId:       v.UserId,
@@ -60,6 +60,7 @@ func ConvertTalkTypes(v *socialrpc.TalkDetailsResp) (out *types.TalkBackVO) {
 		CommentCount: v.CommentCount,
 		CreatedAt:    v.CreatedAt,
 		UpdatedAt:    v.UpdatedAt,
+		UserInfo:     nil,
 	}
 	return
 }

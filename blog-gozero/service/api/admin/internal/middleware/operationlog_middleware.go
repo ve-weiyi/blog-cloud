@@ -14,11 +14,9 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/permissionrpc"
-
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
 )
 
 type OperationLogMiddleware struct {
@@ -122,7 +120,7 @@ func (m *OperationLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc 
 			desc = api.OperationProps.Summary
 		}
 
-		op := &syslogrpc.NewOperationLogReq{
+		op := &syslogrpc.AddOperationLogReq{
 			UserId:         r.Header.Get(bizheader.HeaderUid),
 			TerminalId:     r.Header.Get(bizheader.HeaderXTerminalId),
 			OptModule:      module,

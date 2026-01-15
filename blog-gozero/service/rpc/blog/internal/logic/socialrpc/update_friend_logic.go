@@ -25,13 +25,23 @@ func NewUpdateFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 }
 
 // 更新友链
-func (l *UpdateFriendLogic) UpdateFriend(in *socialrpc.NewFriendReq) (*socialrpc.FriendDetailsResp, error) {
-	entity := convertFriendIn(in)
-
-	_, err := l.svcCtx.TFriendModel.Save(l.ctx, entity)
+func (l *UpdateFriendLogic) UpdateFriend(in *socialrpc.UpdateFriendReq) (*socialrpc.UpdateFriendResp, error) {
+	entity, err := l.svcCtx.TFriendModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertFriendOut(entity), nil
+	entity.LinkName = in.LinkName
+	entity.LinkAvatar = in.LinkAvatar
+	entity.LinkAddress = in.LinkAddress
+	entity.LinkIntro = in.LinkIntro
+
+	_, err = l.svcCtx.TFriendModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &socialrpc.UpdateFriendResp{
+		Friend: convertFriendOut(entity),
+	}, nil
 }

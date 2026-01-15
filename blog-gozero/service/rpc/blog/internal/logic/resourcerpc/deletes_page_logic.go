@@ -24,13 +24,13 @@ func NewDeletesPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 // 删除页面
-func (l *DeletesPageLogic) DeletesPage(in *resourcerpc.IdsReq) (*resourcerpc.BatchResp, error) {
+func (l *DeletesPageLogic) DeletesPage(in *resourcerpc.DeletesPageReq) (*resourcerpc.DeletesPageResp, error) {
 	rows, err := l.svcCtx.TPageModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &resourcerpc.BatchResp{
+	return &resourcerpc.DeletesPageResp{
 		SuccessCount: rows,
 	}, nil
 }

@@ -2,9 +2,7 @@ package auth
 
 import (
 	"context"
-	"time"
 
-	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/client/syslogrpc"
@@ -40,41 +38,33 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		return
 	}
 
-	tk, err := createToken(l.ctx, l.svcCtx, out)
-	if err != nil {
-		return
-	}
-
 	// 登录日志
-	_, err = l.svcCtx.SyslogRpc.AddLoginLog(l.ctx, &syslogrpc.NewLoginLogReq{
-		UserId:    out.UserId,
+	_, err = l.svcCtx.SyslogRpc.AddLoginLog(l.ctx, &syslogrpc.AddLoginLogReq{
+		UserId:    out.User.UserId,
 		LoginType: out.LoginType,
 	})
 
-	resp = &types.LoginResp{
-		Token: tk,
-	}
-
-	return
+	return onLogin(l.ctx, l.svcCtx, out)
 }
 
-func createToken(ctx context.Context, svcCtx *svc.ServiceContext, login *accountrpc.LoginResp) (token *types.Token, err error) {
-	expires := 1 * 24 * time.Hour
-	uid := login.UserId
-
-	accessToken, err := svcCtx.TokenHolder.CreateToken(
-		ctx,
-		cast.ToString(uid),
-		expires,
-	)
-
-	token = &types.Token{
-		UserId:      uid,
-		TokenType:   svcCtx.TokenHolder.TokenType(),
-		AccessToken: accessToken,
-		ExpiresIn:   time.Now().Add(expires).Unix(),
+func onLogin(ctx context.Context, svcCtx *svc.ServiceContext, login *accountrpc.LoginResp) (resp *types.LoginResp, err error) {
+	tk, err := svcCtx.TokenManager.GenerateToken(login.User.UserId)
+	if err != nil {
+		return nil, err
 	}
 
-	// 生成token
-	return token, nil
+	token := &types.Token{
+		TokenType:        tk.TokenType,
+		AccessToken:      tk.AccessToken,
+		ExpiresIn:        tk.ExpiresIn,
+		RefreshToken:     tk.RefreshToken,
+		RefreshExpiresIn: tk.RefreshExpiresIn,
+		RefreshExpiresAt: tk.RefreshExpiresAt,
+	}
+
+	return &types.LoginResp{
+		UserId: login.User.UserId,
+		Scope:  svcCtx.Config.Name,
+		Token:  token,
+	}, nil
 }

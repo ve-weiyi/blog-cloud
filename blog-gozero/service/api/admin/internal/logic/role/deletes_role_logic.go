@@ -26,7 +26,7 @@ func NewDeletesRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 func (l *DeletesRoleLogic) DeletesRole(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &permissionrpc.IdsReq{
+	in := &permissionrpc.DeletesRoleReq{
 		Ids: req.Ids,
 	}
 

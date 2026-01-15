@@ -26,7 +26,7 @@ func NewUpdateRoleMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 // 更新角色菜单
-func (l *UpdateRoleMenusLogic) UpdateRoleMenus(in *permissionrpc.UpdateRoleMenusReq) (*permissionrpc.EmptyResp, error) {
+func (l *UpdateRoleMenusLogic) UpdateRoleMenus(in *permissionrpc.UpdateRoleMenusReq) (*permissionrpc.UpdateRoleMenusResp, error) {
 	// 删除角色菜单
 	_, err := l.svcCtx.TRoleMenuModel.Deletes(l.ctx, "role_id in (?)", in.RoleId)
 	if err != nil {
@@ -49,5 +49,5 @@ func (l *UpdateRoleMenusLogic) UpdateRoleMenus(in *permissionrpc.UpdateRoleMenus
 		return nil, err
 	}
 
-	return &permissionrpc.EmptyResp{}, nil
+	return &permissionrpc.UpdateRoleMenusResp{}, nil
 }

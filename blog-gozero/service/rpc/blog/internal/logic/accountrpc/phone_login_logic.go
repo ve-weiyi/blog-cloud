@@ -36,9 +36,9 @@ func (l *PhoneLoginLogic) PhoneLogin(in *accountrpc.PhoneLoginReq) (*accountrpc.
 	}
 
 	// 验证用户是否存在
-	account, err := l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Phone)
+	account, err := l.svcCtx.TUserModel.FindOne(l.ctx, "phone", in.Phone)
 	if err != nil {
-		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, "用户不存在")
+		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, "手机号未注册")
 	}
 
 	// 验证code是否正确

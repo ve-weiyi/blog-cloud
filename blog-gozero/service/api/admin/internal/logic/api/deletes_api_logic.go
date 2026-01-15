@@ -26,7 +26,7 @@ func NewDeletesApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeletesApiLogic) DeletesApi(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &permissionrpc.IdsReq{
+	in := &permissionrpc.DeletesApiReq{
 		Ids: req.Ids,
 	}
 

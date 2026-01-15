@@ -27,19 +27,8 @@ func NewAddTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTalkLo
 }
 
 // 创建说说
-func (l *AddTalkLogic) AddTalk(in *socialrpc.NewTalkReq) (*socialrpc.TalkDetailsResp, error) {
-	entity := convertTalkIn(in)
-
-	_, err := l.svcCtx.TTalkModel.Insert(l.ctx, entity)
-	if err != nil {
-		return nil, err
-	}
-
-	return convertTalkOut(entity), nil
-}
-
-func convertTalkIn(in *socialrpc.NewTalkReq) (out *model.TTalk) {
-	out = &model.TTalk{
+func (l *AddTalkLogic) AddTalk(in *socialrpc.AddTalkReq) (*socialrpc.AddTalkResp, error) {
+	entity := &model.TTalk{
 		Id:        in.Id,
 		UserId:    in.UserId,
 		Content:   in.Content,
@@ -49,14 +38,21 @@ func convertTalkIn(in *socialrpc.NewTalkReq) (out *model.TTalk) {
 		LikeCount: 0,
 	}
 
-	return out
+	_, err := l.svcCtx.TTalkModel.Insert(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &socialrpc.AddTalkResp{
+		Talk: convertTalkOut(entity),
+	}, nil
 }
 
-func convertTalkOut(in *model.TTalk) (out *socialrpc.TalkDetailsResp) {
+func convertTalkOut(in *model.TTalk) (out *socialrpc.Talk) {
 	var images []string
 	jsonconv.JsonToAny(in.Images, &images)
 
-	out = &socialrpc.TalkDetailsResp{
+	out = &socialrpc.Talk{
 		Id:           in.Id,
 		UserId:       in.UserId,
 		Content:      in.Content,
@@ -65,8 +61,8 @@ func convertTalkOut(in *model.TTalk) (out *socialrpc.TalkDetailsResp) {
 		Status:       in.Status,
 		LikeCount:    in.LikeCount,
 		CommentCount: 0,
-		CreatedAt:    in.CreatedAt.Unix(),
-		UpdatedAt:    in.UpdatedAt.Unix(),
+		CreatedAt:    in.CreatedAt.UnixMilli(),
+		UpdatedAt:    in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

@@ -42,9 +42,9 @@ service admin-api {
 	@handler FindCommentBackList
 	post /comment/find_comment_back_list (QueryCommentReq) returns (PageResp)
 
-	@doc "更新评论审核状态"
+	@doc "更新评论状态"
 	@handler UpdateCommentStatus
-	put /comment/update_comment_review (UpdateCommentStatusReq) returns (BatchResp)
+	put /comment/update_comment_status (UpdateCommentStatusReq) returns (BatchResp)
 
 	@doc "删除评论"
 	@handler DeletesComment

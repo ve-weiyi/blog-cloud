@@ -43,7 +43,7 @@ func (l *FindTalkListLogic) FindTalkList(req *types.QueryTalkReq) (resp *types.P
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *socialrpc.TalkDetailsResp) string {
+		func(v *socialrpc.Talk) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {

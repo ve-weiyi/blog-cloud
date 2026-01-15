@@ -7,7 +7,6 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/rediskey"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
@@ -29,7 +28,7 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 }
 
 // 点赞文章
-func (l *LikeArticleLogic) LikeArticle(in *articlerpc.IdReq) (*articlerpc.EmptyResp, error) {
+func (l *LikeArticleLogic) LikeArticle(in *articlerpc.LikeArticleReq) (*articlerpc.LikeArticleResp, error) {
 	uid, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -73,5 +72,5 @@ func (l *LikeArticleLogic) LikeArticle(in *articlerpc.IdReq) (*articlerpc.EmptyR
 	if err != nil {
 		return nil, err
 	}
-	return &articlerpc.EmptyResp{}, nil
+	return &articlerpc.LikeArticleResp{}, nil
 }

@@ -24,19 +24,19 @@ func NewSocialRpcServer(svcCtx *svc.ServiceContext) *SocialRpcServer {
 }
 
 // 创建友链
-func (s *SocialRpcServer) AddFriend(ctx context.Context, in *socialrpc.NewFriendReq) (*socialrpc.FriendDetailsResp, error) {
+func (s *SocialRpcServer) AddFriend(ctx context.Context, in *socialrpc.AddFriendReq) (*socialrpc.AddFriendResp, error) {
 	l := socialrpclogic.NewAddFriendLogic(ctx, s.svcCtx)
 	return l.AddFriend(in)
 }
 
 // 更新友链
-func (s *SocialRpcServer) UpdateFriend(ctx context.Context, in *socialrpc.NewFriendReq) (*socialrpc.FriendDetailsResp, error) {
+func (s *SocialRpcServer) UpdateFriend(ctx context.Context, in *socialrpc.UpdateFriendReq) (*socialrpc.UpdateFriendResp, error) {
 	l := socialrpclogic.NewUpdateFriendLogic(ctx, s.svcCtx)
 	return l.UpdateFriend(in)
 }
 
 // 删除友链
-func (s *SocialRpcServer) DeletesFriend(ctx context.Context, in *socialrpc.IdsReq) (*socialrpc.BatchResp, error) {
+func (s *SocialRpcServer) DeletesFriend(ctx context.Context, in *socialrpc.DeletesFriendReq) (*socialrpc.DeletesFriendResp, error) {
 	l := socialrpclogic.NewDeletesFriendLogic(ctx, s.svcCtx)
 	return l.DeletesFriend(in)
 }
@@ -48,25 +48,25 @@ func (s *SocialRpcServer) FindFriendList(ctx context.Context, in *socialrpc.Find
 }
 
 // 创建说说
-func (s *SocialRpcServer) AddTalk(ctx context.Context, in *socialrpc.NewTalkReq) (*socialrpc.TalkDetailsResp, error) {
+func (s *SocialRpcServer) AddTalk(ctx context.Context, in *socialrpc.AddTalkReq) (*socialrpc.AddTalkResp, error) {
 	l := socialrpclogic.NewAddTalkLogic(ctx, s.svcCtx)
 	return l.AddTalk(in)
 }
 
 // 更新说说
-func (s *SocialRpcServer) UpdateTalk(ctx context.Context, in *socialrpc.NewTalkReq) (*socialrpc.TalkDetailsResp, error) {
+func (s *SocialRpcServer) UpdateTalk(ctx context.Context, in *socialrpc.UpdateTalkReq) (*socialrpc.UpdateTalkResp, error) {
 	l := socialrpclogic.NewUpdateTalkLogic(ctx, s.svcCtx)
 	return l.UpdateTalk(in)
 }
 
 // 删除说说
-func (s *SocialRpcServer) DeletesTalk(ctx context.Context, in *socialrpc.IdsReq) (*socialrpc.BatchResp, error) {
+func (s *SocialRpcServer) DeletesTalk(ctx context.Context, in *socialrpc.DeletesTalkReq) (*socialrpc.DeletesTalkResp, error) {
 	l := socialrpclogic.NewDeletesTalkLogic(ctx, s.svcCtx)
 	return l.DeletesTalk(in)
 }
 
 // 查询说说
-func (s *SocialRpcServer) GetTalk(ctx context.Context, in *socialrpc.IdReq) (*socialrpc.TalkDetailsResp, error) {
+func (s *SocialRpcServer) GetTalk(ctx context.Context, in *socialrpc.GetTalkReq) (*socialrpc.GetTalkResp, error) {
 	l := socialrpclogic.NewGetTalkLogic(ctx, s.svcCtx)
 	return l.GetTalk(in)
 }
@@ -78,13 +78,13 @@ func (s *SocialRpcServer) FindTalkList(ctx context.Context, in *socialrpc.FindTa
 }
 
 // 点赞说说
-func (s *SocialRpcServer) LikeTalk(ctx context.Context, in *socialrpc.IdReq) (*socialrpc.EmptyResp, error) {
+func (s *SocialRpcServer) LikeTalk(ctx context.Context, in *socialrpc.LikeTalkReq) (*socialrpc.LikeTalkResp, error) {
 	l := socialrpclogic.NewLikeTalkLogic(ctx, s.svcCtx)
 	return l.LikeTalk(in)
 }
 
 // 用户点赞的说说
-func (s *SocialRpcServer) FindUserLikeTalk(ctx context.Context, in *socialrpc.UserIdReq) (*socialrpc.FindLikeTalkResp, error) {
+func (s *SocialRpcServer) FindUserLikeTalk(ctx context.Context, in *socialrpc.FindUserLikeTalkReq) (*socialrpc.FindUserLikeTalkResp, error) {
 	l := socialrpclogic.NewFindUserLikeTalkLogic(ctx, s.svcCtx)
 	return l.FindUserLikeTalk(in)
 }

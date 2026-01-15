@@ -9,7 +9,7 @@ option go_package = "./configrpc";
 
 
 
-/************** blog 网站管理 **************/
+/************** 网站管理 **************/
 
 message SaveConfigReq {
   string config_key = 1;

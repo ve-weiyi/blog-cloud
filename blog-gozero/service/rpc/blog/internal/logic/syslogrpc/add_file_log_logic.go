@@ -26,7 +26,7 @@ func NewAddFileLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFil
 }
 
 // 创建文件记录
-func (l *AddFileLogLogic) AddFileLog(in *syslogrpc.NewFileLogReq) (*syslogrpc.FileLogDetailsResp, error) {
+func (l *AddFileLogLogic) AddFileLog(in *syslogrpc.AddFileLogReq) (*syslogrpc.AddFileLogResp, error) {
 	uid, _ := rpcutils.GetUserIdFromCtx(l.ctx)
 	tid, _ := rpcutils.GetTerminalIdFromCtx(l.ctx)
 
@@ -47,5 +47,7 @@ func (l *AddFileLogLogic) AddFileLog(in *syslogrpc.NewFileLogReq) (*syslogrpc.Fi
 		return nil, err
 	}
 
-	return convertFileLogOut(entity), nil
+	return &syslogrpc.AddFileLogResp{
+		FileLog: convertFileLogOut(entity),
+	}, nil
 }

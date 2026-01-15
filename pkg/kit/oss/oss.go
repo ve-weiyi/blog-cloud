@@ -18,8 +18,8 @@ type Config struct {
 	//BasePath        string `json:"base-path"`
 }
 
-// OSS（Object Storage Service，对象存储服务）
-type OSS interface {
+// Uploader oss（Object Storage Service，对象存储服务）
+type Uploader interface {
 	// return BucketUrl+BasePath+prefix+filename
 	UploadFile(f io.Reader, prefix string, filename string) (filepath string, err error)
 	DeleteFile(filepath string) error

@@ -49,7 +49,7 @@ func (l *FindAccountListLogic) FindAccountList(req *types.QueryAccountReq) (resp
 
 	var list []*types.UserInfoDetail
 	for _, v := range out.List {
-		m := ConvertUserInfoTypes(v)
+		m := convertUserInfoTypes(v)
 		list = append(list, m)
 	}
 
@@ -61,7 +61,7 @@ func (l *FindAccountListLogic) FindAccountList(req *types.QueryAccountReq) (resp
 	return resp, nil
 }
 
-func ConvertUserInfoTypes(in *accountrpc.UserInfoResp) *types.UserInfoDetail {
+func convertUserInfoTypes(in *accountrpc.UserInfo) *types.UserInfoDetail {
 
 	var info types.UserInfoExt
 	jsonconv.JsonToAny(in.Info, &info)

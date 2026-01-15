@@ -1,112 +1,134 @@
 package tokenx
 
 import (
-	"context"
+	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/spf13/cast"
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 
-	"github.com/ve-weiyi/ve-blog-golang/pkg/infra/biz/bizheader"
 	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jwtx"
 )
 
-type JwtTokenHolder struct {
-	issuer string
-
-	token *jwtx.JwtInstance
-	cache *redis.Redis
+// JwtTokenManager JWT Token 管理器实现，支持单设备登录
+type JwtTokenManager struct {
+	store             TokenStore
+	jwtInstance       *jwtx.JwtInstance
+	issuer            string
+	accessExpireTime  int64 // 秒
+	refreshExpireTime int64 // 秒
 }
 
-func NewJwtTokenHolder(issuer string, secret string, cache *redis.Redis) *JwtTokenHolder {
-	return &JwtTokenHolder{
-		issuer: issuer,
-		token:  jwtx.NewJwtInstance([]byte(secret)),
-		cache:  cache,
+// NewJwtTokenManager 创建 JWT Token 管理器
+func NewJwtTokenManager(store TokenStore, secretKey, issuer string, accessExpire, refreshExpire int64) *JwtTokenManager {
+	return &JwtTokenManager{
+		store:             store,
+		jwtInstance:       jwtx.NewJwtInstance([]byte(secretKey)),
+		issuer:            issuer,
+		accessExpireTime:  accessExpire,
+		refreshExpireTime: refreshExpire,
 	}
 }
 
-func (j *JwtTokenHolder) TokenType() string {
-	return TokenTypeBearer
-}
-
-func (j *JwtTokenHolder) VerifyToken(ctx context.Context, token string, uid string) error {
-	//token为空或者uid为空
-	if token == "" || uid == "" {
-		return ErrTokenEmpty
+// GenerateToken 生成 JWT Token
+func (m *JwtTokenManager) GenerateToken(uid string) (*Token, error) {
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
 	}
+	now := time.Now().Unix()
 
-	token = strings.TrimPrefix(token, "Bearer ")
-
-	// 解析token
-	tok, err := j.token.ParseToken(token)
+	// 生成 AccessToken
+	accessToken, err := m.jwtInstance.CreateToken(
+		jwtx.WithSubject(uid),
+		jwtx.WithIssuer(m.issuer),
+		jwtx.WithIssuedAt(now),
+		jwtx.WithExpiresAt(now+m.accessExpireTime),
+	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// token不合法
-	if !tok.Valid {
+	// 生成 RefreshToken
+	refreshToken, err := m.jwtInstance.CreateToken(
+		jwtx.WithSubject(uid),
+		jwtx.WithIssuer(m.issuer),
+		jwtx.WithIssuedAt(now),
+		jwtx.WithExpiresAt(now+m.refreshExpireTime),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// 分开存储 AccessToken 和 RefreshToken
+	if err := m.store.Set(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid), accessToken, int(m.accessExpireTime)); err != nil {
+		return nil, err
+	}
+	if err := m.store.Set(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid), refreshToken, int(m.refreshExpireTime)); err != nil {
+		return nil, err
+	}
+
+	return &Token{
+		TokenType:        TokenTypeBearer,
+		AccessToken:      accessToken,
+		ExpiresIn:        m.accessExpireTime,
+		RefreshToken:     refreshToken,
+		RefreshExpiresIn: m.refreshExpireTime,
+		RefreshExpiresAt: now + m.refreshExpireTime,
+	}, nil
+}
+
+// ValidateToken 验证 AccessToken 有效性
+func (m *JwtTokenManager) ValidateToken(uid, accessToken string) error {
+	_, err := m.jwtInstance.ParseToken(accessToken)
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return ErrTokenExpired
+		}
 		return ErrTokenInvalid
 	}
 
-	// 获取claims
-	claims, ok := tok.Claims.(jwt.MapClaims)
-	if !ok {
-		return fmt.Errorf("token claims is not jwt.MapClaims")
-	}
-
-	// uid不一致
-	if uid != cast.ToString(claims[bizheader.HeaderUid]) {
-		return fmt.Errorf("token cannot use by uid")
-	}
-
-	//token验证成功,但用户在别处登录或退出登录
-	redisKey := GetUserLogoutKey(uid)
-	at, err := j.cache.GetCtx(ctx, redisKey)
+	// 检查存储中的 AccessToken 是否匹配
+	storedToken, err := m.store.Get(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid))
 	if err != nil {
 		return err
 	}
-
-	loginAt := cast.ToInt64(claims[jwtx.JwtIssueAt])
-	logoutAt := cast.ToInt64(at)
-	if loginAt < logoutAt {
-		logx.Infof("loginAt=%d, at.LogoutAt=%d", loginAt, logoutAt)
+	if storedToken == "" {
 		return ErrTokenExpired
+	}
+	if storedToken != accessToken {
+		return ErrTokenInvalid
 	}
 
 	return nil
 }
 
-func (j *JwtTokenHolder) CreateToken(ctx context.Context, uid string, expires time.Duration) (string, error) {
-	now := time.Now().Unix()
-	expiresAt := time.Now().Add(expires).Unix()
-
-	opts := []jwtx.Option{
-		jwtx.WithIssuer(j.issuer),
-		jwtx.WithIssuedAt(now),
-		jwtx.WithExpiresAt(expiresAt),
-		jwtx.WithClaimExt(bizheader.HeaderUid, uid),
-	}
-
-	tk, err := j.token.CreateToken(opts...)
+// RefreshToken 使用 RefreshToken 刷新获取新 Token
+func (m *JwtTokenManager) RefreshToken(uid, refreshToken string) (*Token, error) {
+	_, err := m.jwtInstance.ParseToken(refreshToken)
 	if err != nil {
-		return "", err
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, ErrTokenExpired
+		}
+		return nil, ErrTokenInvalid
 	}
 
-	return tk, nil
+	// 检查存储中的 RefreshToken 是否匹配
+	storedToken, err := m.store.Get(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid))
+	if err != nil || storedToken == "" {
+		return nil, ErrTokenExpired
+	}
+	if storedToken != refreshToken {
+		return nil, ErrTokenInvalid
+	}
+
+	// 生成新的 Token
+	return m.GenerateToken(uid)
 }
 
-func (j *JwtTokenHolder) RemoveToken(ctx context.Context, uid string) error {
-	redisKey := GetSignTokenKey(uid)
-
-	ts := cast.ToString(time.Now().Unix())
-	return j.cache.SetexCtx(ctx, redisKey, ts, 7*24*60*60)
-}
-
-func GetUserLogoutKey(uid string) string {
-	return fmt.Sprintf("blog:user:logout:%v", uid)
+// RevokeToken 撤销 Token
+func (m *JwtTokenManager) RevokeToken(uid string, isRefresh bool) error {
+	if isRefresh {
+		return m.store.Delete(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid))
+	}
+	return m.store.Delete(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid))
 }

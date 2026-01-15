@@ -26,7 +26,7 @@ func NewDeletesFileLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DeletesFileLogLogic) DeletesFileLog(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &syslogrpc.IdsReq{
+	in := &syslogrpc.DeletesFileLogReq{
 		Ids: req.Ids,
 	}
 

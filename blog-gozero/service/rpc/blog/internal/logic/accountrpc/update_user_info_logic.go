@@ -25,7 +25,7 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 // 修改用户信息
-func (l *UpdateUserInfoLogic) UpdateUserInfo(in *accountrpc.UpdateUserInfoReq) (*accountrpc.EmptyResp, error) {
+func (l *UpdateUserInfoLogic) UpdateUserInfo(in *accountrpc.UpdateUserInfoReq) (*accountrpc.UpdateUserInfoResp, error) {
 	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -44,5 +44,5 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *accountrpc.UpdateUserInfoReq) (
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.UpdateUserInfoResp{}, nil
 }

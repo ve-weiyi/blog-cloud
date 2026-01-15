@@ -24,11 +24,13 @@ func NewGetTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTalkLo
 }
 
 // 查询说说
-func (l *GetTalkLogic) GetTalk(in *socialrpc.IdReq) (*socialrpc.TalkDetailsResp, error) {
+func (l *GetTalkLogic) GetTalk(in *socialrpc.GetTalkReq) (*socialrpc.GetTalkResp, error) {
 	entity, err := l.svcCtx.TTalkModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertTalkOut(entity), nil
+	return &socialrpc.GetTalkResp{
+		Talk: convertTalkOut(entity),
+	}, nil
 }

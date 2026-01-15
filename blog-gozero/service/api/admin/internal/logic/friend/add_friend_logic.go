@@ -26,7 +26,7 @@ func NewAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFrie
 }
 
 func (l *AddFriendLogic) AddFriend(req *types.NewFriendReq) (resp *types.FriendBackVO, err error) {
-	in := &socialrpc.NewFriendReq{
+	in := &socialrpc.AddFriendReq{
 		Id:          req.Id,
 		LinkName:    req.LinkName,
 		LinkAvatar:  req.LinkAvatar,
@@ -39,7 +39,11 @@ func (l *AddFriendLogic) AddFriend(req *types.NewFriendReq) (resp *types.FriendB
 		return nil, err
 	}
 
-	resp = &types.FriendBackVO{
+	return convertFriendTypes(out.Friend), nil
+}
+
+func convertFriendTypes(out *socialrpc.Friend) *types.FriendBackVO {
+	return &types.FriendBackVO{
 		Id:          out.Id,
 		LinkName:    out.LinkName,
 		LinkAvatar:  out.LinkAvatar,
@@ -48,5 +52,4 @@ func (l *AddFriendLogic) AddFriend(req *types.NewFriendReq) (resp *types.FriendB
 		CreatedAt:   out.CreatedAt,
 		UpdatedAt:   out.UpdatedAt,
 	}
-	return resp, nil
 }

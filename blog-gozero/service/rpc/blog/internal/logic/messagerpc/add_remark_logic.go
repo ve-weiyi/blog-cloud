@@ -4,10 +4,9 @@ import (
 	"context"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/messagerpc"
-
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +27,7 @@ func NewAddRemarkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRema
 }
 
 // 创建留言
-func (l *AddRemarkLogic) AddRemark(in *messagerpc.AddRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
+func (l *AddRemarkLogic) AddRemark(in *messagerpc.AddRemarkReq) (*messagerpc.AddRemarkResp, error) {
 	uid, _ := rpcutils.GetUserIdFromCtx(l.ctx)
 	tid, _ := rpcutils.GetTerminalIdFromCtx(l.ctx)
 
@@ -47,5 +46,7 @@ func (l *AddRemarkLogic) AddRemark(in *messagerpc.AddRemarkReq) (*messagerpc.Rem
 		return nil, err
 	}
 
-	return convertRemarkOut(entity), nil
+	return &messagerpc.AddRemarkResp{
+		Remark: convertRemarkOut(entity),
+	}, nil
 }

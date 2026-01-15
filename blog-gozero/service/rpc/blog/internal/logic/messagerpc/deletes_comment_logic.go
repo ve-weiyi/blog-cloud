@@ -24,13 +24,13 @@ func NewDeletesCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 // 删除评论
-func (l *DeletesCommentLogic) DeletesComment(in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+func (l *DeletesCommentLogic) DeletesComment(in *messagerpc.DeletesCommentReq) (*messagerpc.DeletesCommentResp, error) {
 	rows, err := l.svcCtx.TCommentModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &messagerpc.BatchResp{
+	return &messagerpc.DeletesCommentResp{
 		SuccessCount: rows,
 	}, nil
 }

@@ -77,7 +77,7 @@ func main() {
 	//})
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	fmt.Printf(`
-	默认接口文档地址:http://localhost:%d/blog-api/v1/swagger/index.html
+	默认接口文档地址: http://localhost:%d/blog-api/v1/swagger/index.html
 `, c.Port)
 
 	server.Start()

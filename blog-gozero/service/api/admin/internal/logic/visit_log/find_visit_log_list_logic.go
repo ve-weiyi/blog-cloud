@@ -45,7 +45,7 @@ func (l *FindVisitLogListLogic) FindVisitLogList(req *types.QueryVisitLogReq) (r
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.VisitLogDetailsResp) string {
+		func(v *syslogrpc.VisitLog) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -58,7 +58,7 @@ func (l *FindVisitLogListLogic) FindVisitLogList(req *types.QueryVisitLogReq) (r
 
 	// 查询访客信息
 	vsm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.VisitLogDetailsResp) string {
+		func(v *syslogrpc.VisitLog) string {
 			return v.TerminalId
 		},
 		func(ids []string) (map[string]*types.ClientInfoVO, error) {

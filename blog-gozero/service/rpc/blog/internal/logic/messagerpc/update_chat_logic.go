@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/messagerpc"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,7 +24,7 @@ func NewUpdateChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新聊天记录
-func (l *UpdateChatLogic) UpdateChat(in *messagerpc.UpdateChatReq) (*messagerpc.ChatDetailsResp, error) {
+func (l *UpdateChatLogic) UpdateChat(in *messagerpc.UpdateChatReq) (*messagerpc.UpdateChatResp, error) {
 	entity, err := l.svcCtx.TChatModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -40,5 +39,7 @@ func (l *UpdateChatLogic) UpdateChat(in *messagerpc.UpdateChatReq) (*messagerpc.
 		return nil, err
 	}
 
-	return convertChatOut(entity), nil
+	return &messagerpc.UpdateChatResp{
+		Chat: convertChatOut(entity),
+	}, nil
 }

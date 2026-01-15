@@ -12,8 +12,8 @@ type (
 		Params     []*MenuMetaParams `json:"params,optional"` // 参数
 		KeepAlive  int64             `json:"keep_alive,optional"` // 是否缓存
 		AlwaysShow int64             `json:"always_show,optional"` // 是否一直显示菜单
-		IsHidden   int64             `json:"is_hidden,optional"` // 是否隐藏
-		IsDisable  int64             `json:"is_disable,optional"` // 是否禁用
+		Visible    int64             `json:"visible,optional"` // 菜单是否可见
+		Status     int64             `json:"status,optional"` // 是否禁用
 	}
 	MenuMetaParams {
 		Key   string `json:"key,optional"`

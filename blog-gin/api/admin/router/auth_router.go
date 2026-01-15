@@ -42,6 +42,8 @@ func (s *AuthRouter) Register(r *gin.RouterGroup) {
 		group.POST("/login", h.Login)
 		// 手机登录
 		group.POST("/phone_login", h.PhoneLogin)
+		// 刷新token
+		group.POST("/refresh_token", h.RefreshToken)
 		// 注册
 		group.POST("/register", h.Register)
 		// 重置密码

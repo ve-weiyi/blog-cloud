@@ -25,7 +25,7 @@ func NewGetArticleRelationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 查询关联文章
-func (l *GetArticleRelationLogic) GetArticleRelation(in *articlerpc.IdReq) (*articlerpc.GetArticleRelationResp, error) {
+func (l *GetArticleRelationLogic) GetArticleRelation(in *articlerpc.GetArticleRelationReq) (*articlerpc.GetArticleRelationResp, error) {
 
 	record, err := l.svcCtx.TArticleModel.FindById(l.ctx, in.Id)
 	if err != nil {

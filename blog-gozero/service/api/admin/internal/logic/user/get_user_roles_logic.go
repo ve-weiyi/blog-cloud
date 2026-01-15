@@ -30,7 +30,7 @@ func NewGetUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetU
 }
 
 func (l *GetUserRolesLogic) GetUserRoles(req *types.EmptyReq) (resp *types.UserRolesResp, err error) {
-	in := &permissionrpc.UserIdReq{
+	in := &permissionrpc.FindUserRolesReq{
 		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 

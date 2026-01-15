@@ -24,7 +24,7 @@ func NewAdminUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 修改用户状态
-func (l *AdminUpdateUserStatusLogic) AdminUpdateUserStatus(in *accountrpc.AdminUpdateUserStatusReq) (*accountrpc.EmptyResp, error) {
+func (l *AdminUpdateUserStatusLogic) AdminUpdateUserStatus(in *accountrpc.AdminUpdateUserStatusReq) (*accountrpc.AdminUpdateUserStatusResp, error) {
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
 		return nil, err
@@ -37,5 +37,5 @@ func (l *AdminUpdateUserStatusLogic) AdminUpdateUserStatus(in *accountrpc.AdminU
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.AdminUpdateUserStatusResp{}, nil
 }

@@ -25,7 +25,7 @@ func NewUpdateUserAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 修改用户头像
-func (l *UpdateUserAvatarLogic) UpdateUserAvatar(in *accountrpc.UpdateUserAvatarReq) (*accountrpc.EmptyResp, error) {
+func (l *UpdateUserAvatarLogic) UpdateUserAvatar(in *accountrpc.UpdateUserAvatarReq) (*accountrpc.UpdateUserAvatarResp, error) {
 	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -43,5 +43,5 @@ func (l *UpdateUserAvatarLogic) UpdateUserAvatar(in *accountrpc.UpdateUserAvatar
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.UpdateUserAvatarResp{}, nil
 }

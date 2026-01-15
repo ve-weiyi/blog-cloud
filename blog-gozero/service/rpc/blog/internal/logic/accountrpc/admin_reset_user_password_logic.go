@@ -27,7 +27,7 @@ func NewAdminResetUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 管理员重置用户密码
-func (l *AdminResetUserPasswordLogic) AdminResetUserPassword(in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.EmptyResp, error) {
+func (l *AdminResetUserPasswordLogic) AdminResetUserPassword(in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.AdminResetUserPasswordResp, error) {
 	// 验证用户是否存在
 	user, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, in.UserId)
 	if err != nil {
@@ -42,5 +42,5 @@ func (l *AdminResetUserPasswordLogic) AdminResetUserPassword(in *accountrpc.Admi
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.AdminResetUserPasswordResp{}, nil
 }

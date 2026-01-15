@@ -23,7 +23,7 @@ func (s *Aliyun) UploadFile(f io.Reader, prefix string, filename string) (filepa
 	// 上传文件流。
 	err = bucket.PutObject(key, f)
 	if err != nil {
-		return "", fmt.Errorf("Aliyun.UploadHttpFile formUploader.Put() Failed, err: %v" + err.Error())
+		return "", fmt.Errorf("Aliyun.UploadFile PutObject() Failed, err: %v", err)
 	}
 
 	return s.cfg.BucketUrl + "/" + key, nil
@@ -37,7 +37,7 @@ func (s *Aliyun) DeleteFile(filepath string) (err error) {
 	// 如需删除文件夹，请将objectName设置为对应的文件夹名称。如果文件夹非空，则需要将文件夹下的所有object删除后才能删除该文件夹。
 	err = bucket.DeleteObject(key)
 	if err != nil {
-		return fmt.Errorf("Aliyun.DeleteFile bucketManager.Delete() Filed, err: %v" + err.Error())
+		return fmt.Errorf("Aliyun.DeleteFile DeleteObject() Failed, err: %v", err)
 	}
 
 	return nil
@@ -48,7 +48,7 @@ func (s *Aliyun) ListFiles(prefix string, limit int) (files []*FileInfo, err err
 
 	result, err := bucket.ListObjectsV2(oss.Prefix(prefix), oss.MaxKeys(limit))
 	if err != nil {
-		return nil, fmt.Errorf("Aliyun.ListFiles bucketManager.ListFiles() Filed, err: %v" + err.Error())
+		return nil, fmt.Errorf("Aliyun.ListFiles ListObjectsV2() Failed, err: %v", err)
 	}
 
 	for _, entry := range result.Objects {

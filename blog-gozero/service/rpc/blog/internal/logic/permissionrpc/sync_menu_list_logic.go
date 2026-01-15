@@ -24,10 +24,10 @@ func NewSyncMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 // 同步菜单列表
-func (l *SyncMenuListLogic) SyncMenuList(in *permissionrpc.SyncMenuListReq) (*permissionrpc.BatchResp, error) {
+func (l *SyncMenuListLogic) SyncMenuList(in *permissionrpc.SyncMenuListReq) (*permissionrpc.SyncMenuListResp, error) {
 	go l.syncMenuList(in)
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.SyncMenuListResp{
 		SuccessCount: 0,
 	}, nil
 }
@@ -49,7 +49,7 @@ func (l *SyncMenuListLogic) syncMenuList(in *permissionrpc.SyncMenuListReq) {
 	return
 }
 
-func (l *SyncMenuListLogic) InsertMenu(ctx context.Context, item *permissionrpc.NewMenuReq) (err error) {
+func (l *SyncMenuListLogic) InsertMenu(ctx context.Context, item *permissionrpc.AddMenuReq) (err error) {
 	// 已存在则跳过
 	parent, _ := l.svcCtx.TMenuModel.FindOneByPath(ctx, item.Path)
 	if parent == nil {

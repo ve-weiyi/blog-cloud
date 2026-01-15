@@ -58,6 +58,13 @@ func (s *AuthLogic) PhoneLogin(reqCtx *request.Context, in *types.PhoneLoginReq)
 	return
 }
 
+// 刷新token
+func (s *AuthLogic) RefreshToken(reqCtx *request.Context, in *types.RefreshTokenReq) (out *types.LoginResp, err error) {
+	// todo
+
+	return
+}
+
 // 注册
 func (s *AuthLogic) Register(reqCtx *request.Context, in *types.RegisterReq) (out *types.EmptyResp, err error) {
 	// todo

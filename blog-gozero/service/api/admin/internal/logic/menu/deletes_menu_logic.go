@@ -26,7 +26,7 @@ func NewDeletesMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 func (l *DeletesMenuLogic) DeletesMenu(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &permissionrpc.IdsReq{
+	in := &permissionrpc.DeletesMenuReq{
 		Ids: req.Ids,
 	}
 

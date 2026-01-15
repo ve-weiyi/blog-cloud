@@ -24,13 +24,13 @@ func NewDeletesLoginLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 // 批量删除登录记录
-func (l *DeletesLoginLogLogic) DeletesLoginLog(in *syslogrpc.IdsReq) (*syslogrpc.BatchResp, error) {
+func (l *DeletesLoginLogLogic) DeletesLoginLog(in *syslogrpc.DeletesLoginLogReq) (*syslogrpc.DeletesLoginLogResp, error) {
 	rows, err := l.svcCtx.TLoginLogModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &syslogrpc.BatchResp{
+	return &syslogrpc.DeletesLoginLogResp{
 		SuccessCount: rows,
 	}, nil
 }

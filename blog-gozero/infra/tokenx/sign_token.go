@@ -1,72 +1,95 @@
 package tokenx
 
 import (
-	"context"
+	"crypto/md5"
 	"fmt"
 	"time"
-
-	"github.com/spf13/cast"
-	"github.com/zeromicro/go-zero/core/stores/redis"
-
-	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/cryptox"
 )
 
-type SignTokenHolder struct {
-	issuer string
-	secret string
-
-	cache *redis.Redis
+// SignTokenManager 基于签名的 Token 管理器实现，支持单设备登录
+type SignTokenManager struct {
+	store             TokenStore
+	secretKey         string
+	issuer            string
+	accessExpireTime  int64
+	refreshExpireTime int64
 }
 
-func NewSignTokenHolder(issuer string, secret string, cache *redis.Redis) *SignTokenHolder {
-	return &SignTokenHolder{
-		issuer: issuer,
-		secret: secret,
-		cache:  cache,
+// NewSignTokenManager 创建签名 Token 管理器
+func NewSignTokenManager(store TokenStore, secretKey, issuer string, accessExpire, refreshExpire int64) *SignTokenManager {
+	return &SignTokenManager{
+		store:             store,
+		secretKey:         secretKey,
+		issuer:            issuer,
+		accessExpireTime:  accessExpire,
+		refreshExpireTime: refreshExpire,
 	}
 }
 
-func (j *SignTokenHolder) TokenType() string {
-	return TokenTypeSign
+// GenerateToken 生成签名 Token
+func (m *SignTokenManager) GenerateToken(uid string) (*Token, error) {
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	accessToken := m.sign(uid)
+	refreshToken := m.sign(uid)
+
+	// 分开存储 AccessToken 和 RefreshToken
+	if err := m.store.Set(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid), accessToken, int(m.accessExpireTime)); err != nil {
+		return nil, err
+	}
+	if err := m.store.Set(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid), refreshToken, int(m.refreshExpireTime)); err != nil {
+		return nil, err
+	}
+
+	return &Token{
+		TokenType:        TokenTypeSign,
+		AccessToken:      accessToken,
+		ExpiresIn:        m.accessExpireTime,
+		RefreshToken:     refreshToken,
+		RefreshExpiresIn: m.refreshExpireTime,
+		RefreshExpiresAt: time.Now().Unix() + int64(m.refreshExpireTime),
+	}, nil
 }
 
-func (j *SignTokenHolder) VerifyToken(ctx context.Context, token string, uid string) error {
-	key := GetSignTokenKey(uid)
-	tk, err := j.cache.GetCtx(ctx, key)
+// ValidateToken 验证 Token 有效性
+func (m *SignTokenManager) ValidateToken(uid, accessToken string) error {
+	storedToken, err := m.store.Get(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid))
 	if err != nil {
 		return err
 	}
-
-	if tk != token {
+	if storedToken == "" {
 		return ErrTokenExpired
 	}
-
+	if storedToken != accessToken {
+		return ErrTokenInvalid
+	}
 	return nil
 }
 
-func (j *SignTokenHolder) CreateToken(ctx context.Context, uid string, expires time.Duration) (string, error) {
-	ts := cast.ToString(time.Now().Unix())
-	tk := cryptox.Md5v(uid+ts, j.secret)
-
-	key := GetSignTokenKey(uid)
-	err := j.cache.SetexCtx(ctx, key, tk, int(expires.Seconds()))
-	if err != nil {
-		return "", err
+// RefreshToken 刷新 Token
+func (m *SignTokenManager) RefreshToken(uid, refreshToken string) (*Token, error) {
+	storedToken, err := m.store.Get(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid))
+	if err != nil || storedToken == "" {
+		return nil, ErrTokenExpired
+	}
+	if storedToken != refreshToken {
+		return nil, ErrTokenInvalid
 	}
 
-	return tk, nil
+	return m.GenerateToken(uid)
 }
 
-func (j *SignTokenHolder) RemoveToken(ctx context.Context, uid string) error {
-	key := GetSignTokenKey(uid)
-	_, err := j.cache.DelCtx(ctx, key)
-	if err != nil {
-		return err
+// RevokeToken 撤销 Token
+func (m *SignTokenManager) RevokeToken(uid string, isRefresh bool) error {
+	if isRefresh {
+		return m.store.Delete(fmt.Sprintf("%s:%s", TokenPrefixRefresh, uid))
 	}
-
-	return nil
+	return m.store.Delete(fmt.Sprintf("%s:%s", TokenPrefixAccess, uid))
 }
 
-func GetSignTokenKey(uid string) string {
-	return fmt.Sprintf("blog:user:token:%v", uid)
+// sign 生成签名token: MD5(uid + timestamp + issuer + secret)
+func (m *SignTokenManager) sign(uid string) string {
+	timestamp := time.Now().UnixMilli()
+	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s:%d:%s:%s", uid, timestamp, m.issuer, m.secretKey))))
 }

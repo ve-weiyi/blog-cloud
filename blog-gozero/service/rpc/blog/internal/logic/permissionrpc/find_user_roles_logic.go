@@ -24,7 +24,7 @@ func NewFindUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fin
 }
 
 // 获取用户角色信息
-func (l *FindUserRolesLogic) FindUserRoles(in *permissionrpc.UserIdReq) (*permissionrpc.FindRoleListResp, error) {
+func (l *FindUserRolesLogic) FindUserRoles(in *permissionrpc.FindUserRolesReq) (*permissionrpc.FindUserRolesResp, error) {
 	uid := in.UserId
 
 	// 查用户
@@ -50,12 +50,12 @@ func (l *FindUserRolesLogic) FindUserRoles(in *permissionrpc.UserIdReq) (*permis
 		return nil, err
 	}
 
-	var list []*permissionrpc.RoleDetailsResp
+	var list []*permissionrpc.Role
 	for _, v := range rs {
 		list = append(list, convertRoleOut(v))
 	}
 
-	out := &permissionrpc.FindRoleListResp{}
+	out := &permissionrpc.FindUserRolesResp{}
 	out.List = list
 	return out, nil
 }

@@ -26,8 +26,8 @@ import "admin/visitor.api"
 import "admin/websocket.api"
 
 info (
-	title:                       "博客后台API"
-	description:                 "博客后台API接口文档"
+	title:                       "博客管理平台API"
+	description:                 "博客管理平台API接口文档"
 	version:                     "v4.0.0"
 	contactName:                 "waynie.wei" // 技术支持联系人姓名
 	contactEmail:                "791422171@qq.com" // 联系人邮箱
@@ -54,12 +54,11 @@ info (
 type (
 	PingReq  {}
 	PingResp {
-		Env         string   `json:"env"`
-		Name        string   `json:"name"`
-		Version     string   `json:"version"`
-		Runtime     string   `json:"runtime"`
-		Description string   `json:"description"`
-		RpcStatus   []string `json:"rpc_status"`
+		Env         string `json:"env"`
+		Name        string `json:"name"`
+		Version     string `json:"version"`
+		Description string `json:"description"`
+		Runtime     string `json:"runtime"`
 	}
 )
 

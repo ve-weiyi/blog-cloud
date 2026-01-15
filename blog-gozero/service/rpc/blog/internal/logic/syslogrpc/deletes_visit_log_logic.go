@@ -24,13 +24,13 @@ func NewDeletesVisitLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 // 批量删除访问记录
-func (l *DeletesVisitLogLogic) DeletesVisitLog(in *syslogrpc.IdsReq) (*syslogrpc.BatchResp, error) {
+func (l *DeletesVisitLogLogic) DeletesVisitLog(in *syslogrpc.DeletesVisitLogReq) (*syslogrpc.DeletesVisitLogResp, error) {
 	rows, err := l.svcCtx.TVisitLogModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &syslogrpc.BatchResp{
+	return &syslogrpc.DeletesVisitLogResp{
 		SuccessCount: rows,
 	}, nil
 }

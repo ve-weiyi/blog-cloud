@@ -26,7 +26,7 @@ func NewUpdateFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 }
 
 func (l *UpdateFriendLogic) UpdateFriend(req *types.NewFriendReq) (resp *types.FriendBackVO, err error) {
-	in := &socialrpc.NewFriendReq{
+	in := &socialrpc.UpdateFriendReq{
 		Id:          req.Id,
 		LinkName:    req.LinkName,
 		LinkAvatar:  req.LinkAvatar,
@@ -39,14 +39,5 @@ func (l *UpdateFriendLogic) UpdateFriend(req *types.NewFriendReq) (resp *types.F
 		return nil, err
 	}
 
-	resp = &types.FriendBackVO{
-		Id:          out.Id,
-		LinkName:    out.LinkName,
-		LinkAvatar:  out.LinkAvatar,
-		LinkAddress: out.LinkAddress,
-		LinkIntro:   out.LinkIntro,
-		CreatedAt:   out.CreatedAt,
-		UpdatedAt:   out.UpdatedAt,
-	}
-	return resp, nil
+	return convertFriendTypes(out.Friend), nil
 }

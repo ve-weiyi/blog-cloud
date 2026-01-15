@@ -3,7 +3,6 @@ package accountrpclogic
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
@@ -18,6 +17,7 @@ import (
 	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/cryptox"
 	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/ipx"
 	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/patternx"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/randomx"
 )
 
 type RegisterLogic struct {
@@ -35,20 +35,26 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 // 注册
-func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.LoginResp, error) {
+func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.RegisterResp, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Username) {
+	if !patternx.IsValidEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 
 	// 获取用户
 	exist, err := l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Username)
-	if exist != nil {
-		return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "用户已存在")
+	if err == nil && exist != nil {
+		return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "用户名已被注册")
+	}
+
+	// 获取用户
+	exist, err = l.svcCtx.TUserModel.FindOne(l.ctx, "email = ?", in.Email)
+	if err == nil && exist != nil {
+		return nil, bizerr.NewBizError(bizcode.CodeUserAlreadyExist, "邮箱已被注册")
 	}
 
 	// 验证code是否正确
-	key := rediskey.GetCaptchaKey(constant.CodeTypeRegister, in.Username)
+	key := rediskey.GetCaptchaKey(constant.CodeTypeRegister, in.Email)
 	if !l.svcCtx.CaptchaHolder.VerifyCaptcha(key, in.VerifyCode) {
 		return nil, bizerr.NewBizError(bizcode.CodeCaptchaVerify, "验证码错误")
 	}
@@ -67,12 +73,14 @@ func (l *RegisterLogic) Register(in *accountrpc.RegisterReq) (*accountrpc.LoginR
 		return nil, err
 	}
 
-	resp := &accountrpc.LoginResp{
-		UserId:   user.UserId,
-		Username: user.Username,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
-		Info:     user.Info,
+	// 查找用户角色
+	rList, err := getUserRoles(l.ctx, l.svcCtx, user.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &accountrpc.RegisterResp{
+		User: convertUserInfoOut(user, rList),
 	}
 
 	return resp, nil
@@ -84,7 +92,7 @@ func (l *RegisterLogic) register(tx *gorm.DB, in *accountrpc.RegisterReq) (out *
 
 	// 邮箱注册
 	user := &model.TUser{
-		UserId:       uuid.NewString(),
+		UserId:       randomx.GenerateUID(32),
 		Username:     in.Username,
 		Password:     cryptox.BcryptHash(in.Password),
 		Nickname:     in.Email,

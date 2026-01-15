@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -14,10 +15,10 @@ import (
 )
 
 type UserTokenMiddleware struct {
-	verifier tokenx.TokenHolder
+	verifier tokenx.TokenManager
 }
 
-func NewUserTokenMiddleware(verifier tokenx.TokenHolder) *UserTokenMiddleware {
+func NewUserTokenMiddleware(verifier tokenx.TokenManager) *UserTokenMiddleware {
 	return &UserTokenMiddleware{
 		verifier: verifier,
 	}
@@ -43,9 +44,13 @@ func (m *UserTokenMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		err := m.verifier.VerifyToken(r.Context(), token, uid)
+		err := m.verifier.ValidateToken(uid, token)
 		if err != nil {
-			responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeUserLoginExpired, err.Error()))
+			if errors.Is(err, tokenx.ErrTokenExpired) {
+				responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeUserLoginExpired, err.Error()))
+				return
+			}
+			responsex.Response(r, w, nil, bizerr.NewBizError(bizcode.CodeUserUnLogin, err.Error()))
 			return
 		}
 

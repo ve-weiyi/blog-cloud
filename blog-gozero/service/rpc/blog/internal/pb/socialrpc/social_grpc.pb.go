@@ -41,27 +41,27 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SocialRpcClient interface {
 	// 创建友链
-	AddFriend(ctx context.Context, in *NewFriendReq, opts ...grpc.CallOption) (*FriendDetailsResp, error)
+	AddFriend(ctx context.Context, in *AddFriendReq, opts ...grpc.CallOption) (*AddFriendResp, error)
 	// 更新友链
-	UpdateFriend(ctx context.Context, in *NewFriendReq, opts ...grpc.CallOption) (*FriendDetailsResp, error)
+	UpdateFriend(ctx context.Context, in *UpdateFriendReq, opts ...grpc.CallOption) (*UpdateFriendResp, error)
 	// 删除友链
-	DeletesFriend(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesFriend(ctx context.Context, in *DeletesFriendReq, opts ...grpc.CallOption) (*DeletesFriendResp, error)
 	// 查询友链列表
 	FindFriendList(ctx context.Context, in *FindFriendListReq, opts ...grpc.CallOption) (*FindFriendListResp, error)
 	// 创建说说
-	AddTalk(ctx context.Context, in *NewTalkReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
+	AddTalk(ctx context.Context, in *AddTalkReq, opts ...grpc.CallOption) (*AddTalkResp, error)
 	// 更新说说
-	UpdateTalk(ctx context.Context, in *NewTalkReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
+	UpdateTalk(ctx context.Context, in *UpdateTalkReq, opts ...grpc.CallOption) (*UpdateTalkResp, error)
 	// 删除说说
-	DeletesTalk(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesTalk(ctx context.Context, in *DeletesTalkReq, opts ...grpc.CallOption) (*DeletesTalkResp, error)
 	// 查询说说
-	GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetailsResp, error)
+	GetTalk(ctx context.Context, in *GetTalkReq, opts ...grpc.CallOption) (*GetTalkResp, error)
 	// 查询说说列表
 	FindTalkList(ctx context.Context, in *FindTalkListReq, opts ...grpc.CallOption) (*FindTalkListResp, error)
 	// 点赞说说
-	LikeTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*EmptyResp, error)
+	LikeTalk(ctx context.Context, in *LikeTalkReq, opts ...grpc.CallOption) (*LikeTalkResp, error)
 	// 用户点赞的说说
-	FindUserLikeTalk(ctx context.Context, in *UserIdReq, opts ...grpc.CallOption) (*FindLikeTalkResp, error)
+	FindUserLikeTalk(ctx context.Context, in *FindUserLikeTalkReq, opts ...grpc.CallOption) (*FindUserLikeTalkResp, error)
 }
 
 type socialRpcClient struct {
@@ -72,8 +72,8 @@ func NewSocialRpcClient(cc grpc.ClientConnInterface) SocialRpcClient {
 	return &socialRpcClient{cc}
 }
 
-func (c *socialRpcClient) AddFriend(ctx context.Context, in *NewFriendReq, opts ...grpc.CallOption) (*FriendDetailsResp, error) {
-	out := new(FriendDetailsResp)
+func (c *socialRpcClient) AddFriend(ctx context.Context, in *AddFriendReq, opts ...grpc.CallOption) (*AddFriendResp, error) {
+	out := new(AddFriendResp)
 	err := c.cc.Invoke(ctx, SocialRpc_AddFriend_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -81,8 +81,8 @@ func (c *socialRpcClient) AddFriend(ctx context.Context, in *NewFriendReq, opts 
 	return out, nil
 }
 
-func (c *socialRpcClient) UpdateFriend(ctx context.Context, in *NewFriendReq, opts ...grpc.CallOption) (*FriendDetailsResp, error) {
-	out := new(FriendDetailsResp)
+func (c *socialRpcClient) UpdateFriend(ctx context.Context, in *UpdateFriendReq, opts ...grpc.CallOption) (*UpdateFriendResp, error) {
+	out := new(UpdateFriendResp)
 	err := c.cc.Invoke(ctx, SocialRpc_UpdateFriend_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -90,8 +90,8 @@ func (c *socialRpcClient) UpdateFriend(ctx context.Context, in *NewFriendReq, op
 	return out, nil
 }
 
-func (c *socialRpcClient) DeletesFriend(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *socialRpcClient) DeletesFriend(ctx context.Context, in *DeletesFriendReq, opts ...grpc.CallOption) (*DeletesFriendResp, error) {
+	out := new(DeletesFriendResp)
 	err := c.cc.Invoke(ctx, SocialRpc_DeletesFriend_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -108,8 +108,8 @@ func (c *socialRpcClient) FindFriendList(ctx context.Context, in *FindFriendList
 	return out, nil
 }
 
-func (c *socialRpcClient) AddTalk(ctx context.Context, in *NewTalkReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
-	out := new(TalkDetailsResp)
+func (c *socialRpcClient) AddTalk(ctx context.Context, in *AddTalkReq, opts ...grpc.CallOption) (*AddTalkResp, error) {
+	out := new(AddTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_AddTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -117,8 +117,8 @@ func (c *socialRpcClient) AddTalk(ctx context.Context, in *NewTalkReq, opts ...g
 	return out, nil
 }
 
-func (c *socialRpcClient) UpdateTalk(ctx context.Context, in *NewTalkReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
-	out := new(TalkDetailsResp)
+func (c *socialRpcClient) UpdateTalk(ctx context.Context, in *UpdateTalkReq, opts ...grpc.CallOption) (*UpdateTalkResp, error) {
+	out := new(UpdateTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_UpdateTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -126,8 +126,8 @@ func (c *socialRpcClient) UpdateTalk(ctx context.Context, in *NewTalkReq, opts .
 	return out, nil
 }
 
-func (c *socialRpcClient) DeletesTalk(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *socialRpcClient) DeletesTalk(ctx context.Context, in *DeletesTalkReq, opts ...grpc.CallOption) (*DeletesTalkResp, error) {
+	out := new(DeletesTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_DeletesTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -135,8 +135,8 @@ func (c *socialRpcClient) DeletesTalk(ctx context.Context, in *IdsReq, opts ...g
 	return out, nil
 }
 
-func (c *socialRpcClient) GetTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*TalkDetailsResp, error) {
-	out := new(TalkDetailsResp)
+func (c *socialRpcClient) GetTalk(ctx context.Context, in *GetTalkReq, opts ...grpc.CallOption) (*GetTalkResp, error) {
+	out := new(GetTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_GetTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -153,8 +153,8 @@ func (c *socialRpcClient) FindTalkList(ctx context.Context, in *FindTalkListReq,
 	return out, nil
 }
 
-func (c *socialRpcClient) LikeTalk(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*EmptyResp, error) {
-	out := new(EmptyResp)
+func (c *socialRpcClient) LikeTalk(ctx context.Context, in *LikeTalkReq, opts ...grpc.CallOption) (*LikeTalkResp, error) {
+	out := new(LikeTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_LikeTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -162,8 +162,8 @@ func (c *socialRpcClient) LikeTalk(ctx context.Context, in *IdReq, opts ...grpc.
 	return out, nil
 }
 
-func (c *socialRpcClient) FindUserLikeTalk(ctx context.Context, in *UserIdReq, opts ...grpc.CallOption) (*FindLikeTalkResp, error) {
-	out := new(FindLikeTalkResp)
+func (c *socialRpcClient) FindUserLikeTalk(ctx context.Context, in *FindUserLikeTalkReq, opts ...grpc.CallOption) (*FindUserLikeTalkResp, error) {
+	out := new(FindUserLikeTalkResp)
 	err := c.cc.Invoke(ctx, SocialRpc_FindUserLikeTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -176,27 +176,27 @@ func (c *socialRpcClient) FindUserLikeTalk(ctx context.Context, in *UserIdReq, o
 // for forward compatibility
 type SocialRpcServer interface {
 	// 创建友链
-	AddFriend(context.Context, *NewFriendReq) (*FriendDetailsResp, error)
+	AddFriend(context.Context, *AddFriendReq) (*AddFriendResp, error)
 	// 更新友链
-	UpdateFriend(context.Context, *NewFriendReq) (*FriendDetailsResp, error)
+	UpdateFriend(context.Context, *UpdateFriendReq) (*UpdateFriendResp, error)
 	// 删除友链
-	DeletesFriend(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesFriend(context.Context, *DeletesFriendReq) (*DeletesFriendResp, error)
 	// 查询友链列表
 	FindFriendList(context.Context, *FindFriendListReq) (*FindFriendListResp, error)
 	// 创建说说
-	AddTalk(context.Context, *NewTalkReq) (*TalkDetailsResp, error)
+	AddTalk(context.Context, *AddTalkReq) (*AddTalkResp, error)
 	// 更新说说
-	UpdateTalk(context.Context, *NewTalkReq) (*TalkDetailsResp, error)
+	UpdateTalk(context.Context, *UpdateTalkReq) (*UpdateTalkResp, error)
 	// 删除说说
-	DeletesTalk(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesTalk(context.Context, *DeletesTalkReq) (*DeletesTalkResp, error)
 	// 查询说说
-	GetTalk(context.Context, *IdReq) (*TalkDetailsResp, error)
+	GetTalk(context.Context, *GetTalkReq) (*GetTalkResp, error)
 	// 查询说说列表
 	FindTalkList(context.Context, *FindTalkListReq) (*FindTalkListResp, error)
 	// 点赞说说
-	LikeTalk(context.Context, *IdReq) (*EmptyResp, error)
+	LikeTalk(context.Context, *LikeTalkReq) (*LikeTalkResp, error)
 	// 用户点赞的说说
-	FindUserLikeTalk(context.Context, *UserIdReq) (*FindLikeTalkResp, error)
+	FindUserLikeTalk(context.Context, *FindUserLikeTalkReq) (*FindUserLikeTalkResp, error)
 	mustEmbedUnimplementedSocialRpcServer()
 }
 
@@ -204,37 +204,37 @@ type SocialRpcServer interface {
 type UnimplementedSocialRpcServer struct {
 }
 
-func (UnimplementedSocialRpcServer) AddFriend(context.Context, *NewFriendReq) (*FriendDetailsResp, error) {
+func (UnimplementedSocialRpcServer) AddFriend(context.Context, *AddFriendReq) (*AddFriendResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFriend not implemented")
 }
-func (UnimplementedSocialRpcServer) UpdateFriend(context.Context, *NewFriendReq) (*FriendDetailsResp, error) {
+func (UnimplementedSocialRpcServer) UpdateFriend(context.Context, *UpdateFriendReq) (*UpdateFriendResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateFriend not implemented")
 }
-func (UnimplementedSocialRpcServer) DeletesFriend(context.Context, *IdsReq) (*BatchResp, error) {
+func (UnimplementedSocialRpcServer) DeletesFriend(context.Context, *DeletesFriendReq) (*DeletesFriendResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletesFriend not implemented")
 }
 func (UnimplementedSocialRpcServer) FindFriendList(context.Context, *FindFriendListReq) (*FindFriendListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindFriendList not implemented")
 }
-func (UnimplementedSocialRpcServer) AddTalk(context.Context, *NewTalkReq) (*TalkDetailsResp, error) {
+func (UnimplementedSocialRpcServer) AddTalk(context.Context, *AddTalkReq) (*AddTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTalk not implemented")
 }
-func (UnimplementedSocialRpcServer) UpdateTalk(context.Context, *NewTalkReq) (*TalkDetailsResp, error) {
+func (UnimplementedSocialRpcServer) UpdateTalk(context.Context, *UpdateTalkReq) (*UpdateTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTalk not implemented")
 }
-func (UnimplementedSocialRpcServer) DeletesTalk(context.Context, *IdsReq) (*BatchResp, error) {
+func (UnimplementedSocialRpcServer) DeletesTalk(context.Context, *DeletesTalkReq) (*DeletesTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletesTalk not implemented")
 }
-func (UnimplementedSocialRpcServer) GetTalk(context.Context, *IdReq) (*TalkDetailsResp, error) {
+func (UnimplementedSocialRpcServer) GetTalk(context.Context, *GetTalkReq) (*GetTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTalk not implemented")
 }
 func (UnimplementedSocialRpcServer) FindTalkList(context.Context, *FindTalkListReq) (*FindTalkListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindTalkList not implemented")
 }
-func (UnimplementedSocialRpcServer) LikeTalk(context.Context, *IdReq) (*EmptyResp, error) {
+func (UnimplementedSocialRpcServer) LikeTalk(context.Context, *LikeTalkReq) (*LikeTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeTalk not implemented")
 }
-func (UnimplementedSocialRpcServer) FindUserLikeTalk(context.Context, *UserIdReq) (*FindLikeTalkResp, error) {
+func (UnimplementedSocialRpcServer) FindUserLikeTalk(context.Context, *FindUserLikeTalkReq) (*FindUserLikeTalkResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUserLikeTalk not implemented")
 }
 func (UnimplementedSocialRpcServer) mustEmbedUnimplementedSocialRpcServer() {}
@@ -251,7 +251,7 @@ func RegisterSocialRpcServer(s grpc.ServiceRegistrar, srv SocialRpcServer) {
 }
 
 func _SocialRpc_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewFriendReq)
+	in := new(AddFriendReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -263,13 +263,13 @@ func _SocialRpc_AddFriend_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: SocialRpc_AddFriend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).AddFriend(ctx, req.(*NewFriendReq))
+		return srv.(SocialRpcServer).AddFriend(ctx, req.(*AddFriendReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_UpdateFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewFriendReq)
+	in := new(UpdateFriendReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -281,13 +281,13 @@ func _SocialRpc_UpdateFriend_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: SocialRpc_UpdateFriend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).UpdateFriend(ctx, req.(*NewFriendReq))
+		return srv.(SocialRpcServer).UpdateFriend(ctx, req.(*UpdateFriendReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_DeletesFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdsReq)
+	in := new(DeletesFriendReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -299,7 +299,7 @@ func _SocialRpc_DeletesFriend_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: SocialRpc_DeletesFriend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).DeletesFriend(ctx, req.(*IdsReq))
+		return srv.(SocialRpcServer).DeletesFriend(ctx, req.(*DeletesFriendReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -323,7 +323,7 @@ func _SocialRpc_FindFriendList_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _SocialRpc_AddTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewTalkReq)
+	in := new(AddTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -335,13 +335,13 @@ func _SocialRpc_AddTalk_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: SocialRpc_AddTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).AddTalk(ctx, req.(*NewTalkReq))
+		return srv.(SocialRpcServer).AddTalk(ctx, req.(*AddTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_UpdateTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewTalkReq)
+	in := new(UpdateTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -353,13 +353,13 @@ func _SocialRpc_UpdateTalk_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: SocialRpc_UpdateTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).UpdateTalk(ctx, req.(*NewTalkReq))
+		return srv.(SocialRpcServer).UpdateTalk(ctx, req.(*UpdateTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_DeletesTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdsReq)
+	in := new(DeletesTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -371,13 +371,13 @@ func _SocialRpc_DeletesTalk_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: SocialRpc_DeletesTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).DeletesTalk(ctx, req.(*IdsReq))
+		return srv.(SocialRpcServer).DeletesTalk(ctx, req.(*DeletesTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_GetTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdReq)
+	in := new(GetTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -389,7 +389,7 @@ func _SocialRpc_GetTalk_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: SocialRpc_GetTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).GetTalk(ctx, req.(*IdReq))
+		return srv.(SocialRpcServer).GetTalk(ctx, req.(*GetTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -413,7 +413,7 @@ func _SocialRpc_FindTalkList_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _SocialRpc_LikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdReq)
+	in := new(LikeTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -425,13 +425,13 @@ func _SocialRpc_LikeTalk_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: SocialRpc_LikeTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).LikeTalk(ctx, req.(*IdReq))
+		return srv.(SocialRpcServer).LikeTalk(ctx, req.(*LikeTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SocialRpc_FindUserLikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserIdReq)
+	in := new(FindUserLikeTalkReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -443,7 +443,7 @@ func _SocialRpc_FindUserLikeTalk_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: SocialRpc_FindUserLikeTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocialRpcServer).FindUserLikeTalk(ctx, req.(*UserIdReq))
+		return srv.(SocialRpcServer).FindUserLikeTalk(ctx, req.(*FindUserLikeTalkReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

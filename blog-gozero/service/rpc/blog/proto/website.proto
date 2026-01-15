@@ -7,30 +7,7 @@ package websiterpc;
 // 生成 golang 代码后的包名
 option go_package = "./websiterpc";
 
-//==================== 通用消息 ====================
-message IdsReq {
-  repeated int64 ids = 1;
-}
-
-message BatchResp {
-  int64 success_count = 1;
-}
-
-// 分页请求
-message PageReq {
-  int64 page = 1;      // 页码
-  int64 page_size = 2; // 每页大小
-  repeated string sorts = 3; // 排序字段
-}
-
-// 分页响应
-message PageResp {
-  int64 page = 1;      // 页码
-  int64 page_size = 2; // 每页大小
-  int64 total = 3;     // 总数
-}
-
-/************** blog 网站管理 **************/
+/************** 网站管理 **************/
 
 message VisitDailyStatistics {
   string date = 1; // 日期

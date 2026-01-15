@@ -195,6 +195,35 @@ func (s *AuthController) PhoneLogin(c *gin.Context) {
 }
 
 // @Tags		Auth
+// @Summary		"刷新token"
+// @accept		application/json
+// @Produce		application/json
+// @Param		data	body		types.RefreshTokenReq		true	"请求参数"
+// @Success		200		{object}	response.Body{data=types.LoginResp}	"返回信息"
+// @Router		/admin-api/v1/refresh_token [POST]
+func (s *AuthController) RefreshToken(c *gin.Context) {
+	reqCtx, err := request.ParseRequestContext(c)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+	var req *types.RefreshTokenReq
+	err = request.ShouldBind(c, &req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	data, err := logic.NewAuthLogic(s.svcCtx).RefreshToken(reqCtx, req)
+	if err != nil {
+		response.ResponseError(c, err)
+		return
+	}
+
+	response.ResponseOk(c, data)
+}
+
+// @Tags		Auth
 // @Summary		"注册"
 // @accept		application/json
 // @Produce		application/json

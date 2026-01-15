@@ -24,7 +24,7 @@ func NewUpdateRemarkStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 更新留言状态
-func (l *UpdateRemarkStatusLogic) UpdateRemarkStatus(in *messagerpc.UpdateRemarkStatusReq) (*messagerpc.BatchResp, error) {
+func (l *UpdateRemarkStatusLogic) UpdateRemarkStatus(in *messagerpc.UpdateRemarkStatusReq) (*messagerpc.UpdateRemarkStatusResp, error) {
 	rows, err := l.svcCtx.TRemarkModel.Updates(l.ctx, map[string]interface{}{
 		"status": in.Status,
 	}, "id in (?)", in.Ids)
@@ -32,7 +32,7 @@ func (l *UpdateRemarkStatusLogic) UpdateRemarkStatus(in *messagerpc.UpdateRemark
 		return nil, err
 	}
 
-	return &messagerpc.BatchResp{
+	return &messagerpc.UpdateRemarkStatusResp{
 		SuccessCount: rows,
 	}, nil
 }

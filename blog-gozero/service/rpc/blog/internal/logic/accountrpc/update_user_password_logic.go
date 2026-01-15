@@ -28,7 +28,7 @@ func NewUpdateUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 修改用户密码
-func (l *UpdateUserPasswordLogic) UpdateUserPassword(in *accountrpc.UpdateUserPasswordReq) (*accountrpc.EmptyResp, error) {
+func (l *UpdateUserPasswordLogic) UpdateUserPassword(in *accountrpc.UpdateUserPasswordReq) (*accountrpc.UpdateUserPasswordResp, error) {
 	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -53,5 +53,5 @@ func (l *UpdateUserPasswordLogic) UpdateUserPassword(in *accountrpc.UpdateUserPa
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.UpdateUserPasswordResp{}, nil
 }

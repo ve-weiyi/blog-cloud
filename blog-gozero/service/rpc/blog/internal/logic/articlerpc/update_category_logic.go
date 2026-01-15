@@ -3,10 +3,10 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateCategoryLogic struct {
@@ -24,17 +24,24 @@ func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 // 更新文章分类
-func (l *UpdateCategoryLogic) UpdateCategory(in *articlerpc.NewCategoryReq) (*articlerpc.CategoryPreviewResp, error) {
-	entity := convertCategoryIn(in)
-	_, err := l.svcCtx.TCategoryModel.Save(l.ctx, entity)
+func (l *UpdateCategoryLogic) UpdateCategory(in *articlerpc.UpdateCategoryReq) (*articlerpc.UpdateCategoryResp, error) {
+	entity, err := l.svcCtx.TCategoryModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.CategoryPreviewResp{
-		Id:           entity.Id,
-		CategoryName: entity.CategoryName,
-		CreatedAt:    entity.CreatedAt.Unix(),
-		UpdatedAt:    entity.UpdatedAt.Unix(),
+	entity.CategoryName = in.CategoryName
+	_, err = l.svcCtx.TCategoryModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &articlerpc.UpdateCategoryResp{
+		Category: &articlerpc.Category{
+			Id:           entity.Id,
+			CategoryName: entity.CategoryName,
+			CreatedAt:    entity.CreatedAt.UnixMilli(),
+			UpdatedAt:    entity.UpdatedAt.UnixMilli(),
+		},
 	}, nil
 }

@@ -49,7 +49,7 @@ func (l *FindAlbumListLogic) FindAlbumList(req *types.QueryAlbumReq) (resp *type
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "相册",
 	})
 	if err != nil {

@@ -25,7 +25,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 // 获取用户信息
-func (l *GetUserInfoLogic) GetUserInfo(in *accountrpc.UserIdReq) (*accountrpc.UserInfoResp, error) {
+func (l *GetUserInfoLogic) GetUserInfo(in *accountrpc.GetUserInfoReq) (*accountrpc.GetUserInfoResp, error) {
 	uid := in.UserId
 
 	ui, err := l.svcCtx.TUserModel.FindOneByUserId(l.ctx, uid)
@@ -39,7 +39,9 @@ func (l *GetUserInfoLogic) GetUserInfo(in *accountrpc.UserIdReq) (*accountrpc.Us
 		return nil, err
 	}
 
-	return convertUserInfoOut(ui, rList), nil
+	return &accountrpc.GetUserInfoResp{
+		User: convertUserInfoOut(ui, rList),
+	}, nil
 }
 
 func getUserRoles(ctx context.Context, svcCtx *svc.ServiceContext, uid string) (list []*model.TRole, err error) {
@@ -65,7 +67,7 @@ func getUserRoles(ctx context.Context, svcCtx *svc.ServiceContext, uid string) (
 	return rList, nil
 }
 
-func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.UserInfoResp) {
+func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.UserInfo) {
 	var list []*accountrpc.UserRoleLabel
 	for _, role := range roles {
 		m := &accountrpc.UserRoleLabel{
@@ -78,7 +80,7 @@ func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.
 		list = append(list, m)
 	}
 
-	out = &accountrpc.UserInfoResp{
+	out = &accountrpc.UserInfo{
 		UserId:       in.UserId,
 		Username:     in.Username,
 		Nickname:     in.Nickname,
@@ -90,8 +92,8 @@ func convertUserInfoOut(in *model.TUser, roles []*model.TRole) (out *accountrpc.
 		RegisterType: in.RegisterType,
 		IpAddress:    in.IpAddress,
 		IpSource:     in.IpSource,
-		CreatedAt:    in.CreatedAt.Unix(),
-		UpdatedAt:    in.UpdatedAt.Unix(),
+		CreatedAt:    in.CreatedAt.UnixMilli(),
+		UpdatedAt:    in.UpdatedAt.UnixMilli(),
 		Roles:        list,
 	}
 

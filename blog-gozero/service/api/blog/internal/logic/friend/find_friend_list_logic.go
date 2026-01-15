@@ -52,7 +52,7 @@ func (l *FindFriendListLogic) FindFriendList(req *types.QueryFriendReq) (resp *t
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "友链",
 	})
 	if err != nil {

@@ -27,7 +27,7 @@ func NewBindUserOauthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bin
 }
 
 // 修改用户第三方账号
-func (l *BindUserOauthLogic) BindUserOauth(in *accountrpc.BindUserOauthReq) (*accountrpc.EmptyResp, error) {
+func (l *BindUserOauthLogic) BindUserOauth(in *accountrpc.BindUserOauthReq) (*accountrpc.BindUserOauthResp, error) {
 	// 查找当前用户是否存在
 	userId, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
@@ -70,5 +70,5 @@ func (l *BindUserOauthLogic) BindUserOauth(in *accountrpc.BindUserOauthReq) (*ac
 		Avatar:   info.Avatar,
 	})
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.BindUserOauthResp{}, nil
 }

@@ -26,9 +26,9 @@ func NewSyncMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 func (l *SyncMenuListLogic) SyncMenuList(req *types.SyncMenuReq) (resp *types.BatchResp, err error) {
-	var menus []*permissionrpc.NewMenuReq
+	var menus []*permissionrpc.AddMenuReq
 	for _, menu := range req.Menus {
-		menus = append(menus, ConvertMenuPb(menu))
+		menus = append(menus, convertMenuPb(menu))
 	}
 
 	in := &permissionrpc.SyncMenuListReq{

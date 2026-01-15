@@ -24,11 +24,13 @@ func NewDeletesCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 // 删除文章分类
-func (l *DeletesCategoryLogic) DeletesCategory(in *articlerpc.IdsReq) (*articlerpc.BatchResp, error) {
-	_, err := l.svcCtx.TCategoryModel.Deletes(l.ctx, "id in (?)", in.Ids)
+func (l *DeletesCategoryLogic) DeletesCategory(in *articlerpc.DeletesCategoryReq) (*articlerpc.DeletesCategoryResp, error) {
+	rows, err := l.svcCtx.TCategoryModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.BatchResp{}, nil
+	return &articlerpc.DeletesCategoryResp{
+		SuccessCount: rows,
+	}, nil
 }

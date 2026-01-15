@@ -1824,7 +1824,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin-api/v1/comment/update_comment_review": {
+        "/admin-api/v1/comment/update_comment_status": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -1835,7 +1835,7 @@ const docTemplate = `{
                 "tags": [
                     "Comment"
                 ],
-                "summary": "\"更新评论审核状态\"",
+                "summary": "\"更新评论状态\"",
                 "parameters": [
                     {
                         "description": "请求参数",
@@ -3399,6 +3399,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin-api/v1/refresh_token": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "\"刷新token\"",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.RefreshTokenReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Body"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_ve-weiyi_ve-blog-golang_blog-gin_api_admin_types.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/admin-api/v1/register": {
             "post": {
                 "consumes": [
@@ -3534,7 +3579,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin-api/v1/remark/update_remark_review": {
+        "/admin-api/v1/remark/update_remark_status": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -3545,7 +3590,7 @@ const docTemplate = `{
                 "tags": [
                     "Remark"
                 ],
-                "summary": "\"更新留言\"",
+                "summary": "\"更新留言状态\"",
                 "parameters": [
                     {
                         "description": "请求参数",
@@ -8025,8 +8070,16 @@ const docTemplate = `{
         "github_com_ve-weiyi_ve-blog-golang_blog-gin_api_admin_types.LoginResp": {
             "type": "object",
             "properties": {
+                "scope": {
+                    "description": "作用域",
+                    "type": "string"
+                },
                 "token": {
                     "$ref": "#/definitions/github_com_ve-weiyi_ve-blog-golang_blog-gin_api_admin_types.Token"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "string"
                 }
             }
         },
@@ -8086,12 +8139,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "rpc_status": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "runtime": {
                     "type": "string"
@@ -8477,31 +8524,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
-                    "description": "访问token,过期时间较短。2h",
+                    "description": "访问令牌：用于接口访问，有效期短",
                     "type": "string"
                 },
                 "expires_in": {
-                    "description": "访问token过期时间",
+                    "description": "AccessToken 有效期（秒），如 3600（1小时）",
+                    "type": "integer"
+                },
+                "refresh_expires_at": {
+                    "description": "RefreshToken 过期时间戳（秒）",
                     "type": "integer"
                 },
                 "refresh_expires_in": {
-                    "description": "刷新token过期时间",
+                    "description": "RefreshToken 有效期（秒），如 604800（7天）",
                     "type": "integer"
                 },
                 "refresh_token": {
-                    "description": "刷新token,过期时间较长。30d",
-                    "type": "string"
-                },
-                "scope": {
-                    "description": "作用域",
+                    "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
                     "type": "string"
                 },
                 "token_type": {
-                    "description": "token类型,Bearer",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户id",
+                    "description": "Token 类型（如 \"Bearer\"）",
                     "type": "string"
                 }
             }
@@ -9066,8 +9109,16 @@ const docTemplate = `{
         "github_com_ve-weiyi_ve-blog-golang_blog-gin_api_blog_types.LoginResp": {
             "type": "object",
             "properties": {
+                "scope": {
+                    "description": "作用域",
+                    "type": "string"
+                },
                 "token": {
                     "$ref": "#/definitions/github_com_ve-weiyi_ve-blog-golang_blog-gin_api_blog_types.Token"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "string"
                 }
             }
         },
@@ -9471,31 +9522,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
-                    "description": "访问token,过期时间较短。2h",
+                    "description": "访问令牌：用于接口访问，有效期短",
                     "type": "string"
                 },
                 "expires_in": {
-                    "description": "访问token过期时间",
+                    "description": "AccessToken 有效期（秒），如 3600（1小时）",
+                    "type": "integer"
+                },
+                "refresh_expires_at": {
+                    "description": "RefreshToken 过期时间戳（秒）",
                     "type": "integer"
                 },
                 "refresh_expires_in": {
-                    "description": "刷新token过期时间",
+                    "description": "RefreshToken 有效期（秒），如 604800（7天）",
                     "type": "integer"
                 },
                 "refresh_token": {
-                    "description": "刷新token,过期时间较长。30d",
-                    "type": "string"
-                },
-                "scope": {
-                    "description": "作用域",
+                    "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
                     "type": "string"
                 },
                 "token_type": {
-                    "description": "token类型,Bearer",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户id",
+                    "description": "Token 类型（如 \"Bearer\"）",
                     "type": "string"
                 }
             }
@@ -9987,10 +10034,6 @@ const docTemplate = `{
                     "description": "主键id",
                     "type": "integer"
                 },
-                "is_disable": {
-                    "description": "是否禁用 0否 1是",
-                    "type": "integer"
-                },
                 "method": {
                     "description": "api请求方法",
                     "type": "string"
@@ -10006,6 +10049,10 @@ const docTemplate = `{
                 "path": {
                     "description": "api路径",
                     "type": "string"
+                },
+                "status": {
+                    "description": "状态 0正常 1禁用",
+                    "type": "integer"
                 },
                 "traceable": {
                     "description": "是否追溯操作记录 0需要，1是",
@@ -10486,14 +10533,6 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "integer"
                 },
-                "is_disable": {
-                    "description": "是否禁用",
-                    "type": "integer"
-                },
-                "is_hidden": {
-                    "description": "是否隐藏",
-                    "type": "integer"
-                },
                 "keep_alive": {
                     "description": "是否缓存",
                     "type": "integer"
@@ -10529,6 +10568,10 @@ const docTemplate = `{
                     "description": "路由重定向",
                     "type": "string"
                 },
+                "status": {
+                    "description": "是否禁用",
+                    "type": "integer"
+                },
                 "title": {
                     "description": "菜单标题",
                     "type": "string"
@@ -10539,6 +10582,10 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "description": "更新时间",
+                    "type": "integer"
+                },
+                "visible": {
+                    "description": "菜单是否可见",
                     "type": "integer"
                 }
             }
@@ -10590,10 +10637,6 @@ const docTemplate = `{
                     "description": "主键id",
                     "type": "integer"
                 },
-                "is_disable": {
-                    "description": "是否禁用 0否 1是",
-                    "type": "integer"
-                },
                 "method": {
                     "description": "api请求方法",
                     "type": "string"
@@ -10609,6 +10652,10 @@ const docTemplate = `{
                 "path": {
                     "description": "api路径",
                     "type": "string"
+                },
+                "status": {
+                    "description": "状态 0正常 1禁用",
+                    "type": "integer"
                 },
                 "traceable": {
                     "description": "是否追溯操作记录 0需要，1是",
@@ -10759,14 +10806,6 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "integer"
                 },
-                "is_disable": {
-                    "description": "是否禁用",
-                    "type": "integer"
-                },
-                "is_hidden": {
-                    "description": "是否隐藏",
-                    "type": "integer"
-                },
                 "keep_alive": {
                     "description": "是否缓存",
                     "type": "integer"
@@ -10802,6 +10841,10 @@ const docTemplate = `{
                     "description": "路由重定向",
                     "type": "string"
                 },
+                "status": {
+                    "description": "是否禁用",
+                    "type": "integer"
+                },
                 "title": {
                     "description": "菜单标题",
                     "type": "string"
@@ -10809,6 +10852,10 @@ const docTemplate = `{
                 "type": {
                     "description": "菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）",
                     "type": "string"
+                },
+                "visible": {
+                    "description": "菜单是否可见",
+                    "type": "integer"
                 }
             }
         },
@@ -10893,10 +10940,6 @@ const docTemplate = `{
                     "description": "是否默认角色 0否 1是",
                     "type": "integer"
                 },
-                "is_disable": {
-                    "description": "是否禁用  0否 1是",
-                    "type": "integer"
-                },
                 "parent_id": {
                     "description": "父角色id",
                     "type": "integer"
@@ -10912,6 +10955,10 @@ const docTemplate = `{
                 "role_label": {
                     "description": "角色标签",
                     "type": "string"
+                },
+                "status": {
+                    "description": "状态 0正常 1禁用",
+                    "type": "integer"
                 }
             }
         },
@@ -11354,10 +11401,6 @@ const docTemplate = `{
         "types.QueryRoleReq": {
             "type": "object",
             "properties": {
-                "is_disable": {
-                    "description": "是否禁用  0否 1是",
-                    "type": "integer"
-                },
                 "page": {
                     "description": "当前页码",
                     "type": "integer"
@@ -11380,6 +11423,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "status": {
+                    "description": "状态 0正常 1禁用",
+                    "type": "integer"
                 }
             }
         },
@@ -11463,6 +11510,23 @@ const docTemplate = `{
                 }
             }
         },
+        "types.RefreshTokenReq": {
+            "type": "object",
+            "properties": {
+                "grant_type": {
+                    "description": "授权类型",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "description": "刷新令牌",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "string"
+                }
+            }
+        },
         "types.RoleBackVO": {
             "type": "object",
             "properties": {
@@ -11476,10 +11540,6 @@ const docTemplate = `{
                 },
                 "is_default": {
                     "description": "是否默认角色 0否 1是",
-                    "type": "integer"
-                },
-                "is_disable": {
-                    "description": "是否禁用  0否 1是",
                     "type": "integer"
                 },
                 "parent_id": {
@@ -11497,6 +11557,10 @@ const docTemplate = `{
                 "role_label": {
                     "description": "角色标签",
                     "type": "string"
+                },
+                "status": {
+                    "description": "状态 0正常 1禁用",
+                    "type": "integer"
                 },
                 "updated_at": {
                     "description": "更新时间",

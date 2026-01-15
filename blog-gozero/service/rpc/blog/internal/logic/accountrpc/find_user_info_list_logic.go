@@ -57,7 +57,7 @@ func (l *FindUserInfoListLogic) FindUserInfoList(in *accountrpc.FindUserListReq)
 		return nil, err
 	}
 
-	var list []*accountrpc.UserInfoResp
+	var list []*accountrpc.UserInfo
 	for _, item := range records {
 
 		var roles []*model.TRole

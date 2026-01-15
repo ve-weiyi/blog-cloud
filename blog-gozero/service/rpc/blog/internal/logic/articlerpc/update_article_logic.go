@@ -5,11 +5,11 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateArticleLogic struct {
@@ -27,7 +27,7 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 // 更新文章
-func (l *UpdateArticleLogic) UpdateArticle(in *articlerpc.NewArticleReq) (*articlerpc.ArticlePreview, error) {
+func (l *UpdateArticleLogic) UpdateArticle(in *articlerpc.UpdateArticleReq) (*articlerpc.UpdateArticleResp, error) {
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
 
 	entity, err := l.svcCtx.TArticleModel.FindById(l.ctx, in.Id)
@@ -88,5 +88,7 @@ func (l *UpdateArticleLogic) UpdateArticle(in *articlerpc.NewArticleReq) (*artic
 		return nil, err
 	}
 
-	return helper.convertArticlePreviewOut(entity), nil
+	return &articlerpc.UpdateArticleResp{
+		Article: helper.convertArticlePreviewOut(entity),
+	}, nil
 }

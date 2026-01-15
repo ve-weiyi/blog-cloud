@@ -37,9 +37,9 @@ service admin-api {
 	@handler FindRemarkList
 	post /remark/find_remark_list (QueryRemarkReq) returns (PageResp)
 
-	@doc "更新留言"
+	@doc "更新留言状态"
 	@handler UpdateRemarkStatus
-	put /remark/update_remark_review (UpdateRemarkStatusReq) returns (BatchResp)
+	put /remark/update_remark_status (UpdateRemarkStatusReq) returns (BatchResp)
 
 	@doc "删除留言"
 	@handler DeletesRemark

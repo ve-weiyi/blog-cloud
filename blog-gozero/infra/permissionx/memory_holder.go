@@ -48,8 +48,8 @@ func (m *MemoryHolder) LoadPolicy() error {
 	m.user = make(map[string][]string)
 
 	var rs = make(map[int64][]int64)
-	var roles = make(map[int64]*permissionrpc.RoleDetailsResp)
-	var apis = make(map[int64]*permissionrpc.ApiDetailsResp)
+	var roles = make(map[int64]*permissionrpc.Role)
+	var apis = make(map[int64]*permissionrpc.Api)
 
 	// 收集角色
 	roleList, err := m.pr.FindAllRole(context.Background(), &permissionrpc.FindAllRoleReq{})
@@ -71,7 +71,7 @@ func (m *MemoryHolder) LoadPolicy() error {
 
 	// 收集角色-资源
 	for _, v := range roleList.List {
-		resource, err := m.pr.FindRoleResources(context.Background(), &permissionrpc.IdReq{Id: v.Id})
+		resource, err := m.pr.FindRoleResources(context.Background(), &permissionrpc.FindRoleResourcesReq{Id: v.Id})
 		if err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ func (m *MemoryHolder) LoadPolicy() error {
 			return fmt.Errorf("role %d not found", roleId)
 		}
 
-		if role.IsDisable == 1 {
+		if role.Status == 1 {
 			continue
 		}
 
@@ -95,7 +95,7 @@ func (m *MemoryHolder) LoadPolicy() error {
 				return fmt.Errorf("api %d not found", apiId)
 			}
 
-			if api.IsDisable == 1 {
+			if api.Status == 1 {
 				continue
 			}
 
@@ -134,7 +134,7 @@ func (m *MemoryHolder) dynamicLoadUserRoles(userId string) error {
 	}
 
 	// 获取用户角色
-	userRoles, err := m.pr.FindUserRoles(context.Background(), &permissionrpc.UserIdReq{UserId: userId})
+	userRoles, err := m.pr.FindUserRoles(context.Background(), &permissionrpc.FindUserRolesReq{UserId: userId})
 	if err != nil {
 		return err
 	}

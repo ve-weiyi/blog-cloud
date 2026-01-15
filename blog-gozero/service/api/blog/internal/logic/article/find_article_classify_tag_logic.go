@@ -41,7 +41,7 @@ func (l *FindArticleClassifyTagLogic) FindArticleClassifyTag(req *types.QueryArt
 	list := make([]*types.ArticleHome, 0)
 	// 转换数据
 	for _, v := range out.List {
-		m := ConvertArticleHomeTypes(v)
+		m := convertArticleHomeTypes(v)
 		list = append(list, m)
 	}
 

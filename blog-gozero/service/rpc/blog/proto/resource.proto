@@ -7,38 +7,23 @@ package resourcerpc;
 // 生成 golang 代码后的包名
 option go_package = "./resourcerpc";
 
-//==================== 通用消息 ====================
-message EmptyResp {
-}
-
-message IdReq {
-  int64 id = 1;
-}
-
-message IdsReq {
-  repeated int64 ids = 1;
-}
-
-message BatchResp {
-  int64 success_count = 1;
-}
-
-// 分页请求
+/************** 通用消息 **************/
+// 分页请求参数
 message PageReq {
   int64 page = 1;      // 页码
   int64 page_size = 2; // 每页大小
   repeated string sorts = 3; // 排序字段
 }
 
-// 分页响应
+// 分页响应参数
 message PageResp {
   int64 page = 1;      // 页码
   int64 page_size = 2; // 每页大小
   int64 total = 3;     // 总数
 }
 
-/************** blog 相册管理 **************/
-message PhotoDetailsResp {
+/************** 照片管理 **************/
+message Photo {
   int64 id = 1;// 主键
   int64 album_id = 2;// 相册id
   string photo_name = 3;// 照片名
@@ -49,7 +34,7 @@ message PhotoDetailsResp {
   int64 updated_at = 8;// 更新时间
 }
 
-message NewPhotoReq {
+message AddPhotoReq {
   int64 id = 1;// 主键
   int64 album_id = 2;// 相册id
   string photo_name = 3;// 照片名
@@ -58,9 +43,38 @@ message NewPhotoReq {
   int64 is_delete = 6;// 是否删除
 }
 
+message AddPhotoResp {
+  Photo photo = 1;
+}
+
+message UpdatePhotoReq {
+  int64 id = 1;// 主键
+  int64 album_id = 2;// 相册id
+  string photo_name = 3;// 照片名
+  string photo_desc = 4;// 照片描述
+  string photo_src = 5;// 照片地址
+  int64 is_delete = 6;// 是否删除
+}
+
+message UpdatePhotoResp {
+  Photo photo = 1;
+}
+
 message UpdatePhotoDeleteReq {
   repeated int64 ids = 1;// id
   int64 is_delete = 2;// 是否删除
+}
+
+message UpdatePhotoDeleteResp {
+  int64 success_count = 1; // 成功数量
+}
+
+message DeletesPhotoReq {
+  repeated int64 ids = 1; // id列表
+}
+
+message DeletesPhotoResp {
+  int64 success_count = 1; // 成功数量
 }
 
 message FindPhotoListReq {
@@ -71,19 +85,11 @@ message FindPhotoListReq {
 
 message FindPhotoListResp {
   PageResp pagination = 1; // 分页信息
-  repeated PhotoDetailsResp list = 2;
+  repeated Photo list = 2;
 }
 
-message NewAlbumReq {
-  int64 id = 1;// 主键
-  string album_name = 2;// 相册名
-  string album_desc = 3;// 相册描述
-  string album_cover = 4;// 相册封面
-  int64 is_delete = 5;// 是否删除
-  int64 status = 6;// 状态值 1公开 2私密
-}
-
-message AlbumDetailsResp {
+/************** 相册管理 **************/
+message Album {
   int64 id = 1;// 主键
   string album_name = 2;// 相册名
   string album_desc = 3;// 相册描述
@@ -95,9 +101,55 @@ message AlbumDetailsResp {
   int64 photo_count = 9;// 照片数量
 }
 
+message AddAlbumReq {
+  int64 id = 1;// 主键
+  string album_name = 2;// 相册名
+  string album_desc = 3;// 相册描述
+  string album_cover = 4;// 相册封面
+  int64 is_delete = 5;// 是否删除
+  int64 status = 6;// 状态值 1公开 2私密
+}
+
+message AddAlbumResp {
+  Album album = 1;
+}
+
+message UpdateAlbumReq {
+  int64 id = 1;// 主键
+  string album_name = 2;// 相册名
+  string album_desc = 3;// 相册描述
+  string album_cover = 4;// 相册封面
+  int64 is_delete = 5;// 是否删除
+  int64 status = 6;// 状态值 1公开 2私密
+}
+
+message UpdateAlbumResp {
+  Album album = 1;
+}
+
 message UpdateAlbumDeleteReq {
   repeated int64 ids = 1;// 相册id
   int64 is_delete = 2;// 是否删除
+}
+
+message UpdateAlbumDeleteResp {
+  int64 success_count = 1; // 成功数量
+}
+
+message GetAlbumReq {
+  int64 id = 1; // 相册id
+}
+
+message GetAlbumResp {
+  Album album = 1;
+}
+
+message DeletesAlbumReq {
+  repeated int64 ids = 1; // id列表
+}
+
+message DeletesAlbumResp {
+  int64 success_count = 1; // 成功数量
 }
 
 message FindAlbumListReq {
@@ -108,20 +160,11 @@ message FindAlbumListReq {
 
 message FindAlbumListResp {
   PageResp pagination = 1; // 分页信息
-  repeated AlbumDetailsResp list = 2;
+  repeated Album list = 2;
 }
 
-/************** blog 页面管理 **************/
-message NewPageReq {
-  int64 id = 1;// 页面id
-  string page_name = 2;// 页面名
-  string page_label = 3;// 页面标签
-  string page_cover = 4;// 页面封面
-  int64 is_carousel = 5;// 是否轮播
-  repeated string carousel_covers = 6;// 轮播列表
-}
-
-message PageDetailsResp {
+/************** 页面管理 **************/
+message Page {
   int64 id = 1;// 页面id
   string page_name = 2;// 页面名
   string page_label = 3;// 页面标签
@@ -132,6 +175,40 @@ message PageDetailsResp {
   int64 updated_at = 8;// 更新时间
 }
 
+message AddPageReq {
+  int64 id = 1;// 页面id
+  string page_name = 2;// 页面名
+  string page_label = 3;// 页面标签
+  string page_cover = 4;// 页面封面
+  int64 is_carousel = 5;// 是否轮播
+  repeated string carousel_covers = 6;// 轮播列表
+}
+
+message AddPageResp {
+  Page page = 1;
+}
+
+message UpdatePageReq {
+  int64 id = 1;// 页面id
+  string page_name = 2;// 页面名
+  string page_label = 3;// 页面标签
+  string page_cover = 4;// 页面封面
+  int64 is_carousel = 5;// 是否轮播
+  repeated string carousel_covers = 6;// 轮播列表
+}
+
+message UpdatePageResp {
+  Page page = 1;
+}
+
+message DeletesPageReq {
+  repeated int64 ids = 1; // id列表
+}
+
+message DeletesPageResp {
+  int64 success_count = 1; // 成功数量
+}
+
 message FindPageListReq {
   PageReq paginate = 1;    // 分页参数
   string page_name = 2;// 页面名
@@ -139,43 +216,41 @@ message FindPageListReq {
 
 message FindPageListResp {
   PageResp pagination = 1; // 分页信息
-  repeated PageDetailsResp list = 2;
+  repeated Page list = 2;
 }
 
 
 service ResourceRpc {
   // 创建照片
-  rpc AddPhoto(NewPhotoReq) returns(PhotoDetailsResp);
+  rpc AddPhoto(AddPhotoReq) returns(AddPhotoResp);
   // 更新照片
-  rpc UpdatePhoto(NewPhotoReq) returns(PhotoDetailsResp);
+  rpc UpdatePhoto(UpdatePhotoReq) returns(UpdatePhotoResp);
   // 更新照片删除状态
-  rpc UpdatePhotoDelete(UpdatePhotoDeleteReq) returns(BatchResp);
+  rpc UpdatePhotoDelete(UpdatePhotoDeleteReq) returns(UpdatePhotoDeleteResp);
   // 删除照片
-  rpc DeletesPhoto(IdsReq) returns(BatchResp);
+  rpc DeletesPhoto(DeletesPhotoReq) returns(DeletesPhotoResp);
   // 查询照片列表
   rpc FindPhotoList(FindPhotoListReq) returns(FindPhotoListResp);
 
-
   // 创建相册
-  rpc AddAlbum(NewAlbumReq) returns(AlbumDetailsResp);
+  rpc AddAlbum(AddAlbumReq) returns(AddAlbumResp);
   // 更新相册
-  rpc UpdateAlbum(NewAlbumReq) returns(AlbumDetailsResp);
+  rpc UpdateAlbum(UpdateAlbumReq) returns(UpdateAlbumResp);
   // 更新相册删除状态
-  rpc UpdateAlbumDelete(UpdateAlbumDeleteReq) returns(BatchResp);
+  rpc UpdateAlbumDelete(UpdateAlbumDeleteReq) returns(UpdateAlbumDeleteResp);
   // 获取相册
-  rpc GetAlbum(IdReq) returns(AlbumDetailsResp);
+  rpc GetAlbum(GetAlbumReq) returns(GetAlbumResp);
   // 删除相册
-  rpc DeletesAlbum(IdsReq) returns(BatchResp);
+  rpc DeletesAlbum(DeletesAlbumReq) returns(DeletesAlbumResp);
   // 查询相册列表
   rpc FindAlbumList(FindAlbumListReq) returns(FindAlbumListResp);
 
-
   // 创建页面
-  rpc AddPage(NewPageReq) returns(PageDetailsResp);
+  rpc AddPage(AddPageReq) returns(AddPageResp);
   // 更新页面
-  rpc UpdatePage(NewPageReq) returns(PageDetailsResp);
+  rpc UpdatePage(UpdatePageReq) returns(UpdatePageResp);
   // 删除页面
-  rpc DeletesPage(IdsReq) returns(BatchResp);
+  rpc DeletesPage(DeletesPageReq) returns(DeletesPageResp);
   // 查询页面列表
   rpc FindPageList(FindPageListReq) returns(FindPageListResp);
 }

@@ -25,40 +25,36 @@ func NewAddPhotoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPhoto
 }
 
 // 创建照片
-func (l *AddPhotoLogic) AddPhoto(in *resourcerpc.NewPhotoReq) (*resourcerpc.PhotoDetailsResp, error) {
-	entity := convertPhotoIn(in)
+func (l *AddPhotoLogic) AddPhoto(in *resourcerpc.AddPhotoReq) (*resourcerpc.AddPhotoResp, error) {
+	entity := &model.TPhoto{
+		Id:        in.Id,
+		AlbumId:   in.AlbumId,
+		PhotoName: in.PhotoName,
+		PhotoDesc: in.PhotoDesc,
+		PhotoSrc:  in.PhotoSrc,
+		IsDelete:  in.IsDelete,
+	}
 
 	_, err := l.svcCtx.TPhotoModel.Insert(l.ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertPhotoOut(entity), nil
+	return &resourcerpc.AddPhotoResp{
+		Photo: convertPhotoOut(entity),
+	}, nil
 }
 
-func convertPhotoIn(in *resourcerpc.NewPhotoReq) (out *model.TPhoto) {
-	out = &model.TPhoto{
+func convertPhotoOut(in *model.TPhoto) (out *resourcerpc.Photo) {
+	out = &resourcerpc.Photo{
 		Id:        in.Id,
 		AlbumId:   in.AlbumId,
 		PhotoName: in.PhotoName,
 		PhotoDesc: in.PhotoDesc,
 		PhotoSrc:  in.PhotoSrc,
 		IsDelete:  in.IsDelete,
-	}
-
-	return out
-}
-
-func convertPhotoOut(in *model.TPhoto) (out *resourcerpc.PhotoDetailsResp) {
-	out = &resourcerpc.PhotoDetailsResp{
-		Id:        in.Id,
-		AlbumId:   in.AlbumId,
-		PhotoName: in.PhotoName,
-		PhotoDesc: in.PhotoDesc,
-		PhotoSrc:  in.PhotoSrc,
-		IsDelete:  in.IsDelete,
-		CreatedAt: in.CreatedAt.Unix(),
-		UpdatedAt: in.UpdatedAt.Unix(),
+		CreatedAt: in.CreatedAt.UnixMilli(),
+		UpdatedAt: in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

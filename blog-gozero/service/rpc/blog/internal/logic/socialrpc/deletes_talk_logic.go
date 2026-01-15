@@ -24,13 +24,13 @@ func NewDeletesTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 // 删除说说
-func (l *DeletesTalkLogic) DeletesTalk(in *socialrpc.IdsReq) (*socialrpc.BatchResp, error) {
+func (l *DeletesTalkLogic) DeletesTalk(in *socialrpc.DeletesTalkReq) (*socialrpc.DeletesTalkResp, error) {
 	rows, err := l.svcCtx.TTalkModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &socialrpc.BatchResp{
+	return &socialrpc.DeletesTalkResp{
 		SuccessCount: rows,
 	}, nil
 }

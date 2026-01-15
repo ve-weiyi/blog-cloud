@@ -30,7 +30,7 @@ func (s *RemarkRouter) Register(r *gin.RouterGroup) {
 		group.DELETE("/remark/deletes_remark", h.DeletesRemark)
 		// 分页获取留言列表
 		group.POST("/remark/find_remark_list", h.FindRemarkList)
-		// 更新留言
-		group.PUT("/remark/update_remark_review", h.UpdateRemarkStatus)
+		// 更新留言状态
+		group.PUT("/remark/update_remark_status", h.UpdateRemarkStatus)
 	}
 }

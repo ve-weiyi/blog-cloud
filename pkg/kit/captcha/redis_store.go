@@ -10,24 +10,21 @@ import (
 
 // 验证码存储
 type RedisStore struct {
-	Redis      *redis.Client // 缓存 15分钟
-	Expiration time.Duration // 过期时间
-	PrefixKey  string        // 前缀
+	Redis      *redis.Client   // 缓存 15分钟
+	Expiration time.Duration   // 过期时间
 	Context    context.Context
 }
 
 func NewRedisStore(rd *redis.Client) *RedisStore {
 	return &RedisStore{
 		Expiration: 15 * 60 * time.Second,
-		PrefixKey:  "captcha:",
 		Redis:      rd,
 		Context:    context.Background(),
 	}
 }
 
 func (rs *RedisStore) Set(key string, value string) error {
-	cacheKey := rs.PrefixKey + key
-	err := rs.Redis.Set(rs.Context, cacheKey, value, rs.Expiration).Err()
+	err := rs.Redis.Set(rs.Context, key, value, rs.Expiration).Err()
 	if err != nil {
 		return err
 	}
@@ -36,13 +33,12 @@ func (rs *RedisStore) Set(key string, value string) error {
 }
 
 func (rs *RedisStore) Get(key string, clear bool) string {
-	cacheKey := rs.PrefixKey + key
-	val, err := rs.Redis.Get(rs.Context, cacheKey).Result()
+	val, err := rs.Redis.Get(rs.Context, key).Result()
 	if err != nil {
 		return ""
 	}
 	if clear {
-		err := rs.Redis.Del(rs.Context, cacheKey).Err()
+		err := rs.Redis.Del(rs.Context, key).Err()
 		if err != nil {
 			return ""
 		}

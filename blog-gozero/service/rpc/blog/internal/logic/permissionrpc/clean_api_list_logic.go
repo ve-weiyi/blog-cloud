@@ -24,13 +24,13 @@ func NewCleanApiListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Clea
 }
 
 // 清空接口列表
-func (l *CleanApiListLogic) CleanApiList(in *permissionrpc.CleanApiListReq) (*permissionrpc.BatchResp, error) {
+func (l *CleanApiListLogic) CleanApiList(in *permissionrpc.CleanApiListReq) (*permissionrpc.CleanApiListResp, error) {
 	row, err := l.svcCtx.TApiModel.Deletes(l.ctx, "1 = 1")
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.CleanApiListResp{
 		SuccessCount: row,
 	}, nil
 }

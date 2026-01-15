@@ -140,7 +140,7 @@ func RunHttpServer(c *config.Config) {
 	欢迎使用 ve-blog-golang
 	当前版本: %s
 	微信号：wy791422171 QQ：791422171
-	默认接口文档地址:http://localhost:%v/api/v1/swagger/index.html
+	默认接口文档地址: http://localhost:%v/api/v1/swagger/index.html
 `, c.System.Version, c.System.Port)
 	fmt.Println(s.ListenAndServe().Error())
 }

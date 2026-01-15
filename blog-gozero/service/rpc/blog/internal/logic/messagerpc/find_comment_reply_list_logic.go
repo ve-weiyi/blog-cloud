@@ -51,7 +51,7 @@ func (l *FindCommentReplyListLogic) FindCommentReplyList(in *messagerpc.FindComm
 		return nil, err
 	}
 
-	var list []*messagerpc.CommentDetailsResp
+	var list []*messagerpc.Comment
 	for _, v := range records {
 		list = append(list, convertCommentOut(v))
 	}

@@ -33,7 +33,7 @@ func (l *FindPhotoListLogic) FindPhotoList(in *resourcerpc.FindPhotoListReq) (*r
 		return nil, err
 	}
 
-	var list []*resourcerpc.PhotoDetailsResp
+	var list []*resourcerpc.Photo
 	for _, v := range records {
 		list = append(list, convertPhotoOut(v))
 	}

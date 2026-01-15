@@ -26,7 +26,7 @@ func NewDeletesCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DeletesCommentLogic) DeletesComment(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &messagerpc.IdsReq{
+	in := &messagerpc.DeletesCommentReq{
 		Ids: req.Ids,
 	}
 

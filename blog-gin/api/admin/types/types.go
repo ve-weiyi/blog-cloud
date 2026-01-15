@@ -95,8 +95,8 @@ type MenuMeta struct {
 	Params     []*MenuMetaParams `json:"params,optional"`      // 参数
 	KeepAlive  int64             `json:"keep_alive,optional"`  // 是否缓存
 	AlwaysShow int64             `json:"always_show,optional"` // 是否一直显示菜单
-	IsHidden   int64             `json:"is_hidden,optional"`   // 是否隐藏
-	IsDisable  int64             `json:"is_disable,optional"`  // 是否禁用
+	Visible    int64             `json:"visible,optional"`     // 菜单是否可见
+	Status     int64             `json:"status,optional"`      // 是否禁用
 }
 
 type MenuMetaParams struct {
@@ -139,12 +139,11 @@ type PingReq struct {
 }
 
 type PingResp struct {
-	Env         string   `json:"env"`
-	Name        string   `json:"name"`
-	Version     string   `json:"version"`
-	Runtime     string   `json:"runtime"`
-	Description string   `json:"description"`
-	RpcStatus   []string `json:"rpc_status"`
+	Env         string `json:"env"`
+	Name        string `json:"name"`
+	Version     string `json:"version"`
+	Description string `json:"description"`
+	Runtime     string `json:"runtime"`
 }
 
 type RemarkBackVO struct {
@@ -185,13 +184,12 @@ type ThirdPlatformInfo struct {
 }
 
 type Token struct {
-	UserId           string `json:"user_id"`            // 用户id
-	TokenType        string `json:"token_type"`         // token类型,Bearer
-	AccessToken      string `json:"access_token"`       // 访问token,过期时间较短。2h
-	ExpiresIn        int64  `json:"expires_in"`         // 访问token过期时间
-	RefreshToken     string `json:"refresh_token"`      // 刷新token,过期时间较长。30d
-	RefreshExpiresIn int64  `json:"refresh_expires_in"` // 刷新token过期时间
-	Scope            string `json:"scope"`              // 作用域
+	TokenType        string `json:"token_type"`         // Token 类型（如 "Bearer"）
+	AccessToken      string `json:"access_token"`       // 访问令牌：用于接口访问，有效期短
+	ExpiresIn        int64  `json:"expires_in"`         // AccessToken 有效期（秒），如 3600（1小时）
+	RefreshToken     string `json:"refresh_token"`      // 刷新令牌：仅用于刷新 AccessToken，有效期长
+	RefreshExpiresIn int64  `json:"refresh_expires_in"` // RefreshToken 有效期（秒），如 604800（7天）
+	RefreshExpiresAt int64  `json:"refresh_expires_at"` // RefreshToken 过期时间戳（秒）
 }
 
 type UserApi struct {

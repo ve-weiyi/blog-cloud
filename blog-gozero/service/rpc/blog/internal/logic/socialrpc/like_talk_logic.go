@@ -28,7 +28,7 @@ func NewLikeTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeTalk
 }
 
 // 点赞说说
-func (l *LikeTalkLogic) LikeTalk(in *socialrpc.IdReq) (*socialrpc.EmptyResp, error) {
+func (l *LikeTalkLogic) LikeTalk(in *socialrpc.LikeTalkReq) (*socialrpc.LikeTalkResp, error) {
 	uid, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -72,5 +72,5 @@ func (l *LikeTalkLogic) LikeTalk(in *socialrpc.IdReq) (*socialrpc.EmptyResp, err
 	if err != nil {
 		return nil, err
 	}
-	return &socialrpc.EmptyResp{}, nil
+	return &socialrpc.LikeTalkResp{}, nil
 }

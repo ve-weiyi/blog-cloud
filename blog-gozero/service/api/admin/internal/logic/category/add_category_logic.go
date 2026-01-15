@@ -26,7 +26,7 @@ func NewAddCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCa
 }
 
 func (l *AddCategoryLogic) AddCategory(req *types.NewCategoryReq) (resp *types.CategoryBackVO, err error) {
-	in := &articlerpc.NewCategoryReq{
+	in := &articlerpc.AddCategoryReq{
 		Id:           req.Id,
 		CategoryName: req.CategoryName,
 	}
@@ -35,11 +35,25 @@ func (l *AddCategoryLogic) AddCategory(req *types.NewCategoryReq) (resp *types.C
 		return nil, err
 	}
 
+	return convertCategoryTypes(out.Category), nil
+}
+
+func convertCategoryTypes(out *articlerpc.Category) *types.CategoryBackVO {
 	return &types.CategoryBackVO{
 		Id:           out.Id,
 		CategoryName: out.CategoryName,
 		ArticleCount: 0,
 		CreatedAt:    out.CreatedAt,
 		UpdatedAt:    out.UpdatedAt,
-	}, nil
+	}
+}
+
+func convertCategoryDetailsTypes(out *articlerpc.CategoryDetails) *types.CategoryBackVO {
+	return &types.CategoryBackVO{
+		Id:           out.Id,
+		CategoryName: out.CategoryName,
+		ArticleCount: out.ArticleCount,
+		CreatedAt:    out.CreatedAt,
+		UpdatedAt:    out.UpdatedAt,
+	}
 }

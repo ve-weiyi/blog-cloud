@@ -30,7 +30,7 @@ func NewBindUserPhoneLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bin
 }
 
 // 修改用户登录手机号
-func (l *BindUserPhoneLogic) BindUserPhone(in *accountrpc.BindUserPhoneReq) (*accountrpc.EmptyResp, error) {
+func (l *BindUserPhoneLogic) BindUserPhone(in *accountrpc.BindUserPhoneReq) (*accountrpc.BindUserPhoneResp, error) {
 	// 校验邮箱格式
 	if !patternx.IsValidPhone(in.Phone) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "手机号格式不正确")
@@ -61,5 +61,5 @@ func (l *BindUserPhoneLogic) BindUserPhone(in *accountrpc.BindUserPhoneReq) (*ac
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.BindUserPhoneResp{}, nil
 }

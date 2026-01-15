@@ -27,7 +27,7 @@ func NewFindUserLikeTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 用户点赞的说说
-func (l *FindUserLikeTalkLogic) FindUserLikeTalk(in *socialrpc.UserIdReq) (*socialrpc.FindLikeTalkResp, error) {
+func (l *FindUserLikeTalkLogic) FindUserLikeTalk(in *socialrpc.FindUserLikeTalkReq) (*socialrpc.FindUserLikeTalkResp, error) {
 	uid := cast.ToString(in.UserId)
 	likeKey := rediskey.GetUserLikeTalkKey(uid)
 
@@ -41,7 +41,7 @@ func (l *FindUserLikeTalkLogic) FindUserLikeTalk(in *socialrpc.UserIdReq) (*soci
 		ids = append(ids, cast.ToInt64(v))
 	}
 
-	return &socialrpc.FindLikeTalkResp{
+	return &socialrpc.FindUserLikeTalkResp{
 		LikeTalkList: ids,
 	}, nil
 }

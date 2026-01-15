@@ -14,56 +14,71 @@ import (
 )
 
 type (
-	AlbumDetailsResp     = resourcerpc.AlbumDetailsResp
-	BatchResp            = resourcerpc.BatchResp
-	EmptyResp            = resourcerpc.EmptyResp
-	FindAlbumListReq     = resourcerpc.FindAlbumListReq
-	FindAlbumListResp    = resourcerpc.FindAlbumListResp
-	FindPageListReq      = resourcerpc.FindPageListReq
-	FindPageListResp     = resourcerpc.FindPageListResp
-	FindPhotoListReq     = resourcerpc.FindPhotoListReq
-	FindPhotoListResp    = resourcerpc.FindPhotoListResp
-	IdReq                = resourcerpc.IdReq
-	IdsReq               = resourcerpc.IdsReq
-	NewAlbumReq          = resourcerpc.NewAlbumReq
-	NewPageReq           = resourcerpc.NewPageReq
-	NewPhotoReq          = resourcerpc.NewPhotoReq
-	PageDetailsResp      = resourcerpc.PageDetailsResp
-	PageReq              = resourcerpc.PageReq
-	PageResp             = resourcerpc.PageResp
-	PhotoDetailsResp     = resourcerpc.PhotoDetailsResp
-	UpdateAlbumDeleteReq = resourcerpc.UpdateAlbumDeleteReq
-	UpdatePhotoDeleteReq = resourcerpc.UpdatePhotoDeleteReq
+	AddAlbumReq           = resourcerpc.AddAlbumReq
+	AddAlbumResp          = resourcerpc.AddAlbumResp
+	AddPageReq            = resourcerpc.AddPageReq
+	AddPageResp           = resourcerpc.AddPageResp
+	AddPhotoReq           = resourcerpc.AddPhotoReq
+	AddPhotoResp          = resourcerpc.AddPhotoResp
+	Album                 = resourcerpc.Album
+	DeletesAlbumReq       = resourcerpc.DeletesAlbumReq
+	DeletesAlbumResp      = resourcerpc.DeletesAlbumResp
+	DeletesPageReq        = resourcerpc.DeletesPageReq
+	DeletesPageResp       = resourcerpc.DeletesPageResp
+	DeletesPhotoReq       = resourcerpc.DeletesPhotoReq
+	DeletesPhotoResp      = resourcerpc.DeletesPhotoResp
+	FindAlbumListReq      = resourcerpc.FindAlbumListReq
+	FindAlbumListResp     = resourcerpc.FindAlbumListResp
+	FindPageListReq       = resourcerpc.FindPageListReq
+	FindPageListResp      = resourcerpc.FindPageListResp
+	FindPhotoListReq      = resourcerpc.FindPhotoListReq
+	FindPhotoListResp     = resourcerpc.FindPhotoListResp
+	GetAlbumReq           = resourcerpc.GetAlbumReq
+	GetAlbumResp          = resourcerpc.GetAlbumResp
+	Page                  = resourcerpc.Page
+	PageReq               = resourcerpc.PageReq
+	PageResp              = resourcerpc.PageResp
+	Photo                 = resourcerpc.Photo
+	UpdateAlbumDeleteReq  = resourcerpc.UpdateAlbumDeleteReq
+	UpdateAlbumDeleteResp = resourcerpc.UpdateAlbumDeleteResp
+	UpdateAlbumReq        = resourcerpc.UpdateAlbumReq
+	UpdateAlbumResp       = resourcerpc.UpdateAlbumResp
+	UpdatePageReq         = resourcerpc.UpdatePageReq
+	UpdatePageResp        = resourcerpc.UpdatePageResp
+	UpdatePhotoDeleteReq  = resourcerpc.UpdatePhotoDeleteReq
+	UpdatePhotoDeleteResp = resourcerpc.UpdatePhotoDeleteResp
+	UpdatePhotoReq        = resourcerpc.UpdatePhotoReq
+	UpdatePhotoResp       = resourcerpc.UpdatePhotoResp
 
 	ResourceRpc interface {
 		// 创建照片
-		AddPhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error)
+		AddPhoto(ctx context.Context, in *AddPhotoReq, opts ...grpc.CallOption) (*AddPhotoResp, error)
 		// 更新照片
-		UpdatePhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error)
+		UpdatePhoto(ctx context.Context, in *UpdatePhotoReq, opts ...grpc.CallOption) (*UpdatePhotoResp, error)
 		// 更新照片删除状态
-		UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*BatchResp, error)
+		UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*UpdatePhotoDeleteResp, error)
 		// 删除照片
-		DeletesPhoto(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesPhoto(ctx context.Context, in *DeletesPhotoReq, opts ...grpc.CallOption) (*DeletesPhotoResp, error)
 		// 查询照片列表
 		FindPhotoList(ctx context.Context, in *FindPhotoListReq, opts ...grpc.CallOption) (*FindPhotoListResp, error)
 		// 创建相册
-		AddAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+		AddAlbum(ctx context.Context, in *AddAlbumReq, opts ...grpc.CallOption) (*AddAlbumResp, error)
 		// 更新相册
-		UpdateAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+		UpdateAlbum(ctx context.Context, in *UpdateAlbumReq, opts ...grpc.CallOption) (*UpdateAlbumResp, error)
 		// 更新相册删除状态
-		UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*BatchResp, error)
+		UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*UpdateAlbumDeleteResp, error)
 		// 获取相册
-		GetAlbum(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+		GetAlbum(ctx context.Context, in *GetAlbumReq, opts ...grpc.CallOption) (*GetAlbumResp, error)
 		// 删除相册
-		DeletesAlbum(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesAlbum(ctx context.Context, in *DeletesAlbumReq, opts ...grpc.CallOption) (*DeletesAlbumResp, error)
 		// 查询相册列表
 		FindAlbumList(ctx context.Context, in *FindAlbumListReq, opts ...grpc.CallOption) (*FindAlbumListResp, error)
 		// 创建页面
-		AddPage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error)
+		AddPage(ctx context.Context, in *AddPageReq, opts ...grpc.CallOption) (*AddPageResp, error)
 		// 更新页面
-		UpdatePage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error)
+		UpdatePage(ctx context.Context, in *UpdatePageReq, opts ...grpc.CallOption) (*UpdatePageResp, error)
 		// 删除页面
-		DeletesPage(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesPage(ctx context.Context, in *DeletesPageReq, opts ...grpc.CallOption) (*DeletesPageResp, error)
 		// 查询页面列表
 		FindPageList(ctx context.Context, in *FindPageListReq, opts ...grpc.CallOption) (*FindPageListResp, error)
 	}
@@ -80,25 +95,25 @@ func NewResourceRpc(cli zrpc.Client) ResourceRpc {
 }
 
 // 创建照片
-func (m *defaultResourceRpc) AddPhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error) {
+func (m *defaultResourceRpc) AddPhoto(ctx context.Context, in *AddPhotoReq, opts ...grpc.CallOption) (*AddPhotoResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.AddPhoto(ctx, in, opts...)
 }
 
 // 更新照片
-func (m *defaultResourceRpc) UpdatePhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error) {
+func (m *defaultResourceRpc) UpdatePhoto(ctx context.Context, in *UpdatePhotoReq, opts ...grpc.CallOption) (*UpdatePhotoResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.UpdatePhoto(ctx, in, opts...)
 }
 
 // 更新照片删除状态
-func (m *defaultResourceRpc) UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultResourceRpc) UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*UpdatePhotoDeleteResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.UpdatePhotoDelete(ctx, in, opts...)
 }
 
 // 删除照片
-func (m *defaultResourceRpc) DeletesPhoto(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultResourceRpc) DeletesPhoto(ctx context.Context, in *DeletesPhotoReq, opts ...grpc.CallOption) (*DeletesPhotoResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.DeletesPhoto(ctx, in, opts...)
 }
@@ -110,31 +125,31 @@ func (m *defaultResourceRpc) FindPhotoList(ctx context.Context, in *FindPhotoLis
 }
 
 // 创建相册
-func (m *defaultResourceRpc) AddAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
+func (m *defaultResourceRpc) AddAlbum(ctx context.Context, in *AddAlbumReq, opts ...grpc.CallOption) (*AddAlbumResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.AddAlbum(ctx, in, opts...)
 }
 
 // 更新相册
-func (m *defaultResourceRpc) UpdateAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
+func (m *defaultResourceRpc) UpdateAlbum(ctx context.Context, in *UpdateAlbumReq, opts ...grpc.CallOption) (*UpdateAlbumResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.UpdateAlbum(ctx, in, opts...)
 }
 
 // 更新相册删除状态
-func (m *defaultResourceRpc) UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultResourceRpc) UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*UpdateAlbumDeleteResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.UpdateAlbumDelete(ctx, in, opts...)
 }
 
 // 获取相册
-func (m *defaultResourceRpc) GetAlbum(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
+func (m *defaultResourceRpc) GetAlbum(ctx context.Context, in *GetAlbumReq, opts ...grpc.CallOption) (*GetAlbumResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.GetAlbum(ctx, in, opts...)
 }
 
 // 删除相册
-func (m *defaultResourceRpc) DeletesAlbum(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultResourceRpc) DeletesAlbum(ctx context.Context, in *DeletesAlbumReq, opts ...grpc.CallOption) (*DeletesAlbumResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.DeletesAlbum(ctx, in, opts...)
 }
@@ -146,19 +161,19 @@ func (m *defaultResourceRpc) FindAlbumList(ctx context.Context, in *FindAlbumLis
 }
 
 // 创建页面
-func (m *defaultResourceRpc) AddPage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error) {
+func (m *defaultResourceRpc) AddPage(ctx context.Context, in *AddPageReq, opts ...grpc.CallOption) (*AddPageResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.AddPage(ctx, in, opts...)
 }
 
 // 更新页面
-func (m *defaultResourceRpc) UpdatePage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error) {
+func (m *defaultResourceRpc) UpdatePage(ctx context.Context, in *UpdatePageReq, opts ...grpc.CallOption) (*UpdatePageResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.UpdatePage(ctx, in, opts...)
 }
 
 // 删除页面
-func (m *defaultResourceRpc) DeletesPage(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultResourceRpc) DeletesPage(ctx context.Context, in *DeletesPageReq, opts ...grpc.CallOption) (*DeletesPageResp, error) {
 	client := resourcerpc.NewResourceRpcClient(m.cli.Conn())
 	return client.DeletesPage(ctx, in, opts...)
 }

@@ -27,7 +27,7 @@ func NewAddCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCom
 }
 
 // 创建评论
-func (l *AddCommentLogic) AddComment(in *messagerpc.AddCommentReq) (*messagerpc.CommentDetailsResp, error) {
+func (l *AddCommentLogic) AddComment(in *messagerpc.AddCommentReq) (*messagerpc.AddCommentResp, error) {
 	uid, _ := rpcutils.GetUserIdFromCtx(l.ctx)
 	tid, _ := rpcutils.GetTerminalIdFromCtx(l.ctx)
 
@@ -49,5 +49,7 @@ func (l *AddCommentLogic) AddComment(in *messagerpc.AddCommentReq) (*messagerpc.
 		return nil, err
 	}
 
-	return convertCommentOut(entity), nil
+	return &messagerpc.AddCommentResp{
+		Comment: convertCommentOut(entity),
+	}, nil
 }

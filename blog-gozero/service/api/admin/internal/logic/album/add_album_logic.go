@@ -26,7 +26,7 @@ func NewAddAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddAlbum
 }
 
 func (l *AddAlbumLogic) AddAlbum(req *types.NewAlbumReq) (resp *types.AlbumBackVO, err error) {
-	in := &resourcerpc.NewAlbumReq{
+	in := &resourcerpc.AddAlbumReq{
 		Id:         req.Id,
 		AlbumName:  req.AlbumName,
 		AlbumDesc:  req.AlbumDesc,
@@ -40,7 +40,11 @@ func (l *AddAlbumLogic) AddAlbum(req *types.NewAlbumReq) (resp *types.AlbumBackV
 		return nil, err
 	}
 
-	resp = &types.AlbumBackVO{
+	return convertAlbumTypes(out.Album), nil
+}
+
+func convertAlbumTypes(out *resourcerpc.Album) *types.AlbumBackVO {
+	return &types.AlbumBackVO{
 		Id:         out.Id,
 		AlbumName:  out.AlbumName,
 		AlbumDesc:  out.AlbumDesc,
@@ -51,5 +55,4 @@ func (l *AddAlbumLogic) AddAlbum(req *types.NewAlbumReq) (resp *types.AlbumBackV
 		UpdatedAt:  out.UpdatedAt,
 		PhotoCount: out.PhotoCount,
 	}
-	return resp, nil
 }

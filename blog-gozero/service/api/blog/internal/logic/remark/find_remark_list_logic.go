@@ -42,7 +42,7 @@ func (l *FindRemarkListLogic) FindRemarkList(req *types.QueryRemarkReq) (resp *t
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *messagerpc.RemarkDetailsResp) string {
+		func(v *messagerpc.Remark) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -68,7 +68,7 @@ func (l *FindRemarkListLogic) FindRemarkList(req *types.QueryRemarkReq) (resp *t
 		list = append(list, m)
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "留言",
 	})
 	if err != nil {

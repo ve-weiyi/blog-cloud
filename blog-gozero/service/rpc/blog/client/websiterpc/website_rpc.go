@@ -18,12 +18,8 @@ type (
 	AddVisitResp         = websiterpc.AddVisitResp
 	AnalysisVisitReq     = websiterpc.AnalysisVisitReq
 	AnalysisVisitResp    = websiterpc.AnalysisVisitResp
-	BatchResp            = websiterpc.BatchResp
 	FindVisitTrendReq    = websiterpc.FindVisitTrendReq
 	FindVisitTrendResp   = websiterpc.FindVisitTrendResp
-	IdsReq               = websiterpc.IdsReq
-	PageReq              = websiterpc.PageReq
-	PageResp             = websiterpc.PageResp
 	VisitDailyStatistics = websiterpc.VisitDailyStatistics
 
 	WebsiteRpc interface {

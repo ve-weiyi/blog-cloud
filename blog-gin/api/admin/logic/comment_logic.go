@@ -30,7 +30,7 @@ func (s *CommentLogic) FindCommentBackList(reqCtx *request.Context, in *types.Qu
 	return
 }
 
-// 更新评论审核状态
+// 更新评论状态
 func (s *CommentLogic) UpdateCommentStatus(reqCtx *request.Context, in *types.UpdateCommentStatusReq) (out *types.BatchResp, err error) {
 	// todo
 

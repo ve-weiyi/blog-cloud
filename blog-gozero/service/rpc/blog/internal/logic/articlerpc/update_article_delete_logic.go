@@ -24,7 +24,7 @@ func NewUpdateArticleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 更新文章删除
-func (l *UpdateArticleDeleteLogic) UpdateArticleDelete(in *articlerpc.UpdateArticleDeleteReq) (*articlerpc.ArticlePreview, error) {
+func (l *UpdateArticleDeleteLogic) UpdateArticleDelete(in *articlerpc.UpdateArticleDeleteReq) (*articlerpc.UpdateArticleDeleteResp, error) {
 	record, err := l.svcCtx.TArticleModel.FindById(l.ctx, in.ArticleId)
 	if err != nil {
 		return nil, err
@@ -37,5 +37,7 @@ func (l *UpdateArticleDeleteLogic) UpdateArticleDelete(in *articlerpc.UpdateArti
 	}
 
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
-	return helper.convertArticlePreviewOut(record), nil
+	return &articlerpc.UpdateArticleDeleteResp{
+		Article: helper.convertArticlePreviewOut(record),
+	}, nil
 }

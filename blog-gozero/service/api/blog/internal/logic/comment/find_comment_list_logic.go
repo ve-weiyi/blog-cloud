@@ -47,7 +47,7 @@ func (l *FindCommentListLogic) FindCommentList(req *types.QueryCommentReq) (resp
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQueryMulti(out.List,
-		func(v *messagerpc.CommentDetailsResp) []string {
+		func(v *messagerpc.Comment) []string {
 			return []string{v.UserId, v.ReplyUserId}
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -60,7 +60,7 @@ func (l *FindCommentListLogic) FindCommentList(req *types.QueryCommentReq) (resp
 
 	// 查询访客信息
 	vsm, err := apiutils.BatchQuery(out.List,
-		func(v *messagerpc.CommentDetailsResp) string {
+		func(v *messagerpc.Comment) string {
 			return v.TerminalId
 		},
 		func(ids []string) (map[string]*types.ClientInfoVO, error) {

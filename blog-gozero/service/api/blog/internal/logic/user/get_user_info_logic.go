@@ -30,24 +30,25 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.EmptyReq) (resp *types.UserInfoResp, err error) {
-	in := &accountrpc.UserIdReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
-	}
-
-	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, in)
+	uid := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
+	info, err := l.svcCtx.AccountRpc.GetUserInfo(l.ctx, &accountrpc.GetUserInfoReq{
+		UserId: uid,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	thp, err := l.svcCtx.AccountRpc.GetUserOauthInfo(l.ctx, in)
+	thp, err := l.svcCtx.AccountRpc.GetUserOauthInfo(l.ctx, &accountrpc.GetUserOauthInfoReq{
+		UserId: uid,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertUserInfoTypes(info, thp), nil
+	return convertUserInfoTypes(info.User, thp), nil
 }
 
-func ConvertUserInfoTypes(in *accountrpc.UserInfoResp, thp *accountrpc.GetUserOauthInfoResp) (out *types.UserInfoResp) {
+func convertUserInfoTypes(in *accountrpc.UserInfo, thp *accountrpc.GetUserOauthInfoResp) (out *types.UserInfoResp) {
 	var info types.UserInfoExt
 	jsonconv.JsonToAny(in.Info, &info)
 

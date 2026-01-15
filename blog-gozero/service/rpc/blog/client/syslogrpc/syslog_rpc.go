@@ -14,11 +14,25 @@ import (
 )
 
 type (
+	AddFileLogReq            = syslogrpc.AddFileLogReq
+	AddFileLogResp           = syslogrpc.AddFileLogResp
+	AddLoginLogReq           = syslogrpc.AddLoginLogReq
+	AddLoginLogResp          = syslogrpc.AddLoginLogResp
 	AddLogoutLogReq          = syslogrpc.AddLogoutLogReq
 	AddLogoutLogResp         = syslogrpc.AddLogoutLogResp
-	BatchResp                = syslogrpc.BatchResp
-	EmptyResp                = syslogrpc.EmptyResp
-	FileLogDetailsResp       = syslogrpc.FileLogDetailsResp
+	AddOperationLogReq       = syslogrpc.AddOperationLogReq
+	AddOperationLogResp      = syslogrpc.AddOperationLogResp
+	AddVisitLogReq           = syslogrpc.AddVisitLogReq
+	AddVisitLogResp          = syslogrpc.AddVisitLogResp
+	DeletesFileLogReq        = syslogrpc.DeletesFileLogReq
+	DeletesFileLogResp       = syslogrpc.DeletesFileLogResp
+	DeletesLoginLogReq       = syslogrpc.DeletesLoginLogReq
+	DeletesLoginLogResp      = syslogrpc.DeletesLoginLogResp
+	DeletesOperationLogReq   = syslogrpc.DeletesOperationLogReq
+	DeletesOperationLogResp  = syslogrpc.DeletesOperationLogResp
+	DeletesVisitLogReq       = syslogrpc.DeletesVisitLogReq
+	DeletesVisitLogResp      = syslogrpc.DeletesVisitLogResp
+	FileLog                  = syslogrpc.FileLog
 	FindFileLogListReq       = syslogrpc.FindFileLogListReq
 	FindFileLogListResp      = syslogrpc.FindFileLogListResp
 	FindLoginLogListReq      = syslogrpc.FindLoginLogListReq
@@ -27,42 +41,37 @@ type (
 	FindOperationLogListResp = syslogrpc.FindOperationLogListResp
 	FindVisitLogListReq      = syslogrpc.FindVisitLogListReq
 	FindVisitLogListResp     = syslogrpc.FindVisitLogListResp
-	IdsReq                   = syslogrpc.IdsReq
-	LoginLogDetailsResp      = syslogrpc.LoginLogDetailsResp
-	NewFileLogReq            = syslogrpc.NewFileLogReq
-	NewLoginLogReq           = syslogrpc.NewLoginLogReq
-	NewOperationLogReq       = syslogrpc.NewOperationLogReq
-	NewVisitLogReq           = syslogrpc.NewVisitLogReq
-	OperationLogDetailsResp  = syslogrpc.OperationLogDetailsResp
+	LoginLog                 = syslogrpc.LoginLog
+	OperationLog             = syslogrpc.OperationLog
 	PageReq                  = syslogrpc.PageReq
 	PageResp                 = syslogrpc.PageResp
-	VisitLogDetailsResp      = syslogrpc.VisitLogDetailsResp
+	VisitLog                 = syslogrpc.VisitLog
 
 	SyslogRpc interface {
 		// 创建登录记录
-		AddLoginLog(ctx context.Context, in *NewLoginLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
+		AddLoginLog(ctx context.Context, in *AddLoginLogReq, opts ...grpc.CallOption) (*AddLoginLogResp, error)
 		// 更新登录记录
 		AddLogoutLog(ctx context.Context, in *AddLogoutLogReq, opts ...grpc.CallOption) (*AddLogoutLogResp, error)
 		// 批量删除登录记录
-		DeletesLoginLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesLoginLog(ctx context.Context, in *DeletesLoginLogReq, opts ...grpc.CallOption) (*DeletesLoginLogResp, error)
 		// 查询登录记录列表
 		FindLoginLogList(ctx context.Context, in *FindLoginLogListReq, opts ...grpc.CallOption) (*FindLoginLogListResp, error)
 		// 创建访问记录
-		AddVisitLog(ctx context.Context, in *NewVisitLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
+		AddVisitLog(ctx context.Context, in *AddVisitLogReq, opts ...grpc.CallOption) (*AddVisitLogResp, error)
 		// 批量删除访问记录
-		DeletesVisitLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesVisitLog(ctx context.Context, in *DeletesVisitLogReq, opts ...grpc.CallOption) (*DeletesVisitLogResp, error)
 		// 查询操作访问列表
 		FindVisitLogList(ctx context.Context, in *FindVisitLogListReq, opts ...grpc.CallOption) (*FindVisitLogListResp, error)
 		// 创建操作记录
-		AddOperationLog(ctx context.Context, in *NewOperationLogReq, opts ...grpc.CallOption) (*EmptyResp, error)
+		AddOperationLog(ctx context.Context, in *AddOperationLogReq, opts ...grpc.CallOption) (*AddOperationLogResp, error)
 		// 批量删除操作记录
-		DeletesOperationLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesOperationLog(ctx context.Context, in *DeletesOperationLogReq, opts ...grpc.CallOption) (*DeletesOperationLogResp, error)
 		// 查询操作记录列表
 		FindOperationLogList(ctx context.Context, in *FindOperationLogListReq, opts ...grpc.CallOption) (*FindOperationLogListResp, error)
 		// 创建文件记录
-		AddFileLog(ctx context.Context, in *NewFileLogReq, opts ...grpc.CallOption) (*FileLogDetailsResp, error)
+		AddFileLog(ctx context.Context, in *AddFileLogReq, opts ...grpc.CallOption) (*AddFileLogResp, error)
 		// 批量删除文件记录
-		DeletesFileLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+		DeletesFileLog(ctx context.Context, in *DeletesFileLogReq, opts ...grpc.CallOption) (*DeletesFileLogResp, error)
 		// 查询文件记录列表
 		FindFileLogList(ctx context.Context, in *FindFileLogListReq, opts ...grpc.CallOption) (*FindFileLogListResp, error)
 	}
@@ -79,7 +88,7 @@ func NewSyslogRpc(cli zrpc.Client) SyslogRpc {
 }
 
 // 创建登录记录
-func (m *defaultSyslogRpc) AddLoginLog(ctx context.Context, in *NewLoginLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (m *defaultSyslogRpc) AddLoginLog(ctx context.Context, in *AddLoginLogReq, opts ...grpc.CallOption) (*AddLoginLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.AddLoginLog(ctx, in, opts...)
 }
@@ -91,7 +100,7 @@ func (m *defaultSyslogRpc) AddLogoutLog(ctx context.Context, in *AddLogoutLogReq
 }
 
 // 批量删除登录记录
-func (m *defaultSyslogRpc) DeletesLoginLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultSyslogRpc) DeletesLoginLog(ctx context.Context, in *DeletesLoginLogReq, opts ...grpc.CallOption) (*DeletesLoginLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.DeletesLoginLog(ctx, in, opts...)
 }
@@ -103,13 +112,13 @@ func (m *defaultSyslogRpc) FindLoginLogList(ctx context.Context, in *FindLoginLo
 }
 
 // 创建访问记录
-func (m *defaultSyslogRpc) AddVisitLog(ctx context.Context, in *NewVisitLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (m *defaultSyslogRpc) AddVisitLog(ctx context.Context, in *AddVisitLogReq, opts ...grpc.CallOption) (*AddVisitLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.AddVisitLog(ctx, in, opts...)
 }
 
 // 批量删除访问记录
-func (m *defaultSyslogRpc) DeletesVisitLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultSyslogRpc) DeletesVisitLog(ctx context.Context, in *DeletesVisitLogReq, opts ...grpc.CallOption) (*DeletesVisitLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.DeletesVisitLog(ctx, in, opts...)
 }
@@ -121,13 +130,13 @@ func (m *defaultSyslogRpc) FindVisitLogList(ctx context.Context, in *FindVisitLo
 }
 
 // 创建操作记录
-func (m *defaultSyslogRpc) AddOperationLog(ctx context.Context, in *NewOperationLogReq, opts ...grpc.CallOption) (*EmptyResp, error) {
+func (m *defaultSyslogRpc) AddOperationLog(ctx context.Context, in *AddOperationLogReq, opts ...grpc.CallOption) (*AddOperationLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.AddOperationLog(ctx, in, opts...)
 }
 
 // 批量删除操作记录
-func (m *defaultSyslogRpc) DeletesOperationLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultSyslogRpc) DeletesOperationLog(ctx context.Context, in *DeletesOperationLogReq, opts ...grpc.CallOption) (*DeletesOperationLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.DeletesOperationLog(ctx, in, opts...)
 }
@@ -139,13 +148,13 @@ func (m *defaultSyslogRpc) FindOperationLogList(ctx context.Context, in *FindOpe
 }
 
 // 创建文件记录
-func (m *defaultSyslogRpc) AddFileLog(ctx context.Context, in *NewFileLogReq, opts ...grpc.CallOption) (*FileLogDetailsResp, error) {
+func (m *defaultSyslogRpc) AddFileLog(ctx context.Context, in *AddFileLogReq, opts ...grpc.CallOption) (*AddFileLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.AddFileLog(ctx, in, opts...)
 }
 
 // 批量删除文件记录
-func (m *defaultSyslogRpc) DeletesFileLog(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
+func (m *defaultSyslogRpc) DeletesFileLog(ctx context.Context, in *DeletesFileLogReq, opts ...grpc.CallOption) (*DeletesFileLogResp, error) {
 	client := syslogrpc.NewSyslogRpcClient(m.cli.Conn())
 	return client.DeletesFileLog(ctx, in, opts...)
 }

@@ -41,9 +41,9 @@ type ServiceContext struct {
 	ConfigRpc     configrpc.ConfigRpc
 	SyslogRpc     syslogrpc.SyslogRpc
 
-	Redis       *redis.Redis
-	Uploader    oss.OSS
-	TokenHolder tokenx.TokenHolder
+	Redis        *redis.Redis
+	Uploader     oss.Uploader
+	TokenManager tokenx.TokenManager
 
 	StompHubServer *client.StompHubServer
 
@@ -63,7 +63,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	uploader := oss.NewQiniu(c.UploadConfig)
 
-	th := tokenx.NewSignTokenHolder(c.Name, c.Name, rds)
+	th := tokenx.NewSignTokenManager(
+		tokenx.NewRedisStore(rds, "blog:token:"),
+		c.Name,
+		c.Name,
+		2*3600,
+		7*24*3600,
+	)
 
 	doc, err := loads.Analyzed(json.RawMessage(docs.Docs), "")
 	if err != nil {
@@ -103,7 +109,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		Redis:          rds,
 		Uploader:       uploader,
-		TokenHolder:    th,
+		TokenManager:   th,
 		StompHubServer: hub,
 
 		TerminalToken: middleware.NewTerminalTokenMiddleware().Handle,

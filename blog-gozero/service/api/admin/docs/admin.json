@@ -13,8 +13,8 @@
   ],
   "swagger": "2.0",
   "info": {
-    "description": "博客后台API接口文档",
-    "title": "博客后台API",
+    "description": "博客管理平台API接口文档",
+    "title": "博客管理平台API",
     "termsOfService": "https://github.com/ve-weiyi/ve-blog-golang",
     "contact": {
       "name": "waynie.wei",
@@ -2014,7 +2014,7 @@
         }
       }
     },
-    "/admin-api/v1/comment/update_comment_review": {
+    "/admin-api/v1/comment/update_comment_status": {
       "put": {
         "security": [
           {
@@ -2033,7 +2033,7 @@
         "tags": [
           "评论管理"
         ],
-        "summary": "更新评论审核状态",
+        "summary": "更新评论状态",
         "operationId": "commentUpdateCommentStatus",
         "responses": {
           "200": {
@@ -3747,6 +3747,57 @@
         }
       }
     },
+    "/admin-api/v1/refresh_token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "登录认证"
+        ],
+        "summary": "刷新token",
+        "operationId": "authRefreshToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "1001-未登录\u003cbr\u003e1002-无权限操作",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LoginResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin-api/v1/register": {
       "post": {
         "consumes": [
@@ -3900,7 +3951,7 @@
         }
       }
     },
-    "/admin-api/v1/remark/update_remark_review": {
+    "/admin-api/v1/remark/update_remark_status": {
       "put": {
         "security": [
           {
@@ -3919,7 +3970,7 @@
         "tags": [
           "留言管理"
         ],
-        "summary": "更新留言",
+        "summary": "更新留言状态",
         "operationId": "remarkUpdateRemarkStatus",
         "responses": {
           "200": {
@@ -6112,10 +6163,6 @@
           "description": "主键id",
           "type": "integer"
         },
-        "is_disable": {
-          "description": "是否禁用 0否 1是",
-          "type": "integer"
-        },
         "method": {
           "description": "api请求方法",
           "type": "string"
@@ -6131,6 +6178,10 @@
         "path": {
           "description": "api路径",
           "type": "string"
+        },
+        "status": {
+          "description": "状态 0正常 1禁用",
+          "type": "integer"
         },
         "traceable": {
           "description": "是否追溯操作记录 0需要，1是",
@@ -7169,51 +7220,56 @@
     "LoginResp": {
       "type": "object",
       "required": [
+        "user_id",
+        "scope",
         "token"
       ],
       "properties": {
+        "scope": {
+          "description": "作用域",
+          "type": "string"
+        },
         "token": {
           "type": "object",
           "required": [
-            "user_id",
             "token_type",
             "access_token",
             "expires_in",
             "refresh_token",
             "refresh_expires_in",
-            "scope"
+            "refresh_expires_at"
           ],
           "properties": {
             "access_token": {
-              "description": "访问token,过期时间较短。2h",
+              "description": "访问令牌：用于接口访问，有效期短",
               "type": "string"
             },
             "expires_in": {
-              "description": "访问token过期时间",
+              "description": "AccessToken 有效期（秒），如 3600（1小时）",
+              "type": "integer"
+            },
+            "refresh_expires_at": {
+              "description": "RefreshToken 过期时间戳（秒）",
               "type": "integer"
             },
             "refresh_expires_in": {
-              "description": "刷新token过期时间",
+              "description": "RefreshToken 有效期（秒），如 604800（7天）",
               "type": "integer"
             },
             "refresh_token": {
-              "description": "刷新token,过期时间较长。30d",
-              "type": "string"
-            },
-            "scope": {
-              "description": "作用域",
+              "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
               "type": "string"
             },
             "token_type": {
-              "description": "token类型,Bearer",
-              "type": "string"
-            },
-            "user_id": {
-              "description": "用户id",
+              "description": "Token 类型（如 \"Bearer\"）",
               "type": "string"
             }
           },
           "$ref": "#/definitions/Token"
+        },
+        "user_id": {
+          "description": "用户id",
+          "type": "string"
         }
       }
     },
@@ -7248,14 +7304,6 @@
         },
         "id": {
           "description": "主键",
-          "type": "integer"
-        },
-        "is_disable": {
-          "description": "是否禁用",
-          "type": "integer"
-        },
-        "is_hidden": {
-          "description": "是否隐藏",
           "type": "integer"
         },
         "keep_alive": {
@@ -7293,6 +7341,10 @@
           "description": "路由重定向",
           "type": "string"
         },
+        "status": {
+          "description": "是否禁用",
+          "type": "integer"
+        },
         "title": {
           "description": "菜单标题",
           "type": "string"
@@ -7303,6 +7355,10 @@
         },
         "updated_at": {
           "description": "更新时间",
+          "type": "integer"
+        },
+        "visible": {
+          "description": "菜单是否可见",
           "type": "integer"
         }
       }
@@ -7317,14 +7373,6 @@
         "icon": {
           "description": "菜单图标",
           "type": "string"
-        },
-        "is_disable": {
-          "description": "是否禁用",
-          "type": "integer"
-        },
-        "is_hidden": {
-          "description": "是否隐藏",
-          "type": "integer"
         },
         "keep_alive": {
           "description": "是否缓存",
@@ -7345,6 +7393,10 @@
           "description": "排序",
           "type": "integer"
         },
+        "status": {
+          "description": "是否禁用",
+          "type": "integer"
+        },
         "title": {
           "description": "菜单标题",
           "type": "string"
@@ -7352,6 +7404,10 @@
         "type": {
           "description": "菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）",
           "type": "string"
+        },
+        "visible": {
+          "description": "菜单是否可见",
+          "type": "integer"
         }
       }
     },
@@ -7419,10 +7475,6 @@
           "description": "主键id",
           "type": "integer"
         },
-        "is_disable": {
-          "description": "是否禁用 0否 1是",
-          "type": "integer"
-        },
         "method": {
           "description": "api请求方法",
           "type": "string"
@@ -7438,6 +7490,10 @@
         "path": {
           "description": "api路径",
           "type": "string"
+        },
+        "status": {
+          "description": "状态 0正常 1禁用",
+          "type": "integer"
         },
         "traceable": {
           "description": "是否追溯操作记录 0需要，1是",
@@ -7573,14 +7629,6 @@
           "description": "主键",
           "type": "integer"
         },
-        "is_disable": {
-          "description": "是否禁用",
-          "type": "integer"
-        },
-        "is_hidden": {
-          "description": "是否隐藏",
-          "type": "integer"
-        },
         "keep_alive": {
           "description": "是否缓存",
           "type": "integer"
@@ -7616,6 +7664,10 @@
           "description": "路由重定向",
           "type": "string"
         },
+        "status": {
+          "description": "是否禁用",
+          "type": "integer"
+        },
         "title": {
           "description": "菜单标题",
           "type": "string"
@@ -7623,6 +7675,10 @@
         "type": {
           "description": "菜单类型（0代表目录、1代表菜单、2代表按钮、3代表外链）",
           "type": "string"
+        },
+        "visible": {
+          "description": "菜单是否可见",
+          "type": "integer"
         }
       }
     },
@@ -7705,8 +7761,8 @@
         "role_key",
         "role_label",
         "role_comment",
-        "is_disable",
-        "is_default"
+        "is_default",
+        "status"
       ],
       "properties": {
         "id": {
@@ -7715,10 +7771,6 @@
         },
         "is_default": {
           "description": "是否默认角色 0否 1是",
-          "type": "integer"
-        },
-        "is_disable": {
-          "description": "是否禁用  0否 1是",
           "type": "integer"
         },
         "parent_id": {
@@ -7736,6 +7788,10 @@
         "role_label": {
           "description": "角色标签",
           "type": "string"
+        },
+        "status": {
+          "description": "状态 0正常 1禁用",
+          "type": "integer"
         }
       }
     },
@@ -8096,9 +8152,8 @@
         "env",
         "name",
         "version",
-        "runtime",
         "description",
-        "rpc_status"
+        "runtime"
       ],
       "properties": {
         "description": {
@@ -8109,12 +8164,6 @@
         },
         "name": {
           "type": "string"
-        },
-        "rpc_status": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "runtime": {
           "type": "string"
@@ -8569,10 +8618,6 @@
     "QueryRoleReq": {
       "type": "object",
       "properties": {
-        "is_disable": {
-          "description": "是否禁用  0否 1是",
-          "type": "integer"
-        },
         "page": {
           "description": "当前页码",
           "type": "integer"
@@ -8597,6 +8642,10 @@
             "type": "string"
           },
           "example": "[]"
+        },
+        "status": {
+          "description": "状态 0正常 1禁用",
+          "type": "integer"
         }
       }
     },
@@ -8734,6 +8783,28 @@
         },
         "terminal_id": {
           "description": "终端id",
+          "type": "string"
+        }
+      }
+    },
+    "RefreshTokenReq": {
+      "type": "object",
+      "required": [
+        "user_id",
+        "grant_type",
+        "refresh_token"
+      ],
+      "properties": {
+        "grant_type": {
+          "description": "授权类型",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "刷新令牌",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "用户id",
           "type": "string"
         }
       }
@@ -8931,8 +9002,8 @@
         "role_key",
         "role_label",
         "role_comment",
-        "is_disable",
         "is_default",
+        "status",
         "created_at",
         "updated_at"
       ],
@@ -8947,10 +9018,6 @@
         },
         "is_default": {
           "description": "是否默认角色 0否 1是",
-          "type": "integer"
-        },
-        "is_disable": {
-          "description": "是否禁用  0否 1是",
           "type": "integer"
         },
         "parent_id": {
@@ -8968,6 +9035,10 @@
         "role_label": {
           "description": "角色标签",
           "type": "string"
+        },
+        "status": {
+          "description": "状态 0正常 1禁用",
+          "type": "integer"
         },
         "updated_at": {
           "description": "更新时间",
@@ -9288,41 +9359,36 @@
     "Token": {
       "type": "object",
       "required": [
-        "user_id",
         "token_type",
         "access_token",
         "expires_in",
         "refresh_token",
         "refresh_expires_in",
-        "scope"
+        "refresh_expires_at"
       ],
       "properties": {
         "access_token": {
-          "description": "访问token,过期时间较短。2h",
+          "description": "访问令牌：用于接口访问，有效期短",
           "type": "string"
         },
         "expires_in": {
-          "description": "访问token过期时间",
+          "description": "AccessToken 有效期（秒），如 3600（1小时）",
+          "type": "integer"
+        },
+        "refresh_expires_at": {
+          "description": "RefreshToken 过期时间戳（秒）",
           "type": "integer"
         },
         "refresh_expires_in": {
-          "description": "刷新token过期时间",
+          "description": "RefreshToken 有效期（秒），如 604800（7天）",
           "type": "integer"
         },
         "refresh_token": {
-          "description": "刷新token,过期时间较长。30d",
-          "type": "string"
-        },
-        "scope": {
-          "description": "作用域",
+          "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
           "type": "string"
         },
         "token_type": {
-          "description": "token类型,Bearer",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "用户id",
+          "description": "Token 类型（如 \"Bearer\"）",
           "type": "string"
         }
       }
@@ -10627,7 +10693,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-01-13 13:12:16",
+  "x-date": "2026-01-19 03:05:37",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

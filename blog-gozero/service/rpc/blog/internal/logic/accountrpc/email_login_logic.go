@@ -36,7 +36,7 @@ func (l *EmailLoginLogic) EmailLogin(in *accountrpc.EmailLoginReq) (*accountrpc.
 	}
 
 	// 验证用户是否存在
-	account, err := l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Email)
+	account, err := l.svcCtx.TUserModel.FindOne(l.ctx, "email = ?", in.Email)
 	if err != nil {
 		return nil, bizerr.NewBizError(bizcode.CodeUserNotExist, "用户不存在")
 	}

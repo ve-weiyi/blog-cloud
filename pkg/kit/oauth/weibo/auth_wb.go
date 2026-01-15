@@ -23,8 +23,8 @@ func NewAuthWb(conf *oauth.OauthConfig) *AuthWb {
 	return &AuthWb{
 		Config:         conf,
 		Name:           "weibo",
-		AuthorizeUrl:   "https://api.weibo.com/oauth/authorize",
-		AccessTokenUrl: "https://api.weibo.com/oauth/access_token",
+		AuthorizeUrl:   "https://api.weibo.com/oauth2/authorize",
+		AccessTokenUrl: "https://api.weibo.com/oauth2/access_token",
 		UserInfoUrl:    "https://api.weibo.com/2/users/show.json",
 	}
 }

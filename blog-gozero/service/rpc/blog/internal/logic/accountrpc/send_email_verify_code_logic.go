@@ -32,7 +32,7 @@ func NewSendEmailVerifyCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 发送邮件验证码
-func (l *SendEmailVerifyCodeLogic) SendEmailVerifyCode(in *accountrpc.SendEmailVerifyCodeReq) (*accountrpc.EmptyResp, error) {
+func (l *SendEmailVerifyCodeLogic) SendEmailVerifyCode(in *accountrpc.SendEmailVerifyCodeReq) (*accountrpc.SendEmailVerifyCodeResp, error) {
 	// 校验邮箱格式
 	if !patternx.IsValidEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
@@ -82,7 +82,7 @@ func (l *SendEmailVerifyCodeLogic) SendEmailVerifyCode(in *accountrpc.SendEmailV
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.SendEmailVerifyCodeResp{}, nil
 }
 
 var emailContent = map[string]string{

@@ -24,13 +24,13 @@ func NewDeletesFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 // 删除友链
-func (l *DeletesFriendLogic) DeletesFriend(in *socialrpc.IdsReq) (*socialrpc.BatchResp, error) {
+func (l *DeletesFriendLogic) DeletesFriend(in *socialrpc.DeletesFriendReq) (*socialrpc.DeletesFriendResp, error) {
 	rows, err := l.svcCtx.TFriendModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &socialrpc.BatchResp{
+	return &socialrpc.DeletesFriendResp{
 		SuccessCount: rows,
 	}, nil
 }

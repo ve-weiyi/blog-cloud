@@ -25,13 +25,13 @@ func NewDeletesChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 // 删除聊天记录
-func (l *DeletesChatLogic) DeletesChat(in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+func (l *DeletesChatLogic) DeletesChat(in *messagerpc.DeletesChatReq) (*messagerpc.DeletesChatResp, error) {
 	rows, err := l.svcCtx.TChatModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &messagerpc.BatchResp{
+	return &messagerpc.DeletesChatResp{
 		SuccessCount: rows,
 	}, nil
 }

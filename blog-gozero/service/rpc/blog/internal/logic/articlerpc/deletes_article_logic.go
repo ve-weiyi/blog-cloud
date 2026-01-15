@@ -24,11 +24,13 @@ func NewDeletesArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 // 删除文章
-func (l *DeletesArticleLogic) DeletesArticle(in *articlerpc.IdsReq) (*articlerpc.BatchResp, error) {
-	_, err := l.svcCtx.TArticleModel.Deletes(l.ctx, "id in (?)", in.Ids)
+func (l *DeletesArticleLogic) DeletesArticle(in *articlerpc.DeletesArticleReq) (*articlerpc.DeletesArticleResp, error) {
+	rows, err := l.svcCtx.TArticleModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.BatchResp{}, nil
+	return &articlerpc.DeletesArticleResp{
+		SuccessCount: rows,
+	}, nil
 }

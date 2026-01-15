@@ -1,7 +1,6 @@
 package stomphook
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/go-stomp/stomp/v3/frame"
@@ -11,10 +10,10 @@ import (
 )
 
 type JwtAuthenticator struct {
-	verifier tokenx.TokenHolder
+	verifier tokenx.TokenManager
 }
 
-func NewJwtAuthenticator(verifier tokenx.TokenHolder) *JwtAuthenticator {
+func NewJwtAuthenticator(verifier tokenx.TokenManager) *JwtAuthenticator {
 	return &JwtAuthenticator{
 		verifier: verifier,
 	}
@@ -36,7 +35,7 @@ func (a *JwtAuthenticator) Authenticate(c *client.Client, f *frame.Frame) (strin
 		return "", "", fmt.Errorf("stomp auth failed: missing header: 'client'")
 	}
 	// 校验jwt
-	err := a.verifier.VerifyToken(context.Background(), passcode, login)
+	err := a.verifier.ValidateToken(login, passcode)
 	if err != nil {
 		return "", "", fmt.Errorf("stomp auth failed: %v", err)
 	}

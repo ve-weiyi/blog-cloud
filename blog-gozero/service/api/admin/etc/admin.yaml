@@ -2,7 +2,7 @@ Name: admin-api
 Host: 0.0.0.0
 Port: 9091
 Mode: dev
-Timeout: 5000
+Timeout: 60000
 # 健康检查
 DevServer:
   Enabled: true

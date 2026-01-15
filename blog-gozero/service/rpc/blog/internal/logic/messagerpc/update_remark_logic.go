@@ -6,7 +6,6 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/common/rpcutils"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/messagerpc"
-
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +26,7 @@ func NewUpdateRemarkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 }
 
 // 更新留言
-func (l *UpdateRemarkLogic) UpdateRemark(in *messagerpc.UpdateRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
+func (l *UpdateRemarkLogic) UpdateRemark(in *messagerpc.UpdateRemarkReq) (*messagerpc.UpdateRemarkResp, error) {
 	uid, err := rpcutils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -49,5 +48,7 @@ func (l *UpdateRemarkLogic) UpdateRemark(in *messagerpc.UpdateRemarkReq) (*messa
 		return nil, err
 	}
 
-	return convertRemarkOut(remark), nil
+	return &messagerpc.UpdateRemarkResp{
+		Remark: convertRemarkOut(remark),
+	}, nil
 }

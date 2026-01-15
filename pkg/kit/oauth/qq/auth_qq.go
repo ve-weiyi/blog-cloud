@@ -25,10 +25,10 @@ func NewAuthQq(conf *oauth.OauthConfig) *AuthQq {
 	return &AuthQq{
 		Config:          conf,
 		Name:            "qq",
-		AuthorizeUrl:    "https://graph.qq.com/oauth.0/authorize",
-		AccessTokenUrl:  "https://graph.qq.com/oauth.0/token",
-		RefreshTokenUrl: "https://graph.qq.com/oauth.0/token",
-		OpenidUrl:       "https://graph.qq.com/oauth.0/me",
+		AuthorizeUrl:    "https://graph.qq.com/oauth2.0/authorize",
+		AccessTokenUrl:  "https://graph.qq.com/oauth2.0/token",
+		RefreshTokenUrl: "https://graph.qq.com/oauth2.0/token",
+		OpenidUrl:       "https://graph.qq.com/oauth2.0/me",
 		UserInfoUrl:     "https://graph.qq.com/user/get_user_info",
 	}
 }

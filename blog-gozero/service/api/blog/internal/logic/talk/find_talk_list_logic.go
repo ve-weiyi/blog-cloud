@@ -47,7 +47,7 @@ func (l *FindTalkListLogic) FindTalkList(req *types.QueryTalkReq) (resp *types.P
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *socialrpc.TalkDetailsResp) string {
+		func(v *socialrpc.Talk) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -68,7 +68,7 @@ func (l *FindTalkListLogic) FindTalkList(req *types.QueryTalkReq) (resp *types.P
 
 	list := make([]*types.Talk, 0)
 	for _, v := range out.List {
-		m := ConvertTalkTypes(v, usm, counts.TopicCommentCounts)
+		m := convertTalkTypes(v, usm, counts.TopicCommentCounts)
 		list = append(list, m)
 	}
 
@@ -80,7 +80,7 @@ func (l *FindTalkListLogic) FindTalkList(req *types.QueryTalkReq) (resp *types.P
 	return resp, nil
 }
 
-func ConvertTalkTypes(in *socialrpc.TalkDetailsResp, usm map[string]*types.UserInfoVO, csm map[int64]int64) (out *types.Talk) {
+func convertTalkTypes(in *socialrpc.Talk, usm map[string]*types.UserInfoVO, csm map[int64]int64) (out *types.Talk) {
 	out = &types.Talk{
 		Id:           in.Id,
 		UserId:       in.UserId,

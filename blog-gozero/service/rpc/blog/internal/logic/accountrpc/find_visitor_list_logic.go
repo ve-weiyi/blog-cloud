@@ -61,8 +61,8 @@ func (l *FindVisitorListLogic) FindVisitorList(in *accountrpc.FindVisitorListReq
 			Browser:    vs.Browser,
 			IpAddress:  vs.IpAddress,
 			IpSource:   vs.IpSource,
-			CreatedAt:  vs.CreatedAt.Unix(),
-			UpdatedAt:  vs.UpdatedAt.Unix(),
+			CreatedAt:  vs.CreatedAt.UnixMilli(),
+			UpdatedAt:  vs.UpdatedAt.UnixMilli(),
 		})
 	}
 

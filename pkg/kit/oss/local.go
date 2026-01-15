@@ -9,7 +9,7 @@ import (
 )
 
 type Local struct {
-	cfg *Config
+	dir string
 }
 
 func (s *Local) UploadFile(f io.Reader, prefix string, filename string) (filepath string, err error) {
@@ -17,32 +17,33 @@ func (s *Local) UploadFile(f io.Reader, prefix string, filename string) (filepat
 	key := path.Join(prefix, filename)
 
 	// 尝试创建上传目录
-	err = os.MkdirAll(prefix, os.ModePerm)
+	dir := path.Dir(key)
+	err = os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
-		return "", fmt.Errorf("Local.UploadHttpFile os.MkdirAll() Filed, err: %v" + err.Error())
+		return "", fmt.Errorf("Local.UploadFile MkdirAll() Failed, err: %v", err)
 	}
 
 	// 创建目标文件
 	out, err := os.Create(key)
 	if err != nil {
-		return "", fmt.Errorf("Local.UploadHttpFile os.Create() Filed, err: %v" + err.Error())
+		return "", fmt.Errorf("Local.UploadFile Create() Failed, err: %v", err)
 	}
 	defer out.Close()
 
 	// 传输（拷贝）文件内容
 	_, copyErr := io.Copy(out, f)
 	if copyErr != nil {
-		return "", fmt.Errorf("Local.UploadHttpFile io.Copy() Filed, err:" + copyErr.Error())
+		return "", fmt.Errorf("Local.UploadFile Copy() Failed, err: %v", copyErr)
 	}
 
-	return s.cfg.BucketUrl + "/" + key, nil
+	return s.dir + "/" + key, nil
 }
 
 func (s *Local) DeleteFile(filepath string) error {
-	p := s.cfg.BucketUrl + "/" + filepath
+	p := s.dir + "/" + filepath
 
 	if err := os.Remove(p); err != nil {
-		return fmt.Errorf("本地文件删除失败, err: %v" + err.Error())
+		return fmt.Errorf("Local.DeleteFile Remove() Failed, err: %v", err)
 	}
 	return nil
 }
@@ -61,7 +62,7 @@ func (s *Local) ListFiles(prefix string, limit int) (files []*FileInfo, err erro
 			FileName: info.Name(),
 			FileType: path.Ext(info.Name()),
 			FileSize: info.Size(),
-			FileUrl:  s.cfg.BucketUrl + "/" + filepath,
+			FileUrl:  s.dir + "/" + filepath,
 			UpTime:   info.ModTime().UnixMilli(),
 		}
 		files = append(files, f)
@@ -82,8 +83,8 @@ func (s *Local) ListFiles(prefix string, limit int) (files []*FileInfo, err erro
 	return files, nil
 }
 
-func NewLocal(cfg *Config) *Local {
+func NewLocal(dir string) *Local {
 	return &Local{
-		cfg: cfg,
+		dir: dir,
 	}
 }

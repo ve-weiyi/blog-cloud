@@ -30,7 +30,7 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 }
 
 func (l *AddArticleLogic) AddArticle(req *types.NewArticleReq) (resp *types.ArticleBackVO, err error) {
-	in := &articlerpc.NewArticleReq{
+	in := &articlerpc.AddArticleReq{
 		Id:             req.Id,
 		UserId:         cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 		ArticleCover:   req.ArticleCover,
@@ -49,12 +49,16 @@ func (l *AddArticleLogic) AddArticle(req *types.NewArticleReq) (resp *types.Arti
 		return nil, err
 	}
 
-	return &types.ArticleBackVO{
-		Id: out.Id,
-	}, nil
+	return convertArticlePreviewTypes(out.Article), nil
 }
 
-func ConvertArticleTypes(in *articlerpc.ArticleDetailsResp) (out *types.ArticleBackVO) {
+func convertArticlePreviewTypes(in *articlerpc.ArticlePreview) *types.ArticleBackVO {
+	return &types.ArticleBackVO{
+		Id: in.Id,
+	}
+}
+
+func convertArticleTypes(in *articlerpc.ArticleDetails) (out *types.ArticleBackVO) {
 	out = &types.ArticleBackVO{
 		Id:             in.Id,
 		ArticleCover:   in.ArticleCover,

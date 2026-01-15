@@ -25,19 +25,8 @@ func NewAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFrie
 }
 
 // 创建友链
-func (l *AddFriendLogic) AddFriend(in *socialrpc.NewFriendReq) (*socialrpc.FriendDetailsResp, error) {
-	entity := convertFriendIn(in)
-
-	_, err := l.svcCtx.TFriendModel.Insert(l.ctx, entity)
-	if err != nil {
-		return nil, err
-	}
-
-	return convertFriendOut(entity), nil
-}
-
-func convertFriendIn(in *socialrpc.NewFriendReq) (out *model.TFriend) {
-	out = &model.TFriend{
+func (l *AddFriendLogic) AddFriend(in *socialrpc.AddFriendReq) (*socialrpc.AddFriendResp, error) {
+	entity := &model.TFriend{
 		Id:          in.Id,
 		LinkName:    in.LinkName,
 		LinkAvatar:  in.LinkAvatar,
@@ -47,18 +36,25 @@ func convertFriendIn(in *socialrpc.NewFriendReq) (out *model.TFriend) {
 		//UpdatedAt:   time.Time{},
 	}
 
-	return out
+	_, err := l.svcCtx.TFriendModel.Insert(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &socialrpc.AddFriendResp{
+		Friend: convertFriendOut(entity),
+	}, nil
 }
 
-func convertFriendOut(in *model.TFriend) (out *socialrpc.FriendDetailsResp) {
-	out = &socialrpc.FriendDetailsResp{
+func convertFriendOut(in *model.TFriend) (out *socialrpc.Friend) {
+	out = &socialrpc.Friend{
 		Id:          in.Id,
 		LinkName:    in.LinkName,
 		LinkAvatar:  in.LinkAvatar,
 		LinkAddress: in.LinkAddress,
 		LinkIntro:   in.LinkIntro,
-		CreatedAt:   in.CreatedAt.Unix(),
-		UpdatedAt:   in.UpdatedAt.Unix(),
+		CreatedAt:   in.CreatedAt.UnixMilli(),
+		UpdatedAt:   in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

@@ -38,7 +38,7 @@ func (l *FindMenuListLogic) FindMenuList(req *types.QueryMenuReq) (resp *types.P
 
 	var list []*types.MenuBackVO
 	for _, v := range out.List {
-		m := ConvertMenuTypes(v)
+		m := convertMenuTypes(v)
 		list = append(list, m)
 	}
 

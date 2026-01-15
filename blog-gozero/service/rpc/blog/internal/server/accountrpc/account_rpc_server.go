@@ -36,19 +36,19 @@ func (s *AccountRpcServer) Logout(ctx context.Context, in *accountrpc.LogoutReq)
 }
 
 // 注销
-func (s *AccountRpcServer) Logoff(ctx context.Context, in *accountrpc.LogoffReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) Logoff(ctx context.Context, in *accountrpc.LogoffReq) (*accountrpc.LogoffResp, error) {
 	l := accountrpclogic.NewLogoffLogic(ctx, s.svcCtx)
 	return l.Logoff(in)
 }
 
 // 注册
-func (s *AccountRpcServer) Register(ctx context.Context, in *accountrpc.RegisterReq) (*accountrpc.LoginResp, error) {
+func (s *AccountRpcServer) Register(ctx context.Context, in *accountrpc.RegisterReq) (*accountrpc.RegisterResp, error) {
 	l := accountrpclogic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
 // 重置密码
-func (s *AccountRpcServer) ResetPassword(ctx context.Context, in *accountrpc.ResetPasswordReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) ResetPassword(ctx context.Context, in *accountrpc.ResetPasswordReq) (*accountrpc.ResetPasswordResp, error) {
 	l := accountrpclogic.NewResetPasswordLogic(ctx, s.svcCtx)
 	return l.ResetPassword(in)
 }
@@ -78,13 +78,13 @@ func (s *AccountRpcServer) GetOauthAuthorizeUrl(ctx context.Context, in *account
 }
 
 // 发送邮件验证码
-func (s *AccountRpcServer) SendEmailVerifyCode(ctx context.Context, in *accountrpc.SendEmailVerifyCodeReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) SendEmailVerifyCode(ctx context.Context, in *accountrpc.SendEmailVerifyCodeReq) (*accountrpc.SendEmailVerifyCodeResp, error) {
 	l := accountrpclogic.NewSendEmailVerifyCodeLogic(ctx, s.svcCtx)
 	return l.SendEmailVerifyCode(in)
 }
 
 // 发送手机号验证码
-func (s *AccountRpcServer) SendPhoneVerifyCode(ctx context.Context, in *accountrpc.SendPhoneVerifyCodeReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) SendPhoneVerifyCode(ctx context.Context, in *accountrpc.SendPhoneVerifyCodeReq) (*accountrpc.SendPhoneVerifyCodeResp, error) {
 	l := accountrpclogic.NewSendPhoneVerifyCodeLogic(ctx, s.svcCtx)
 	return l.SendPhoneVerifyCode(in)
 }
@@ -96,67 +96,67 @@ func (s *AccountRpcServer) GenerateCaptchaCode(ctx context.Context, in *accountr
 }
 
 // 获取用户信息
-func (s *AccountRpcServer) GetUserInfo(ctx context.Context, in *accountrpc.UserIdReq) (*accountrpc.UserInfoResp, error) {
+func (s *AccountRpcServer) GetUserInfo(ctx context.Context, in *accountrpc.GetUserInfoReq) (*accountrpc.GetUserInfoResp, error) {
 	l := accountrpclogic.NewGetUserInfoLogic(ctx, s.svcCtx)
 	return l.GetUserInfo(in)
 }
 
 // 获取用户第三平台信息
-func (s *AccountRpcServer) GetUserOauthInfo(ctx context.Context, in *accountrpc.UserIdReq) (*accountrpc.GetUserOauthInfoResp, error) {
+func (s *AccountRpcServer) GetUserOauthInfo(ctx context.Context, in *accountrpc.GetUserOauthInfoReq) (*accountrpc.GetUserOauthInfoResp, error) {
 	l := accountrpclogic.NewGetUserOauthInfoLogic(ctx, s.svcCtx)
 	return l.GetUserOauthInfo(in)
 }
 
 // 修改用户信息
-func (s *AccountRpcServer) UpdateUserInfo(ctx context.Context, in *accountrpc.UpdateUserInfoReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) UpdateUserInfo(ctx context.Context, in *accountrpc.UpdateUserInfoReq) (*accountrpc.UpdateUserInfoResp, error) {
 	l := accountrpclogic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
 	return l.UpdateUserInfo(in)
 }
 
 // 修改用户头像
-func (s *AccountRpcServer) UpdateUserAvatar(ctx context.Context, in *accountrpc.UpdateUserAvatarReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) UpdateUserAvatar(ctx context.Context, in *accountrpc.UpdateUserAvatarReq) (*accountrpc.UpdateUserAvatarResp, error) {
 	l := accountrpclogic.NewUpdateUserAvatarLogic(ctx, s.svcCtx)
 	return l.UpdateUserAvatar(in)
 }
 
 // 修改用户密码
-func (s *AccountRpcServer) UpdateUserPassword(ctx context.Context, in *accountrpc.UpdateUserPasswordReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) UpdateUserPassword(ctx context.Context, in *accountrpc.UpdateUserPasswordReq) (*accountrpc.UpdateUserPasswordResp, error) {
 	l := accountrpclogic.NewUpdateUserPasswordLogic(ctx, s.svcCtx)
 	return l.UpdateUserPassword(in)
 }
 
 // 修改用户登录邮箱
-func (s *AccountRpcServer) BindUserEmail(ctx context.Context, in *accountrpc.BindUserEmailReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) BindUserEmail(ctx context.Context, in *accountrpc.BindUserEmailReq) (*accountrpc.BindUserEmailResp, error) {
 	l := accountrpclogic.NewBindUserEmailLogic(ctx, s.svcCtx)
 	return l.BindUserEmail(in)
 }
 
 // 修改用户登录手机号
-func (s *AccountRpcServer) BindUserPhone(ctx context.Context, in *accountrpc.BindUserPhoneReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) BindUserPhone(ctx context.Context, in *accountrpc.BindUserPhoneReq) (*accountrpc.BindUserPhoneResp, error) {
 	l := accountrpclogic.NewBindUserPhoneLogic(ctx, s.svcCtx)
 	return l.BindUserPhone(in)
 }
 
 // 修改用户第三方账号
-func (s *AccountRpcServer) BindUserOauth(ctx context.Context, in *accountrpc.BindUserOauthReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) BindUserOauth(ctx context.Context, in *accountrpc.BindUserOauthReq) (*accountrpc.BindUserOauthResp, error) {
 	l := accountrpclogic.NewBindUserOauthLogic(ctx, s.svcCtx)
 	return l.BindUserOauth(in)
 }
 
 // 解绑第三方账号
-func (s *AccountRpcServer) UnbindUserOauth(ctx context.Context, in *accountrpc.UnbindUserOauthReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) UnbindUserOauth(ctx context.Context, in *accountrpc.UnbindUserOauthReq) (*accountrpc.UnbindUserOauthResp, error) {
 	l := accountrpclogic.NewUnbindUserOauthLogic(ctx, s.svcCtx)
 	return l.UnbindUserOauth(in)
 }
 
 // 修改用户状态
-func (s *AccountRpcServer) AdminUpdateUserStatus(ctx context.Context, in *accountrpc.AdminUpdateUserStatusReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) AdminUpdateUserStatus(ctx context.Context, in *accountrpc.AdminUpdateUserStatusReq) (*accountrpc.AdminUpdateUserStatusResp, error) {
 	l := accountrpclogic.NewAdminUpdateUserStatusLogic(ctx, s.svcCtx)
 	return l.AdminUpdateUserStatus(in)
 }
 
 // 管理员重置用户密码
-func (s *AccountRpcServer) AdminResetUserPassword(ctx context.Context, in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.EmptyResp, error) {
+func (s *AccountRpcServer) AdminResetUserPassword(ctx context.Context, in *accountrpc.AdminResetUserPasswordReq) (*accountrpc.AdminResetUserPasswordResp, error) {
 	l := accountrpclogic.NewAdminResetUserPasswordLogic(ctx, s.svcCtx)
 	return l.AdminResetUserPassword(in)
 }

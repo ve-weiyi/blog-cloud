@@ -31,8 +31,9 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 }
 
 func (l *LogoutLogic) Logout(req *types.EmptyReq) (resp *types.EmptyResp, err error) {
+	uid := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
 	in := &accountrpc.LogoutReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
+		UserId: uid,
 	}
 
 	_, err = l.svcCtx.AccountRpc.Logout(l.ctx, in)
@@ -42,10 +43,10 @@ func (l *LogoutLogic) Logout(req *types.EmptyReq) (resp *types.EmptyResp, err er
 
 	// 登录日志
 	_, err = l.svcCtx.SyslogRpc.AddLogoutLog(l.ctx, &syslogrpc.AddLogoutLogReq{
-		UserId:   cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
-		LogoutAt: time.Now().Unix(),
+		UserId:   uid,
+		LogoutAt: time.Now().UnixMilli(),
 	})
 
-	l.svcCtx.TokenHolder.RemoveToken(l.ctx, cast.ToString(l.ctx.Value(bizheader.HeaderUid)))
+	l.svcCtx.TokenManager.RevokeToken(uid, false)
 	return &types.EmptyResp{}, nil
 }

@@ -24,13 +24,25 @@ func NewUpdateApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 }
 
 // 更新接口
-func (l *UpdateApiLogic) UpdateApi(in *permissionrpc.NewApiReq) (*permissionrpc.ApiDetailsResp, error) {
-	entity := convertApiIn(in)
-
-	_, err := l.svcCtx.TApiModel.Save(l.ctx, entity)
+func (l *UpdateApiLogic) UpdateApi(in *permissionrpc.UpdateApiReq) (*permissionrpc.UpdateApiResp, error) {
+	entity, err := l.svcCtx.TApiModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertApiOut(entity), nil
+	entity.ParentId = in.ParentId
+	entity.Path = in.Path
+	entity.Name = in.Name
+	entity.Method = in.Method
+	entity.Traceable = in.Traceable
+	entity.Status = in.Status
+
+	_, err = l.svcCtx.TApiModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionrpc.UpdateApiResp{
+		Api: convertApiOut(entity),
+	}, nil
 }

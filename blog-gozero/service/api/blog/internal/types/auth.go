@@ -50,7 +50,9 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Token *Token `json:"token"`
+	UserId string `json:"user_id"` // 用户id
+	Scope  string `json:"scope"`   // 作用域
+	Token  *Token `json:"token"`
 }
 
 type PhoneLoginReq struct {

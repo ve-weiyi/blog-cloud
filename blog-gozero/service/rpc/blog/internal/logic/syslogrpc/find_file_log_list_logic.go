@@ -34,7 +34,7 @@ func (l *FindFileLogListLogic) FindFileLogList(in *syslogrpc.FindFileLogListReq)
 		return nil, err
 	}
 
-	var list []*syslogrpc.FileLogDetailsResp
+	var list []*syslogrpc.FileLog
 	for _, v := range records {
 		list = append(list, convertFileLogOut(v))
 	}
@@ -72,8 +72,8 @@ func convertFileLogQuery(in *syslogrpc.FindFileLogListReq) (page int, size int, 
 	return query.NewQueryBuilder(opts...).Build()
 }
 
-func convertFileLogOut(in *model.TFileLog) (out *syslogrpc.FileLogDetailsResp) {
-	out = &syslogrpc.FileLogDetailsResp{
+func convertFileLogOut(in *model.TFileLog) (out *syslogrpc.FileLog) {
+	out = &syslogrpc.FileLog{
 		Id:         in.Id,
 		UserId:     in.UserId,
 		TerminalId: in.TerminalId,
@@ -83,8 +83,8 @@ func convertFileLogOut(in *model.TFileLog) (out *syslogrpc.FileLogDetailsResp) {
 		FileSize:   in.FileSize,
 		FileMd5:    in.FileMd5,
 		FileUrl:    in.FileUrl,
-		CreatedAt:  in.CreatedAt.Unix(),
-		UpdatedAt:  in.UpdatedAt.Unix(),
+		CreatedAt:  in.CreatedAt.UnixMilli(),
+		UpdatedAt:  in.UpdatedAt.UnixMilli(),
 	}
 
 	return out

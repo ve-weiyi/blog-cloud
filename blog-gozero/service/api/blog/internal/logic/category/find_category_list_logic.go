@@ -50,7 +50,7 @@ func (l *FindCategoryListLogic) FindCategoryList(req *types.QueryCategoryReq) (r
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "分类",
 	})
 	if err != nil {

@@ -24,20 +24,15 @@ func NewFindAllRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindA
 }
 
 // 查询所有角色
-func (l *FindAllRoleLogic) FindAllRole(in *permissionrpc.FindAllRoleReq) (*permissionrpc.FindRoleListResp, error) {
+func (l *FindAllRoleLogic) FindAllRole(in *permissionrpc.FindAllRoleReq) (*permissionrpc.FindAllRoleResp, error) {
 	result, err := l.svcCtx.TRoleModel.FindALL(l.ctx, "")
 	if err != nil {
 		return nil, err
 	}
 
-	out := &permissionrpc.FindRoleListResp{}
+	out := &permissionrpc.FindAllRoleResp{}
 	for _, item := range result {
 		out.List = append(out.List, convertRoleOut(item))
-	}
-	out.Pagination = &permissionrpc.PageResp{
-		Page:     1,
-		PageSize: int64(len(result)),
-		Total:    int64(len(result)),
 	}
 
 	return out, nil

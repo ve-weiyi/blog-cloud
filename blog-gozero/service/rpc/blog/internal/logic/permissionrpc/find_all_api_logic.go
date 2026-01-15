@@ -24,20 +24,15 @@ func NewFindAllApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindAl
 }
 
 // 查找所有接口
-func (l *FindAllApiLogic) FindAllApi(in *permissionrpc.FindAllApiReq) (*permissionrpc.FindApiListResp, error) {
+func (l *FindAllApiLogic) FindAllApi(in *permissionrpc.FindAllApiReq) (*permissionrpc.FindAllApiResp, error) {
 	result, err := l.svcCtx.TApiModel.FindALL(l.ctx, "")
 	if err != nil {
 		return nil, err
 	}
 
-	out := &permissionrpc.FindApiListResp{}
+	out := &permissionrpc.FindAllApiResp{}
 	for _, item := range result {
 		out.List = append(out.List, convertApiOut(item))
-	}
-	out.Pagination = &permissionrpc.PageResp{
-		Page:     1,
-		PageSize: int64(len(result)),
-		Total:    int64(len(result)),
 	}
 
 	return out, nil

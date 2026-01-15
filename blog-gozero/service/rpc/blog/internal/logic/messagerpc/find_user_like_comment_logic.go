@@ -27,7 +27,7 @@ func NewFindUserLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 用户点赞的评论
-func (l *FindUserLikeCommentLogic) FindUserLikeComment(in *messagerpc.UserIdReq) (*messagerpc.FindLikeCommentResp, error) {
+func (l *FindUserLikeCommentLogic) FindUserLikeComment(in *messagerpc.FindUserLikeCommentReq) (*messagerpc.FindLikeCommentResp, error) {
 	uid := cast.ToString(in.UserId)
 	likeKey := rediskey.GetUserLikeCommentKey(uid)
 

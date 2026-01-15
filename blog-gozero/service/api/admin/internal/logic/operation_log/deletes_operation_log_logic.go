@@ -26,7 +26,7 @@ func NewDeletesOperationLogLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *DeletesOperationLogLogic) DeletesOperationLog(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &syslogrpc.IdsReq{
+	in := &syslogrpc.DeletesOperationLogReq{
 		Ids: req.Ids,
 	}
 

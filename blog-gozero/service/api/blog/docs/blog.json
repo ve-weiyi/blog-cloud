@@ -4440,51 +4440,56 @@
     "LoginResp": {
       "type": "object",
       "required": [
+        "user_id",
+        "scope",
         "token"
       ],
       "properties": {
+        "scope": {
+          "description": "作用域",
+          "type": "string"
+        },
         "token": {
           "type": "object",
           "required": [
-            "user_id",
             "token_type",
             "access_token",
             "expires_in",
             "refresh_token",
             "refresh_expires_in",
-            "scope"
+            "refresh_expires_at"
           ],
           "properties": {
             "access_token": {
-              "description": "访问token,过期时间较短。2h",
+              "description": "访问令牌：用于接口访问，有效期短",
               "type": "string"
             },
             "expires_in": {
-              "description": "访问token过期时间",
+              "description": "AccessToken 有效期（秒），如 3600（1小时）",
+              "type": "integer"
+            },
+            "refresh_expires_at": {
+              "description": "RefreshToken 过期时间戳（秒）",
               "type": "integer"
             },
             "refresh_expires_in": {
-              "description": "刷新token过期时间",
+              "description": "RefreshToken 有效期（秒），如 604800（7天）",
               "type": "integer"
             },
             "refresh_token": {
-              "description": "刷新token,过期时间较长。30d",
-              "type": "string"
-            },
-            "scope": {
-              "description": "作用域",
+              "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
               "type": "string"
             },
             "token_type": {
-              "description": "token类型,Bearer",
-              "type": "string"
-            },
-            "user_id": {
-              "description": "用户id",
+              "description": "Token 类型（如 \"Bearer\"）",
               "type": "string"
             }
           },
           "$ref": "#/definitions/Token"
+        },
+        "user_id": {
+          "description": "用户id",
+          "type": "string"
         }
       }
     },
@@ -5404,41 +5409,36 @@
     "Token": {
       "type": "object",
       "required": [
-        "user_id",
         "token_type",
         "access_token",
         "expires_in",
         "refresh_token",
         "refresh_expires_in",
-        "scope"
+        "refresh_expires_at"
       ],
       "properties": {
         "access_token": {
-          "description": "访问token,过期时间较短。2h",
+          "description": "访问令牌：用于接口访问，有效期短",
           "type": "string"
         },
         "expires_in": {
-          "description": "访问token过期时间",
+          "description": "AccessToken 有效期（秒），如 3600（1小时）",
+          "type": "integer"
+        },
+        "refresh_expires_at": {
+          "description": "RefreshToken 过期时间戳（秒）",
           "type": "integer"
         },
         "refresh_expires_in": {
-          "description": "刷新token过期时间",
+          "description": "RefreshToken 有效期（秒），如 604800（7天）",
           "type": "integer"
         },
         "refresh_token": {
-          "description": "刷新token,过期时间较长。30d",
-          "type": "string"
-        },
-        "scope": {
-          "description": "作用域",
+          "description": "刷新令牌：仅用于刷新 AccessToken，有效期长",
           "type": "string"
         },
         "token_type": {
-          "description": "token类型,Bearer",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "用户id",
+          "description": "Token 类型（如 \"Bearer\"）",
           "type": "string"
         }
       }
@@ -6042,7 +6042,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-01-13 13:12:27",
+  "x-date": "2026-01-19 03:05:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

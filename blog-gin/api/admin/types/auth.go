@@ -47,12 +47,20 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Token *Token `json:"token"`
+	UserId string `json:"user_id"` // 用户id
+	Scope  string `json:"scope"`   // 作用域
+	Token  *Token `json:"token"`
 }
 
 type PhoneLoginReq struct {
 	Phone      string `json:"phone"`       // 手机号
 	VerifyCode string `json:"verify_code"` // 验证码
+}
+
+type RefreshTokenReq struct {
+	UserId       string `json:"user_id"`       // 用户id
+	GrantType    string `json:"grant_type"`    // 授权类型
+	RefreshToken string `json:"refresh_token"` // 刷新令牌
 }
 
 type RegisterReq struct {

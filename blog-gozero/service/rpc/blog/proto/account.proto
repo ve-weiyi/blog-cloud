@@ -1,4 +1,3 @@
-// 声明 proto 语法版本，固定值
 syntax = "proto3";
 
 // proto 包名
@@ -7,34 +6,24 @@ package accountrpc;
 // 生成 golang 代码后的包名
 option go_package = "./accountrpc";
 
-//==================== 通用消息 ====================
-message EmptyResp {
-}
-
-message UserIdReq {
-  string user_id = 1;
-}
-
-// 分页请求
+/************** 通用消息 **************/
+// 分页请求参数
 message PageReq {
   int64 page = 1;      // 页码
   int64 page_size = 2; // 每页大小
   repeated string sorts = 3; // 排序字段
 }
 
-// 分页响应
+// 分页响应参数
 message PageResp {
   int64 page = 1;      // 页码
   int64 page_size = 2; // 每页大小
-  int64 total = 3; // 总数
-}
-/************** auth 登录相关 **************/
-message LoginReq {
-  string username = 1;
-  string password = 2;
+  int64 total = 3;     // 总数
 }
 
-message LoginResp {
+/************** 基础消息 **************/
+// 用户基础信息
+message User {
   string user_id = 1; // 用户id
   string username = 2;// 用户名
   string nickname = 3;// 用户昵称
@@ -42,24 +31,93 @@ message LoginResp {
   string email = 5;// 用户邮箱
   string phone = 6;// 用户手机号
   string info = 7;// 用户信息
-  string register_type = 9; // 注册类型
-  string login_type = 10;
+  int64 status = 8;
+  string register_type = 9;
+  string ip_address = 10;// IP 地址
+  string ip_source = 11;// IP 归属地
+  int64 created_at = 12;
+  int64 updated_at = 13;
+}
+
+// 用户信息响应基础结构
+message UserInfo {
+  string user_id = 1; // 用户id
+  string username = 2;// 用户名
+  string nickname = 3;// 用户昵称
+  string avatar = 4;// 用户头像
+  string email = 5;// 用户邮箱
+  string phone = 6;// 用户手机号
+  string info = 7;// 用户信息
+  int64 status = 8;
+  string register_type = 9;
+  string ip_address = 10;// IP 地址
+  string ip_source = 11;// IP 归属地
+  int64 created_at = 12;
+  int64 updated_at = 13;
   repeated UserRoleLabel roles = 16;
+}
+
+// 用户角色标签
+message UserRoleLabel{
+  int64 role_id = 1;
+  string role_key = 2;
+  string role_label = 3;
+  string role_comment = 4;
+}
+
+// 用户第三方授权信息
+message UserOauthInfo {
+  string platform = 1;// 平台
+  string open_id = 2;// 开放id
+  string nickname = 3;// 昵称
+  string avatar = 4;// 头像
+  int64 created_at = 5;// 创建时间
+  int64 updated_at = 6;// 更新时间
+}
+
+// 用户地区分布信息
+message UserArea {
+  string area = 1; // 地区
+  int64 count = 2; // 数量
+}
+
+// 游客信息
+message VisitorInfo{
+  int64 id = 1;                 // 游客ID
+  string terminal_id = 2;       // 终端标识
+  string os = 3;                // 操作系统
+  string browser = 4;           // 浏览器
+  string ip_address = 5;        // IP地址
+  string ip_source = 6;         // IP归属地
+  int64 created_at = 7;         // 创建时间
+  int64 updated_at = 8;         // 更新时间
+}
+
+/************** auth 登录相关 **************/
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  UserInfo user = 1;
+  string login_type = 2;
 }
 
 message LogoutReq {
   string user_id = 1; // 用户id
 }
 
+message LogoutResp {
+  int64 logout_at = 2;
+}
+
 message LogoffReq {
   string user_id = 1; // 用户id
 }
 
-message LogoutResp {
-  string user_id = 1; // 用户id
-  int64 logout_at = 2;
+message LogoffResp {
 }
-
 
 message RegisterReq {
   string username = 1;
@@ -68,10 +126,17 @@ message RegisterReq {
   string verify_code = 4;
 }
 
+message RegisterResp {
+  UserInfo user = 1;
+}
+
 message ResetPasswordReq {
   string email = 1;
   string password = 2;
   string verify_code = 3;
+}
+
+message ResetPasswordResp {
 }
 
 message SendEmailVerifyCodeReq {
@@ -79,9 +144,15 @@ message SendEmailVerifyCodeReq {
   string type = 2; // 类型 register, reset_password, bind_email, bind_phone
 }
 
+message SendEmailVerifyCodeResp {
+}
+
 message SendPhoneVerifyCodeReq {
   string phone = 1;
   string type = 2; // 类型 register, reset_password, bind_email, bind_phone
+}
+
+message SendPhoneVerifyCodeResp {
 }
 
 message GenerateCaptchaCodeReq {
@@ -121,44 +192,16 @@ message GetOauthAuthorizeUrlResp {
   string authorize_url = 1;// 授权地址
 }
 
-message User {
-  string user_id = 1; // 用户id
-  string username = 2;// 用户名
-  string nickname = 3;// 用户昵称
-  string avatar = 4;// 用户头像
-  string email = 5;// 用户邮箱
-  string phone = 6;// 用户手机号
-  string info = 7;// 用户信息
-  int64 status = 8;
-  string register_type = 9;
-  string ip_address = 10;// IP 地址
-  string ip_source = 11;// IP 归属地
-  int64 created_at = 12;
-  int64 updated_at = 13;
+message GetUserInfoReq{
+  string user_id = 1;
 }
 
-message UserInfoResp {
-  string user_id = 1; // 用户id
-  string username = 2;// 用户名
-  string nickname = 3;// 用户昵称
-  string avatar = 4;// 用户头像
-  string email = 5;// 用户邮箱
-  string phone = 6;// 用户手机号
-  string info = 7;// 用户信息
-  int64 status = 8;
-  string register_type = 9;
-  string ip_address = 10;// IP 地址
-  string ip_source = 11;// IP 归属地
-  int64 created_at = 12;
-  int64 updated_at = 13;
-  repeated UserRoleLabel roles = 16;
+message GetUserInfoResp{
+  UserInfo user = 1;
 }
 
-message UserRoleLabel{
-  int64 role_id = 1;
-  string role_key = 2;
-  string role_label = 3;
-  string role_comment = 4;
+message GetUserOauthInfoReq{
+  string user_id = 1;
 }
 
 message UpdateUserInfoReq {
@@ -166,8 +209,14 @@ message UpdateUserInfoReq {
   string info = 2;// 用户信息
 }
 
+message UpdateUserInfoResp {
+}
+
 message UpdateUserAvatarReq {
   string avatar = 1; // 头像
+}
+
+message UpdateUserAvatarResp {
 }
 
 message UpdateUserPasswordReq {
@@ -175,9 +224,15 @@ message UpdateUserPasswordReq {
   string new_password = 2; // 新密码
 }
 
+message UpdateUserPasswordResp {
+}
+
 message BindUserEmailReq {
   string email = 1; // 邮箱
   string verify_code = 2;
+}
+
+message BindUserEmailResp {
 }
 
 message BindUserPhoneReq {
@@ -185,22 +240,22 @@ message BindUserPhoneReq {
   string verify_code = 2;
 }
 
+message BindUserPhoneResp {
+}
+
 message BindUserOauthReq {
   string platform = 1;// 平台
   string code = 2;// 授权码
+}
+
+message BindUserOauthResp {
 }
 
 message UnbindUserOauthReq {
   string platform = 1;// 平台
 }
 
-message UserOauthInfo {
-  string platform = 1;// 平台
-  string open_id = 2;// 开放id
-  string nickname = 3;// 昵称
-  string avatar = 4;// 头像
-  int64 created_at = 5;// 创建时间
-  int64 updated_at = 6;// 更新时间
+message UnbindUserOauthResp {
 }
 
 message GetUserOauthInfoResp {
@@ -212,9 +267,15 @@ message AdminUpdateUserStatusReq {
   int64 status = 2;
 }
 
+message AdminUpdateUserStatusResp {
+}
+
 message AdminResetUserPasswordReq {
   string user_id = 1; // 用户id
   string password = 2;
+}
+
+message AdminResetUserPasswordResp {
 }
 
 message FindUserListReq {
@@ -234,9 +295,8 @@ message FindUserListResp{
 
 message FindUserInfoListResp{
   PageResp pagination = 1; // 分页信息
-  repeated UserInfoResp list = 2;
+  repeated UserInfo list = 2;
 }
-
 
 message AnalysisUserReq {
   int64 user_type = 1; // 用户类型 0用户 1游客
@@ -254,25 +314,9 @@ message AnalysisUserAreasResp {
   repeated UserArea list = 1;
 }
 
-message UserArea {
-  string area = 1; // 地区
-  int64 count = 2; // 数量
-}
-
-message VisitorInfo{
-  int64 id = 1;                 // 游客ID
-  string terminal_id = 2;       // 终端标识
-  string os = 3;                // 操作系统
-  string browser = 4;           // 浏览器
-  string ip_address = 5;        // IP地址
-  string ip_source = 6;         // IP归属地
-  int64 created_at = 7;         // 创建时间
-  int64 updated_at = 8;         // 更新时间
-}
-
 message GetClientInfoReq{
-
 }
+
 message GetClientInfoResp {
   VisitorInfo visitor = 1;
 }
@@ -295,12 +339,12 @@ service AccountRpc {
   // 登出
   rpc Logout(LogoutReq) returns(LogoutResp);
   // 注销
-  rpc Logoff(LogoffReq) returns(EmptyResp);
+  rpc Logoff(LogoffReq) returns(LogoffResp);
 
   // 注册
-  rpc Register(RegisterReq) returns(LoginResp);
+  rpc Register(RegisterReq) returns(RegisterResp);
   // 重置密码
-  rpc ResetPassword(ResetPasswordReq) returns(EmptyResp);
+  rpc ResetPassword(ResetPasswordReq) returns(ResetPasswordResp);
 
   // 邮箱登录
   rpc EmailLogin(EmailLoginReq) returns(LoginResp);
@@ -313,39 +357,38 @@ service AccountRpc {
   // 获取第三方登录授权地址
   rpc GetOauthAuthorizeUrl(GetOauthAuthorizeUrlReq) returns(GetOauthAuthorizeUrlResp);
   // 发送邮件验证码
-  rpc SendEmailVerifyCode(SendEmailVerifyCodeReq) returns(EmptyResp);
+  rpc SendEmailVerifyCode(SendEmailVerifyCodeReq) returns(SendEmailVerifyCodeResp);
   // 发送手机号验证码
-  rpc SendPhoneVerifyCode(SendPhoneVerifyCodeReq) returns(EmptyResp);
+  rpc SendPhoneVerifyCode(SendPhoneVerifyCodeReq) returns(SendPhoneVerifyCodeResp);
   // 生成验证码
   rpc GenerateCaptchaCode(GenerateCaptchaCodeReq) returns(GenerateCaptchaCodeResp);
 
 
   // 获取用户信息
-  rpc GetUserInfo(UserIdReq) returns(UserInfoResp);
+  rpc GetUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
   // 获取用户第三平台信息
-  rpc GetUserOauthInfo(UserIdReq) returns(GetUserOauthInfoResp);
+  rpc GetUserOauthInfo(GetUserOauthInfoReq) returns(GetUserOauthInfoResp);
   // 修改用户信息
-  rpc UpdateUserInfo(UpdateUserInfoReq) returns(EmptyResp);
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns(UpdateUserInfoResp);
   // 修改用户头像
-  rpc UpdateUserAvatar(UpdateUserAvatarReq) returns(EmptyResp);
+  rpc UpdateUserAvatar(UpdateUserAvatarReq) returns(UpdateUserAvatarResp);
   // 修改用户密码
-  rpc UpdateUserPassword(UpdateUserPasswordReq) returns(EmptyResp);
-
+  rpc UpdateUserPassword(UpdateUserPasswordReq) returns(UpdateUserPasswordResp);
 
   // 修改用户登录邮箱
-  rpc BindUserEmail(BindUserEmailReq) returns(EmptyResp);
+  rpc BindUserEmail(BindUserEmailReq) returns(BindUserEmailResp);
   // 修改用户登录手机号
-  rpc BindUserPhone(BindUserPhoneReq) returns(EmptyResp);
+  rpc BindUserPhone(BindUserPhoneReq) returns(BindUserPhoneResp);
   // 修改用户第三方账号
-  rpc BindUserOauth(BindUserOauthReq) returns(EmptyResp);
+  rpc BindUserOauth(BindUserOauthReq) returns(BindUserOauthResp);
   // 解绑第三方账号
-  rpc UnbindUserOauth(UnbindUserOauthReq) returns(EmptyResp);
+  rpc UnbindUserOauth(UnbindUserOauthReq) returns(UnbindUserOauthResp);
 
 
   // 修改用户状态
-  rpc AdminUpdateUserStatus(AdminUpdateUserStatusReq) returns(EmptyResp);
+  rpc AdminUpdateUserStatus(AdminUpdateUserStatusReq) returns(AdminUpdateUserStatusResp);
   // 管理员重置用户密码
-  rpc AdminResetUserPassword(AdminResetUserPasswordReq) returns(EmptyResp);
+  rpc AdminResetUserPassword(AdminResetUserPasswordReq) returns(AdminResetUserPasswordResp);
 
   // 查找用户列表
   rpc FindUserList(FindUserListReq) returns(FindUserListResp);

@@ -45,33 +45,33 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResourceRpcClient interface {
 	// 创建照片
-	AddPhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error)
+	AddPhoto(ctx context.Context, in *AddPhotoReq, opts ...grpc.CallOption) (*AddPhotoResp, error)
 	// 更新照片
-	UpdatePhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error)
+	UpdatePhoto(ctx context.Context, in *UpdatePhotoReq, opts ...grpc.CallOption) (*UpdatePhotoResp, error)
 	// 更新照片删除状态
-	UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*BatchResp, error)
+	UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*UpdatePhotoDeleteResp, error)
 	// 删除照片
-	DeletesPhoto(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesPhoto(ctx context.Context, in *DeletesPhotoReq, opts ...grpc.CallOption) (*DeletesPhotoResp, error)
 	// 查询照片列表
 	FindPhotoList(ctx context.Context, in *FindPhotoListReq, opts ...grpc.CallOption) (*FindPhotoListResp, error)
 	// 创建相册
-	AddAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+	AddAlbum(ctx context.Context, in *AddAlbumReq, opts ...grpc.CallOption) (*AddAlbumResp, error)
 	// 更新相册
-	UpdateAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+	UpdateAlbum(ctx context.Context, in *UpdateAlbumReq, opts ...grpc.CallOption) (*UpdateAlbumResp, error)
 	// 更新相册删除状态
-	UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*BatchResp, error)
+	UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*UpdateAlbumDeleteResp, error)
 	// 获取相册
-	GetAlbum(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error)
+	GetAlbum(ctx context.Context, in *GetAlbumReq, opts ...grpc.CallOption) (*GetAlbumResp, error)
 	// 删除相册
-	DeletesAlbum(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesAlbum(ctx context.Context, in *DeletesAlbumReq, opts ...grpc.CallOption) (*DeletesAlbumResp, error)
 	// 查询相册列表
 	FindAlbumList(ctx context.Context, in *FindAlbumListReq, opts ...grpc.CallOption) (*FindAlbumListResp, error)
 	// 创建页面
-	AddPage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error)
+	AddPage(ctx context.Context, in *AddPageReq, opts ...grpc.CallOption) (*AddPageResp, error)
 	// 更新页面
-	UpdatePage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error)
+	UpdatePage(ctx context.Context, in *UpdatePageReq, opts ...grpc.CallOption) (*UpdatePageResp, error)
 	// 删除页面
-	DeletesPage(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error)
+	DeletesPage(ctx context.Context, in *DeletesPageReq, opts ...grpc.CallOption) (*DeletesPageResp, error)
 	// 查询页面列表
 	FindPageList(ctx context.Context, in *FindPageListReq, opts ...grpc.CallOption) (*FindPageListResp, error)
 }
@@ -84,8 +84,8 @@ func NewResourceRpcClient(cc grpc.ClientConnInterface) ResourceRpcClient {
 	return &resourceRpcClient{cc}
 }
 
-func (c *resourceRpcClient) AddPhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error) {
-	out := new(PhotoDetailsResp)
+func (c *resourceRpcClient) AddPhoto(ctx context.Context, in *AddPhotoReq, opts ...grpc.CallOption) (*AddPhotoResp, error) {
+	out := new(AddPhotoResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_AddPhoto_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -93,8 +93,8 @@ func (c *resourceRpcClient) AddPhoto(ctx context.Context, in *NewPhotoReq, opts 
 	return out, nil
 }
 
-func (c *resourceRpcClient) UpdatePhoto(ctx context.Context, in *NewPhotoReq, opts ...grpc.CallOption) (*PhotoDetailsResp, error) {
-	out := new(PhotoDetailsResp)
+func (c *resourceRpcClient) UpdatePhoto(ctx context.Context, in *UpdatePhotoReq, opts ...grpc.CallOption) (*UpdatePhotoResp, error) {
+	out := new(UpdatePhotoResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_UpdatePhoto_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,8 +102,8 @@ func (c *resourceRpcClient) UpdatePhoto(ctx context.Context, in *NewPhotoReq, op
 	return out, nil
 }
 
-func (c *resourceRpcClient) UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *resourceRpcClient) UpdatePhotoDelete(ctx context.Context, in *UpdatePhotoDeleteReq, opts ...grpc.CallOption) (*UpdatePhotoDeleteResp, error) {
+	out := new(UpdatePhotoDeleteResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_UpdatePhotoDelete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -111,8 +111,8 @@ func (c *resourceRpcClient) UpdatePhotoDelete(ctx context.Context, in *UpdatePho
 	return out, nil
 }
 
-func (c *resourceRpcClient) DeletesPhoto(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *resourceRpcClient) DeletesPhoto(ctx context.Context, in *DeletesPhotoReq, opts ...grpc.CallOption) (*DeletesPhotoResp, error) {
+	out := new(DeletesPhotoResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_DeletesPhoto_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -129,8 +129,8 @@ func (c *resourceRpcClient) FindPhotoList(ctx context.Context, in *FindPhotoList
 	return out, nil
 }
 
-func (c *resourceRpcClient) AddAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
-	out := new(AlbumDetailsResp)
+func (c *resourceRpcClient) AddAlbum(ctx context.Context, in *AddAlbumReq, opts ...grpc.CallOption) (*AddAlbumResp, error) {
+	out := new(AddAlbumResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_AddAlbum_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -138,8 +138,8 @@ func (c *resourceRpcClient) AddAlbum(ctx context.Context, in *NewAlbumReq, opts 
 	return out, nil
 }
 
-func (c *resourceRpcClient) UpdateAlbum(ctx context.Context, in *NewAlbumReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
-	out := new(AlbumDetailsResp)
+func (c *resourceRpcClient) UpdateAlbum(ctx context.Context, in *UpdateAlbumReq, opts ...grpc.CallOption) (*UpdateAlbumResp, error) {
+	out := new(UpdateAlbumResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_UpdateAlbum_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -147,8 +147,8 @@ func (c *resourceRpcClient) UpdateAlbum(ctx context.Context, in *NewAlbumReq, op
 	return out, nil
 }
 
-func (c *resourceRpcClient) UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *resourceRpcClient) UpdateAlbumDelete(ctx context.Context, in *UpdateAlbumDeleteReq, opts ...grpc.CallOption) (*UpdateAlbumDeleteResp, error) {
+	out := new(UpdateAlbumDeleteResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_UpdateAlbumDelete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -156,8 +156,8 @@ func (c *resourceRpcClient) UpdateAlbumDelete(ctx context.Context, in *UpdateAlb
 	return out, nil
 }
 
-func (c *resourceRpcClient) GetAlbum(ctx context.Context, in *IdReq, opts ...grpc.CallOption) (*AlbumDetailsResp, error) {
-	out := new(AlbumDetailsResp)
+func (c *resourceRpcClient) GetAlbum(ctx context.Context, in *GetAlbumReq, opts ...grpc.CallOption) (*GetAlbumResp, error) {
+	out := new(GetAlbumResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_GetAlbum_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -165,8 +165,8 @@ func (c *resourceRpcClient) GetAlbum(ctx context.Context, in *IdReq, opts ...grp
 	return out, nil
 }
 
-func (c *resourceRpcClient) DeletesAlbum(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *resourceRpcClient) DeletesAlbum(ctx context.Context, in *DeletesAlbumReq, opts ...grpc.CallOption) (*DeletesAlbumResp, error) {
+	out := new(DeletesAlbumResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_DeletesAlbum_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -183,8 +183,8 @@ func (c *resourceRpcClient) FindAlbumList(ctx context.Context, in *FindAlbumList
 	return out, nil
 }
 
-func (c *resourceRpcClient) AddPage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error) {
-	out := new(PageDetailsResp)
+func (c *resourceRpcClient) AddPage(ctx context.Context, in *AddPageReq, opts ...grpc.CallOption) (*AddPageResp, error) {
+	out := new(AddPageResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_AddPage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -192,8 +192,8 @@ func (c *resourceRpcClient) AddPage(ctx context.Context, in *NewPageReq, opts ..
 	return out, nil
 }
 
-func (c *resourceRpcClient) UpdatePage(ctx context.Context, in *NewPageReq, opts ...grpc.CallOption) (*PageDetailsResp, error) {
-	out := new(PageDetailsResp)
+func (c *resourceRpcClient) UpdatePage(ctx context.Context, in *UpdatePageReq, opts ...grpc.CallOption) (*UpdatePageResp, error) {
+	out := new(UpdatePageResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_UpdatePage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -201,8 +201,8 @@ func (c *resourceRpcClient) UpdatePage(ctx context.Context, in *NewPageReq, opts
 	return out, nil
 }
 
-func (c *resourceRpcClient) DeletesPage(ctx context.Context, in *IdsReq, opts ...grpc.CallOption) (*BatchResp, error) {
-	out := new(BatchResp)
+func (c *resourceRpcClient) DeletesPage(ctx context.Context, in *DeletesPageReq, opts ...grpc.CallOption) (*DeletesPageResp, error) {
+	out := new(DeletesPageResp)
 	err := c.cc.Invoke(ctx, ResourceRpc_DeletesPage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -224,33 +224,33 @@ func (c *resourceRpcClient) FindPageList(ctx context.Context, in *FindPageListRe
 // for forward compatibility
 type ResourceRpcServer interface {
 	// 创建照片
-	AddPhoto(context.Context, *NewPhotoReq) (*PhotoDetailsResp, error)
+	AddPhoto(context.Context, *AddPhotoReq) (*AddPhotoResp, error)
 	// 更新照片
-	UpdatePhoto(context.Context, *NewPhotoReq) (*PhotoDetailsResp, error)
+	UpdatePhoto(context.Context, *UpdatePhotoReq) (*UpdatePhotoResp, error)
 	// 更新照片删除状态
-	UpdatePhotoDelete(context.Context, *UpdatePhotoDeleteReq) (*BatchResp, error)
+	UpdatePhotoDelete(context.Context, *UpdatePhotoDeleteReq) (*UpdatePhotoDeleteResp, error)
 	// 删除照片
-	DeletesPhoto(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesPhoto(context.Context, *DeletesPhotoReq) (*DeletesPhotoResp, error)
 	// 查询照片列表
 	FindPhotoList(context.Context, *FindPhotoListReq) (*FindPhotoListResp, error)
 	// 创建相册
-	AddAlbum(context.Context, *NewAlbumReq) (*AlbumDetailsResp, error)
+	AddAlbum(context.Context, *AddAlbumReq) (*AddAlbumResp, error)
 	// 更新相册
-	UpdateAlbum(context.Context, *NewAlbumReq) (*AlbumDetailsResp, error)
+	UpdateAlbum(context.Context, *UpdateAlbumReq) (*UpdateAlbumResp, error)
 	// 更新相册删除状态
-	UpdateAlbumDelete(context.Context, *UpdateAlbumDeleteReq) (*BatchResp, error)
+	UpdateAlbumDelete(context.Context, *UpdateAlbumDeleteReq) (*UpdateAlbumDeleteResp, error)
 	// 获取相册
-	GetAlbum(context.Context, *IdReq) (*AlbumDetailsResp, error)
+	GetAlbum(context.Context, *GetAlbumReq) (*GetAlbumResp, error)
 	// 删除相册
-	DeletesAlbum(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesAlbum(context.Context, *DeletesAlbumReq) (*DeletesAlbumResp, error)
 	// 查询相册列表
 	FindAlbumList(context.Context, *FindAlbumListReq) (*FindAlbumListResp, error)
 	// 创建页面
-	AddPage(context.Context, *NewPageReq) (*PageDetailsResp, error)
+	AddPage(context.Context, *AddPageReq) (*AddPageResp, error)
 	// 更新页面
-	UpdatePage(context.Context, *NewPageReq) (*PageDetailsResp, error)
+	UpdatePage(context.Context, *UpdatePageReq) (*UpdatePageResp, error)
 	// 删除页面
-	DeletesPage(context.Context, *IdsReq) (*BatchResp, error)
+	DeletesPage(context.Context, *DeletesPageReq) (*DeletesPageResp, error)
 	// 查询页面列表
 	FindPageList(context.Context, *FindPageListReq) (*FindPageListResp, error)
 	mustEmbedUnimplementedResourceRpcServer()
@@ -260,46 +260,46 @@ type ResourceRpcServer interface {
 type UnimplementedResourceRpcServer struct {
 }
 
-func (UnimplementedResourceRpcServer) AddPhoto(context.Context, *NewPhotoReq) (*PhotoDetailsResp, error) {
+func (UnimplementedResourceRpcServer) AddPhoto(context.Context, *AddPhotoReq) (*AddPhotoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPhoto not implemented")
 }
-func (UnimplementedResourceRpcServer) UpdatePhoto(context.Context, *NewPhotoReq) (*PhotoDetailsResp, error) {
+func (UnimplementedResourceRpcServer) UpdatePhoto(context.Context, *UpdatePhotoReq) (*UpdatePhotoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePhoto not implemented")
 }
-func (UnimplementedResourceRpcServer) UpdatePhotoDelete(context.Context, *UpdatePhotoDeleteReq) (*BatchResp, error) {
+func (UnimplementedResourceRpcServer) UpdatePhotoDelete(context.Context, *UpdatePhotoDeleteReq) (*UpdatePhotoDeleteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePhotoDelete not implemented")
 }
-func (UnimplementedResourceRpcServer) DeletesPhoto(context.Context, *IdsReq) (*BatchResp, error) {
+func (UnimplementedResourceRpcServer) DeletesPhoto(context.Context, *DeletesPhotoReq) (*DeletesPhotoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletesPhoto not implemented")
 }
 func (UnimplementedResourceRpcServer) FindPhotoList(context.Context, *FindPhotoListReq) (*FindPhotoListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindPhotoList not implemented")
 }
-func (UnimplementedResourceRpcServer) AddAlbum(context.Context, *NewAlbumReq) (*AlbumDetailsResp, error) {
+func (UnimplementedResourceRpcServer) AddAlbum(context.Context, *AddAlbumReq) (*AddAlbumResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddAlbum not implemented")
 }
-func (UnimplementedResourceRpcServer) UpdateAlbum(context.Context, *NewAlbumReq) (*AlbumDetailsResp, error) {
+func (UnimplementedResourceRpcServer) UpdateAlbum(context.Context, *UpdateAlbumReq) (*UpdateAlbumResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAlbum not implemented")
 }
-func (UnimplementedResourceRpcServer) UpdateAlbumDelete(context.Context, *UpdateAlbumDeleteReq) (*BatchResp, error) {
+func (UnimplementedResourceRpcServer) UpdateAlbumDelete(context.Context, *UpdateAlbumDeleteReq) (*UpdateAlbumDeleteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAlbumDelete not implemented")
 }
-func (UnimplementedResourceRpcServer) GetAlbum(context.Context, *IdReq) (*AlbumDetailsResp, error) {
+func (UnimplementedResourceRpcServer) GetAlbum(context.Context, *GetAlbumReq) (*GetAlbumResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAlbum not implemented")
 }
-func (UnimplementedResourceRpcServer) DeletesAlbum(context.Context, *IdsReq) (*BatchResp, error) {
+func (UnimplementedResourceRpcServer) DeletesAlbum(context.Context, *DeletesAlbumReq) (*DeletesAlbumResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletesAlbum not implemented")
 }
 func (UnimplementedResourceRpcServer) FindAlbumList(context.Context, *FindAlbumListReq) (*FindAlbumListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindAlbumList not implemented")
 }
-func (UnimplementedResourceRpcServer) AddPage(context.Context, *NewPageReq) (*PageDetailsResp, error) {
+func (UnimplementedResourceRpcServer) AddPage(context.Context, *AddPageReq) (*AddPageResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPage not implemented")
 }
-func (UnimplementedResourceRpcServer) UpdatePage(context.Context, *NewPageReq) (*PageDetailsResp, error) {
+func (UnimplementedResourceRpcServer) UpdatePage(context.Context, *UpdatePageReq) (*UpdatePageResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePage not implemented")
 }
-func (UnimplementedResourceRpcServer) DeletesPage(context.Context, *IdsReq) (*BatchResp, error) {
+func (UnimplementedResourceRpcServer) DeletesPage(context.Context, *DeletesPageReq) (*DeletesPageResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletesPage not implemented")
 }
 func (UnimplementedResourceRpcServer) FindPageList(context.Context, *FindPageListReq) (*FindPageListResp, error) {
@@ -319,7 +319,7 @@ func RegisterResourceRpcServer(s grpc.ServiceRegistrar, srv ResourceRpcServer) {
 }
 
 func _ResourceRpc_AddPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewPhotoReq)
+	in := new(AddPhotoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -331,13 +331,13 @@ func _ResourceRpc_AddPhoto_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: ResourceRpc_AddPhoto_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).AddPhoto(ctx, req.(*NewPhotoReq))
+		return srv.(ResourceRpcServer).AddPhoto(ctx, req.(*AddPhotoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ResourceRpc_UpdatePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewPhotoReq)
+	in := new(UpdatePhotoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -349,7 +349,7 @@ func _ResourceRpc_UpdatePhoto_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: ResourceRpc_UpdatePhoto_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).UpdatePhoto(ctx, req.(*NewPhotoReq))
+		return srv.(ResourceRpcServer).UpdatePhoto(ctx, req.(*UpdatePhotoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -373,7 +373,7 @@ func _ResourceRpc_UpdatePhotoDelete_Handler(srv interface{}, ctx context.Context
 }
 
 func _ResourceRpc_DeletesPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdsReq)
+	in := new(DeletesPhotoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -385,7 +385,7 @@ func _ResourceRpc_DeletesPhoto_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ResourceRpc_DeletesPhoto_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).DeletesPhoto(ctx, req.(*IdsReq))
+		return srv.(ResourceRpcServer).DeletesPhoto(ctx, req.(*DeletesPhotoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -409,7 +409,7 @@ func _ResourceRpc_FindPhotoList_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _ResourceRpc_AddAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewAlbumReq)
+	in := new(AddAlbumReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -421,13 +421,13 @@ func _ResourceRpc_AddAlbum_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: ResourceRpc_AddAlbum_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).AddAlbum(ctx, req.(*NewAlbumReq))
+		return srv.(ResourceRpcServer).AddAlbum(ctx, req.(*AddAlbumReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ResourceRpc_UpdateAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewAlbumReq)
+	in := new(UpdateAlbumReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -439,7 +439,7 @@ func _ResourceRpc_UpdateAlbum_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: ResourceRpc_UpdateAlbum_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).UpdateAlbum(ctx, req.(*NewAlbumReq))
+		return srv.(ResourceRpcServer).UpdateAlbum(ctx, req.(*UpdateAlbumReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -463,7 +463,7 @@ func _ResourceRpc_UpdateAlbumDelete_Handler(srv interface{}, ctx context.Context
 }
 
 func _ResourceRpc_GetAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdReq)
+	in := new(GetAlbumReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -475,13 +475,13 @@ func _ResourceRpc_GetAlbum_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: ResourceRpc_GetAlbum_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).GetAlbum(ctx, req.(*IdReq))
+		return srv.(ResourceRpcServer).GetAlbum(ctx, req.(*GetAlbumReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ResourceRpc_DeletesAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdsReq)
+	in := new(DeletesAlbumReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -493,7 +493,7 @@ func _ResourceRpc_DeletesAlbum_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ResourceRpc_DeletesAlbum_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).DeletesAlbum(ctx, req.(*IdsReq))
+		return srv.(ResourceRpcServer).DeletesAlbum(ctx, req.(*DeletesAlbumReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -517,7 +517,7 @@ func _ResourceRpc_FindAlbumList_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _ResourceRpc_AddPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewPageReq)
+	in := new(AddPageReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -529,13 +529,13 @@ func _ResourceRpc_AddPage_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: ResourceRpc_AddPage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).AddPage(ctx, req.(*NewPageReq))
+		return srv.(ResourceRpcServer).AddPage(ctx, req.(*AddPageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ResourceRpc_UpdatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewPageReq)
+	in := new(UpdatePageReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -547,13 +547,13 @@ func _ResourceRpc_UpdatePage_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: ResourceRpc_UpdatePage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).UpdatePage(ctx, req.(*NewPageReq))
+		return srv.(ResourceRpcServer).UpdatePage(ctx, req.(*UpdatePageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ResourceRpc_DeletesPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdsReq)
+	in := new(DeletesPageReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -565,7 +565,7 @@ func _ResourceRpc_DeletesPage_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: ResourceRpc_DeletesPage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceRpcServer).DeletesPage(ctx, req.(*IdsReq))
+		return srv.(ResourceRpcServer).DeletesPage(ctx, req.(*DeletesPageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

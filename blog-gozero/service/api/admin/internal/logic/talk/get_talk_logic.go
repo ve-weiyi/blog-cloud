@@ -26,7 +26,7 @@ func NewGetTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTalkLo
 }
 
 func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.TalkBackVO, err error) {
-	in := &socialrpc.IdReq{
+	in := &socialrpc.GetTalkReq{
 		Id: req.Id,
 	}
 	out, err := l.svcCtx.SocialRpc.GetTalk(l.ctx, in)
@@ -34,6 +34,6 @@ func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.TalkBackVO, err er
 		return nil, err
 	}
 
-	resp = ConvertTalkTypes(out)
+	resp = convertTalkTypes(out.Talk)
 	return resp, nil
 }

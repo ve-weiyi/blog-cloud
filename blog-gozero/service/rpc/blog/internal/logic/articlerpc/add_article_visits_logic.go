@@ -12,14 +12,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type VisitArticleLogic struct {
+type AddArticleVisitsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewVisitArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VisitArticleLogic {
-	return &VisitArticleLogic{
+func NewAddArticleVisitsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArticleVisitsLogic {
+	return &AddArticleVisitsLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -27,7 +27,7 @@ func NewVisitArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Visi
 }
 
 // 访问文章
-func (l *VisitArticleLogic) VisitArticle(in *articlerpc.IdReq) (*articlerpc.VisitArticleResp, error) {
+func (l *AddArticleVisitsLogic) AddArticleVisits(in *articlerpc.AddArticleVisitsReq) (*articlerpc.AddArticleVisitsResp, error) {
 	record, err := l.svcCtx.TArticleModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -51,5 +51,5 @@ func (l *VisitArticleLogic) VisitArticle(in *articlerpc.IdReq) (*articlerpc.Visi
 		return nil, err
 	}
 
-	return &articlerpc.VisitArticleResp{}, nil
+	return &articlerpc.AddArticleVisitsResp{}, nil
 }

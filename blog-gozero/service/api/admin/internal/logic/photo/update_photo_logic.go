@@ -26,7 +26,7 @@ func NewUpdatePhotoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Updat
 }
 
 func (l *UpdatePhotoLogic) UpdatePhoto(req *types.NewPhotoReq) (resp *types.PhotoBackVO, err error) {
-	in := &resourcerpc.NewPhotoReq{
+	in := &resourcerpc.UpdatePhotoReq{
 		Id:        req.Id,
 		AlbumId:   req.AlbumId,
 		PhotoName: req.PhotoName,
@@ -40,15 +40,5 @@ func (l *UpdatePhotoLogic) UpdatePhoto(req *types.NewPhotoReq) (resp *types.Phot
 		return nil, err
 	}
 
-	resp = &types.PhotoBackVO{
-		Id:        out.Id,
-		AlbumId:   out.AlbumId,
-		PhotoName: out.PhotoName,
-		PhotoDesc: out.PhotoDesc,
-		PhotoSrc:  out.PhotoSrc,
-		IsDelete:  out.IsDelete,
-		CreatedAt: out.CreatedAt,
-		UpdatedAt: out.UpdatedAt,
-	}
-	return resp, nil
+	return convertPhotoTypes(out.Photo), nil
 }

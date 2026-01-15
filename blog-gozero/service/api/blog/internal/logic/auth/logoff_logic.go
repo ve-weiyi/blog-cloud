@@ -31,8 +31,9 @@ func NewLogoffLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoffLogi
 }
 
 func (l *LogoffLogic) Logoff(req *types.EmptyReq) (resp *types.EmptyResp, err error) {
+	uid := cast.ToString(l.ctx.Value(bizheader.HeaderUid))
 	in := accountrpc.LogoffReq{
-		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
+		UserId: uid,
 	}
 
 	_, err = l.svcCtx.AccountRpc.Logoff(l.ctx, &in)
@@ -42,10 +43,12 @@ func (l *LogoffLogic) Logoff(req *types.EmptyReq) (resp *types.EmptyResp, err er
 
 	// 登录日志
 	_, err = l.svcCtx.SyslogRpc.AddLogoutLog(l.ctx, &syslogrpc.AddLogoutLogReq{
-		UserId:   cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
-		LogoutAt: time.Now().Unix(),
+		UserId:   uid,
+		LogoutAt: time.Now().UnixMilli(),
 	})
 
-	l.svcCtx.TokenHolder.RemoveToken(l.ctx, cast.ToString(l.ctx.Value(bizheader.HeaderUid)))
+	// 撤销所有token
+	l.svcCtx.TokenManager.RevokeToken(uid, false) // 撤销 AccessToken
+	l.svcCtx.TokenManager.RevokeToken(uid, true)  // 撤销 RefreshToken
 	return &types.EmptyResp{}, nil
 }

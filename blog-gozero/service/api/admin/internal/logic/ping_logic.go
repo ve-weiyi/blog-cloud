@@ -32,9 +32,8 @@ func (l *PingLogic) Ping(req *types.PingReq) (resp *types.PingResp, err error) {
 		Env:         l.svcCtx.Config.Mode,
 		Name:        l.svcCtx.Config.Name,
 		Version:     "v1.0.0",
-		Runtime:     runtime.String(),
 		Description: "",
-		RpcStatus:   nil,
+		Runtime:     runtime.String(),
 	}
 
 	return

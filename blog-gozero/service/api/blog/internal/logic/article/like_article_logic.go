@@ -26,7 +26,7 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 }
 
 func (l *LikeArticleLogic) LikeArticle(req *types.IdReq) (resp *types.EmptyResp, err error) {
-	in := &articlerpc.IdReq{Id: req.Id}
+	in := &articlerpc.LikeArticleReq{Id: req.Id}
 
 	_, err = l.svcCtx.ArticleRpc.LikeArticle(l.ctx, in)
 	if err != nil {

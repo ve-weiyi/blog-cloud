@@ -24,13 +24,13 @@ func NewDeletesMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 }
 
 // 删除菜单
-func (l *DeletesMenuLogic) DeletesMenu(in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
+func (l *DeletesMenuLogic) DeletesMenu(in *permissionrpc.DeletesMenuReq) (*permissionrpc.DeletesMenuResp, error) {
 	rows, err := l.svcCtx.TMenuModel.Deletes(l.ctx, "id in (?) or parent_id in (?) ", in.Ids, in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.DeletesMenuResp{
 		SuccessCount: rows,
 	}, nil
 }

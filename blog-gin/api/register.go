@@ -12,8 +12,8 @@ import (
 
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/admin"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/api/blog"
-	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/middleware"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/docs"
+	"github.com/ve-weiyi/ve-blog-golang/blog-gin/infra/middleware"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gin/svctx"
 )
 

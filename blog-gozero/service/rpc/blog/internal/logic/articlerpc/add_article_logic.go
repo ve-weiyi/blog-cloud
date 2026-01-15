@@ -3,12 +3,12 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/common/constant"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/model"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AddArticleLogic struct {
@@ -26,7 +26,7 @@ func NewAddArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddArt
 }
 
 // 创建文章
-func (l *AddArticleLogic) AddArticle(in *articlerpc.NewArticleReq) (*articlerpc.ArticlePreview, error) {
+func (l *AddArticleLogic) AddArticle(in *articlerpc.AddArticleReq) (*articlerpc.AddArticleResp, error) {
 	helper := NewArticleHelperLogic(l.ctx, l.svcCtx)
 
 	entity := &model.TArticle{
@@ -73,5 +73,7 @@ func (l *AddArticleLogic) AddArticle(in *articlerpc.NewArticleReq) (*articlerpc.
 	l.svcCtx.TArticleTagModel.Deletes(l.ctx, "article_id = ?", entity.Id)
 	l.svcCtx.TArticleTagModel.Inserts(l.ctx, ats...)
 
-	return helper.convertArticlePreviewOut(entity), nil
+	return &articlerpc.AddArticleResp{
+		Article: helper.convertArticlePreviewOut(entity),
+	}, nil
 }

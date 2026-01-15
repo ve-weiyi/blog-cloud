@@ -30,7 +30,7 @@ func NewGetUserApisLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserApisLogic) GetUserApis(req *types.EmptyReq) (resp *types.UserApisResp, err error) {
-	in := &permissionrpc.UserIdReq{
+	in := &permissionrpc.FindUserApisReq{
 		UserId: cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 	}
 
@@ -50,7 +50,7 @@ func (l *GetUserApisLogic) GetUserApis(req *types.EmptyReq) (resp *types.UserApi
 	return
 }
 
-func convertUserApi(req *permissionrpc.ApiDetailsResp) (out *types.UserApi) {
+func convertUserApi(req *permissionrpc.Api) (out *types.UserApi) {
 	children := make([]*types.UserApi, 0)
 	for _, v := range req.Children {
 		m := convertUserApi(v)

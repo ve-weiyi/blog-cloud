@@ -30,7 +30,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 }
 
 // 重置密码
-func (l *ResetPasswordLogic) ResetPassword(in *accountrpc.ResetPasswordReq) (*accountrpc.EmptyResp, error) {
+func (l *ResetPasswordLogic) ResetPassword(in *accountrpc.ResetPasswordReq) (*accountrpc.ResetPasswordResp, error) {
 	// 校验邮箱格式
 	if !patternx.IsValidEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
@@ -56,5 +56,5 @@ func (l *ResetPasswordLogic) ResetPassword(in *accountrpc.ResetPasswordReq) (*ac
 		return nil, err
 	}
 
-	return &accountrpc.EmptyResp{}, nil
+	return &accountrpc.ResetPasswordResp{}, nil
 }

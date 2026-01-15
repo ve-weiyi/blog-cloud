@@ -26,7 +26,7 @@ func NewAddVisitLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddVi
 }
 
 // 创建访问记录
-func (l *AddVisitLogLogic) AddVisitLog(in *syslogrpc.NewVisitLogReq) (*syslogrpc.EmptyResp, error) {
+func (l *AddVisitLogLogic) AddVisitLog(in *syslogrpc.AddVisitLogReq) (*syslogrpc.AddVisitLogResp, error) {
 	uid, _ := rpcutils.GetUserIdFromCtx(l.ctx)
 	tid, _ := rpcutils.GetTerminalIdFromCtx(l.ctx)
 
@@ -42,5 +42,7 @@ func (l *AddVisitLogLogic) AddVisitLog(in *syslogrpc.NewVisitLogReq) (*syslogrpc
 		return nil, err
 	}
 
-	return &syslogrpc.EmptyResp{}, nil
+	return &syslogrpc.AddVisitLogResp{
+		VisitLog: convertVisitLogOut(entity),
+	}, nil
 }

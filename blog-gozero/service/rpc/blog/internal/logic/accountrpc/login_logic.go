@@ -56,29 +56,9 @@ func onLogin(ctx context.Context, svcCtx *svc.ServiceContext, user *model.TUser,
 		return nil, err
 	}
 
-	var roles []*accountrpc.UserRoleLabel
-	for _, role := range rList {
-		m := &accountrpc.UserRoleLabel{
-			RoleId:      role.Id,
-			RoleKey:     role.RoleKey,
-			RoleLabel:   role.RoleLabel,
-			RoleComment: role.RoleComment,
-		}
-
-		roles = append(roles, m)
-	}
-
 	resp = &accountrpc.LoginResp{
-		UserId:       user.UserId,
-		Username:     user.Username,
-		Nickname:     user.Nickname,
-		Avatar:       user.Avatar,
-		Email:        user.Email,
-		Phone:        user.Phone,
-		Info:         user.Info,
-		RegisterType: user.RegisterType,
-		LoginType:    loginType,
-		Roles:        roles,
+		User:      convertUserInfoOut(user, rList),
+		LoginType: loginType,
 	}
 
 	err = svcCtx.OnlineUserService.Login(ctx, user.UserId)

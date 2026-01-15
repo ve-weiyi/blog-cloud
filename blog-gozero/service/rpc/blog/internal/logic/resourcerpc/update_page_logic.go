@@ -3,8 +3,9 @@ package resourcerpclogic
 import (
 	"context"
 
-	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/resourcerpc"
+	"github.com/ve-weiyi/ve-blog-golang/pkg/utils/jsonconv"
 
+	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/resourcerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,13 +26,24 @@ func NewUpdatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 // 更新页面
-func (l *UpdatePageLogic) UpdatePage(in *resourcerpc.NewPageReq) (*resourcerpc.PageDetailsResp, error) {
-	entity := convertPageIn(in)
-
-	_, err := l.svcCtx.TPageModel.Save(l.ctx, entity)
+func (l *UpdatePageLogic) UpdatePage(in *resourcerpc.UpdatePageReq) (*resourcerpc.UpdatePageResp, error) {
+	entity, err := l.svcCtx.TPageModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertPageOut(entity), nil
+	entity.PageName = in.PageName
+	entity.PageLabel = in.PageLabel
+	entity.PageCover = in.PageCover
+	entity.IsCarousel = in.IsCarousel
+	entity.CarouselCovers = jsonconv.AnyToJsonNE(in.CarouselCovers)
+
+	_, err = l.svcCtx.TPageModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resourcerpc.UpdatePageResp{
+		Page: convertPageOut(entity),
+	}, nil
 }

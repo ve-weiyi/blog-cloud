@@ -45,7 +45,7 @@ func (l *FindFileLogListLogic) FindFileLogList(req *types.QueryFileLogReq) (resp
 
 	// 获取用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.FileLogDetailsResp) string {
+		func(v *syslogrpc.FileLog) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -58,7 +58,7 @@ func (l *FindFileLogListLogic) FindFileLogList(req *types.QueryFileLogReq) (resp
 
 	// 查询访客信息
 	vsm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.FileLogDetailsResp) string {
+		func(v *syslogrpc.FileLog) string {
 			return v.TerminalId
 		},
 		func(ids []string) (map[string]*types.ClientInfoVO, error) {

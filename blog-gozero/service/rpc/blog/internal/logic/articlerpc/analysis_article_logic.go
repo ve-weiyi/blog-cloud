@@ -47,7 +47,7 @@ func (l *AnalysisArticleLogic) AnalysisArticle(in *articlerpc.AnalysisArticleReq
 		return nil, err
 	}
 
-	cds, err := helper.convertCategoryDetailsResp(cl)
+	cds, err := helper.convertCategory(cl)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (l *AnalysisArticleLogic) AnalysisArticle(in *articlerpc.AnalysisArticleReq
 		return nil, err
 	}
 
-	tds, err := helper.convertTagDetailsResp(tl)
+	tds, err := helper.convertTag(tl)
 	if err != nil {
 		return nil, err
 	}

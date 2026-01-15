@@ -26,7 +26,7 @@ func NewDeletesAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 func (l *DeletesAlbumLogic) DeletesAlbum(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &resourcerpc.IdsReq{
+	in := &resourcerpc.DeletesAlbumReq{
 		Ids: req.Ids,
 	}
 

@@ -42,7 +42,7 @@ func (l *FindOperationLogListLogic) FindOperationLogList(req *types.QueryOperati
 
 	// 获取用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.OperationLogDetailsResp) string {
+		func(v *syslogrpc.OperationLog) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -55,7 +55,7 @@ func (l *FindOperationLogListLogic) FindOperationLogList(req *types.QueryOperati
 
 	// 查询访客信息
 	vsm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.OperationLogDetailsResp) string {
+		func(v *syslogrpc.OperationLog) string {
 			return v.TerminalId
 		},
 		func(ids []string) (map[string]*types.ClientInfoVO, error) {

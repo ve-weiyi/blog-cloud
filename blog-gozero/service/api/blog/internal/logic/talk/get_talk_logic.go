@@ -29,7 +29,7 @@ func NewGetTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTalkLo
 }
 
 func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.Talk, err error) {
-	in := &socialrpc.IdReq{
+	in := &socialrpc.GetTalkReq{
 		Id: req.Id,
 	}
 
@@ -38,7 +38,7 @@ func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.Talk, err error) {
 		return nil, err
 	}
 
-	uids := []string{out.UserId}
+	uids := []string{out.Talk.UserId}
 	// 查询用户信息
 	usm, err := apiutils.GetUserInfos(l.ctx, l.svcCtx, uids)
 	if err != nil {
@@ -47,19 +47,19 @@ func (l *GetTalkLogic) GetTalk(req *types.IdReq) (resp *types.Talk, err error) {
 
 	// 查询评论量
 	counts, err := l.svcCtx.MessageRpc.FindCommentReplyCounts(l.ctx, &messagerpc.FindCommentReplyCountsReq{
-		TopicIds: []int64{out.Id},
+		TopicIds: []int64{out.Talk.Id},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "说说",
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resp = ConvertTalkTypes(out, usm, counts.TopicCommentCounts)
+	resp = convertTalkTypes(out.Talk, usm, counts.TopicCommentCounts)
 	return resp, nil
 }

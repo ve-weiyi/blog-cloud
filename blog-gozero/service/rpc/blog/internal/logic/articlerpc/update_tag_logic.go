@@ -3,10 +3,10 @@ package articlerpclogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/pb/articlerpc"
 	"github.com/ve-weiyi/ve-blog-golang/blog-gozero/service/rpc/blog/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateTagLogic struct {
@@ -24,17 +24,24 @@ func NewUpdateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateT
 }
 
 // 更新标签
-func (l *UpdateTagLogic) UpdateTag(in *articlerpc.NewTagReq) (*articlerpc.TagPreviewResp, error) {
-	entity := convertTagIn(in)
-	_, err := l.svcCtx.TTagModel.Save(l.ctx, entity)
+func (l *UpdateTagLogic) UpdateTag(in *articlerpc.UpdateTagReq) (*articlerpc.UpdateTagResp, error) {
+	entity, err := l.svcCtx.TTagModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &articlerpc.TagPreviewResp{
-		Id:        entity.Id,
-		TagName:   entity.TagName,
-		CreatedAt: entity.CreatedAt.Unix(),
-		UpdatedAt: entity.UpdatedAt.Unix(),
+	entity.TagName = in.TagName
+	_, err = l.svcCtx.TTagModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &articlerpc.UpdateTagResp{
+		Tag: &articlerpc.Tag{
+			Id:        entity.Id,
+			TagName:   entity.TagName,
+			CreatedAt: entity.CreatedAt.UnixMilli(),
+			UpdatedAt: entity.UpdatedAt.UnixMilli(),
+		},
 	}, nil
 }

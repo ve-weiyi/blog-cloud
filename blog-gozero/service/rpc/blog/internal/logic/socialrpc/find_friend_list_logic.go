@@ -33,7 +33,7 @@ func (l *FindFriendListLogic) FindFriendList(in *socialrpc.FindFriendListReq) (*
 		return nil, err
 	}
 
-	var list []*socialrpc.FriendDetailsResp
+	var list []*socialrpc.Friend
 	for _, v := range records {
 		list = append(list, convertFriendOut(v))
 	}

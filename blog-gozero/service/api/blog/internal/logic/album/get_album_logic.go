@@ -26,16 +26,16 @@ func NewGetAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAlbum
 }
 
 func (l *GetAlbumLogic) GetAlbum(req *types.IdReq) (resp *types.Album, err error) {
-	in := &resourcerpc.IdReq{Id: req.Id}
+	in := &resourcerpc.GetAlbumReq{Id: req.Id}
 	album, err := l.svcCtx.ResourceRpc.GetAlbum(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.Album{
-		Id:         album.Id,
-		AlbumName:  album.AlbumName,
-		AlbumDesc:  album.AlbumDesc,
-		AlbumCover: album.AlbumCover,
+		Id:         album.Album.Id,
+		AlbumName:  album.Album.AlbumName,
+		AlbumDesc:  album.Album.AlbumDesc,
+		AlbumCover: album.Album.AlbumCover,
 	}, nil
 }

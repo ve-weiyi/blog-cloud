@@ -50,7 +50,7 @@ func (l *FindTagListLogic) FindTagList(req *types.QueryTagReq) (resp *types.Page
 		})
 	}
 
-	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.NewVisitLogReq{
+	_, err = l.svcCtx.SyslogRpc.AddVisitLog(l.ctx, &syslogrpc.AddVisitLogReq{
 		PageName: "标签",
 	})
 	if err != nil {

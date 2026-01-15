@@ -30,25 +30,25 @@ func (s *MessageRpcServer) AnalysisMessage(ctx context.Context, in *messagerpc.A
 }
 
 // 创建聊天记录
-func (s *MessageRpcServer) AddChat(ctx context.Context, in *messagerpc.AddChatReq) (*messagerpc.ChatDetailsResp, error) {
+func (s *MessageRpcServer) AddChat(ctx context.Context, in *messagerpc.AddChatReq) (*messagerpc.AddChatResp, error) {
 	l := messagerpclogic.NewAddChatLogic(ctx, s.svcCtx)
 	return l.AddChat(in)
 }
 
 // 更新聊天记录
-func (s *MessageRpcServer) UpdateChat(ctx context.Context, in *messagerpc.UpdateChatReq) (*messagerpc.ChatDetailsResp, error) {
+func (s *MessageRpcServer) UpdateChat(ctx context.Context, in *messagerpc.UpdateChatReq) (*messagerpc.UpdateChatResp, error) {
 	l := messagerpclogic.NewUpdateChatLogic(ctx, s.svcCtx)
 	return l.UpdateChat(in)
 }
 
 // 查询聊天记录
-func (s *MessageRpcServer) GetChat(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.ChatDetailsResp, error) {
+func (s *MessageRpcServer) GetChat(ctx context.Context, in *messagerpc.GetChatReq) (*messagerpc.GetChatResp, error) {
 	l := messagerpclogic.NewGetChatLogic(ctx, s.svcCtx)
 	return l.GetChat(in)
 }
 
 // 删除聊天记录
-func (s *MessageRpcServer) DeletesChat(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+func (s *MessageRpcServer) DeletesChat(ctx context.Context, in *messagerpc.DeletesChatReq) (*messagerpc.DeletesChatResp, error) {
 	l := messagerpclogic.NewDeletesChatLogic(ctx, s.svcCtx)
 	return l.DeletesChat(in)
 }
@@ -60,25 +60,25 @@ func (s *MessageRpcServer) FindChatList(ctx context.Context, in *messagerpc.Find
 }
 
 // 创建留言
-func (s *MessageRpcServer) AddRemark(ctx context.Context, in *messagerpc.AddRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
+func (s *MessageRpcServer) AddRemark(ctx context.Context, in *messagerpc.AddRemarkReq) (*messagerpc.AddRemarkResp, error) {
 	l := messagerpclogic.NewAddRemarkLogic(ctx, s.svcCtx)
 	return l.AddRemark(in)
 }
 
 // 更新留言
-func (s *MessageRpcServer) UpdateRemark(ctx context.Context, in *messagerpc.UpdateRemarkReq) (*messagerpc.RemarkDetailsResp, error) {
+func (s *MessageRpcServer) UpdateRemark(ctx context.Context, in *messagerpc.UpdateRemarkReq) (*messagerpc.UpdateRemarkResp, error) {
 	l := messagerpclogic.NewUpdateRemarkLogic(ctx, s.svcCtx)
 	return l.UpdateRemark(in)
 }
 
 // 查询留言
-func (s *MessageRpcServer) GetRemark(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.RemarkDetailsResp, error) {
+func (s *MessageRpcServer) GetRemark(ctx context.Context, in *messagerpc.GetRemarkReq) (*messagerpc.GetRemarkResp, error) {
 	l := messagerpclogic.NewGetRemarkLogic(ctx, s.svcCtx)
 	return l.GetRemark(in)
 }
 
 // 删除留言
-func (s *MessageRpcServer) DeletesRemark(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+func (s *MessageRpcServer) DeletesRemark(ctx context.Context, in *messagerpc.DeletesRemarkReq) (*messagerpc.DeletesRemarkResp, error) {
 	l := messagerpclogic.NewDeletesRemarkLogic(ctx, s.svcCtx)
 	return l.DeletesRemark(in)
 }
@@ -90,31 +90,31 @@ func (s *MessageRpcServer) FindRemarkList(ctx context.Context, in *messagerpc.Fi
 }
 
 // 更新留言状态
-func (s *MessageRpcServer) UpdateRemarkStatus(ctx context.Context, in *messagerpc.UpdateRemarkStatusReq) (*messagerpc.BatchResp, error) {
+func (s *MessageRpcServer) UpdateRemarkStatus(ctx context.Context, in *messagerpc.UpdateRemarkStatusReq) (*messagerpc.UpdateRemarkStatusResp, error) {
 	l := messagerpclogic.NewUpdateRemarkStatusLogic(ctx, s.svcCtx)
 	return l.UpdateRemarkStatus(in)
 }
 
 // 创建评论
-func (s *MessageRpcServer) AddComment(ctx context.Context, in *messagerpc.AddCommentReq) (*messagerpc.CommentDetailsResp, error) {
+func (s *MessageRpcServer) AddComment(ctx context.Context, in *messagerpc.AddCommentReq) (*messagerpc.AddCommentResp, error) {
 	l := messagerpclogic.NewAddCommentLogic(ctx, s.svcCtx)
 	return l.AddComment(in)
 }
 
 // 更新评论
-func (s *MessageRpcServer) UpdateComment(ctx context.Context, in *messagerpc.UpdateCommentReq) (*messagerpc.CommentDetailsResp, error) {
+func (s *MessageRpcServer) UpdateComment(ctx context.Context, in *messagerpc.UpdateCommentReq) (*messagerpc.UpdateCommentResp, error) {
 	l := messagerpclogic.NewUpdateCommentLogic(ctx, s.svcCtx)
 	return l.UpdateComment(in)
 }
 
 // 查询评论
-func (s *MessageRpcServer) GetComment(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.CommentDetailsResp, error) {
+func (s *MessageRpcServer) GetComment(ctx context.Context, in *messagerpc.GetCommentReq) (*messagerpc.GetCommentResp, error) {
 	l := messagerpclogic.NewGetCommentLogic(ctx, s.svcCtx)
 	return l.GetComment(in)
 }
 
 // 删除评论
-func (s *MessageRpcServer) DeletesComment(ctx context.Context, in *messagerpc.IdsReq) (*messagerpc.BatchResp, error) {
+func (s *MessageRpcServer) DeletesComment(ctx context.Context, in *messagerpc.DeletesCommentReq) (*messagerpc.DeletesCommentResp, error) {
 	l := messagerpclogic.NewDeletesCommentLogic(ctx, s.svcCtx)
 	return l.DeletesComment(in)
 }
@@ -138,19 +138,19 @@ func (s *MessageRpcServer) FindCommentReplyCounts(ctx context.Context, in *messa
 }
 
 // 更新评论状态
-func (s *MessageRpcServer) UpdateCommentStatus(ctx context.Context, in *messagerpc.UpdateCommentStatusReq) (*messagerpc.BatchResp, error) {
+func (s *MessageRpcServer) UpdateCommentStatus(ctx context.Context, in *messagerpc.UpdateCommentStatusReq) (*messagerpc.UpdateCommentStatusResp, error) {
 	l := messagerpclogic.NewUpdateCommentStatusLogic(ctx, s.svcCtx)
 	return l.UpdateCommentStatus(in)
 }
 
 // 点赞评论
-func (s *MessageRpcServer) LikeComment(ctx context.Context, in *messagerpc.IdReq) (*messagerpc.EmptyResp, error) {
+func (s *MessageRpcServer) LikeComment(ctx context.Context, in *messagerpc.LikeCommentReq) (*messagerpc.LikeCommentResp, error) {
 	l := messagerpclogic.NewLikeCommentLogic(ctx, s.svcCtx)
 	return l.LikeComment(in)
 }
 
 // 用户点赞的评论
-func (s *MessageRpcServer) FindUserLikeComment(ctx context.Context, in *messagerpc.UserIdReq) (*messagerpc.FindLikeCommentResp, error) {
+func (s *MessageRpcServer) FindUserLikeComment(ctx context.Context, in *messagerpc.FindUserLikeCommentReq) (*messagerpc.FindLikeCommentResp, error) {
 	l := messagerpclogic.NewFindUserLikeCommentLogic(ctx, s.svcCtx)
 	return l.FindUserLikeComment(in)
 }

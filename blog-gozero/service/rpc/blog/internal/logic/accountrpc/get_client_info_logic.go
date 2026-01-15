@@ -77,8 +77,8 @@ func (l *GetClientInfoLogic) GetClientInfo(in *accountrpc.GetClientInfoReq) (*ac
 			Browser:    vs.Browser,
 			IpAddress:  vs.IpAddress,
 			IpSource:   vs.IpSource,
-			CreatedAt:  vs.CreatedAt.Unix(),
-			UpdatedAt:  vs.UpdatedAt.Unix(),
+			CreatedAt:  vs.CreatedAt.UnixMilli(),
+			UpdatedAt:  vs.UpdatedAt.UnixMilli(),
 		},
 	}, nil
 }

@@ -26,7 +26,7 @@ func NewDeletesFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeletesFriendLogic) DeletesFriend(req *types.IdsReq) (resp *types.BatchResp, err error) {
-	in := &socialrpc.IdsReq{
+	in := &socialrpc.DeletesFriendReq{
 		Ids: req.Ids,
 	}
 

@@ -39,7 +39,7 @@ func (l *FindAlbumListLogic) FindAlbumList(in *resourcerpc.FindAlbumListReq) (*r
 		return nil, err
 	}
 
-	var list []*resourcerpc.AlbumDetailsResp
+	var list []*resourcerpc.Album
 	for _, v := range records {
 		list = append(list, convertAlbumOut(v, cm))
 	}

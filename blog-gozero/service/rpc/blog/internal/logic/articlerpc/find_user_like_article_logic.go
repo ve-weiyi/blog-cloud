@@ -27,7 +27,7 @@ func NewFindUserLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 用户点赞的文章
-func (l *FindUserLikeArticleLogic) FindUserLikeArticle(in *articlerpc.UserIdReq) (*articlerpc.FindLikeArticleResp, error) {
+func (l *FindUserLikeArticleLogic) FindUserLikeArticle(in *articlerpc.FindUserLikeArticleReq) (*articlerpc.FindLikeArticleResp, error) {
 	uid := cast.ToString(in.UserId)
 	likeKey := rediskey.GetUserLikeArticleKey(uid)
 

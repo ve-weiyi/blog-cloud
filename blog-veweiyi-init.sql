@@ -1,17 +1,17 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : veweiyi.cn-mysql8.0
+ Source Server         : localhost
  Source Server Type    : MySQL
  Source Server Version : 80034 (8.0.34)
- Source Host           : veweiyi.cn:3306
+ Source Host           : localhost:3306
  Source Schema         : blog-veweiyi
 
  Target Server Type    : MySQL
  Target Server Version : 80034 (8.0.34)
  File Encoding         : 65001
 
- Date: 13/01/2026 14:47:35
+ Date: 18/01/2026 00:49:06
 */
 
 SET NAMES utf8mb4;
@@ -47,7 +47,7 @@ CREATE TABLE `t_api`
     `path`       varchar(128) NOT NULL DEFAULT '' COMMENT 'api路径',
     `method`     varchar(16)  NOT NULL DEFAULT '' COMMENT 'api请求方法',
     `traceable`  tinyint      NOT NULL DEFAULT '0' COMMENT '是否追溯操作记录 0需要，1是',
-    `is_disable` tinyint      NOT NULL DEFAULT '0' COMMENT '是否禁用 0否 1是',
+    `status`     tinyint      NOT NULL DEFAULT '0' COMMENT '状态 0正常 1禁用',
     `created_at` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
@@ -231,7 +231,7 @@ CREATE TABLE `t_menu`
     `keep_alive`  tinyint       NOT NULL DEFAULT '0' COMMENT '是否缓存',
     `always_show` tinyint       NOT NULL DEFAULT '0' COMMENT '是否一直显示菜单',
     `is_hidden`   tinyint       NOT NULL DEFAULT '0' COMMENT '是否隐藏',
-    `is_disable`  tinyint       NOT NULL DEFAULT '0' COMMENT '是否禁用',
+    `status`      tinyint       NOT NULL DEFAULT '0' COMMENT '是否禁用',
     `extra`       varchar(1024) NOT NULL DEFAULT '' COMMENT '菜单元数据',
     `created_at`  datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at`  datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -322,8 +322,8 @@ CREATE TABLE `t_role`
     `role_key`     varchar(64) NOT NULL DEFAULT '' COMMENT '角色标识',
     `role_label`   varchar(64) NOT NULL DEFAULT '' COMMENT '角色标签',
     `role_comment` varchar(64) NOT NULL DEFAULT '' COMMENT '角色备注',
-    `is_disable`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否禁用  0否 1是',
     `is_default`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否默认角色 0否 1是',
+    `status`       tinyint     NOT NULL DEFAULT '0' COMMENT '状态  0正常 1禁用',
     `created_at`   datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at`   datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE

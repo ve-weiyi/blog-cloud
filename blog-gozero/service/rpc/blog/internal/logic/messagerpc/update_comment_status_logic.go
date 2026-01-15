@@ -24,7 +24,7 @@ func NewUpdateCommentStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 更新评论状态
-func (l *UpdateCommentStatusLogic) UpdateCommentStatus(in *messagerpc.UpdateCommentStatusReq) (*messagerpc.BatchResp, error) {
+func (l *UpdateCommentStatusLogic) UpdateCommentStatus(in *messagerpc.UpdateCommentStatusReq) (*messagerpc.UpdateCommentStatusResp, error) {
 	rows, err := l.svcCtx.TCommentModel.Updates(l.ctx, map[string]interface{}{
 		"status": in.Status,
 	}, "id in (?)", in.Ids)
@@ -32,7 +32,7 @@ func (l *UpdateCommentStatusLogic) UpdateCommentStatus(in *messagerpc.UpdateComm
 		return nil, err
 	}
 
-	return &messagerpc.BatchResp{
+	return &messagerpc.UpdateCommentStatusResp{
 		SuccessCount: rows,
 	}, nil
 }

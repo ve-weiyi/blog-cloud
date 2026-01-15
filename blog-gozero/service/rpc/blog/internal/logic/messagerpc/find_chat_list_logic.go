@@ -34,7 +34,7 @@ func (l *FindChatListLogic) FindChatList(in *messagerpc.FindChatListReq) (*messa
 		return nil, err
 	}
 
-	var list []*messagerpc.ChatDetailsResp
+	var list []*messagerpc.Chat
 	for _, v := range records {
 		list = append(list, convertChatOut(v))
 	}
@@ -55,11 +55,11 @@ func convertChatQuery(in *messagerpc.FindChatListReq) (page int, size int, sorts
 	}
 
 	if in.After != 0 {
-		opts = append(opts, query.WithCondition("created_at >= ?", time.Unix(in.After, 0)))
+		opts = append(opts, query.WithCondition("created_at >= ?", time.UnixMilli(in.After)))
 	}
 
 	if in.Before != 0 {
-		opts = append(opts, query.WithCondition("created_at <= ?", time.Unix(in.Before, 0)))
+		opts = append(opts, query.WithCondition("created_at <= ?", time.UnixMilli(in.Before)))
 	}
 
 	if in.UserId != "" {

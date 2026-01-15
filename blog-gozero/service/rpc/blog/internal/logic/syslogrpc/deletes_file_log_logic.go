@@ -24,13 +24,13 @@ func NewDeletesFileLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 // 批量删除文件记录
-func (l *DeletesFileLogLogic) DeletesFileLog(in *syslogrpc.IdsReq) (*syslogrpc.BatchResp, error) {
+func (l *DeletesFileLogLogic) DeletesFileLog(in *syslogrpc.DeletesFileLogReq) (*syslogrpc.DeletesFileLogResp, error) {
 	rows, err := l.svcCtx.TFileLogModel.Deletes(l.ctx, "id in (?)", in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &syslogrpc.BatchResp{
+	return &syslogrpc.DeletesFileLogResp{
 		SuccessCount: rows,
 	}, nil
 }

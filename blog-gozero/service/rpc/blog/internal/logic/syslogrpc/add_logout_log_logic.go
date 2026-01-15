@@ -42,7 +42,7 @@ func (l *AddLogoutLogLogic) AddLogoutLog(in *syslogrpc.AddLogoutLogReq) (*syslog
 	}
 
 	exist := exists[0]
-	exist.LogoutAt = sql.NullTime{Time: time.Unix(in.LogoutAt, 0), Valid: true}
+	exist.LogoutAt = sql.NullTime{Time: time.UnixMilli(in.LogoutAt), Valid: true}
 	exist.UpdatedAt = time.Now()
 	_, err = l.svcCtx.TLoginLogModel.Save(l.ctx, exist)
 	if err != nil {

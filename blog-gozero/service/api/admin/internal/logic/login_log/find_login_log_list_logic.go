@@ -43,7 +43,7 @@ func (l *FindLoginLogListLogic) FindLoginLogList(req *types.QueryLoginLogReq) (r
 
 	// 查询用户信息
 	usm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.LoginLogDetailsResp) string {
+		func(v *syslogrpc.LoginLog) string {
 			return v.UserId
 		},
 		func(ids []string) (map[string]*types.UserInfoVO, error) {
@@ -55,7 +55,7 @@ func (l *FindLoginLogListLogic) FindLoginLogList(req *types.QueryLoginLogReq) (r
 	}
 	// 查询访客信息
 	vsm, err := apiutils.BatchQuery(out.List,
-		func(v *syslogrpc.LoginLogDetailsResp) string {
+		func(v *syslogrpc.LoginLog) string {
 			return v.TerminalId
 		},
 		func(ids []string) (map[string]*types.ClientInfoVO, error) {

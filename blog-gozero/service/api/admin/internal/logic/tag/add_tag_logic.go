@@ -26,7 +26,7 @@ func NewAddTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddTagLogi
 }
 
 func (l *AddTagLogic) AddTag(req *types.NewTagReq) (resp *types.TagBackVO, err error) {
-	in := &articlerpc.NewTagReq{
+	in := &articlerpc.AddTagReq{
 		Id:      req.Id,
 		TagName: req.TagName,
 	}
@@ -36,12 +36,24 @@ func (l *AddTagLogic) AddTag(req *types.NewTagReq) (resp *types.TagBackVO, err e
 		return nil, err
 	}
 
-	resp = &types.TagBackVO{
+	return convertTagTypes(out.Tag), nil
+}
+
+func convertTagTypes(out *articlerpc.Tag) *types.TagBackVO {
+	return &types.TagBackVO{
 		Id:           out.Id,
 		TagName:      out.TagName,
 		ArticleCount: 0,
 		CreatedAt:    out.CreatedAt,
 		UpdatedAt:    out.UpdatedAt,
 	}
-	return resp, nil
+}
+func convertTagDetailsTypes(out *articlerpc.TagDetails) *types.TagBackVO {
+	return &types.TagBackVO{
+		Id:           out.Id,
+		TagName:      out.TagName,
+		ArticleCount: out.ArticleCount,
+		CreatedAt:    out.CreatedAt,
+		UpdatedAt:    out.UpdatedAt,
+	}
 }

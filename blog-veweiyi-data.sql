@@ -2,7 +2,7 @@
 -- Records of t_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_role` (`id`, `parent_id`, `role_key`, `role_label`, `role_comment`, `is_disable`, `is_default`,
+INSERT INTO `t_role` (`id`, `parent_id`, `role_key`, `role_label`, `role_comment`, `status`, `is_default`,
                       `created_at`, `updated_at`)
 VALUES (1, 0, 'super-admin', '超级管理员', '', 0, 0, '2021-03-22 14:10:21', '2024-11-15 17:44:02');
 
@@ -24,31 +24,31 @@ COMMIT;
 BEGIN;
 INSERT INTO `blog-veweiyi`.`t_menu` (`id`, `parent_id`, `path`, `name`, `component`, `redirect`, `type`, `title`,
                                      `icon`, `rank`, `perm`, `params`, `keep_alive`, `always_show`, `is_hidden`,
-                                     `is_disable`, `extra`, `created_at`, `updated_at`)
+                                     `status`, `extra`, `created_at`, `updated_at`)
 VALUES (1, 0, '/system', '', '/src/layout/index', '/system/user', '', '系统管理', 'el-icon-setting', 6, '', 'null', 0,
         0, 0, 0, '{\"title\":\"系统管理\",\"icon\":\"el-icon-setting\",\"rank\":6,\"params\":\"null\"}',
         '2024-11-21 17:58:47', '2024-11-21 17:58:47');
 INSERT INTO `blog-veweiyi`.`t_menu` (`id`, `parent_id`, `path`, `name`, `component`, `redirect`, `type`, `title`,
                                      `icon`, `rank`, `perm`, `params`, `keep_alive`, `always_show`, `is_hidden`,
-                                     `is_disable`, `extra`, `created_at`, `updated_at`)
+                                     `status`, `extra`, `created_at`, `updated_at`)
 VALUES (2, 1, '/system/user', 'User', '/src/views/admin/system/user/User', '', '', '用户列表', '', 1, '', 'null', 0,
         0, 0, 0, '{\"type\":1,\"title\":\"用户列表\",\"rank\":1,\"params\":\"null\"}', '2024-11-21 17:58:47',
         '2024-11-21 17:58:47');
 INSERT INTO `blog-veweiyi`.`t_menu` (`id`, `parent_id`, `path`, `name`, `component`, `redirect`, `type`, `title`,
                                      `icon`, `rank`, `perm`, `params`, `keep_alive`, `always_show`, `is_hidden`,
-                                     `is_disable`, `extra`, `created_at`, `updated_at`)
+                                     `status`, `extra`, `created_at`, `updated_at`)
 VALUES (3, 1, '/system/role', 'Role', '/src/views/admin/system/role/Role', '', '', '角色管理', '', 2, '', 'null', 0,
         0, 0, 0, '{\"type\":1,\"title\":\"角色管理\",\"rank\":2,\"params\":\"null\"}', '2024-11-21 17:58:47',
         '2024-11-21 17:58:47');
 INSERT INTO `blog-veweiyi`.`t_menu` (`id`, `parent_id`, `path`, `name`, `component`, `redirect`, `type`, `title`,
                                      `icon`, `rank`, `perm`, `params`, `keep_alive`, `always_show`, `is_hidden`,
-                                     `is_disable`, `extra`, `created_at`, `updated_at`)
+                                     `status`, `extra`, `created_at`, `updated_at`)
 VALUES (4, 1, '/system/menu', 'Menu', '/src/views/admin/system/menu/Menu', '', '', '菜单管理', '', 3, '', 'null', 0,
         0, 0, 0, '{\"type\":1,\"title\":\"菜单管理\",\"rank\":3,\"params\":\"null\"}', '2024-11-21 17:58:47',
         '2024-11-21 17:58:47');
 INSERT INTO `blog-veweiyi`.`t_menu` (`id`, `parent_id`, `path`, `name`, `component`, `redirect`, `type`, `title`,
                                      `icon`, `rank`, `perm`, `params`, `keep_alive`, `always_show`, `is_hidden`,
-                                     `is_disable`, `extra`, `created_at`, `updated_at`)
+                                     `status`, `extra`, `created_at`, `updated_at`)
 VALUES (5, 1, '/system/api', 'Api', '/src/views/admin/system/api/Api', '', '', '接口管理', '', 4, '', 'null', 0, 0, 0,
         0, '{\"type\":1,\"title\":\"接口管理\",\"rank\":4,\"params\":\"null\"}', '2024-11-21 17:58:47',
         '2024-11-21 17:58:47');

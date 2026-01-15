@@ -44,7 +44,7 @@ type (
 		Path      string    `json:"path" gorm:"column:path"`             // api路径
 		Method    string    `json:"method" gorm:"column:method"`         // api请求方法
 		Traceable int64     `json:"traceable" gorm:"column:traceable"`   // 是否追溯操作记录 0需要，1是
-		IsDisable int64     `json:"is_disable" gorm:"column:is_disable"` // 是否禁用 0否 1是
+		Status    int64     `json:"status" gorm:"column:status"`         // 状态 0正常 1禁用
 		CreatedAt time.Time `json:"created_at" gorm:"column:created_at"` // 创建时间
 		UpdatedAt time.Time `json:"updated_at" gorm:"column:updated_at"` // 更新时间
 	}

@@ -24,13 +24,13 @@ func NewDeletesApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 // 删除接口
-func (l *DeletesApiLogic) DeletesApi(in *permissionrpc.IdsReq) (*permissionrpc.BatchResp, error) {
+func (l *DeletesApiLogic) DeletesApi(in *permissionrpc.DeletesApiReq) (*permissionrpc.DeletesApiResp, error) {
 	rows, err := l.svcCtx.TApiModel.Deletes(l.ctx, "id in (?) or parent_id in (?) ", in.Ids, in.Ids)
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionrpc.BatchResp{
+	return &permissionrpc.DeletesApiResp{
 		SuccessCount: rows,
 	}, nil
 }

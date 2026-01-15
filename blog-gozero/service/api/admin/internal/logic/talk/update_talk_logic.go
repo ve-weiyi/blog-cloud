@@ -30,7 +30,7 @@ func NewUpdateTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 func (l *UpdateTalkLogic) UpdateTalk(req *types.NewTalkReq) (resp *types.TalkBackVO, err error) {
-	in := &socialrpc.NewTalkReq{
+	in := &socialrpc.UpdateTalkReq{
 		Id:      req.Id,
 		UserId:  cast.ToString(l.ctx.Value(bizheader.HeaderUid)),
 		Content: req.Content,
@@ -44,6 +44,6 @@ func (l *UpdateTalkLogic) UpdateTalk(req *types.NewTalkReq) (resp *types.TalkBac
 		return nil, err
 	}
 
-	resp = ConvertTalkTypes(out)
+	resp = convertTalkTypes(out.Talk)
 	return resp, nil
 }

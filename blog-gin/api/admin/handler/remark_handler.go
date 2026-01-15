@@ -79,12 +79,12 @@ func (s *RemarkController) FindRemarkList(c *gin.Context) {
 }
 
 // @Tags		Remark
-// @Summary		"更新留言"
+// @Summary		"更新留言状态"
 // @accept		application/json
 // @Produce		application/json
 // @Param		data	body		types.UpdateRemarkStatusReq		true	"请求参数"
 // @Success		200		{object}	response.Body{data=types.BatchResp}	"返回信息"
-// @Router		/admin-api/v1/remark/update_remark_review [PUT]
+// @Router		/admin-api/v1/remark/update_remark_status [PUT]
 func (s *RemarkController) UpdateRemarkStatus(c *gin.Context) {
 	reqCtx, err := request.ParseRequestContext(c)
 	if err != nil {

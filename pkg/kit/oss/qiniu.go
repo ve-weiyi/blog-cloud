@@ -25,13 +25,14 @@ func (s *Qiniu) UploadFile(f io.Reader, prefix string, filename string) (filepat
 	putPolicy := storage.PutPolicy{Scope: s.cfg.BucketName}
 	mac := qbox.NewMac(s.cfg.AccessKeyId, s.cfg.AccessKeySecret)
 	upToken := putPolicy.UploadToken(mac)
-	resumeUploader := storage.NewResumeUploaderV2(s.storageConfig)
+	// 使用表单上传（适合小文件，速度更快）
+	formUploader := storage.NewFormUploader(s.storageConfig)
 	// 上传文件
 	ret := storage.PutRet{}
-	putExtra := storage.RputV2Extra{}
-	err = resumeUploader.PutWithoutSize(context.Background(), &ret, upToken, key, f, &putExtra)
+	putExtra := storage.PutExtra{}
+	err = formUploader.Put(context.Background(), &ret, upToken, key, f, -1, &putExtra)
 	if err != nil {
-		return "", fmt.Errorf("Qiniu.UploadHttpFile formUploader.Put() Filed, err: %v" + err.Error())
+		return "", fmt.Errorf("Qiniu.UploadFile formUploader.Put() Failed, err: %v", err)
 	}
 	return s.cfg.BucketUrl + "/" + key, nil
 }
@@ -43,7 +44,7 @@ func (s *Qiniu) DeleteFile(filepath string) error {
 	key := strings.TrimPrefix(filepath, s.cfg.BucketUrl+"/")
 
 	if err := bucketManager.Delete(s.cfg.BucketName, key); err != nil {
-		return fmt.Errorf("Qiniu.UploadHttpFile bucketManager.Delete() Filed, err: %v", err.Error())
+		return fmt.Errorf("Qiniu.DeleteFile Delete() Failed, err: %v", err)
 	}
 	return nil
 }
@@ -58,7 +59,7 @@ func (s *Qiniu) ListFiles(prefix string, limit int) (files []*FileInfo, err erro
 
 	entries, prefixes, _, _, err := bucketManager.ListFiles(s.cfg.BucketName, prefix, delimiter, marker, limit)
 	if err != nil {
-		return nil, fmt.Errorf("Qiniu.ListFiles bucketManager.ListFiles() Filed, err: %v" + err.Error())
+		return nil, fmt.Errorf("Qiniu.ListFiles ListFiles() Failed, err: %v", err)
 	}
 
 	for _, fix := range prefixes {
@@ -120,7 +121,7 @@ func NewQiniu(conf *Config) *Qiniu {
 	// 是否使用https域名
 	cfg.UseHTTPS = true
 	// 上传是否使用CDN上传加速
-	cfg.UseCdnDomains = false
+	cfg.UseCdnDomains = true
 
 	return &Qiniu{
 		cfg:           conf,

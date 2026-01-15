@@ -23,13 +23,25 @@ func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateRoleLogic) UpdateRole(in *permissionrpc.NewRoleReq) (*permissionrpc.RoleDetailsResp, error) {
-	entity := convertRoleIn(in)
-
-	_, err := l.svcCtx.TRoleModel.Save(l.ctx, entity)
+func (l *UpdateRoleLogic) UpdateRole(in *permissionrpc.UpdateRoleReq) (*permissionrpc.UpdateRoleResp, error) {
+	entity, err := l.svcCtx.TRoleModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertRoleOut(entity), nil
+	entity.ParentId = in.ParentId
+	entity.RoleKey = in.RoleKey
+	entity.RoleLabel = in.RoleLabel
+	entity.RoleComment = in.RoleComment
+	entity.Status = in.Status
+	entity.IsDefault = in.IsDefault
+
+	_, err = l.svcCtx.TRoleModel.Save(l.ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionrpc.UpdateRoleResp{
+		Role: convertRoleOut(entity),
+	}, nil
 }

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package configrpc;
+
+option go_package = "./configrpc";
+
+// ============================================
+// 配置管理
+// ============================================
+
+message GetConfigRequest {
+  string config_key = 1;           // 配置键
+}
+
+message GetConfigResponse {
+  string config_value = 1;         // 配置值
+}
+
+message SaveConfigRequest {
+  string config_key = 1;           // 配置键
+  string config_value = 2;         // 配置值
+}
+
+message SaveConfigResponse {
+  bool success = 1;
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service ConfigService {
+  // ==================== 配置管理 ====================
+
+  // 查询配置
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse);
+  // 保存配置
+  rpc SaveConfig(SaveConfigRequest) returns (SaveConfigResponse);
+}

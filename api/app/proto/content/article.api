@@ -1,0 +1,98 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 文章结构体 ====================
+type (
+	ArticleHome {
+		Id             int64    `json:"id"`
+		ArticleCover   string   `json:"article_cover"`
+		ArticleTitle   string   `json:"article_title"`
+		ArticleContent string   `json:"article_content"`
+		ArticleType    int64    `json:"article_type"`
+		OriginalUrl    string   `json:"original_url"`
+		IsTop          int64    `json:"is_top"`
+		Status         int64    `json:"status"`
+		CreatedAt      int64    `json:"created_at"`
+		UpdatedAt      int64    `json:"updated_at"`
+		CategoryName   string   `json:"category_name"`
+		TagNameList    []string `json:"tag_name_list"`
+		LikeCount      int64    `json:"like_count"`
+		ViewsCount     int64    `json:"views_count"`
+	}
+	ArticlePreview {
+		Id           int64  `json:"id"`
+		ArticleCover string `json:"article_cover"`
+		ArticleTitle string `json:"article_title"`
+		LikeCount    int64  `json:"like_count"`
+		ViewsCount   int64  `json:"views_count"`
+		CreatedAt    int64  `json:"created_at"`
+	}
+	ArticleDetails {
+		ArticleHome
+		Author               *UserInfoVO       `json:"author"`
+		LastArticle          *ArticlePreview   `json:"last_article"`
+		NextArticle          *ArticlePreview   `json:"next_article"`
+		RecommendArticleList []*ArticlePreview `json:"recommend_article_list"`
+		NewestArticleList    []*ArticlePreview `json:"newest_article_list"`
+	}
+	// 列表查询（按你的规范命名）
+	QueryArticleListReq {
+		PageQuery
+		ArticleTitle *string `json:"article_title,optional"`
+		CategoryName *string `json:"category_name,optional"`
+		TagName      *string `json:"tag_name,optional"`
+	}
+	// 推荐文章查询
+	QueryRecommendArticleListReq  {}
+	// 归档文章查询
+	QueryArchivedArticleListReq {
+		PageQuery
+	}
+	GetArticleReq {
+		ArticleId int64 `form:"article_id"`
+	}
+	LikeArticleReq {
+		ArticleId int64 `json:"article_id"`
+	}
+)
+
+// ==================== 文章公开接口 ====================
+@server (
+	tags:     "文章"
+	prefix:   /api/v1
+	group:    content/article
+	authType: apiKey
+)
+service app-api {
+	@doc "获取推荐文章列表"
+	@handler QueryRecommendArticleList
+	post /article/query_recommend_article_list (QueryRecommendArticleListReq) returns (PageResult)
+
+	@doc "获取归档文章列表"
+	@handler QueryArchivedArticleList
+	post /article/query_archived_article_list (QueryArchivedArticleListReq) returns (PageResult)
+
+	@doc "获取文章列表"
+	@handler QueryArticleList
+	post /article/query_article_list (QueryArticleListReq) returns (PageResult)
+
+	@doc "获取文章详情"
+	@handler GetArticle
+	get /article/get_article (GetArticleReq) returns (ArticleDetails)
+}
+
+// ==================== 需要登录：点赞文章 ====================
+@server (
+	tags:       "文章"
+	prefix:     /api/v1
+	group:      content/article
+	authType:   apiKey
+	middleware: UserAuth
+)
+service app-api {
+	@doc "点赞文章"
+	@handler LikeArticle
+	post /article/like_article (LikeArticleReq) returns (EmptyResp)
+}
+

@@ -1,0 +1,42 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 登录日志 ====================
+type (
+	LoginLogVO {
+		Id        int64        `json:"id,optional"`
+		UserId    string       `json:"user_id"` // 用户id
+		DeviceId  string       `json:"device_id"` // 终端id
+		LoginType string       `json:"login_type"` // 登录类型
+		LoginAt   int64        `json:"login_at"` // 登录时间
+		LogoutAt  int64        `json:"logout_at"` // 登出时间
+		UserInfo  *UserInfoVO  `json:"user_info"` // 用户信息
+		GuestInfo *GuestInfoVO `json:"guest_info"` // 游客信息
+	}
+	QueryLoginLogListReq {
+		PageQuery
+		UserId *string `json:"user_id,optional"`
+	}
+	DeleteLoginLogReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "登录日志"
+	prefix:     /admin-api/v1
+	group:      syslog/login_log
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取登录日志列表"
+	@handler QueryLoginLogList
+	post /login_log/query_login_log_list (QueryLoginLogListReq) returns (PageResult)
+
+	@doc "批量删除登录日志"
+	@handler DeleteLoginLog
+	delete /login_log/delete_login_log (DeleteLoginLogReq) returns (BatchResp)
+}
+

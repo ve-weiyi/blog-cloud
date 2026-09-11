@@ -1,0 +1,25 @@
+syntax = "v1"
+
+type (
+	GetGuestReq  {}
+	GetGuestResp {
+		Id        int64  `json:"id"` // 访客唯一ID
+		DeviceId  string `json:"device_id"` // 设备ID
+		Os        string `json:"os"` // 操作系统
+		Browser   string `json:"browser"` // 浏览器
+		IpAddress string `json:"ip_address"` // IP地址
+		IpSource  string `json:"ip_source"` // IP归属地
+	}
+)
+
+@server (
+	tags:   "访客管理"
+	prefix: /api/v1
+	group:  account/guest
+)
+service app-api {
+	@doc "获取游客信息"
+	@handler GetGuest
+	get /guest/get_guest (GetGuestReq) returns (GetGuestResp)
+}
+

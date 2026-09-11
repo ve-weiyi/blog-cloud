@@ -1,0 +1,44 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 访问日志 ====================
+type (
+	VisitLogVO {
+		Id        int64        `json:"id,optional"`
+		UserId    string       `json:"user_id"`
+		DeviceId  string       `json:"device_id"`
+		PageName  string       `json:"page_name"`
+		CreatedAt int64        `json:"created_at"`
+		UpdatedAt int64        `json:"updated_at"`
+		UserInfo  *UserInfoVO  `json:"user_info"`
+		GuestInfo *GuestInfoVO `json:"guest_info"`
+	}
+	QueryVisitLogListReq {
+		PageQuery
+		UserId   *string `json:"user_id,optional"`
+		DeviceId *string `json:"device_id,optional"`
+		PageName *string `json:"page_name,optional"`
+	}
+	DeleteVisitLogReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "访问日志"
+	prefix:     /admin-api/v1
+	group:      syslog/visit_log
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取访问日志列表"
+	@handler QueryVisitLogList
+	post /visit_log/query_visit_log_list (QueryVisitLogListReq) returns (PageResult)
+
+	@doc "批量删除访问日志"
+	@handler DeleteVisitLog
+	delete /visit_log/delete_visit_log (DeleteVisitLogReq) returns (BatchResp)
+}
+

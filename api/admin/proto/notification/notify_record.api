@@ -1,0 +1,91 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 统一投递记录管理 ====================
+type (
+	NotifyRecordVO {
+		Id           int64  `json:"id,optional"`
+		MessageId    int64  `json:"message_id"`
+		Channel      string `json:"channel"`
+		Recipient    string `json:"recipient"`
+		TemplateCode string `json:"template_code"`
+		Content      string `json:"content"`
+		Status       string `json:"status"`
+		BizId        string `json:"biz_id"`
+		ErrorMsg     string `json:"error_msg"`
+		ReadAt       int64  `json:"read_at"`
+		SentAt       int64  `json:"sent_at"`
+		CreatedAt    int64  `json:"created_at"`
+		Title        string `json:"title"`
+		Category     string `json:"category"`
+		Level        string `json:"level"`
+		PublishedAt  int64  `json:"published_at"`
+		PublishedBy  string `json:"published_by"`
+	}
+	QueryUserInboxRecordListReq {
+		PageQuery
+		UserId     string  `json:"user_id"`
+		OnlyUnread *int64  `json:"only_unread,optional"`
+		Title      *string `json:"title,optional"`
+	}
+	QueryNotifyRecordListReq {
+		PageQuery
+		Channel   *string `json:"channel,optional"`
+		Status    *string `json:"status,optional"`
+		Recipient *string `json:"recipient,optional"`
+	}
+	DeleteNotifyRecordReq {
+		Ids []int64 `json:"ids"`
+	}
+	BatchMarkRecordsReadReq {
+		Ids []int64 `json:"ids"`
+	}
+	MarkAllRecordsReadReq {
+		UserId string `json:"user_id"`
+	}
+	MarkRecordReadReq {
+		Id int64 `json:"id"`
+	}
+	QueryUserInboxRecordListResp {
+		Page        int64       `json:"page"`
+		PageSize    int64       `json:"page_size"`
+		Total       int64       `json:"total"`
+		UnreadTotal int64       `json:"unread_total"`
+		List        interface{} `json:"list"`
+	}
+)
+
+@server (
+	tags:       "通知管理"
+	prefix:     /admin-api/v1
+	group:      notification/notify_record
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "查询用户 inbox 投递列表"
+	@handler QueryUserInboxRecordList
+	post /notify_record/query_user_inbox_record_list (QueryUserInboxRecordListReq) returns (QueryUserInboxRecordListResp)
+
+	@doc "获取统一投递记录列表"
+	@handler QueryNotifyRecordList
+	post /notify_record/query_notify_record_list (QueryNotifyRecordListReq) returns (PageResult)
+
+	@doc "批量删除投递记录"
+	@handler DeleteNotifyRecord
+	delete /notify_record/delete_notify_record (DeleteNotifyRecordReq) returns (BatchResp)
+
+	@doc "批量标记投递记录为已读"
+	@handler BatchMarkRecordsRead
+	post /notify_record/batch_mark_records_read (BatchMarkRecordsReadReq) returns (BatchResp)
+
+	@doc "全部标记投递记录为已读"
+	@handler MarkAllRecordsRead
+	post /notify_record/mark_all_records_read (MarkAllRecordsReadReq) returns (BatchResp)
+
+	@doc "标记单条投递记录为已读"
+	@handler MarkRecordRead
+	post /notify_record/mark_record_read (MarkRecordReadReq) returns (BatchResp)
+}
+

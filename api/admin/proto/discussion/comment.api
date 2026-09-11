@@ -1,0 +1,56 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 评论管理 ====================
+type (
+	CommentVO {
+		Id             int64        `json:"id"`
+		UserId         string       `json:"user_id"`
+		DeviceId       string       `json:"device_id"`
+		Type           int64        `json:"type"`
+		TopicTitle     string       `json:"topic_title"`
+		ReplyUserId    string       `json:"reply_user_id"`
+		CommentContent string       `json:"comment_content"`
+		Status         int64        `json:"status"`
+		CreatedAt      int64        `json:"created_at"`
+		GuestInfo      *GuestInfoVO `json:"guest_info"`
+		UserInfo       *UserInfoVO  `json:"user_info"`
+		ReplyUserInfo  *UserInfoVO  `json:"reply_user_info"`
+	}
+	QueryCommentListReq {
+		PageQuery
+		UserId *string `json:"user_id,optional"`
+		Status *int64  `json:"status,optional"`
+		Type   *int64  `json:"type,optional"`
+	}
+	UpdateCommentStatusReq {
+		Ids    []int64 `json:"ids"`
+		Status int64   `json:"status"`
+	}
+	DeleteCommentReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "评论管理"
+	prefix:     /admin-api/v1
+	group:      discussion/comment
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取评论列表(后台)"
+	@handler QueryCommentList
+	post /comment/query_comment_list (QueryCommentListReq) returns (PageResult)
+
+	@doc "批量更新评论状态"
+	@handler UpdateCommentStatus
+	put /comment/update_comment_status (UpdateCommentStatusReq) returns (BatchResp)
+
+	@doc "批量删除评论"
+	@handler DeleteComment
+	delete /comment/delete_comment (DeleteCommentReq) returns (BatchResp)
+}
+

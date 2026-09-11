@@ -1,0 +1,95 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ============================================
+// 接口管理
+// ============================================
+type (
+	ApiVO {
+		Id        int64    `json:"id,optional"` // 主键id
+		ParentId  int64    `json:"parent_id"` // 分组id
+		Name      string   `json:"name"` // api名称
+		Path      string   `json:"path"` // api路径
+		Method    string   `json:"method"` // api请求方法
+		Traceable int64    `json:"traceable"` // 是否追溯操作记录 0不需要，1需要
+		Status    int64    `json:"status"` // 状态 0正常 1禁用
+		CreatedAt int64    `json:"created_at"` // 创建时间
+		UpdatedAt int64    `json:"updated_at"` // 更新时间
+		Children  []*ApiVO `json:"children,optional"`
+	}
+	CreateApiReq {
+		ParentId  int64  `json:"parent_id"` // 分组id
+		Name      string `json:"name"` // api名称
+		Path      string `json:"path"` // api路径
+		Method    string `json:"method"` // api请求方法
+		Traceable int64  `json:"traceable"` // 是否追溯操作记录 0不需要，1需要
+		Status    int64  `json:"status"` // 状态 0正常 1禁用
+	}
+	GetApiReq {
+		Id int64 `form:"id"` // 主键id
+	}
+	UpdateApiReq {
+		Id        int64  `json:"id"` // 主键id
+		ParentId  int64  `json:"parent_id"` // 分组id
+		Name      string `json:"name"` // api名称
+		Path      string `json:"path"` // api路径
+		Method    string `json:"method"` // api请求方法
+		Traceable int64  `json:"traceable"` // 是否追溯操作记录 0不需要，1需要
+		Status    int64  `json:"status"` // 状态 0正常 1禁用
+	}
+	DeleteApiReq {
+		Ids []int64 `json:"ids"` // 主键id
+	}
+	QueryApiListReq {
+		PageQuery
+		Name   *string `json:"name,optional"` // api名称
+		Path   *string `json:"path,optional"` // api路径
+		Method *string `json:"method,optional"` // api请求方法
+		Status *int64  `json:"status,optional"` // 状态
+	}
+	SyncApiResp {
+		SuccessCount int64 `json:"success_count"` // 同步成功数量
+	}
+	CleanApiResp {
+		SuccessCount int64 `json:"success_count"` // 清空成功数量
+	}
+)
+
+@server (
+	tags:       "接口管理"
+	prefix:     /admin-api/v1
+	group:      permission/api
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取接口列表"
+	@handler QueryApiList
+	post /api/query_api_list (QueryApiListReq) returns (PageResult)
+
+	@doc "创建接口"
+	@handler CreateApi
+	post /api/create_api (CreateApiReq) returns (ApiVO)
+
+	@doc "获取接口详情"
+	@handler GetApi
+	get /api/get_api (GetApiReq) returns (ApiVO)
+
+	@doc "更新接口"
+	@handler UpdateApi
+	put /api/update_api (UpdateApiReq) returns (ApiVO)
+
+	@doc "删除接口"
+	@handler DeleteApi
+	delete /api/delete_api (DeleteApiReq) returns (BatchResp)
+
+	@doc "同步接口列表"
+	@handler SyncApi
+	post /api/sync_api (EmptyReq) returns (SyncApiResp)
+
+	@doc "清空接口列表"
+	@handler CleanApi
+	post /api/clean_api (EmptyReq) returns (CleanApiResp)
+}
+

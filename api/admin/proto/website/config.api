@@ -1,0 +1,91 @@
+syntax = "v1"
+
+import "../base.api"
+
+type (
+	WebsiteConfigVO {
+		AdminUrl        string               `json:"admin_url"`
+		WebsocketUrl    string               `json:"websocket_url"`
+		TouristAvatar   string               `json:"tourist_avatar"`
+		UserAvatar      string               `json:"user_avatar"`
+		WebsiteFeature  *WebsiteFeature      `json:"website_feature"`
+		WebsiteInfo     *WebsiteInfo         `json:"website_info"`
+		RewardQrCode    *RewardQrCode        `json:"reward_qr_code"`
+		SocialLoginList []*ThirdPlatformInfo `json:"social_login_list"`
+		SocialUrlList   []*SocialAccountInfo `json:"social_url_list"`
+	}
+	ThirdPlatformInfo {
+		Name         string `json:"name"`
+		Platform     string `json:"platform"`
+		AuthorizeUrl string `json:"authorize_url"`
+		Enabled      bool   `json:"enabled"`
+	}
+	SocialAccountInfo {
+		Name     string `json:"name"`
+		Platform string `json:"platform"`
+		LinkUrl  string `json:"link_url"`
+		Enabled  bool   `json:"enabled"`
+	}
+	WebsiteFeature {
+		IsChatRoom      int64 `json:"is_chat_room"`
+		IsAiAssistant   int64 `json:"is_ai_assistant"`
+		IsMusicPlayer   int64 `json:"is_music_player"`
+		IsCommentReview int64 `json:"is_comment_review"`
+		IsEmailNotice   int64 `json:"is_email_notice"`
+		IsMessageReview int64 `json:"is_message_review"`
+		IsReward        int64 `json:"is_reward"`
+	}
+	RewardQrCode {
+		AlipayQrCode string `json:"alipay_qr_code"`
+		WeixinQrCode string `json:"weixin_qr_code"`
+	}
+	WebsiteInfo {
+		WebsiteAuthor     string `json:"website_author"`
+		WebsiteAvatar     string `json:"website_avatar"`
+		WebsiteCreateTime string `json:"website_create_time"`
+		WebsiteIntro      string `json:"website_intro"`
+		WebsiteName       string `json:"website_name"`
+		WebsiteNotice     string `json:"website_notice"`
+		WebsiteRecordNo   string `json:"website_record_no"`
+	}
+	AboutMeVO {
+		Content string `json:"content"`
+	}
+)
+
+type Server {
+	Os   interface{} `json:"os"`
+	Cpu  interface{} `json:"cpu"`
+	Ram  interface{} `json:"ram"`
+	Disk interface{} `json:"disk"`
+}
+
+@server (
+	tags:       "网站管理"
+	prefix:     /admin-api/v1
+	group:      website/config
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取服务器信息"
+	@handler GetSystemState
+	get /admin/get_system_state (EmptyReq) returns (Server)
+
+	@doc "获取网站配置"
+	@handler GetWebsiteConfig
+	get /admin/get_website_config (EmptyReq) returns (WebsiteConfigVO)
+
+	@doc "更新网站配置"
+	@handler UpdateWebsiteConfig
+	put /admin/update_website_config (WebsiteConfigVO) returns (EmptyResp)
+
+	@doc "获取关于我的信息"
+	@handler GetAboutMe
+	get /admin/get_about_me (EmptyReq) returns (AboutMeVO)
+
+	@doc "更新关于我的信息"
+	@handler UpdateAboutMe
+	put /admin/update_about_me (AboutMeVO) returns (EmptyResp)
+}
+

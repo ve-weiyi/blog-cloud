@@ -1,0 +1,13 @@
+syntax = "v1"
+
+@server (
+	tags:   "WebSocket"
+	prefix: /api/v1
+	group:  common/websocket
+)
+service app-api {
+	@doc "WebSocket消息"
+	@handler Websocket
+	get /websocket
+}
+

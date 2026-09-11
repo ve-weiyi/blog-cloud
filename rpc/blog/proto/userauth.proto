@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+// proto 包名
+package userauthrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./userauthrpc";
+
+
+// ==============================
+// 登录相关
+// ==============================
+
+// 密码登录请求（账号/手机号/邮箱 + 密码）
+message LoginByPasswordRequest {
+  string account = 1;             // 账号/手机号/邮箱
+  string password = 2;             // 密码
+}
+
+// 登录响应
+message LoginResponse {
+  string user_id = 1; // 用户id
+  string username = 2;// 用户名
+  int64 status = 3; // 用户状态
+}
+
+// 邮箱验证码登录请求
+message LoginByEmailRequest {
+  string email = 1;                // 邮箱
+}
+
+// 手机号验证码登录请求
+message LoginByMobileRequest {
+  string mobile = 1;                // 手机号
+}
+
+// 第三方登录请求
+message LoginByOAuthRequest {
+  string platform = 1;        // 平台
+  string code = 2;            // 授权码
+}
+
+// ==============================
+// 注册与注销
+// ==============================
+
+// 注册请求
+message RegisterRequest {
+  string email = 1;                // 邮箱
+  string password = 2;             // 密码
+  optional string username = 3;    // 用户名
+  optional string nickname = 4;    // 昵称
+}
+
+// 登出请求
+message LogoutRequest {}
+
+message LogoutResponse {
+  bool success = 1;
+}
+
+// ==============================
+// 重置密码
+// ==============================
+message ResetPasswordRequest {
+  string email = 1;                // 邮箱
+  string password = 2;             // 新密码
+  string confirm_password = 3;     // 确认密码
+}
+
+message ResetPasswordResponse {
+  bool success = 1;
+}
+
+// ==============================
+// OAuth 相关
+// ==============================
+
+// 获取 OAuth 授权地址请求
+message GetOAuthAuthorizeUrlRequest {
+  string platform = 1;             // 平台
+  string state = 2;       // 状态
+}
+
+// 获取 OAuth 授权地址响应
+message GetOAuthAuthorizeUrlResponse {
+  string authorize_url = 1;        // 授权地址
+}
+
+// 认证授权核心服务
+service UserAuthService {
+  // ==================== 登录 ====================
+
+  // 密码登录
+  rpc LoginByPassword(LoginByPasswordRequest) returns (LoginResponse);
+  // 邮箱验证码登录
+  rpc LoginByEmail(LoginByEmailRequest) returns (LoginResponse);
+  // 手机验证码登录
+  rpc LoginByMobile(LoginByMobileRequest) returns (LoginResponse);
+  // 第三方平台登录
+  rpc LoginByOAuth(LoginByOAuthRequest) returns (LoginResponse);
+
+  // ==================== 注册与注销 ====================
+
+  // 用户注册
+  rpc Register(RegisterRequest) returns (LoginResponse);
+  // 退出登录
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+
+  // ==================== 密码管理 ====================
+
+  // 重置密码
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+
+  // ==================== OAuth ====================
+
+  // 获取第三方OAuth授权地址
+  rpc GetOAuthAuthorizeUrl(GetOAuthAuthorizeUrlRequest) returns (GetOAuthAuthorizeUrlResponse);
+}

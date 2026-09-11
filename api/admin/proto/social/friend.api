@@ -1,0 +1,62 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 友链管理 ====================
+type (
+	FriendVO {
+		Id          int64  `json:"id,optional"`
+		LinkName    string `json:"link_name"`
+		LinkAvatar  string `json:"link_avatar"`
+		LinkAddress string `json:"link_address"`
+		LinkIntro   string `json:"link_intro"`
+		CreatedAt   int64  `json:"created_at"`
+		UpdatedAt   int64  `json:"updated_at"`
+	}
+	CreateFriendReq {
+		LinkName    string `json:"link_name"`
+		LinkAvatar  string `json:"link_avatar"`
+		LinkAddress string `json:"link_address"`
+		LinkIntro   string `json:"link_intro"`
+	}
+	UpdateFriendReq {
+		Id          int64  `json:"id"`
+		LinkName    string `json:"link_name"`
+		LinkAvatar  string `json:"link_avatar"`
+		LinkAddress string `json:"link_address"`
+		LinkIntro   string `json:"link_intro"`
+	}
+	QueryFriendListReq {
+		PageQuery
+		LinkName *string `json:"link_name,optional"`
+	}
+	DeleteFriendReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "友链管理"
+	prefix:     /admin-api/v1
+	group:      social/friend
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取友链列表"
+	@handler QueryFriendList
+	post /friend/query_friend_list (QueryFriendListReq) returns (PageResult)
+
+	@doc "创建友链"
+	@handler CreateFriend
+	post /friend/create_friend (CreateFriendReq) returns (FriendVO)
+
+	@doc "更新友链"
+	@handler UpdateFriend
+	put /friend/update_friend (UpdateFriendReq) returns (FriendVO)
+
+	@doc "批量删除友链"
+	@handler DeleteFriend
+	delete /friend/delete_friend (DeleteFriendReq) returns (BatchResp)
+}
+

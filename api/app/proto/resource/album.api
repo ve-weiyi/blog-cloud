@@ -1,0 +1,47 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 相册模块 ====================
+type (
+	Album {
+		Id         int64  `json:"id"` // 主键
+		AlbumName  string `json:"album_name"` // 相册名
+		AlbumDesc  string `json:"album_desc"` // 相册描述
+		AlbumCover string `json:"album_cover"` // 相册封面
+	}
+	Photo {
+		Id       int64  `json:"id"` // 主键
+		PhotoUrl string `json:"photo_url"` // 照片地址
+	}
+	QueryAlbumListReq {
+		PageQuery
+	}
+	QueryAlbumPhotoListReq {
+		AlbumId int64 `json:"album_id"` // 相册ID
+	}
+	GetAlbumReq {
+		AlbumId int64 `form:"album_id"`
+	}
+)
+
+@server (
+	tags:     "相册"
+	prefix:   /api/v1
+	group:    resource/album
+	authType: apiKey
+)
+service app-api {
+	@doc "获取相册列表"
+	@handler QueryAlbumList
+	post /album/query_album_list (QueryAlbumListReq) returns (PageResult)
+
+	@doc "获取相册详情"
+	@handler GetAlbum
+	get /album/get_album (GetAlbumReq) returns (Album)
+
+	@doc "获取相册下的照片列表"
+	@handler QueryAlbumPhotoList
+	post /album/query_album_photo_list (QueryAlbumPhotoListReq) returns (PageResult)
+}
+

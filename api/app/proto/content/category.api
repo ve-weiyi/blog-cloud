@@ -1,0 +1,32 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 分类结构体 ====================
+type (
+	Category {
+		Id           int64  `json:"id"`
+		CategoryName string `json:"category_name"`
+		ArticleCount int64  `json:"article_count"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	QueryCategoryListReq {
+		PageQuery
+		CategoryName *string `json:"category_name,optional"`
+	}
+)
+
+// ==================== 分类接口 ====================
+@server (
+	tags:     "分类"
+	prefix:   /api/v1
+	group:    content/category
+	authType: apiKey
+)
+service app-api {
+	@doc "获取分类列表"
+	@handler QueryCategoryList
+	post /category/query_category_list (QueryCategoryListReq) returns (PageResult)
+}
+

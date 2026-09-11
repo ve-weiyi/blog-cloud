@@ -1,0 +1,49 @@
+syntax = "v1"
+
+type (
+	EmptyReq  {}
+	EmptyResp  {}
+)
+
+type (
+	IdReq {
+		Id int64 `json:"id"`
+	}
+	IdsReq {
+		Ids []int64 `json:"ids"`
+	}
+	PageQuery {
+		Page     int64    `json:"page,optional,default=1"` // 当前页码
+		PageSize int64    `json:"page_size,optional,default=20"` // 每页数量
+		Sorts    []string `json:"sorts,optional,default=[]"` // 排序
+	}
+	PageResult {
+		Page     int64       `json:"page"`
+		PageSize int64       `json:"page_size"`
+		Total    int64       `json:"total"`
+		List     interface{} `json:"list"`
+	}
+)
+
+type (
+	UserInfoVO {
+		UserId   string `json:"user_id"`
+		Username string `json:"username"`
+		Avatar   string `json:"avatar"`
+		Nickname string `json:"nickname"`
+		UserType string `json:"user_type"`
+	}
+	GuestInfoVO {
+		DeviceId  string `json:"device_id"` // 设备ID
+		Os        string `json:"os"` // 操作系统
+		Browser   string `json:"browser"` // 浏览器
+		IpAddress string `json:"ip_address"` // IP地址
+		IpSource  string `json:"ip_source"` // IP归属地
+	}
+	UserInfoExt {
+		Gender  int64  `json:"gender,optional"` // 性别 0未知 1男 2女
+		Intro   string `json:"intro,optional"` // 简介
+		Website string `json:"website,optional"` // 网站
+	}
+)
+

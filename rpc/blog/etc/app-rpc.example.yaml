@@ -1,0 +1,41 @@
+Name: app.rpc
+ListenOn: 0.0.0.0:9120
+Mode: dev
+
+Log:
+  Mode: console
+  Encoding: plain
+
+MysqlConf:
+  Host: 127.0.0.1
+  Port: "3306"
+  Username: root
+  Password: root
+  Dbname: ve_blog
+  Config: charset=utf8mb4&parseTime=True&loc=Local
+
+RedisConf:
+  Host: 127.0.0.1
+  Port: "6379"
+  Password: ""
+  DB: 0
+
+RabbitMQConf:
+  Host: 127.0.0.1
+  Port: "5672"
+  Username: guest
+  Password: guest
+
+EmailConf:
+  Host: smtp.qq.com
+  Port: 465
+  Username: xxx@qq.com
+  Password: xxx
+  Nickname: ve-blog
+  IsSsl: true
+
+AppOAuthConf:
+  github:
+    ClientId: xxx
+    ClientSecret: xxx
+    RedirectUri: xxx

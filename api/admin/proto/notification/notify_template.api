@@ -1,0 +1,75 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 通知模板管理 ====================
+type (
+	NotifyTemplateVO {
+		Id        int64  `json:"id,optional"`
+		Code      string `json:"code"`
+		Channel   string `json:"channel"`
+		Scene     string `json:"scene"`
+		Title     string `json:"title"`
+		Content   string `json:"content"`
+		Enabled   int64  `json:"enabled"`
+		CreatedAt int64  `json:"created_at"`
+		UpdatedAt int64  `json:"updated_at"`
+	}
+	QueryNotifyTemplateListReq {
+		PageQuery
+		Channel *string `json:"channel,optional"`
+	}
+	CreateNotifyTemplateReq {
+		Code    string `json:"code"`
+		Channel string `json:"channel"`
+		Scene   string `json:"scene"`
+		Title   string `json:"title"`
+		Content string `json:"content"`
+		Enabled int64  `json:"enabled,optional,default=1"`
+	}
+	UpdateNotifyTemplateReq {
+		Id      int64  `json:"id"`
+		Code    string `json:"code"`
+		Channel string `json:"channel"`
+		Scene   string `json:"scene"`
+		Title   string `json:"title"`
+		Content string `json:"content"`
+		Enabled int64  `json:"enabled"`
+	}
+	DeleteNotifyTemplateReq {
+		Ids []int64 `json:"ids"`
+	}
+	GetNotifyTemplateReq {
+		Id int64 `form:"id"`
+	}
+)
+
+@server (
+	tags:       "通知管理"
+	prefix:     /admin-api/v1
+	group:      notification/notify_template
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取通知模板列表"
+	@handler QueryNotifyTemplateList
+	post /notify_template/query_notify_template_list (QueryNotifyTemplateListReq) returns (PageResult)
+
+	@doc "创建通知模板"
+	@handler CreateNotifyTemplate
+	post /notify_template/create_notify_template (CreateNotifyTemplateReq) returns (NotifyTemplateVO)
+
+	@doc "获取通知模板详情"
+	@handler GetNotifyTemplate
+	get /notify_template/get_notify_template (GetNotifyTemplateReq) returns (NotifyTemplateVO)
+
+	@doc "更新通知模板"
+	@handler UpdateNotifyTemplate
+	put /notify_template/update_notify_template (UpdateNotifyTemplateReq) returns (NotifyTemplateVO)
+
+	@doc "批量删除通知模板"
+	@handler DeleteNotifyTemplate
+	delete /notify_template/delete_notify_template (DeleteNotifyTemplateReq) returns (BatchResp)
+}
+

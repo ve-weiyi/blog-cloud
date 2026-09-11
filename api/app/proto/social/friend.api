@@ -1,0 +1,32 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 友链模块 ====================
+type (
+	Friend {
+		Id          int64  `json:"id"`
+		LinkName    string `json:"link_name"`
+		LinkAvatar  string `json:"link_avatar"`
+		LinkAddress string `json:"link_address"`
+		LinkIntro   string `json:"link_intro"`
+		CreatedAt   int64  `json:"created_at"`
+		UpdatedAt   int64  `json:"updated_at"`
+	}
+	QueryFriendListReq {
+		PageQuery
+	}
+)
+
+@server (
+	tags:     "友链"
+	prefix:   /api/v1
+	group:    social/friend
+	authType: apiKey
+)
+service app-api {
+	@doc "获取友链列表"
+	@handler QueryFriendList
+	post /friend/query_friend_list (QueryFriendListReq) returns (PageResult)
+}
+

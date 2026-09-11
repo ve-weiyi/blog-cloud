@@ -1,0 +1,242 @@
+syntax = "proto3";
+
+// proto 包名
+package userrpc;
+// 生成 golang 代码后的包名
+option go_package = "./userrpc";
+
+// ==============================
+// 通用消息定义（第一层）
+// ==============================
+
+// 分页请求参数（复用）
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段（格式：字段名+空格+asc/desc，如 "created_at desc"）
+}
+
+// 分页响应结果（复用）
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ==============================
+// 核心数据模型（第二层）
+// ==============================
+
+// 用户信息（t_user）
+message User {
+  int64 id = 1;                    // 自增ID（数据库主键）
+  string user_id = 2;              // 用户ID (UUID)
+  string username = 3;             // 用户名（唯一）
+  string password = 4;            // 加密后的密码（bcrypt）
+  string nickname = 5;             // 昵称
+  string avatar = 6;               // 头像URL
+  string email = 7;                // 邮箱（唯一）
+  string mobile = 8;               // 手机号（唯一）
+  int64 status = 9;                // 状态：0-禁用 1-正常 2-冻结
+  string info = 10;                // 用户信息
+  string register_type = 11;       // 注册方式
+  string ip_address = 12;          // IP 地址
+  string ip_source = 13;           // IP 归属地
+  int64 created_at = 14;           // 创建时间，时间戳，毫秒
+  int64 updated_at = 15;           // 更新时间，时间戳，毫秒
+  int64 deleted_at = 16;           // 删除时间（软删除），时间戳，毫秒
+}
+
+// 第三方平台信息（t_user_third_party）
+message ThirdPartyInfo {
+  string platform = 1;             // 平台：wechat(微信)、github(GitHub)、google(谷歌)
+  string open_id = 2;              // 平台用户ID
+  string nickname = 3;             // 昵称
+  string avatar = 4;               // 头像
+  int64 created_at = 5;            // 创建时间，时间戳，毫秒
+}
+
+// 当前用户详细信息
+message MeInfo {
+  User user = 1;
+  repeated ThirdPartyInfo third_parties = 2;
+}
+
+// ==============================
+// 资源管理消息（第三层）
+// ==============================
+
+// ---------------- 管理员用户管理 ----------------
+message ListUsersRequest {
+  PageQuery page_query = 1;        // 分页参数（强制第1位）
+  optional string mobile = 2;      // 手机号筛选
+  optional int64 status = 3;       // 状态筛选：0-禁用 1-正常 2-冻结
+  optional string keyword = 4;     // 关键词搜索（用户名/昵称/手机号/邮箱）
+  optional string username = 5;    // 用户名筛选
+  optional string email = 6;       // 邮箱筛选
+  repeated string user_ids = 7;
+}
+
+message ListUsersResponse {
+  PageResult page_result = 1;      // 分页结果（强制第1位）
+  repeated User list = 2;          // 用户列表
+}
+
+message GetUserRequest {
+  string user_id = 1;            // 用户ID（UUID）
+}
+
+message GetUserResponse {
+  User user = 1;                   // 用户信息
+}
+
+message UpdateUserStatusRequest {
+  string user_id = 1;              // 用户ID（UUID）
+  int64 status = 2;                // 状态：0-禁用 1-正常 2-冻结
+}
+
+message UpdateUserStatusResponse {
+  bool success = 1;                // 是否更新成功
+}
+
+message ResetUserPasswordRequest {
+  string user_id = 1;              // 用户ID（UUID）
+  string new_password = 2;         // 新密码（加密前/后，根据业务定）
+}
+
+message ResetUserPasswordResponse {
+  bool success = 1;                // 是否重置成功
+}
+
+// ---------------- 当前用户（Me）管理 ----------------
+message GetMeProfileRequest {}     // 独立请求体（规范：每个RPC必须有专属Request）
+
+message GetMeProfileResponse {
+  MeInfo me_info = 1;              // 当前用户详细资料
+}
+
+message UpdateMeRequest {
+  string nickname = 1;             // 昵称
+  optional string avatar = 2;      // 头像URL
+}
+
+message UpdateMeResponse {
+  bool success = 1;                // 是否更新成功（禁用EmptyResponse）
+}
+
+message UpdateMeAvatarRequest {
+  string avatar = 1;               // 头像URL
+}
+
+message UpdateMeAvatarResponse {
+  bool success = 1;                // 是否更新成功
+}
+
+message UpdateMePasswordRequest {
+  string old_password = 1;         // 旧密码
+  string new_password = 2;         // 新密码
+  string confirm_password = 3;     // 确认密码
+}
+
+message UpdateMePasswordResponse {
+  bool success = 1;                // 是否更新成功
+}
+
+message BindMeEmailRequest {
+  string email = 1;                // 邮箱（验证码验证已在 API 层完成）
+}
+
+message BindMeEmailResponse {
+  bool success = 1;                // 是否绑定成功
+}
+
+message BindMePhoneRequest {
+  string mobile = 1;               // 手机号（验证码验证已在 API 层完成）
+}
+
+message BindMePhoneResponse {
+  bool success = 1;                // 是否绑定成功
+}
+
+message BindMeThirdPartyRequest {
+  string platform = 1;             // 平台：wechat(微信)、github(GitHub)、google(谷歌)
+  string code = 2;                 // 授权码
+  optional string state = 3;       // 状态
+}
+
+message BindMeThirdPartyResponse {
+  bool success = 1;                // 是否绑定成功
+}
+
+message UnbindMeThirdPartyRequest {
+  string platform = 1;             // 平台：wechat(微信)、github(GitHub)、google(谷歌)
+}
+
+message UnbindMeThirdPartyResponse {
+  bool success = 1;                // 是否解绑成功
+}
+
+
+// 停用账号请求（进入冷静期）
+message DeactivateAccountRequest {
+  string password = 1;        // 确认密码
+  string reason = 2;          // 停用原因
+}
+
+message DeactivateAccountResponse {
+  bool success = 1;
+  int64 cooling_period_days = 2;       // 冷静期天数
+  int64 can_reactivate_until = 3;      // 可恢复截止时间（时间戳，毫秒）
+}
+
+// 恢复账号请求（冷静期内）
+message ReactivateAccountRequest {
+  optional string email = 1;
+  optional string mobile = 2;
+}
+
+message ReactivateAccountResponse {
+  bool success = 1;
+}
+
+// ==============================
+// 服务定义（第四层）
+// ==============================
+
+service UserService {
+  // ==================== 用户管理（管理员） ====================
+
+  // 分页查询用户列表
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  // 查询用户详情
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  // 更新用户状态
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse);
+  // 重置用户密码
+  rpc ResetUserPassword(ResetUserPasswordRequest) returns (ResetUserPasswordResponse);
+
+  // ==================== 当前用户（Me） ====================
+
+  // 获取当前用户详细资料
+  rpc GetMeProfile(GetMeProfileRequest) returns (GetMeProfileResponse);
+  // 更新当前用户基础信息
+  rpc UpdateMe(UpdateMeRequest) returns (UpdateMeResponse);
+  // 更新当前用户头像
+  rpc UpdateMeAvatar(UpdateMeAvatarRequest) returns (UpdateMeAvatarResponse);
+  // 更新当前用户密码
+  rpc UpdateMePassword(UpdateMePasswordRequest) returns (UpdateMePasswordResponse);
+
+  // 绑定当前用户邮箱
+  rpc BindMeEmail(BindMeEmailRequest) returns (BindMeEmailResponse);
+  // 绑定当前用户手机号
+  rpc BindMePhone(BindMePhoneRequest) returns (BindMePhoneResponse);
+  // 绑定当前用户第三方平台
+  rpc BindMeThirdParty(BindMeThirdPartyRequest) returns (BindMeThirdPartyResponse);
+  // 解绑当前用户第三方平台
+  rpc UnbindMeThirdParty(UnbindMeThirdPartyRequest) returns (UnbindMeThirdPartyResponse);
+
+  // 停用账号（进入冷静期）
+  rpc DeactivateAccount(DeactivateAccountRequest) returns (DeactivateAccountResponse);
+  // 恢复账号（冷静期内）
+  rpc ReactivateAccount(ReactivateAccountRequest) returns (ReactivateAccountResponse);
+}

@@ -1,0 +1,95 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 统一通知消息管理 ====================
+type (
+	NotifyMessageVO {
+		Id          int64  `json:"id,optional"`
+		Title       string `json:"title"`
+		Content     string `json:"content"`
+		Category    string `json:"category"`
+		Level       string `json:"level"`
+		TargetType  string `json:"target_type"`
+		TargetIds   string `json:"target_ids"`
+		Status      string `json:"status"`
+		PublishedAt int64  `json:"published_at"`
+		PublishedBy string `json:"published_by"`
+		CreatedAt   int64  `json:"created_at"`
+		UpdatedAt   int64  `json:"updated_at"`
+	}
+	QueryNotifyMessageListReq {
+		PageQuery
+		Category   *string `json:"category,optional"`
+		Level      *string `json:"level,optional"`
+		Status     *string `json:"status,optional"`
+		TargetType *string `json:"target_type,optional"`
+	}
+	CreateNotifyMessageReq {
+		Title      string `json:"title"`
+		Content    string `json:"content"`
+		Category   string `json:"category"`
+		Level      string `json:"level"`
+		TargetType string `json:"target_type"`
+		TargetIds  string `json:"target_ids,optional"`
+	}
+	UpdateNotifyMessageReq {
+		Id         int64  `json:"id"`
+		Title      string `json:"title"`
+		Content    string `json:"content"`
+		Category   string `json:"category"`
+		Level      string `json:"level"`
+		TargetType string `json:"target_type"`
+		TargetIds  string `json:"target_ids,optional"`
+	}
+	DeleteNotifyMessageReq {
+		Ids []int64 `json:"ids"`
+	}
+	GetNotifyMessageReq {
+		Id int64 `form:"id"`
+	}
+	PublishNotifyMessageReq {
+		Id int64 `json:"id"`
+	}
+	RevokeNotifyMessageReq {
+		Id int64 `json:"id"`
+	}
+)
+
+@server (
+	tags:       "通知管理"
+	prefix:     /admin-api/v1
+	group:      notification/notify_message
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取统一通知消息列表"
+	@handler QueryNotifyMessageList
+	post /notify_message/query_notify_message_list (QueryNotifyMessageListReq) returns (PageResult)
+
+	@doc "创建统一通知消息"
+	@handler CreateNotifyMessage
+	post /notify_message/create_notify_message (CreateNotifyMessageReq) returns (NotifyMessageVO)
+
+	@doc "获取统一通知消息详情"
+	@handler GetNotifyMessage
+	get /notify_message/get_notify_message (GetNotifyMessageReq) returns (NotifyMessageVO)
+
+	@doc "更新统一通知消息"
+	@handler UpdateNotifyMessage
+	put /notify_message/update_notify_message (UpdateNotifyMessageReq) returns (NotifyMessageVO)
+
+	@doc "批量删除统一通知消息"
+	@handler DeleteNotifyMessage
+	delete /notify_message/delete_notify_message (DeleteNotifyMessageReq) returns (BatchResp)
+
+	@doc "发布统一通知消息"
+	@handler PublishNotifyMessage
+	post /notify_message/publish_notify_message (PublishNotifyMessageReq) returns (BatchResp)
+
+	@doc "撤回统一通知消息"
+	@handler RevokeNotifyMessage
+	post /notify_message/revoke_notify_message (RevokeNotifyMessageReq) returns (BatchResp)
+}
+

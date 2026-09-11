@@ -1,0 +1,54 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 标签管理 ====================
+type (
+	TagVO {
+		Id           int64  `json:"id,optional"`
+		TagName      string `json:"tag_name"`
+		ArticleCount int64  `json:"article_count"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	QueryTagListReq {
+		PageQuery
+		TagName *string `json:"tag_name,optional"`
+	}
+	CreateTagReq {
+		TagName string `json:"tag_name"`
+	}
+	UpdateTagReq {
+		Id      int64  `json:"id"`
+		TagName string `json:"tag_name"`
+	}
+	DeleteTagReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "标签管理"
+	prefix:     /admin-api/v1
+	group:      content/tag
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取标签列表"
+	@handler QueryTagList
+	post /tag/query_tag_list (QueryTagListReq) returns (PageResult)
+
+	@doc "创建标签"
+	@handler CreateTag
+	post /tag/create_tag (CreateTagReq) returns (TagVO)
+
+	@doc "更新标签"
+	@handler UpdateTag
+	put /tag/update_tag (UpdateTagReq) returns (TagVO)
+
+	@doc "删除标签"
+	@handler DeleteTag
+	delete /tag/delete_tag (DeleteTagReq) returns (BatchResp)
+}
+

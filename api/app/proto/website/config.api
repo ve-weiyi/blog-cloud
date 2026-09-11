@@ -1,0 +1,96 @@
+syntax = "v1"
+
+type (
+	GetBlogHomeInfoReq  {}
+	GetBlogHomeInfoResp {
+		ArticleCount       int64           `json:"article_count"` // 文章数量
+		CategoryCount      int64           `json:"category_count"` // 分类数量
+		TagCount           int64           `json:"tag_count"` // 标签数量
+		TotalUserViewCount int64           `json:"total_user_view_count"` // 总服务量
+		TotalPageViewCount int64           `json:"total_page_view_count"` // 总浏览量
+		PageList           []*PageVO       `json:"page_list"` // 页面列表
+		NoticeList         []*NoticeVO     `json:"notice_list"` // 通知列表
+		WebsiteConfig      WebsiteConfigVO `json:"website_config"` // 网站配置
+	}
+	NoticeVO {
+		Id          int64  `json:"id,optional"` // 主键ID
+		Title       string `json:"title"` // 通知标题
+		Content     string `json:"content"` // 通知内容
+		Type        string `json:"type"` // 通知类型
+		Level       string `json:"level"` // 通知等级
+		PublishTime int64  `json:"publish_time"` // 发布时间
+	}
+	PageVO {
+		Id         int64  `json:"id"` // 页面ID
+		PageName   string `json:"page_name"` // 页面名称
+		PageLabel  string `json:"page_label"` // 页面标签
+		PageCover  string `json:"page_cover"` // 页面封面
+		IsCarousel int64  `json:"is_carousel,optional"` // 是否轮播
+	}
+	WebsiteConfigVO {
+		AdminUrl        string               `json:"admin_url"` // 后台地址
+		WebsocketUrl    string               `json:"websocket_url"` // websocket地址
+		TouristAvatar   string               `json:"tourist_avatar"` // 游客头像
+		UserAvatar      string               `json:"user_avatar"` // 用户头像
+		WebsiteFeature  *WebsiteFeature      `json:"website_feature"` // 网站功能
+		WebsiteInfo     *WebsiteInfo         `json:"website_info"` // 网站信息
+		RewardQrCode    *RewardQrCode        `json:"reward_qr_code"` // 打赏二维码
+		SocialLoginList []*ThirdPlatformInfo `json:"social_login_list"` // 用户第三方登录列表
+		SocialUrlList   []*SocialAccountInfo `json:"social_url_list"` // 作者社交地址列表
+	}
+	ThirdPlatformInfo {
+		Name         string `json:"name"` // 名称-微信
+		Platform     string `json:"platform"` // 平台-wechat
+		AuthorizeUrl string `json:"authorize_url"` // 授权地址
+		Enabled      bool   `json:"enabled"` // 是否启用
+	}
+	SocialAccountInfo {
+		Name     string `json:"name"` // 名称-微信
+		Platform string `json:"platform"` // 平台-wechat
+		LinkUrl  string `json:"link_url"` // 链接地址
+		Enabled  bool   `json:"enabled"` // 是否启用
+	}
+	WebsiteFeature {
+		IsChatRoom      int64 `json:"is_chat_room"` // 是否开启聊天室
+		IsAiAssistant   int64 `json:"is_ai_assistant"` // 是否开启AI助手
+		IsMusicPlayer   int64 `json:"is_music_player"` // 是否开启音乐播放器
+		IsCommentReview int64 `json:"is_comment_review"` // 是否开启评论审核
+		IsEmailNotice   int64 `json:"is_email_notice"` // 是否开启邮件通知
+		IsMessageReview int64 `json:"is_message_review"` // 是否开启留言审核
+		IsReward        int64 `json:"is_reward"` // 是否开启打赏
+	}
+	RewardQrCode {
+		AlipayQrCode string `json:"alipay_qr_code"` // 支付宝二维码
+		WeixinQrCode string `json:"weixin_qr_code"` // 微信二维码
+	}
+	WebsiteInfo {
+		WebsiteAuthor     string `json:"website_author"` // 网站作者
+		WebsiteAvatar     string `json:"website_avatar"` // 网站头像
+		WebsiteCreateTime string `json:"website_create_time"` // 网站创建时间
+		WebsiteIntro      string `json:"website_intro"` // 网站介绍
+		WebsiteName       string `json:"website_name"` // 网站名称
+		WebsiteNotice     string `json:"website_notice"` // 网站公告
+		WebsiteRecordNo   string `json:"website_record_no"` // 网站备案号
+	}
+	GetAboutMeReq  {}
+	GetAboutMeResp {
+		Content string `json:"content"`
+	}
+)
+
+@server (
+	tags:     "网站"
+	prefix:   /api/v1
+	group:    website/config
+	authType: apiKey
+)
+service app-api {
+	@doc "获取博客前台首页信息"
+	@handler GetBlogHomeInfo
+	get /blog (GetBlogHomeInfoReq) returns (GetBlogHomeInfoResp)
+
+	@doc "获取关于我的信息"
+	@handler GetAboutMe
+	get /blog/get_about_me (GetAboutMeReq) returns (GetAboutMeResp)
+}
+

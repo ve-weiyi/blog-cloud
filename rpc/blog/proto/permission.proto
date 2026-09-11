@@ -1,0 +1,315 @@
+syntax = "proto3";
+
+package permissionrpc;
+option go_package = "./permissionrpc";
+
+// ============================================
+// 通用消息
+// ============================================
+message PageQuery {
+  int64 page = 1;                 // 页码
+  int64 page_size = 2;            // 每页大小
+  repeated string sorts = 3;      // 排序字段
+}
+
+message PageResult {
+  int64 page = 1;                 // 页码
+  int64 page_size = 2;            // 每页大小
+  int64 total = 3;                // 总数
+}
+
+// ============================================
+// 核心数据模型
+// ============================================
+message MenuMeta {
+  string type = 1;                // 菜单类型 0目录 1菜单 2按钮 3外链
+  string title = 2;               // 菜单标题
+  string icon = 3;                // 菜单图标
+  int64 rank = 4;                 // 菜单排序
+  string perm = 5;                // 权限标识
+  string params = 6;              // 路由参数(JSON)
+  int64 keep_alive = 7;           // 是否缓存 0否 1是
+  int64 always_show = 8;          // 是否始终显示 0否 1是
+  int64 visible = 9;              // 是否可见 0否 1是
+  int64 status = 10;              // 状态 0正常 1禁用
+}
+
+message Api {
+  int64 id = 1;                   // 主键id
+  int64 parent_id = 2;            // 父id
+  string path = 3;                // API路径
+  string name = 4;                // API名称
+  string method = 5;              // 请求方法
+  int64 traceable = 6;            // 是否记录操作日志 0否 1是
+  int64 status = 7;               // 状态 0正常 1禁用
+  int64 created_at = 8;           // 创建时间戳，毫秒
+  int64 updated_at = 9;           // 更新时间戳，毫秒
+  repeated Api children = 10;
+}
+
+message Menu {
+  int64 id = 1;                   // 主键id
+  int64 parent_id = 2;            // 父id
+  string path = 3;                // 路由路径
+  string name = 4;                // 路由名称
+  string component = 5;           // 前端组件
+  string redirect = 6;            // 重定向路径
+  MenuMeta meta = 7;              // 菜单元信息
+  int64 created_at = 8;           // 创建时间戳，毫秒
+  int64 updated_at = 9;           // 更新时间戳，毫秒
+  repeated Menu children = 10;
+}
+
+message Role {
+  int64 id = 1;                   // 主键id
+  int64 parent_id = 2;            // 父角色id
+  string role_key = 3;            // 角色标识
+  string role_label = 4;          // 角色名称
+  string role_comment = 5;        // 角色说明
+  int64 is_default = 6;           // 是否默认 0否 1是
+  int64 status = 7;               // 状态 0正常 1禁用
+  int64 created_at = 8;           // 创建时间戳，毫秒
+  int64 updated_at = 9;           // 更新时间戳，毫秒
+}
+
+// ============================================
+// API 管理
+// ============================================
+message ListApisRequest {
+  PageQuery page_query = 1;
+  optional string name = 2;
+  optional string path = 3;
+  optional string method = 4;
+}
+
+message ListApisResponse {
+  PageResult page_result = 1;
+  repeated Api list = 2;
+}
+
+message CreateApiRequest {
+  int64 parent_id = 1;
+  string path = 2;
+  string name = 3;
+  string method = 4;
+  int64 traceable = 5;
+  int64 status = 6;
+  repeated CreateApiRequest children = 10;
+}
+message CreateApiResponse {int64 id = 1;}
+
+message UpdateApiRequest {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string path = 3;
+  string name = 4;
+  string method = 5;
+  int64 traceable = 6;
+  int64 status = 7;
+}
+message UpdateApiResponse {bool success = 1;}
+
+message DeleteApiRequest {repeated int64 ids = 1;}
+message DeleteApiResponse {int64 success_count = 1;}
+
+message SyncApisRequest {repeated CreateApiRequest apis = 1;}
+message SyncApisResponse {int64 success_count = 1;}
+
+message CleanApisRequest {}
+message CleanApisResponse {int64 success_count = 1;}
+
+
+// ============================================
+// 菜单管理
+// ============================================
+message ListMenusRequest {
+  PageQuery page_query = 1;
+  optional string title = 2;
+  optional string name = 3;
+}
+
+message ListMenusResponse {
+  PageResult page_result = 1;
+  repeated Menu list = 2;
+}
+
+message CreateMenuRequest {
+  int64 parent_id = 1;
+  string path = 2;
+  string name = 3;
+  string component = 4;
+  string redirect = 5;
+  MenuMeta meta = 6;
+  repeated CreateMenuRequest children = 10;
+}
+
+message CreateMenuResponse {int64 id = 1;}
+
+message UpdateMenuRequest {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string path = 3;
+  string name = 4;
+  string component = 5;
+  string redirect = 6;
+  MenuMeta meta = 7;
+}
+message UpdateMenuResponse {bool success = 1;}
+
+message DeleteMenuRequest {repeated int64 ids = 1;}
+message DeleteMenuResponse {int64 success_count = 1;}
+
+message SyncMenusRequest {repeated CreateMenuRequest menus = 1;}
+message SyncMenusResponse {int64 success_count = 1;}
+
+message CleanMenusRequest {}
+message CleanMenusResponse {int64 success_count = 1;}
+
+
+// ============================================
+// 角色管理
+// ============================================
+message ListRolesRequest {
+  PageQuery page_query = 1;
+  optional string role_key = 2;
+  optional string role_label = 3;
+  optional int64 status = 4;
+}
+
+message ListRolesResponse {
+  PageResult page_result = 1;
+  repeated Role list = 2;
+}
+
+message CreateRoleRequest {
+  int64 parent_id = 1;
+  string role_key = 2;
+  string role_label = 3;
+  string role_comment = 4;
+  int64 is_default = 5;
+  int64 status = 6;
+}
+message CreateRoleResponse {int64 id = 1;}
+
+message UpdateRoleRequest {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string role_key = 3;
+  string role_label = 4;
+  string role_comment = 5;
+  int64 is_default = 6;
+  int64 status = 7;
+}
+message UpdateRoleResponse {bool success = 1;}
+
+message DeleteRoleRequest {repeated int64 ids = 1;}
+message DeleteRoleResponse {int64 success_count = 1;}
+
+
+message UpdateRoleMenuRequest {
+  int64 role_id = 1;
+  repeated int64 menu_ids = 2;
+}
+message UpdateRoleMenuResponse {bool success = 1;}
+
+message UpdateRoleApiRequest {
+  int64 role_id = 1;
+  repeated int64 api_ids = 2;
+}
+message UpdateRoleApiResponse {bool success = 1;}
+
+message GetRoleResourceRequest {int64 role_id = 1;}
+message GetRoleResourceResponse {
+  repeated int64 api_ids = 1;
+  repeated int64 menu_ids = 2;
+}
+
+message UpdateUserRolesRequest {
+  string user_id = 1;
+  repeated int64 role_ids = 2;
+}
+message UpdateUserRolesResponse {bool success = 1;}
+
+message GetUserApisRequest {string user_id = 1;}
+message GetUserApisResponse {repeated Api list = 1;}
+
+message GetUserMenusRequest {string user_id = 1;}
+message GetUserMenusResponse {repeated Menu list = 1;}
+
+message GetUserRolesRequest {string user_id = 1;}
+message GetUserRolesResponse {repeated Role list = 1;}
+
+message GetUsersRolesRequest {repeated string user_ids = 1;}
+message UserRoles {
+  string user_id = 1;
+  repeated Role list = 2;
+}
+message GetUsersRolesResponse {repeated UserRoles list = 1;}
+
+// ============================================
+// Service
+// ============================================
+service PermissionService {
+  // ==================== API 管理 ====================
+
+  // 分页查询 API 列表
+  rpc ListApis(ListApisRequest) returns (ListApisResponse);
+  // 创建 API
+  rpc CreateApi(CreateApiRequest) returns (CreateApiResponse);
+  // 更新 API
+  rpc UpdateApi(UpdateApiRequest) returns (UpdateApiResponse);
+  // 批量删除 API
+  rpc DeleteApi(DeleteApiRequest) returns (DeleteApiResponse);
+  // 同步 API
+  rpc SyncApis(SyncApisRequest) returns (SyncApisResponse);
+  // 清空 API
+  rpc CleanApis(CleanApisRequest) returns (CleanApisResponse);
+
+  // ==================== 菜单管理 ====================
+
+  // 分页查询菜单列表
+  rpc ListMenus(ListMenusRequest) returns (ListMenusResponse);
+  // 创建菜单
+  rpc CreateMenu(CreateMenuRequest) returns (CreateMenuResponse);
+  // 更新菜单
+  rpc UpdateMenu(UpdateMenuRequest) returns (UpdateMenuResponse);
+  // 批量删除菜单
+  rpc DeleteMenu(DeleteMenuRequest) returns (DeleteMenuResponse);
+  // 同步菜单
+  rpc SyncMenus(SyncMenusRequest) returns (SyncMenusResponse);
+  // 清空菜单
+  rpc CleanMenus(CleanMenusRequest) returns (CleanMenusResponse);
+
+  // ==================== 角色管理 ====================
+
+  // 分页查询角色列表
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+  // 创建角色
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  // 更新角色
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  // 批量删除角色
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+
+  // ==================== 角色资源绑定 ====================
+
+  // 更新角色菜单资源
+  rpc UpdateRoleMenu(UpdateRoleMenuRequest) returns (UpdateRoleMenuResponse);
+  // 更新角色 API 资源
+  rpc UpdateRoleApi(UpdateRoleApiRequest) returns (UpdateRoleApiResponse);
+  // 查询角色资源
+  rpc GetRoleResource(GetRoleResourceRequest) returns (GetRoleResourceResponse);
+
+  // ==================== 用户权限 ====================
+
+  // 更新用户角色
+  rpc UpdateUserRoles(UpdateUserRolesRequest) returns (UpdateUserRolesResponse);
+  // 查询用户 API 权限
+  rpc GetUserApis(GetUserApisRequest) returns (GetUserApisResponse);
+  // 查询用户菜单权限
+  rpc GetUserMenus(GetUserMenusRequest) returns (GetUserMenusResponse);
+  // 查询用户角色
+  rpc GetUserRoles(GetUserRolesRequest) returns (GetUserRolesResponse);
+  // 批量查询用户角色
+  rpc GetUsersRoles(GetUsersRolesRequest) returns (GetUsersRolesResponse);
+}

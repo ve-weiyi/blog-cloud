@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+// proto 包名
+package guestrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./guestrpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+// 分页请求参数
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段（格式：字段名+空格+asc/desc，如 "created_at desc"）
+}
+
+// 分页响应结果
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ============================================
+// 游客信息模块
+// ============================================
+
+// 游客信息
+message Guest {
+  int64 id = 1;                    // 访客唯一ID
+  string device_id = 2;          // 设备ID
+  string os = 3;                   // 操作系统
+  string browser = 4;              // 浏览器
+  string ip_address = 5;           // IP地址
+  string ip_source = 6;            // IP归属地
+  int64 created_at = 7;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 8;            // 更新时间（时间戳，毫秒）
+}
+
+// 分页查询游客信息列表请求
+message ListGuestsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string device_id = 2; // 设备ID
+  optional string ip_address = 3;  // IP地址
+  repeated string device_ids = 4;// 设备ID列表
+}
+
+// 分页查询游客信息列表响应
+message ListGuestsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Guest list = 2;    // 游客信息列表
+}
+
+// 获取游客信息请求
+message GetGuestRequest {}
+
+// 获取游客信息响应
+message GetGuestResponse {
+  Guest guest = 1;
+}
+
+// ============================================
+// 游客信息服务定义
+// ============================================
+
+service GuestService {
+  // ==================== 游客信息 ====================
+
+  // 分页查询游客信息列表
+  rpc ListGuests(ListGuestsRequest) returns (ListGuestsResponse);
+  // 获取游客环境信息
+  rpc GetGuest(GetGuestRequest) returns (GetGuestResponse);
+}

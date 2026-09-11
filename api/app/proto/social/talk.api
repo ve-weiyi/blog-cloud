@@ -1,0 +1,59 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 说说模块 ====================
+type (
+	Talk {
+		Id           int64       `json:"id"` // 说说ID
+		UserId       string      `json:"user_id"` // 用户ID
+		Content      string      `json:"content"` // 评论内容
+		ImgList      []string    `json:"img_list"` // 图片URL列表
+		IsTop        int64       `json:"is_top"` // 是否置顶
+		Status       int64       `json:"status"` // 状态 1.公开 2.私密
+		LikeCount    int64       `json:"like_count"` // 点赞量
+		CommentCount int64       `json:"comment_count"` // 评论量
+		CreatedAt    int64       `json:"created_at"` // 创建时间
+		UpdatedAt    int64       `json:"updated_at"` // 更新时间
+		UserInfo     *UserInfoVO `json:"user_info"` // 用户信息
+	}
+	QueryTalkListReq {
+		PageQuery
+	}
+	GetTalkReq {
+		TalkId int64 `form:"talk_id"`
+	}
+	LikeTalkReq {
+		TalkId int64 `json:"talk_id"`
+	}
+)
+
+@server (
+	tags:     "说说"
+	prefix:   /api/v1
+	group:    social/talk
+	authType: apiKey
+)
+service app-api {
+	@doc "获取说说列表"
+	@handler QueryTalkList
+	post /talk/query_talk_list (QueryTalkListReq) returns (PageResult)
+
+	@doc "获取说说详情"
+	@handler GetTalk
+	get /talk/get_talk (GetTalkReq) returns (Talk)
+}
+
+@server (
+	tags:       "说说"
+	prefix:     /api/v1
+	group:      social/talk
+	authType:   apiKey
+	middleware: UserAuth
+)
+service app-api {
+	@doc "点赞说说"
+	@handler LikeTalk
+	post /talk/like_talk (LikeTalkReq) returns (EmptyResp)
+}
+

@@ -27,13 +27,21 @@ yarn-error.log*
 *.log
 *.sum
 
+# SSL certificates (contains private keys)
+../deploy/ssl/
+output
+
+
+.claude/
+.amazonq/
+
 bin
 runtime
 default.etcd
 config.yaml
+app-api.yaml
 admin-api.yaml
-blog-api.yaml
-blog-rpc.yaml
+app-rpc.yaml
 test.*
 any_test.go
 blog-veweiyi.sql

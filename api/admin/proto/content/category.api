@@ -1,0 +1,54 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 分类管理 ====================
+type (
+	CategoryVO {
+		Id           int64  `json:"id,optional"`
+		CategoryName string `json:"category_name"`
+		ArticleCount int64  `json:"article_count"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	QueryCategoryListReq {
+		PageQuery
+		CategoryName *string `json:"category_name,optional"`
+	}
+	CreateCategoryReq {
+		CategoryName string `json:"category_name"`
+	}
+	UpdateCategoryReq {
+		Id           int64  `json:"id"`
+		CategoryName string `json:"category_name"`
+	}
+	DeleteCategoryReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "分类管理"
+	prefix:     /admin-api/v1
+	group:      content/category
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取分类列表"
+	@handler QueryCategoryList
+	post /category/query_category_list (QueryCategoryListReq) returns (PageResult)
+
+	@doc "创建分类"
+	@handler CreateCategory
+	post /category/create_category (CreateCategoryReq) returns (CategoryVO)
+
+	@doc "更新分类"
+	@handler UpdateCategory
+	put /category/update_category (UpdateCategoryReq) returns (CategoryVO)
+
+	@doc "批量删除分类"
+	@handler DeleteCategory
+	delete /category/delete_category (DeleteCategoryReq) returns (BatchResp)
+}
+

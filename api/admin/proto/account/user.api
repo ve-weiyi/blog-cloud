@@ -1,0 +1,124 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ============================================
+// 用户管理相关请求响应类型定义
+// ============================================
+type (
+	// 用户列表查询请求
+	QueryUserListReq {
+		PageQuery
+		Mobile  *string `json:"mobile,optional"` // 手机号筛选
+		Status  *int64  `json:"status,optional"` // 状态筛选
+		Keyword *string `json:"keyword,optional"` // 关键词搜索（昵称/手机号）
+	}
+	// 用户信息项
+	UserVO {
+		Id           int64            `json:"id"` // 用户ID
+		UserId       string           `json:"user_id"` // 用户ID (UUID)
+		Username     string           `json:"username"` //  用户名
+		Nickname     string           `json:"nickname"` // 用户昵称
+		Avatar       string           `json:"avatar"` // 用户头像
+		Mobile       string           `json:"mobile,optional"` // 用户手机号
+		Email        string           `json:"email,optional"` // 用户邮箱
+		Status       int64            `json:"status"` // 状态：0-禁用 1-正常 2-冻结
+		RegisterType string           `json:"register_type"` // 注册方式
+		IpAddress    string           `json:"ip_address"` // IP地址
+		IpSource     string           `json:"ip_source"` // IP归属地
+		CreatedAt    int64            `json:"created_at"`
+		UpdatedAt    int64            `json:"updated_at"`
+		RoleLabels   []*UserRoleLabel `json:"roles"`
+	}
+	UserRoleLabel {
+		RoleId    int64  `json:"role_id"`
+		RoleKey   string `json:"role_key"`
+		RoleLabel string `json:"role_label"`
+	}
+	UserLastLogin {
+		LoginAt        int64  `json:"login_at"` // 最后登录时间（毫秒时间戳）
+		LoginIpAddress string `json:"login_ip_address"` // 最后登录IP地址
+		LoginIpSource  string `json:"login_ip_source"` // 最后登录IP归属地
+	}
+	// 获取用户详情请求
+	GetUserDetailReq {
+		UserId string `form:"user_id"` // 用户ID (UUID)
+	}
+	// 用户详情响应
+	GetUserDetailResp {
+		UserVO
+		LastLogin UserLastLogin `json:"last_login"`
+	}
+	// 重置用户密码请求
+	ResetUserPasswordReq {
+		UserId      string `json:"user_id"` // 用户ID (UUID)
+		NewPassword string `json:"new_password" validate:"required,min=6"` // 新密码
+	}
+	// 重置用户密码响应
+	ResetUserPasswordResp {
+		Success bool `json:"success"`
+	}
+	// 更新用户状态请求
+	UpdateUserStatusReq {
+		UserId string `json:"user_id"` // 用户ID (UUID)
+		Status int64  `json:"status" validate:"required,oneof=0 1 2"` // 状态：0-禁用 1-正常 2-冻结
+	}
+	// 更新用户状态响应
+	UpdateUserStatusResp {
+		Success bool `json:"success"`
+	}
+	// 更新用户角色请求
+	UpdateUserRolesReq {
+		UserId  string  `json:"user_id"` // 用户ID (UUID)
+		RoleIds []int64 `json:"role_ids"` // 角色ID列表
+	}
+	// 更新用户角色响应
+	UpdateUserRolesResp {
+		Success bool `json:"success"`
+	}
+	OnlineUserItem {
+		UserInfo     *UserInfoVO  `json:"user_info"`
+		GuestInfo    *GuestInfoVO `json:"guest_info"`
+		LastActiveAt int64        `json:"last_active_at"`
+	}
+	OnlineUserListResp {
+		List []*OnlineUserItem `json:"list"`
+	}
+)
+
+// ============================================
+// 用户管理API定义（需要管理员认证）
+// ============================================
+@server (
+	tags:       "用户管理"
+	prefix:     /admin-api/v1
+	group:      account/user
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取用户列表"
+	@handler QueryUserList
+	post /user/query_user_list (QueryUserListReq) returns (PageResult)
+
+	@doc "获取用户详情"
+	@handler GetUserDetail
+	get /user/get_user (GetUserDetailReq) returns (GetUserDetailResp)
+
+	@doc "重置用户密码"
+	@handler ResetUserPassword
+	post /user/reset_user_password (ResetUserPasswordReq) returns (ResetUserPasswordResp)
+
+	@doc "更新用户状态"
+	@handler UpdateUserStatus
+	put /user/update_user_status (UpdateUserStatusReq) returns (UpdateUserStatusResp)
+
+	@doc "更新用户角色"
+	@handler UpdateUserRoles
+	put /user/update_user_roles (UpdateUserRolesReq) returns (UpdateUserRolesResp)
+
+	@doc "获取在线用户列表"
+	@handler GetOnlineUsers
+	get /user/get_online_users (EmptyReq) returns (OnlineUserListResp)
+}
+

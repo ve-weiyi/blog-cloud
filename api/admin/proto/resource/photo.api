@@ -1,0 +1,73 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 照片管理 ====================
+type (
+	PhotoVO {
+		Id        int64  `json:"id,optional"`
+		AlbumId   int64  `json:"album_id"`
+		PhotoName string `json:"photo_name"`
+		PhotoDesc string `json:"photo_desc"`
+		PhotoSrc  string `json:"photo_src"`
+		IsDelete  int64  `json:"is_delete"`
+		CreatedAt int64  `json:"created_at"`
+		UpdatedAt int64  `json:"updated_at"`
+	}
+	CreatePhotoReq {
+		AlbumId   int64  `json:"album_id"`
+		PhotoName string `json:"photo_name"`
+		PhotoDesc string `json:"photo_desc"`
+		PhotoSrc  string `json:"photo_src"`
+	}
+	UpdatePhotoReq {
+		Id        int64  `json:"id"`
+		AlbumId   int64  `json:"album_id"`
+		PhotoName string `json:"photo_name"`
+		PhotoDesc string `json:"photo_desc"`
+		PhotoSrc  string `json:"photo_src"`
+		IsDelete  int64  `json:"is_delete"`
+	}
+	QueryPhotoListReq {
+		PageQuery
+		AlbumId  *int64 `json:"album_id,optional"`
+		IsDelete *int64 `json:"is_delete,optional"`
+	}
+	UpdatePhotoDeleteReq {
+		Ids      []int64 `json:"ids"`
+		IsDelete int64   `json:"is_delete"`
+	}
+	DeletePhotoReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "照片管理"
+	prefix:     /admin-api/v1
+	group:      resource/photo
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取照片列表"
+	@handler QueryPhotoList
+	post /photo/query_photo_list (QueryPhotoListReq) returns (PageResult)
+
+	@doc "创建照片"
+	@handler CreatePhoto
+	post /photo/create_photo (CreatePhotoReq) returns (PhotoVO)
+
+	@doc "更新照片"
+	@handler UpdatePhoto
+	put /photo/update_photo (UpdatePhotoReq) returns (PhotoVO)
+
+	@doc "批量删除照片"
+	@handler DeletePhoto
+	delete /photo/delete_photo (DeletePhotoReq) returns (BatchResp)
+
+	@doc "批量更新照片删除状态"
+	@handler UpdatePhotoDelete
+	put /photo/update_photo_delete (UpdatePhotoDeleteReq) returns (BatchResp)
+}
+

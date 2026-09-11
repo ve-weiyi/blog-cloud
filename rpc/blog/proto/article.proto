@@ -1,0 +1,365 @@
+syntax = "proto3";
+
+package articlerpc;
+
+option go_package = "./articlerpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段
+}
+
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ============================================
+// 核心数据模型
+// ============================================
+
+// 文章预览
+message ArticlePreview {
+  int64 id = 1;                    // 文章ID
+  string article_cover = 2;        // 文章缩略图
+  string article_title = 3;        // 标题
+  int64 created_at = 4;            // 发表时间（时间戳，毫秒）
+  int64 like_count = 5;            // 点赞数
+  int64 view_count = 6;            // 查看数量
+}
+
+// 文章分类（嵌套用）
+message ArticleCategory {
+  int64 id = 1;                    // 分类ID
+  string category_name = 2;        // 分类名
+}
+
+// 文章标签（嵌套用）
+message ArticleTag {
+  int64 id = 1;                    // 标签ID
+  string tag_name = 2;             // 标签名
+}
+
+// 文章详情
+message Article {
+  int64 id = 1;                    // 文章ID
+  string user_id = 2;              // 作者ID
+  int64 category_id = 3;           // 分类ID
+  string article_cover = 4;        // 文章缩略图
+  string article_title = 5;        // 标题
+  string article_content = 6;      // 内容
+  int64 article_type = 7;          // 文章类型 1原创 2转载 3翻译
+  string original_url = 8;         // 原文链接
+  int64 is_top = 9;                // 是否置顶 0否 1是
+  int64 is_delete = 10;            // 是否删除 0否 1是
+  int64 status = 11;               // 状态 1公开 2私密 3草稿 4已删除
+  int64 created_at = 12;           // 发表时间（时间戳，毫秒）
+  int64 updated_at = 13;           // 更新时间（时间戳，毫秒）
+  ArticleCategory category = 14;   // 分类
+  repeated ArticleTag tags = 15;   // 标签列表
+  int64 like_count = 16;           // 点赞数
+  int64 view_count = 17;           // 查看数量
+}
+
+// 分类
+message Category {
+  int64 id = 1;                    // 分类ID
+  string category_name = 2;        // 分类名
+  int64 created_at = 3;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 4;            // 更新时间（时间戳，毫秒）
+  int64 article_count = 5;         // 文章数量
+}
+
+// 标签
+message Tag {
+  int64 id = 1;                    // 标签ID
+  string tag_name = 2;             // 标签名
+  int64 created_at = 3;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 4;            // 更新时间（时间戳，毫秒）
+  int64 article_count = 5;         // 文章数量
+}
+
+// 文章每日统计
+message ArticleDailyStatistic {
+  string date = 1;                 // 日期
+  int64 count = 2;                 // 数量
+}
+
+// ============================================
+// 文章管理
+// ============================================
+
+message ListArticlesRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string article_title = 2; // 标题
+  optional int64 article_type = 3; // 文章类型 1原创 2转载 3翻译
+  optional string category_name = 4; // 分类名
+  optional string tag_name = 5;    // 标签名
+  optional int64 is_top = 6;       // 是否置顶 0否 1是
+  optional int64 is_delete = 7;    // 是否删除 0否 1是
+  optional int64 status = 8;       // 状态 1公开 2私密 3草稿 4已删除
+  repeated int64 ids = 9;          // 文章ID列表
+}
+
+message ListArticlesResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Article list = 2;       // 文章列表
+}
+
+message ListArticlePreviewsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated ArticlePreview list = 2; // 文章预览列表
+}
+
+message GetArticleRequest {
+  int64 id = 1;                    // 文章ID
+}
+
+message GetArticleResponse {
+  Article article = 1;             // 文章详情
+}
+
+message GetArticleRelationRequest {
+  int64 id = 1;                    // 文章ID
+}
+
+message GetArticleRelationResponse {
+  ArticlePreview last = 1;         // 上一篇
+  ArticlePreview next = 2;         // 下一篇
+  repeated ArticlePreview recommends = 3; // 推荐文章
+  repeated ArticlePreview newests = 4;    // 最新文章
+}
+
+message CreateArticleRequest {
+  string user_id = 1;              // 作者ID
+  string article_cover = 2;        // 文章缩略图
+  string article_title = 3;        // 标题
+  string article_content = 4;      // 内容
+  int64 article_type = 5;          // 文章类型 1原创 2转载 3翻译
+  string original_url = 6;         // 原文链接
+  int64 is_top = 7;                // 是否置顶 0否 1是
+  int64 status = 8;                // 状态 1公开 2私密 3草稿 4已删除
+  string category_name = 9;        // 分类名
+  repeated string tag_names = 10;  // 标签名列表
+}
+
+message CreateArticleResponse {
+  int64 id = 1;                    // 文章ID
+}
+
+message UpdateArticleRequest {
+  int64 id = 1;                    // 文章ID
+  string article_cover = 3;        // 文章缩略图
+  string article_title = 4;        // 标题
+  string article_content = 5;      // 内容
+  int64 article_type = 6;          // 文章类型 1原创 2转载 3翻译
+  string original_url = 7;         // 原文链接
+  int64 is_top = 8;                // 是否置顶 0否 1是
+  int64 status = 9;                // 状态 1公开 2私密 3草稿 4已删除
+  string category_name = 10;       // 分类名
+  repeated string tag_names = 11;  // 标签名列表
+}
+
+message UpdateArticleResponse {
+  bool success = 1;
+}
+
+message PatchArticleRequest {
+  int64 id = 1;                    // 文章ID
+  optional int64 is_delete = 2;    // 是否删除 0否 1是
+  optional int64 is_top = 3;       // 是否置顶 0否 1是
+}
+
+message PatchArticleResponse {
+  bool success = 1;
+}
+
+message DeleteArticleRequest {
+  repeated int64 ids = 1;          // 文章ID列表
+}
+
+message DeleteArticleResponse {
+  int64 success_count = 1;
+}
+
+message IncrementArticleViewRequest {
+  int64 id = 1;                    // 文章ID
+}
+
+message IncrementArticleViewResponse {
+  bool success = 1;
+}
+
+message LikeArticleRequest {
+  int64 id = 1;                    // 文章ID
+}
+
+message LikeArticleResponse {
+  bool success = 1;
+}
+
+message GetUserLikeArticleRequest {
+  string user_id = 1;              // 用户ID
+}
+
+message GetUserLikeArticleResponse {
+  repeated int64 like_article_ids = 1; // 点赞文章ID列表
+}
+
+// ============================================
+// 分类管理
+// ============================================
+
+message ListCategoriesRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string category_name = 2; // 分类名
+}
+
+message ListCategoriesResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Category list = 2;      // 分类列表
+}
+
+message GetCategoryRequest {
+  int64 id = 1;                    // 分类ID
+}
+
+message GetCategoryResponse {
+  Category category = 1;           // 分类详情
+}
+
+message CreateCategoryRequest {
+  string category_name = 1;        // 分类名
+}
+
+message CreateCategoryResponse {
+  int64 id = 1;                    // 分类ID
+}
+
+message UpdateCategoryRequest {
+  int64 id = 1;                    // 分类ID
+  string category_name = 2;        // 分类名
+}
+
+message UpdateCategoryResponse {
+  bool success = 1;
+}
+
+message DeleteCategoryRequest {
+  repeated int64 ids = 1;          // 分类ID列表
+}
+
+message DeleteCategoryResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 标签管理
+// ============================================
+
+message ListTagsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string tag_name = 2;    // 标签名
+}
+
+message ListTagsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Tag list = 2;           // 标签列表
+}
+
+message GetTagRequest {
+  int64 id = 1;                    // 标签ID
+}
+
+message GetTagResponse {
+  Tag tag = 1;                     // 标签详情
+}
+
+message CreateTagRequest {
+  string tag_name = 1;             // 标签名
+}
+
+message CreateTagResponse {
+  int64 id = 1;                    // 标签ID
+}
+
+message UpdateTagRequest {
+  int64 id = 1;                    // 标签ID
+  string tag_name = 2;             // 标签名
+}
+
+message UpdateTagResponse {
+  bool success = 1;
+}
+
+message DeleteTagRequest {
+  repeated int64 ids = 1;          // 标签ID列表
+}
+
+message DeleteTagResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service ArticleService {
+  // ==================== 文章管理 ====================
+
+  // 分页查询文章列表
+  rpc ListArticles(ListArticlesRequest) returns (ListArticlesResponse);
+  // 分页查询文章预览列表
+  rpc ListArticlePreviews(ListArticlesRequest) returns (ListArticlePreviewsResponse);
+  // 查询文章详情
+  rpc GetArticle(GetArticleRequest) returns (GetArticleResponse);
+  // 查询关联文章
+  rpc GetArticleRelation(GetArticleRelationRequest) returns (GetArticleRelationResponse);
+  // 创建文章
+  rpc CreateArticle(CreateArticleRequest) returns (CreateArticleResponse);
+  // 更新文章
+  rpc UpdateArticle(UpdateArticleRequest) returns (UpdateArticleResponse);
+  // 部分更新文章
+  rpc PatchArticle(PatchArticleRequest) returns (PatchArticleResponse);
+  // 批量删除文章
+  rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse);
+  // 增加文章浏览量
+  rpc IncrementArticleView(IncrementArticleViewRequest) returns (IncrementArticleViewResponse);
+  // 点赞文章
+  rpc LikeArticle(LikeArticleRequest) returns (LikeArticleResponse);
+  // 查询用户点赞的文章
+  rpc GetUserLikeArticle(GetUserLikeArticleRequest) returns (GetUserLikeArticleResponse);
+
+  // ==================== 分类管理 ====================
+
+  // 分页查询分类列表
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
+  // 查询分类详情
+  rpc GetCategory(GetCategoryRequest) returns (GetCategoryResponse);
+  // 创建分类
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  // 更新分类
+  rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryResponse);
+  // 批量删除分类
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+
+  // ==================== 标签管理 ====================
+
+  // 分页查询标签列表
+  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+  // 查询标签详情
+  rpc GetTag(GetTagRequest) returns (GetTagResponse);
+  // 创建标签
+  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
+  // 更新标签
+  rpc UpdateTag(UpdateTagRequest) returns (UpdateTagResponse);
+  // 批量删除标签
+  rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse);
+
+}

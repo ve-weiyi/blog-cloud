@@ -1,0 +1,32 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 标签结构体 ====================
+type (
+	Tag {
+		Id           int64  `json:"id"`
+		TagName      string `json:"tag_name"`
+		ArticleCount int64  `json:"article_count"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	QueryTagListReq {
+		PageQuery
+		TagName *string `json:"tag_name,optional"`
+	}
+)
+
+// ==================== 标签接口 ====================
+@server (
+	tags:     "标签"
+	prefix:   /api/v1
+	group:    content/tag
+	authType: apiKey
+)
+service app-api {
+	@doc "获取标签列表"
+	@handler QueryTagList
+	post /tag/query_tag_list (QueryTagListReq) returns (PageResult)
+}
+

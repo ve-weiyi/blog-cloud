@@ -1,0 +1,63 @@
+syntax = "v1"
+
+import "base.api"
+import "common/upload.api"
+import "common/websocket.api"
+import "account/auth.api"
+import "account/guest.api"
+import "account/me.api"
+import "content/article.api"
+import "content/category.api"
+import "content/tag.api"
+import "discussion/comment.api"
+import "discussion/message.api"
+import "social/talk.api"
+import "social/friend.api"
+import "resource/album.api"
+import "website/page.api"
+import "website/config.api"
+
+info (
+	title:                       "Blog APP API"
+	description:                 "Blog APP 接口文档 - 小红书内容生成系统用户端API"
+	version:                     "v1.0.0"
+	contactName:                 "waynie.wei"
+	contactEmail:                "791422171@qq.com"
+	consumes:                    "application/json"
+	produces:                    "application/json"
+	schemes:                     "http,https"
+	host:                        ""
+	basePath:                    ""
+	wrapCodeMsg:                 true
+	useDefinitions:              true
+	securityDefinitionsFromJson: `
+{
+"AppName": {"type": "apiKey", "name": "App-Name", "in": "header", "description": "应用名称，用于标识调用方"},
+"Timestamp": {"type": "apiKey", "name": "Timestamp", "in": "header", "description": "时间戳，用于校验请求是否过期"},
+"XDeviceId": {"type": "apiKey", "name": "X-Device-Id", "in": "header", "description": "终端id，用于标识用户使用设备"},
+"XDeviceToken": {"type": "apiKey", "name": "X-Device-Token", "in": "header", "description": "游客token，使用时间戳和终端id生成"},
+"Uid": {"type": "apiKey", "name": "Uid", "in": "header", "description": "用户id，用于标识用户"},
+"Token": {"type": "apiKey", "name": "Token", "in": "header", "description": "token，用户登录凭证"}
+}`
+)
+
+type (
+	PingReq  {}
+	PingResp {
+		Env         string `json:"env"`
+		Name        string `json:"name"`
+		Version     string `json:"version"`
+		Runtime     string `json:"runtime"`
+		Description string `json:"description"`
+	}
+)
+
+@server (
+	prefix: /api/v1
+)
+service app-api {
+	@doc "健康检查"
+	@handler Ping
+	get /ping (PingReq) returns (PingResp)
+}
+

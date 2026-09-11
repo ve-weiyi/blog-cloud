@@ -1,0 +1,78 @@
+syntax = "v1"
+
+import "base.api"
+import "common/upload.api"
+import "common/websocket.api"
+import "account/auth.api"
+import "account/user.api"
+import "account/me.api"
+import "account/guest.api"
+import "content/article.api"
+import "content/category.api"
+import "content/tag.api"
+import "resource/album.api"
+import "resource/photo.api"
+import "website/page.api"
+import "website/config.api"
+import "website/stats.api"
+import "discussion/comment.api"
+import "discussion/message.api"
+import "social/friend.api"
+import "social/talk.api"
+import "notification/notify_template.api"
+import "notification/notify_record.api"
+import "notification/notify_message.api"
+import "permission/role.api"
+import "permission/menu.api"
+import "permission/api.api"
+import "syslog/login_log.api"
+import "syslog/upload_log.api"
+import "syslog/operation_log.api"
+import "syslog/visit_log.api"
+
+info (
+	title:                       "博客管理平台API"
+	description:                 "博客管理平台API接口文档"
+	version:                     "v4.0.0"
+	contactName:                 "waynie.wei" // 技术支持联系人姓名
+	contactEmail:                "791422171@qq.com" // 联系人邮箱
+	contactURL:                  "https://github.com/ve-weiyi/blog-cloud" // 联系人相关链接
+	termsOfService:              "https://github.com/ve-weiyi/blog-cloud" // API服务条款URL
+	licenseName:                 "MIT" // 许可证类型(如 MIT/Apache 2.0/GPL等)
+	licenseURL:                  "https://github.com/ve-weiyi/blog-cloud/main/LICENSE" // 许可证详情URL
+	consumes:                    "application/json" // 默认请求内容类型，可配置多个用逗号分隔
+	produces:                    "application/json" // 默认响应内容类型，可配置多个用逗号分隔
+	schemes:                     "http,https,ws,wss" // 支持协议(http/https/ws/wss)，可配置多个
+	host:                        "" // API服务主机地址(不带协议头)
+	basePath:                    "" // API基础路径，所有接口都会添加此前缀
+	wrapCodeMsg:                 true
+	useDefinitions:              true
+	bizCodeEnumDescription:      "1001-未登录<br>1002-无权限操作"
+	securityDefinitionsFromJson: `{
+	  "AppName": {"type": "apiKey", "name": "App-Name", "in": "header", "description": "应用名称，用于标识调用方"},
+	  "Timestamp": {"type": "apiKey", "name": "Timestamp", "in": "header", "description": "时间戳，用于校验请求是否过期"},
+	  "Uid": {"type": "apiKey", "name": "Uid", "in": "header", "description": "用户id，用于标识用户"},
+	  "Authorization": {"type": "apiKey", "name": "Authorization", "in": "header", "description": "授权token，用户登录凭证"}
+	}`
+)
+
+type (
+	PingReq  {}
+	PingResp {
+		Env         string `json:"env"`
+		Name        string `json:"name"`
+		Version     string `json:"version"`
+		Description string `json:"description"`
+		Runtime     string `json:"runtime"`
+	}
+)
+
+@server (
+	prefix: /admin-api/v1
+)
+service admin-api {
+	@doc "ping"
+	@handler Ping
+	get /ping (PingReq) returns (PingResp)
+}
+

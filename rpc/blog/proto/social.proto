@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package socialrpc;
+
+option go_package = "./socialrpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段
+}
+
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ============================================
+// 核心数据模型
+// ============================================
+
+// 友链
+message Friend {
+  int64 id = 1;                    // 友链ID
+  string link_name = 2;            // 链接名
+  string link_avatar = 3;          // 链接头像
+  string link_address = 4;         // 链接地址
+  string link_intro = 5;           // 链接介绍
+  int64 created_at = 6;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 7;            // 更新时间（时间戳，毫秒）
+}
+
+// 说说
+message Talk {
+  int64 id = 1;                    // 说说ID
+  string user_id = 2;              // 用户ID
+  string content = 3;              // 说说内容
+  repeated string images = 4;      // 图片URL列表
+  int64 is_top = 5;                // 是否置顶 0否 1是
+  int64 status = 6;                // 状态 1公开 2私密
+  int64 created_at = 7;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 8;            // 更新时间（时间戳，毫秒）
+  int64 like_count = 9;            // 点赞量
+  int64 comment_count = 10;        // 评论量
+}
+
+// ============================================
+// 友链管理
+// ============================================
+
+message ListFriendsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string link_name = 2;   // 链接名
+}
+
+message ListFriendsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Friend list = 2;        // 友链列表
+}
+
+message CreateFriendRequest {
+  string link_name = 1;            // 链接名
+  string link_avatar = 2;          // 链接头像
+  string link_address = 3;         // 链接地址
+  string link_intro = 4;           // 链接介绍
+}
+
+message CreateFriendResponse {
+  int64 id = 1;                    // 友链ID
+}
+
+message UpdateFriendRequest {
+  int64 id = 1;                    // 友链ID
+  string link_name = 2;            // 链接名
+  string link_avatar = 3;          // 链接头像
+  string link_address = 4;         // 链接地址
+  string link_intro = 5;           // 链接介绍
+}
+
+message UpdateFriendResponse {
+  bool success = 1;
+}
+
+message DeleteFriendRequest {
+  repeated int64 ids = 1;          // 友链ID列表
+}
+
+message DeleteFriendResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 说说管理
+// ============================================
+
+message ListTalksRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional int64 status = 2;       // 状态 1公开 2私密
+}
+
+message ListTalksResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Talk list = 2;          // 说说列表
+}
+
+message GetTalkRequest {
+  int64 id = 1;                    // 说说ID
+}
+
+message GetTalkResponse {
+  Talk talk = 1;                   // 说说详情
+}
+
+message CreateTalkRequest {
+  string user_id = 1;              // 用户ID
+  string content = 2;              // 说说内容
+  repeated string images = 3;      // 图片URL列表
+  int64 is_top = 4;                // 是否置顶 0否 1是
+  int64 status = 5;                // 状态 1公开 2私密
+}
+
+message CreateTalkResponse {
+  int64 id = 1;                    // 说说ID
+}
+
+message UpdateTalkRequest {
+  int64 id = 1;                    // 说说ID
+  string content = 3;              // 说说内容
+  repeated string images = 4;      // 图片URL列表
+  int64 is_top = 5;                // 是否置顶 0否 1是
+  int64 status = 6;                // 状态 1公开 2私密
+}
+
+message UpdateTalkResponse {
+  bool success = 1;
+}
+
+message DeleteTalkRequest {
+  repeated int64 ids = 1;          // 说说ID列表
+}
+
+message DeleteTalkResponse {
+  int64 success_count = 1;
+}
+
+message LikeTalkRequest {
+  int64 id = 1;                    // 说说ID
+}
+
+message LikeTalkResponse {
+  bool success = 1;
+}
+
+message GetUserLikeTalkRequest {
+  string user_id = 1;              // 用户ID
+}
+
+message GetUserLikeTalkResponse {
+  repeated int64 like_talk_ids = 1; // 点赞说说ID列表
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service SocialService {
+  // ==================== 友链管理 ====================
+
+  // 分页查询友链列表
+  rpc ListFriends(ListFriendsRequest) returns (ListFriendsResponse);
+  // 创建友链
+  rpc CreateFriend(CreateFriendRequest) returns (CreateFriendResponse);
+  // 更新友链
+  rpc UpdateFriend(UpdateFriendRequest) returns (UpdateFriendResponse);
+  // 批量删除友链
+  rpc DeleteFriend(DeleteFriendRequest) returns (DeleteFriendResponse);
+
+  // ==================== 说说管理 ====================
+
+  // 分页查询说说列表
+  rpc ListTalks(ListTalksRequest) returns (ListTalksResponse);
+  // 查询说说详情
+  rpc GetTalk(GetTalkRequest) returns (GetTalkResponse);
+  // 创建说说
+  rpc CreateTalk(CreateTalkRequest) returns (CreateTalkResponse);
+  // 更新说说
+  rpc UpdateTalk(UpdateTalkRequest) returns (UpdateTalkResponse);
+  // 批量删除说说
+  rpc DeleteTalk(DeleteTalkRequest) returns (DeleteTalkResponse);
+  // 点赞说说
+  rpc LikeTalk(LikeTalkRequest) returns (LikeTalkResponse);
+  // 查询用户点赞的说说
+  rpc GetUserLikeTalk(GetUserLikeTalkRequest) returns (GetUserLikeTalkResponse);
+}

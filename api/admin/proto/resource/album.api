@@ -1,0 +1,81 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 相册管理 ====================
+type (
+	AlbumVO {
+		Id         int64  `json:"id,optional"`
+		AlbumName  string `json:"album_name"`
+		AlbumDesc  string `json:"album_desc"`
+		AlbumCover string `json:"album_cover"`
+		IsDelete   int64  `json:"is_delete"`
+		Status     int64  `json:"status"`
+		CreatedAt  int64  `json:"created_at"`
+		UpdatedAt  int64  `json:"updated_at"`
+		PhotoCount int64  `json:"photo_count"`
+	}
+	CreateAlbumReq {
+		AlbumName  string `json:"album_name"`
+		AlbumDesc  string `json:"album_desc"`
+		AlbumCover string `json:"album_cover"`
+		Status     int64  `json:"status"`
+	}
+	UpdateAlbumReq {
+		Id         int64  `json:"id"`
+		AlbumName  string `json:"album_name"`
+		AlbumDesc  string `json:"album_desc"`
+		AlbumCover string `json:"album_cover"`
+		IsDelete   int64  `json:"is_delete"`
+		Status     int64  `json:"status"`
+	}
+	QueryAlbumListReq {
+		PageQuery
+		AlbumName *string `json:"album_name,optional"`
+		IsDelete  *int64  `json:"is_delete,optional"`
+	}
+	GetAlbumReq {
+		Id int64 `form:"id"`
+	}
+	DeleteAlbumReq {
+		Ids []int64 `json:"ids"`
+	}
+	UpdateAlbumDeleteReq {
+		Ids      []int64 `json:"ids"`
+		IsDelete int64   `json:"is_delete"`
+	}
+)
+
+@server (
+	tags:       "相册管理"
+	prefix:     /admin-api/v1
+	group:      resource/album
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取相册列表"
+	@handler QueryAlbumList
+	post /album/query_album_list (QueryAlbumListReq) returns (PageResult)
+
+	@doc "获取相册详情"
+	@handler GetAlbum
+	get /album/get_album (GetAlbumReq) returns (AlbumVO)
+
+	@doc "创建相册"
+	@handler CreateAlbum
+	post /album/create_album (CreateAlbumReq) returns (AlbumVO)
+
+	@doc "更新相册"
+	@handler UpdateAlbum
+	put /album/update_album (UpdateAlbumReq) returns (AlbumVO)
+
+	@doc "批量删除相册"
+	@handler DeleteAlbum
+	delete /album/delete_album (DeleteAlbumReq) returns (BatchResp)
+
+	@doc "批量更新相册删除状态"
+	@handler UpdateAlbumDelete
+	put /album/update_album_delete (UpdateAlbumDeleteReq) returns (BatchResp)
+}
+

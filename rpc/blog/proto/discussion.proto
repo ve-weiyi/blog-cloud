@@ -1,0 +1,360 @@
+syntax = "proto3";
+
+package discussionrpc;
+
+option go_package = "./discussionrpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段
+}
+
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ============================================
+// 核心数据模型
+// ============================================
+
+// 聊天记录
+message Chat {
+  int64 id = 1;                    // 主键
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string ip_address = 4;           // IP地址
+  string ip_source = 5;            // IP归属地
+  string nickname = 6;             // 昵称
+  string avatar = 7;               // 头像
+  string type = 8;                 // 类型
+  string content = 9;              // 聊天内容
+  int64 status = 10;               // 状态
+  int64 created_at = 11;           // 创建时间（时间戳，毫秒）
+  int64 updated_at = 12;           // 更新时间（时间戳，毫秒）
+}
+
+// 留言
+message Message {
+  int64 id = 1;                    // 主键ID
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string message_content = 4;      // 留言内容
+  int64 status = 5;                // 状态
+  int64 created_at = 6;            // 发布时间（时间戳，毫秒）
+  int64 updated_at = 7;            // 更新时间（时间戳，毫秒）
+}
+
+// 评论
+message Comment {
+  int64 id = 1;                    // 主键
+  string user_id = 2;              // 评论用户ID
+  string device_id = 3;          // 设备ID
+  int64 topic_id = 4;              // 主题ID
+  int64 parent_id = 5;             // 父评论ID
+  int64 reply_id = 6;              // 回复评论ID
+  string reply_user_id = 7;        // 回复用户ID
+  string comment_content = 8;      // 评论内容
+  int64 type = 9;                  // 评论类型
+  int64 status = 10;               // 状态
+  int64 created_at = 11;           // 评论时间（时间戳，毫秒）
+  int64 updated_at = 12;           // 更新时间（时间戳，毫秒）
+  int64 like_count = 13;           // 点赞数
+}
+
+// ============================================
+// 聊天记录管理
+// ============================================
+
+message ListChatsRequest {
+  int64 after = 1;                 // 起始时间
+  int64 before = 2;                // 截止时间
+  int64 limit = 3;                 // 数量限制
+  optional string user_id = 4;     // 用户ID
+  optional string type = 5;        // 类型
+  optional string content = 6;     // 聊天内容
+  optional int64 status = 7;       // 状态
+}
+
+message ListChatsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Chat list = 2;          // 聊天记录列表
+}
+
+message GetChatRequest {
+  int64 id = 1;                    // 主键
+}
+
+message GetChatResponse {
+  Chat chat = 1;                   // 聊天记录
+}
+
+message CreateChatRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string ip_address = 3;           // IP地址
+  string ip_source = 4;            // IP归属地
+  string nickname = 5;             // 昵称
+  string avatar = 6;               // 头像
+  string type = 7;                 // 类型
+  string content = 8;              // 聊天内容
+  int64 status = 9;                // 状态
+}
+
+message CreateChatResponse {
+  int64 id = 1;                    // 主键
+}
+
+message UpdateChatRequest {
+  int64 id = 1;                    // 主键
+  string nickname = 6;             // 昵称
+  string avatar = 7;               // 头像
+  string type = 8;                 // 类型
+  string content = 9;              // 聊天内容
+  int64 status = 10;               // 状态
+}
+
+message UpdateChatResponse {
+  bool success = 1;
+}
+
+message DeleteChatRequest {
+  repeated int64 ids = 1;          // ID列表
+}
+
+message DeleteChatResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 留言管理
+// ============================================
+
+message ListMessagesRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID
+  optional int64 status = 3;       // 状态
+}
+
+message ListMessagesResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Message list = 2;       // 留言列表
+}
+
+message GetMessageRequest {
+  int64 id = 1;                    // 主键ID
+}
+
+message GetMessageResponse {
+  Message message = 1;             // 留言
+}
+
+message CreateMessageRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string message_content = 3;      // 留言内容
+  int64 status = 4;                // 状态
+}
+
+message CreateMessageResponse {
+  int64 id = 1;                    // 主键ID
+}
+
+message UpdateMessageRequest {
+  int64 id = 1;                    // 主键ID
+  string message_content = 4;      // 留言内容
+  int64 status = 5;                // 状态
+}
+
+message UpdateMessageResponse {
+  bool success = 1;
+}
+
+message DeleteMessageRequest {
+  repeated int64 ids = 1;          // ID列表
+}
+
+message DeleteMessageResponse {
+  int64 success_count = 1;
+}
+
+message BatchUpdateMessageStatusRequest {
+  repeated int64 ids = 1;          // 主键列表
+  int64 status = 2;                // 状态
+}
+
+message BatchUpdateMessageStatusResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 评论管理
+// ============================================
+
+message ListCommentsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID
+  optional int64 status = 3;       // 状态
+  optional int64 type = 4;         // 评论类型
+}
+
+message ListCommentsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Comment list = 2;       // 评论列表
+}
+
+message ListCommentRepliesRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional int64 topic_id = 2;     // 主题ID
+  optional int64 parent_id = 3;    // 父评论ID
+  optional int64 reply_id = 4;     // 回复评论ID
+  optional int64 type = 5;         // 评论类型
+}
+
+message ListCommentRepliesResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated Comment list = 2;       // 评论回复列表
+}
+
+message GetCommentRequest {
+  int64 id = 1;                    // 主键
+}
+
+message GetCommentResponse {
+  Comment comment = 1;             // 评论
+}
+
+message CreateCommentRequest {
+  string user_id = 1;              // 评论用户ID
+  string device_id = 2;          // 设备ID
+  int64 topic_id = 3;              // 主题ID
+  int64 parent_id = 4;             // 父评论ID
+  int64 reply_id = 5;              // 回复评论ID
+  string reply_user_id = 6;        // 回复用户ID
+  string comment_content = 7;      // 评论内容
+  int64 type = 8;                  // 评论类型
+  int64 status = 9;                // 状态
+}
+
+message CreateCommentResponse {
+  int64 id = 1;                    // 主键
+}
+
+message UpdateCommentRequest {
+  int64 id = 1;                    // 主键
+  int64 parent_id = 5;             // 父评论ID
+  int64 reply_id = 6;              // 回复评论ID
+  string reply_user_id = 7;        // 回复用户ID
+  string comment_content = 8;      // 评论内容
+  int64 type = 9;                  // 评论类型
+  int64 status = 10;               // 状态
+}
+
+message UpdateCommentResponse {
+  bool success = 1;
+}
+
+message DeleteCommentRequest {
+  repeated int64 ids = 1;          // ID列表
+}
+
+message DeleteCommentResponse {
+  int64 success_count = 1;
+}
+
+message BatchUpdateCommentStatusRequest {
+  repeated int64 ids = 1;          // 主键列表
+  int64 status = 2;                // 状态
+}
+
+message BatchUpdateCommentStatusResponse {
+  int64 success_count = 1;
+}
+
+message GetCommentReplyCountRequest {
+  repeated int64 topic_ids = 1;    // 主题ID列表
+}
+
+message GetCommentReplyCountResponse {
+  map<int64, int64> topic_comment_counts = 1; // 主题评论数量映射
+}
+
+message LikeCommentRequest {
+  int64 id = 1;                    // 评论ID
+}
+
+message LikeCommentResponse {
+  bool success = 1;
+}
+
+message GetUserLikeCommentRequest {
+  string user_id = 1;              // 用户ID
+}
+
+message GetUserLikeCommentResponse {
+  repeated int64 like_comment_ids = 1; // 点赞评论ID列表
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service DiscussionService {
+  // ==================== 聊天记录 ====================
+
+  // 查询聊天记录列表
+  rpc ListChats(ListChatsRequest) returns (ListChatsResponse);
+  // 查询聊天记录
+  rpc GetChat(GetChatRequest) returns (GetChatResponse);
+  // 创建聊天记录
+  rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
+  // 更新聊天记录
+  rpc UpdateChat(UpdateChatRequest) returns (UpdateChatResponse);
+  // 批量删除聊天记录
+  rpc DeleteChat(DeleteChatRequest) returns (DeleteChatResponse);
+
+  // ==================== 留言 ====================
+
+  // 查询留言列表
+  rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse);
+  // 查询留言
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
+  // 创建留言
+  rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse);
+  // 更新留言
+  rpc UpdateMessage(UpdateMessageRequest) returns (UpdateMessageResponse);
+  // 批量删除留言
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+  // 批量更新留言状态
+  rpc BatchUpdateMessageStatus(BatchUpdateMessageStatusRequest) returns (BatchUpdateMessageStatusResponse);
+
+  // ==================== 评论 ====================
+
+  // 查询评论列表
+  rpc ListComments(ListCommentsRequest) returns (ListCommentsResponse);
+  // 查询评论回复列表
+  rpc ListCommentReplies(ListCommentRepliesRequest) returns (ListCommentRepliesResponse);
+  // 查询评论
+  rpc GetComment(GetCommentRequest) returns (GetCommentResponse);
+  // 创建评论
+  rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse);
+  // 更新评论
+  rpc UpdateComment(UpdateCommentRequest) returns (UpdateCommentResponse);
+  // 批量删除评论
+  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
+  // 批量更新评论状态
+  rpc BatchUpdateCommentStatus(BatchUpdateCommentStatusRequest) returns (BatchUpdateCommentStatusResponse);
+  // 查询评论回复数量
+  rpc GetCommentReplyCount(GetCommentReplyCountRequest) returns (GetCommentReplyCountResponse);
+  // 点赞评论
+  rpc LikeComment(LikeCommentRequest) returns (LikeCommentResponse);
+  // 查询用户点赞的评论
+  rpc GetUserLikeComment(GetUserLikeCommentRequest) returns (GetUserLikeCommentResponse);
+
+}

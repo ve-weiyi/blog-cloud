@@ -1,0 +1,132 @@
+syntax = "v1"
+
+import "../base.api"
+
+type (
+	// 获取当前用户信息请求
+	GetUserProfileReq  {}
+	// 获取当前用户信息响应
+	GetUserProfileResp {
+		UserId     string                `json:"user_id"` // 用户ID（UUID）
+		Username   string                `json:"username"` // 用户名
+		Nickname   string                `json:"nickname"` // 昵称
+		Avatar     string                `json:"avatar"` // 头像URL
+		Email      string                `json:"email"` // 邮箱
+		Mobile     string                `json:"mobile"` // 手机号
+		Status     int64                 `json:"status"` // 账号状态
+		Plan       string                `json:"plan"` // 会员计划
+		Balance    float64               `json:"balance"` // 余额
+		Coin       int64                 `json:"coin"` // 账户积分
+		CreatedAt  int64                 `json:"created_at"` // 注册时间
+		ThirdParty []*UserThirdPartyInfo `json:"third_party"` // 第三方绑定
+		UserInfoExt
+	}
+	// 第三方平台绑定信息
+	UserThirdPartyInfo {
+		Platform  string `json:"platform"` // 平台
+		OpenId    string `json:"open_id"` // 平台用户id
+		Nickname  string `json:"nickname"` // 昵称
+		Avatar    string `json:"avatar"` // 头像
+		CreatedAt int64  `json:"created_at"` // 创建时间
+	}
+	// 更新用户信息请求
+	UpdateUserProfileReq {
+		Nickname string `json:"nickname,optional" validate:"max=100"` // 昵称
+		Avatar   string `json:"avatar,optional" validate:"url"` // 头像URL
+		UserInfoExt
+	}
+	// 更新用户信息响应
+	UpdateUserProfileResp  {}
+	// 绑定邮箱请求
+	BindUserEmailReq {
+		Email      string `json:"email"` // 邮箱
+		VerifyCode string `json:"verify_code"` // 验证码
+	}
+	// 绑定手机号请求
+	BindUserPhoneReq {
+		Mobile     string `json:"mobile"` // 手机号
+		VerifyCode string `json:"verify_code"` // 验证码
+	}
+	// 绑定第三方平台请求
+	BindUserThirdPartyReq {
+		Platform string `json:"platform"` // 平台
+		Code     string `json:"code"` // 授权码
+		State    string `json:"state,optional"` // 状态
+	}
+	// 解绑第三方平台请求
+	UnbindUserThirdPartyReq {
+		Platform string `json:"platform"` // 平台
+	}
+	// 停用账号请求（进入冷静期）
+	DeactivateAccountReq {
+		Password string `json:"password"` // 确认密码
+		Reason   string `json:"reason"` // 停用原因
+	}
+	DeactivateAccountResp {
+		CoolingPeriodDays  int64 `json:"cooling_period_days"` // 冷静期天数
+		CanReactivateUntil int64 `json:"can_reactivate_until"` // 可恢复截止时间（时间戳，毫秒）
+	}
+	// 恢复账号请求（冷静期内）
+	ReactivateAccountReq {
+		Email            string `json:"email,optional"` // 邮箱
+		Mobile           string `json:"mobile,optional"` // 手机号
+		VerificationCode string `json:"verification_code"` // 验证码（可选）
+	}
+	ReactivateAccountResp {
+		Success bool `json:"success"` // 是否恢复成功
+	}
+	// 获取用户点赞集合请求
+	GetUserLikeReq  {}
+	// 获取用户点赞集合响应
+	GetUserLikeResp {
+		ArticleLikeSet []int64 `json:"article_like_set"` // 文章点赞集合
+		CommentLikeSet []int64 `json:"comment_like_set"` // 评论点赞集合
+		TalkLikeSet    []int64 `json:"talk_like_set"` // 说说点赞集合
+	}
+)
+
+@server (
+	tags:       "个人中心"
+	prefix:     /api/v1
+	group:      account/me
+	authType:   apiKey
+	middleware: UserAuth // 用户认证中间件
+)
+service app-api {
+	@doc "获取当前用户信息"
+	@handler GetUserProfile
+	get /user/me/get_user_profile (GetUserProfileReq) returns (GetUserProfileResp)
+
+	@doc "更新当前用户信息"
+	@handler UpdateUserProfile
+	put /user/me/update_user_profile (UpdateUserProfileReq) returns (UpdateUserProfileResp)
+
+	@doc "绑定邮箱"
+	@handler BindUserEmail
+	post /user/me/bind_user_email (BindUserEmailReq) returns (EmptyResp)
+
+	@doc "绑定手机号"
+	@handler BindUserPhone
+	post /user/me/bind_user_phone (BindUserPhoneReq) returns (EmptyResp)
+
+	@doc "绑定第三方平台账号"
+	@handler BindUserThirdParty
+	post /user/me/bind_user_third_party (BindUserThirdPartyReq) returns (EmptyResp)
+
+	@doc "解绑第三方平台账号"
+	@handler UnbindUserThirdParty
+	post /user/me/unbind_user_third_party (UnbindUserThirdPartyReq) returns (EmptyResp)
+
+	@doc "获取用户点赞集合"
+	@handler GetUserLike
+	get /user/me/get_user_like (GetUserLikeReq) returns (GetUserLikeResp)
+
+	@doc "停用账号（进入冷静期）"
+	@handler DeactivateAccount
+	post /user/me/deactivate_account (DeactivateAccountReq) returns (DeactivateAccountResp)
+
+	@doc "恢复账号（冷静期内）"
+	@handler ReactivateAccount
+	post /user/me/reactivate_account (ReactivateAccountReq) returns (ReactivateAccountResp)
+}
+

@@ -1,0 +1,316 @@
+syntax = "proto3";
+
+// proto 包名
+package syslogrpc;
+
+// 生成 golang 代码后的包名
+option go_package = "./syslogrpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+// 分页请求参数
+message PageQuery {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  repeated string sorts = 3;       // 排序字段（格式：字段名+空格+asc/desc，如 "created_at desc"）
+}
+
+// 分页响应结果
+message PageResult {
+  int64 page = 1;                  // 当前页码
+  int64 page_size = 2;             // 每页数量
+  int64 total = 3;                 // 总数
+}
+
+// ============================================
+// 核心数据模型
+// ============================================
+
+// 用户登录日志（t_user_login_log）
+message LoginLog {
+  int64 id = 1;                    // 日志ID
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string login_type = 4;           // 登录类型：password-密码登录 sms-短信登录
+  int64 status = 5;                // 登录状态：0-失败 1-成功
+  string fail_reason = 6;          // 失败原因
+  int64 logout_at = 7;             // 登出时间（时间戳，毫秒）
+  int64 created_at = 8;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 9;            // 更新时间（时间戳，毫秒）
+}
+
+// 操作日志（t_operation_log）
+message OperationLog {
+  int64 id = 1;                    // 主键ID
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string module = 4;               // 操作模块
+  string description = 5;          // 操作描述
+  string request_uri = 6;          // 请求地址
+  string request_method = 7;       // 请求方式
+  string request_data = 8;         // 请求参数
+  string response_data = 9;        // 返回数据
+  int64 response_status = 10;      // 响应状态码
+  string cost = 11;                // 耗时（ms）
+  int64 created_at = 12;           // 创建时间（时间戳，毫秒）
+  int64 updated_at = 13;           // 更新时间（时间戳，毫秒）
+}
+
+// 文件上传日志（t_upload_log）
+message UploadLog {
+  int64 id = 1;                    // ID
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string file_base = 4;            // 文件路径
+  string file_name = 5;            // 文件名称
+  string file_type = 6;            // 文件类型
+  int64 file_size = 7;             // 文件大小
+  string file_url = 8;             // 上传路径
+  int64 created_at = 9;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 10;           // 更新时间（时间戳，毫秒）
+}
+
+// 访问日志（t_visit_log）
+message VisitLog {
+  int64 id = 1;                    // 主键ID
+  string user_id = 2;              // 用户ID
+  string device_id = 3;          // 设备ID
+  string page_name = 4;            // 访问页面
+  int64 created_at = 5;            // 创建时间（时间戳，毫秒）
+  int64 updated_at = 6;            // 更新时间（时间戳，毫秒）
+}
+
+// ============================================
+// 用户登录日志相关
+// ============================================
+
+// 分页查询用户登录日志请求
+message ListLoginLogsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID筛选
+  optional int64 status = 3;       // 登录状态筛选
+  optional string start_date = 4;  // 开始日期
+  optional string end_date = 5;    // 结束日期
+}
+
+// 分页查询用户登录日志响应
+message ListLoginLogsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated LoginLog list = 2;  // 用户登录日志列表
+}
+
+// 创建用户登录日志请求
+message CreateLoginLogRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string login_type = 3;           // 登录类型
+  int64 status = 4;                // 登录状态
+  optional string fail_reason = 5; // 失败原因
+}
+
+// 创建用户登录日志响应
+message CreateLoginLogResponse {
+  int64 log_id = 1;                // 日志ID
+}
+
+// 更新登录日志（登出时间）
+message UpdateLoginLogRequest {
+  int64 log_id = 1;                // 日志ID
+  int64 logout_at = 2;             // 登出时间（时间戳，毫秒）
+}
+
+// 更新登录日志响应
+message UpdateLoginLogResponse {
+  bool success = 1;                // 是否成功
+}
+
+// 批量删除用户登录日志请求
+message DeleteLoginLogRequest {
+  repeated int64 ids = 1;          // 日志ID列表
+}
+
+// 批量删除用户登录日志响应
+message DeleteLoginLogResponse {
+  int64 success_count = 1;         // 成功删除数量
+}
+
+// ============================================
+// 操作日志相关
+// ============================================
+
+// 分页查询操作日志请求
+message ListOperationLogsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID筛选
+  optional string module = 3;      // 操作模块筛选
+  optional string start_date = 4;  // 开始日期
+  optional string end_date = 5;    // 结束日期
+}
+
+// 分页查询操作日志响应
+message ListOperationLogsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated OperationLog list = 2;  // 操作日志列表
+}
+
+// 创建操作日志请求
+message CreateOperationLogRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string module = 3;               // 操作模块
+  string description = 4;          // 操作描述
+  string request_uri = 5;          // 请求地址
+  string request_method = 6;       // 请求方式
+  string request_data = 7; // 请求参数
+  string response_data = 8; // 返回数据
+  int64 response_status = 9;       // 响应状态码
+  string cost = 10;       // 耗时（ms）
+}
+
+// 创建操作日志响应
+message CreateOperationLogResponse {
+  int64 log_id = 1;                // 日志ID
+}
+
+// 批量删除操作日志请求
+message DeleteOperationLogRequest {
+  repeated int64 ids = 1;          // 日志ID列表
+}
+
+// 批量删除操作日志响应
+message DeleteOperationLogResponse {
+  int64 success_count = 1;         // 成功删除数量
+}
+
+// ============================================
+// 文件上传日志相关
+// ============================================
+
+// 分页查询文件上传日志请求
+message ListUploadLogsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID筛选
+  optional string file_type = 3;   // 文件类型筛选
+  optional string start_date = 4;  // 开始日期
+  optional string end_date = 5;    // 结束日期
+}
+
+// 分页查询文件上传日志响应
+message ListUploadLogsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated UploadLog list = 2;     // 文件上传日志列表
+}
+
+// 创建文件上传日志请求
+message CreateUploadLogRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string file_base = 3;            // 文件路径
+  string file_name = 4;            // 文件名称
+  string file_type = 5;            // 文件类型
+  int64 file_size = 6;             // 文件大小
+  string file_url = 7;             // 上传路径
+}
+
+// 创建文件上传日志响应
+message CreateUploadLogResponse {
+  int64 log_id = 1;                // 日志ID
+}
+
+// 批量删除文件上传日志请求
+message DeleteUploadLogRequest {
+  repeated int64 ids = 1;          // 日志ID列表
+}
+
+// 批量删除文件上传日志响应
+message DeleteUploadLogResponse {
+  int64 success_count = 1;         // 成功删除数量
+}
+
+// ============================================
+// 访问日志相关
+// ============================================
+
+// 分页查询访问日志请求
+message ListVisitLogsRequest {
+  PageQuery page_query = 1;        // 分页参数
+  optional string user_id = 2;     // 用户ID筛选
+  optional string device_id = 3; // 设备ID筛选
+  optional string page_name = 4;   // 访问页面筛选
+  optional string start_date = 5;  // 开始日期
+  optional string end_date = 6;    // 结束日期
+}
+
+// 分页查询访问日志响应
+message ListVisitLogsResponse {
+  PageResult page_result = 1;      // 分页结果
+  repeated VisitLog list = 2;      // 访问日志列表
+}
+
+// 创建访问日志请求
+message CreateVisitLogRequest {
+  string user_id = 1;              // 用户ID
+  string device_id = 2;          // 设备ID
+  string page_name = 3;            // 访问页面
+}
+
+// 创建访问日志响应
+message CreateVisitLogResponse {
+  int64 log_id = 1;                // 日志ID
+}
+
+// 批量删除访问日志请求
+message DeleteVisitLogRequest {
+  repeated int64 ids = 1;          // 日志ID列表
+}
+
+// 批量删除访问日志响应
+message DeleteVisitLogResponse {
+  int64 success_count = 1;         // 成功删除数量
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service SyslogService {
+  // ==================== 用户登录日志 ====================
+
+  // 分页查询用户登录日志
+  rpc ListLoginLogs(ListLoginLogsRequest) returns (ListLoginLogsResponse);
+  // 创建用户登录日志
+  rpc CreateLoginLog(CreateLoginLogRequest) returns (CreateLoginLogResponse);
+  // 更新登出时间
+  rpc UpdateLoginLog(UpdateLoginLogRequest) returns (UpdateLoginLogResponse);
+  // 批量删除用户登录日志
+  rpc DeleteLoginLog(DeleteLoginLogRequest) returns (DeleteLoginLogResponse);
+
+  // ==================== 操作日志 ====================
+
+  // 分页查询操作日志
+  rpc ListOperationLogs(ListOperationLogsRequest) returns (ListOperationLogsResponse);
+  // 创建操作日志
+  rpc CreateOperationLog(CreateOperationLogRequest) returns (CreateOperationLogResponse);
+  // 批量删除操作日志
+  rpc DeleteOperationLog(DeleteOperationLogRequest) returns (DeleteOperationLogResponse);
+
+  // ==================== 文件上传日志 ====================
+
+  // 分页查询文件上传日志
+  rpc ListUploadLogs(ListUploadLogsRequest) returns (ListUploadLogsResponse);
+  // 创建文件上传日志
+  rpc CreateUploadLog(CreateUploadLogRequest) returns (CreateUploadLogResponse);
+  // 批量删除文件上传日志
+  rpc DeleteUploadLog(DeleteUploadLogRequest) returns (DeleteUploadLogResponse);
+
+  // ==================== 访问日志 ====================
+
+  // 分页查询访问日志
+  rpc ListVisitLogs(ListVisitLogsRequest) returns (ListVisitLogsResponse);
+  // 创建访问日志
+  rpc CreateVisitLog(CreateVisitLogRequest) returns (CreateVisitLogResponse);
+  // 批量删除访问日志
+  rpc DeleteVisitLog(DeleteVisitLogRequest) returns (DeleteVisitLogResponse);
+}

@@ -1,0 +1,393 @@
+syntax = "proto3";
+
+package notificationrpc;
+
+option go_package = "./notificationrpc";
+
+// ============================================
+// 通用消息定义
+// ============================================
+
+message PageQuery {
+  int64 page = 1;
+  int64 page_size = 2;
+  repeated string sorts = 3;
+}
+
+message PageResult {
+  int64 page = 1;
+  int64 page_size = 2;
+  int64 total = 3;
+}
+
+// ============================================
+// 通知模板
+// ============================================
+message NotifyTemplate {
+  int64 id = 1;
+  string code = 2;
+  string channel = 3;
+  string scene = 4;
+  string title = 5;
+  string content = 6;
+  int64 enabled = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
+}
+
+// ============================================
+// 统一通知消息（内容）
+// ============================================
+message NotifyMessage {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string category = 4;
+  string level = 5;
+  string target_type = 6;
+  string target_ids = 7;
+  string status = 8;
+  int64 published_at = 9;
+  string published_by = 10;
+  int64 created_at = 11;
+  int64 updated_at = 12;
+}
+
+// ============================================
+// 统一投递记录（channel: inbox | sms | email）
+// ============================================
+message NotifyRecord {
+  int64 id = 1;
+  int64 message_id = 2;       // 关联消息内容ID
+  string channel = 3;         // inbox | sms | email
+  string recipient = 4;       // user_id | phone | email
+  string template_code = 5;   // 模板编码
+  string content = 6;         // 实际发送内容
+  string status = 7;          // inbox: unread|read / sms/email: pending|sent|failed
+  string biz_id = 8;          // 业务幂等键
+  string error_msg = 9;       // 失败原因
+  int64 read_at = 10;         // 阅读时间（inbox）
+  int64 sent_at = 11;         // 发送时间（sms/email）
+  int64 created_at = 12;
+  // 来自关联消息的字段
+  string title = 13;
+  string category = 14;
+  string level = 15;
+}
+
+// ============================================
+// NotifyTemplate 请求/响应
+// ============================================
+
+message ListNotifyTemplatesRequest {
+  PageQuery page_query = 1;
+  optional string channel = 2;
+}
+
+message ListNotifyTemplatesResponse {
+  PageResult page_result = 1;
+  repeated NotifyTemplate templates = 2;
+}
+
+message GetNotifyTemplateRequest {
+  int64 id = 1;
+}
+
+message GetNotifyTemplateResponse {
+  NotifyTemplate template = 1;
+}
+
+message CreateNotifyTemplateRequest {
+  string code = 1;
+  string channel = 2;
+  string scene = 3;
+  string title = 4;
+  string content = 5;
+  int64 enabled = 6;
+}
+
+message CreateNotifyTemplateResponse {
+  int64 id = 1;
+}
+
+message UpdateNotifyTemplateRequest {
+  int64 id = 1;
+  string code = 2;
+  string channel = 3;
+  string scene = 4;
+  string title = 5;
+  string content = 6;
+  int64 enabled = 7;
+}
+
+message UpdateNotifyTemplateResponse {
+  bool success = 1;
+}
+
+message DeleteNotifyTemplateRequest {
+  int64 id = 1;
+}
+
+message DeleteNotifyTemplateResponse {
+  bool success = 1;
+}
+
+// ============================================
+// NotifyMessage 请求/响应
+// ============================================
+
+message ListNotifyMessagesRequest {
+  PageQuery page_query = 1;
+  optional string category = 2;
+  optional string level = 3;
+  optional string status = 4;
+  optional string target_type = 5;
+}
+
+message ListNotifyMessagesResponse {
+  PageResult page_result = 1;
+  repeated NotifyMessage messages = 2;
+}
+
+message GetNotifyMessageRequest {
+  int64 id = 1;
+}
+
+message GetNotifyMessageResponse {
+  NotifyMessage message = 1;
+}
+
+message CreateNotifyMessageRequest {
+  string title = 1;
+  string content = 2;
+  string category = 3;
+  string level = 4;
+  string target_type = 5;
+  string target_ids = 6;
+}
+
+message CreateNotifyMessageResponse {
+  int64 id = 1;
+}
+
+message UpdateNotifyMessageRequest {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string category = 4;
+  string level = 5;
+  string target_type = 6;
+  string target_ids = 7;
+}
+
+message UpdateNotifyMessageResponse {
+  bool success = 1;
+}
+
+message DeleteNotifyMessageRequest {
+  repeated int64 ids = 1;
+}
+
+message DeleteNotifyMessageResponse {
+  int64 success_count = 1;
+}
+
+message PublishNotifyMessageRequest {
+  int64 id = 1;
+}
+
+message PublishNotifyMessageResponse {
+  bool success = 1;
+}
+
+message RevokeNotifyMessageRequest {
+  int64 id = 1;
+}
+
+message RevokeNotifyMessageResponse {
+  bool success = 1;
+}
+
+// ============================================
+// NotifyRecord 请求/响应
+// ============================================
+
+// 管理端：分页查询投递记录
+message ListNotifyRecordsRequest {
+  PageQuery page_query = 1;
+  optional string channel = 2;
+  optional string status = 3;
+  optional string recipient = 4;
+}
+
+message ListNotifyRecordsResponse {
+  PageResult page_result = 1;
+  repeated NotifyRecord records = 2;
+}
+
+// 管理端：批量删除投递记录
+message DeleteNotifyRecordsRequest {
+  repeated int64 ids = 1;
+}
+
+message DeleteNotifyRecordsResponse {
+  int64 success_count = 1;
+}
+
+// 用户端：查询 inbox 投递列表
+message ListUserInboxRecordsRequest {
+  PageQuery page_query = 1;
+  string user_id = 2;
+  optional int64 only_unread = 3;
+  optional string title = 4;
+}
+
+message ListUserInboxRecordsResponse {
+  PageResult page_result = 1;
+  repeated NotifyRecord records = 2;
+  int64 unread_total = 3;
+}
+
+// 用户端：标记单条 inbox 已读
+message MarkRecordReadRequest {
+  int64 id = 1;
+}
+
+message MarkRecordReadResponse {
+  bool success = 1;
+}
+
+// 用户端：批量标记 inbox 已读
+message BatchMarkRecordsReadRequest {
+  repeated int64 ids = 1;
+}
+
+message BatchMarkRecordsReadResponse {
+  int64 success_count = 1;
+}
+
+// 用户端：全部标记 inbox 已读
+message MarkAllRecordsReadRequest {
+  string user_id = 1;
+}
+
+message MarkAllRecordsReadResponse {
+  int64 success_count = 1;
+}
+
+// ============================================
+// 验证码
+// ============================================
+
+message SendPhoneCodeRequest {
+  string phone = 1;
+  string scene = 2;
+  string biz_id = 3;
+  int64 expire_seconds = 4;
+}
+
+message SendPhoneCodeResponse {
+  int64 id = 1;
+  string code = 2;
+}
+
+message VerifyPhoneCodeRequest {
+  string phone = 1;
+  string scene = 2;
+  string code = 3;
+  string biz_id = 4;
+}
+
+message VerifyPhoneCodeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message SendEmailCodeRequest {
+  string email = 1;
+  string scene = 2;
+  string biz_id = 3;
+  int64 expire_seconds = 4;
+}
+
+message SendEmailCodeResponse {
+  int64 id = 1;
+  string code = 2;
+}
+
+message VerifyEmailCodeRequest {
+  string email = 1;
+  string scene = 2;
+  string code = 3;
+  string biz_id = 4;
+}
+
+message VerifyEmailCodeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ============================================
+// 服务定义
+// ============================================
+
+service NotificationService {
+  // ==================== 通知模板 ====================
+
+  // 分页查询通知模板列表
+  rpc ListNotifyTemplates(ListNotifyTemplatesRequest) returns (ListNotifyTemplatesResponse);
+  // 查询通知模板详情
+  rpc GetNotifyTemplate(GetNotifyTemplateRequest) returns (GetNotifyTemplateResponse);
+  // 创建通知模板
+  rpc CreateNotifyTemplate(CreateNotifyTemplateRequest) returns (CreateNotifyTemplateResponse);
+  // 更新通知模板
+  rpc UpdateNotifyTemplate(UpdateNotifyTemplateRequest) returns (UpdateNotifyTemplateResponse);
+  // 删除通知模板
+  rpc DeleteNotifyTemplate(DeleteNotifyTemplateRequest) returns (DeleteNotifyTemplateResponse);
+
+  // ==================== 通知消息（内容管理） ====================
+
+  // 分页查询通知消息列表
+  rpc ListNotifyMessages(ListNotifyMessagesRequest) returns (ListNotifyMessagesResponse);
+  // 查询通知消息详情
+  rpc GetNotifyMessage(GetNotifyMessageRequest) returns (GetNotifyMessageResponse);
+  // 创建通知消息
+  rpc CreateNotifyMessage(CreateNotifyMessageRequest) returns (CreateNotifyMessageResponse);
+  // 更新通知消息
+  rpc UpdateNotifyMessage(UpdateNotifyMessageRequest) returns (UpdateNotifyMessageResponse);
+  // 批量删除通知消息
+  rpc DeleteNotifyMessage(DeleteNotifyMessageRequest) returns (DeleteNotifyMessageResponse);
+  // 发布通知消息
+  rpc PublishNotifyMessage(PublishNotifyMessageRequest) returns (PublishNotifyMessageResponse);
+  // 撤销通知消息
+  rpc RevokeNotifyMessage(RevokeNotifyMessageRequest) returns (RevokeNotifyMessageResponse);
+
+  // ==================== 投递记录（管理端） ====================
+
+  // 分页查询投递记录列表
+  rpc ListNotifyRecords(ListNotifyRecordsRequest) returns (ListNotifyRecordsResponse);
+  // 批量删除投递记录
+  rpc DeleteNotifyRecords(DeleteNotifyRecordsRequest) returns (DeleteNotifyRecordsResponse);
+
+  // ==================== 投递记录（用户端） ====================
+
+  // 查询用户 inbox 投递列表
+  rpc ListUserInboxRecords(ListUserInboxRecordsRequest) returns (ListUserInboxRecordsResponse);
+  // 标记单条 inbox 已读
+  rpc MarkRecordRead(MarkRecordReadRequest) returns (MarkRecordReadResponse);
+  // 批量标记 inbox 已读
+  rpc BatchMarkRecordsRead(BatchMarkRecordsReadRequest) returns (BatchMarkRecordsReadResponse);
+  // 全部标记 inbox 已读
+  rpc MarkAllRecordsRead(MarkAllRecordsReadRequest) returns (MarkAllRecordsReadResponse);
+
+  // ==================== 验证码 ====================
+
+  // 发送手机验证码
+  rpc SendPhoneCode(SendPhoneCodeRequest) returns (SendPhoneCodeResponse);
+  // 校验手机验证码
+  rpc VerifyPhoneCode(VerifyPhoneCodeRequest) returns (VerifyPhoneCodeResponse);
+  // 发送邮箱验证码
+  rpc SendEmailCode(SendEmailCodeRequest) returns (SendEmailCodeResponse);
+  // 校验邮箱验证码
+  rpc VerifyEmailCode(VerifyEmailCodeRequest) returns (VerifyEmailCodeResponse);
+}

@@ -1,0 +1,50 @@
+Name: blog-api
+Host: 0.0.0.0
+Port: 9420
+Timeout: 5000
+# 健康检查
+DevServer:
+  Enabled: true
+  Port: 6060
+  HealthPath: "/ping"
+  MetricsPath: "/metrics"
+  EnableMetrics: true
+# 日志配置
+Log:
+  Mode: file
+  Encoding: json
+  Path: runtime/blog-api/log
+# 文件上传配置
+StorageConfig:
+  provider: qiniu
+  endpoint: s3.cn-south-1.qiniucs.com
+  bucket: veweiyi
+  access_key: gyoAZPHHZrwXt4HhG7SNRaxRShJPhEKvxJJKhDUV
+  secret_key: OqbepkdXNm0pKfZMy1ziPqdYjZMCtdzRIrz1Hlhi
+  region: huanan
+  cdn_domain: https://static.veweiyi.cn
+  base_path: blog
+  is_private: false
+
+RedisConf:
+  db: 0
+  host: localhost
+  port: "6379"
+  password: redis7914
+
+# etcd模式
+# AppRpcConf:
+#   Etcd:
+#     Hosts:
+#      - "localhost:2379"
+#     Key: "blog/app.rpc"
+#     User: "root"
+#     Pass: "etcd7914"
+#   NonBlock: true
+#   Timeout: 5000
+
+# 直连模式
+AppRpcConf:
+  Endpoints:
+    - localhost:9120
+  Timeout: 5000

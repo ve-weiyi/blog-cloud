@@ -1,0 +1,48 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 操作日志 ====================
+type (
+	OperationLogVO {
+		Id             int64        `json:"id,optional"`
+		UserId         string       `json:"user_id"`
+		DeviceId       string       `json:"device_id"`
+		Module         string       `json:"module"`
+		Description    string       `json:"description"`
+		RequestUri     string       `json:"request_uri"`
+		RequestMethod  string       `json:"request_method"`
+		RequestData    string       `json:"request_data"`
+		ResponseData   string       `json:"response_data"`
+		ResponseStatus int64        `json:"response_status"`
+		Cost           string       `json:"cost"`
+		CreatedAt      int64        `json:"created_at"`
+		UpdatedAt      int64        `json:"updated_at"`
+		UserInfo       *UserInfoVO  `json:"user_info"`
+		GuestInfo      *GuestInfoVO `json:"guest_info"`
+	}
+	QueryOperationLogListReq {
+		PageQuery
+	}
+	DeleteOperationLogReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "操作日志"
+	prefix:     /admin-api/v1
+	group:      syslog/operation_log
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取操作日志列表"
+	@handler QueryOperationLogList
+	post /operation_log/query_operation_log_list (QueryOperationLogListReq) returns (PageResult)
+
+	@doc "批量删除操作日志"
+	@handler DeleteOperationLog
+	delete /operation_log/delete_operation_log (DeleteOperationLogReq) returns (BatchResp)
+}
+

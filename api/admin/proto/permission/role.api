@@ -1,0 +1,117 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ============================================
+// 角色管理
+// ============================================
+type (
+	// 角色信息VO - 后端返回视图对象
+	RoleVO {
+		Id          int64  `json:"id,optional"` // 主键ID
+		ParentId    int64  `json:"parent_id"` // 父角色ID
+		RoleKey     string `json:"role_key"` // 角色标识（唯一）
+		RoleLabel   string `json:"role_label"` // 角色名称（展示用）
+		RoleComment string `json:"role_comment"` // 角色备注说明
+		IsDefault   int64  `json:"is_default"` // 是否默认角色 0-否 1-是
+		Status      int64  `json:"status"` // 状态 0-正常 1-禁用
+		CreatedAt   int64  `json:"created_at"` // 创建时间（时间戳）
+		UpdatedAt   int64  `json:"updated_at"` // 更新时间（时间戳）
+	}
+	// 角色创建请求
+	CreateRoleReq {
+		ParentId    int64  `json:"parent_id,optional"` // 父角色ID（可选，默认顶级角色）
+		RoleKey     string `json:"role_key"` // 角色标识（必填，唯一）
+		RoleLabel   string `json:"role_label"` // 角色名称（必填）
+		RoleComment string `json:"role_comment"` // 角色备注（必填）
+		IsDefault   int64  `json:"is_default"` // 是否默认角色 0-否 1-是（必填）
+		Status      int64  `json:"status"` // 状态 0-正常 1-禁用（必填）
+	}
+	// 获取角色详情请求
+	GetRoleReq {
+		Ids []int64 `form:"ids"` // 角色ID列表
+	}
+	// 角色更新请求
+	UpdateRoleReq {
+		Id          int64  `json:"id"` // 主键ID（必填）
+		ParentId    int64  `json:"parent_id,optional"` // 父角色ID（可选）
+		RoleKey     string `json:"role_key"` // 角色标识（必填，唯一）
+		RoleLabel   string `json:"role_label"` // 角色名称（必填）
+		RoleComment string `json:"role_comment"` // 角色备注（必填）
+		IsDefault   int64  `json:"is_default"` // 是否默认角色 0-否 1-是（必填）
+		Status      int64  `json:"status"` // 状态 0-正常 1-禁用（必填）
+	}
+	// 删除角色请求
+	DeleteRoleReq {
+		Ids []int64 `json:"ids"` // 角色ID列表
+	}
+	// 获取角色权限请求
+	GetRolePermissionsReq {
+		RoleId int64 `form:"role_id"` // 角色ID
+	}
+	// 角色资源权限响应
+	RolePermissionsResp {
+		RoleId  int64   `json:"role_id"` // 角色ID
+		ApiIds  []int64 `json:"api_ids"` // 绑定的接口权限ID列表
+		MenuIds []int64 `json:"menu_ids"` // 绑定的菜单权限ID列表
+	}
+	// 更新角色接口权限请求
+	UpdateRoleApiPermissionsReq {
+		RoleId int64   `json:"role_id"` // 角色ID（必填）
+		ApiIds []int64 `json:"api_ids"` // 接口权限ID列表（必填，空数组表示清空权限）
+	}
+	// 更新角色菜单权限请求
+	UpdateRoleMenuPermissionsReq {
+		RoleId  int64   `json:"role_id"` // 角色ID（必填）
+		MenuIds []int64 `json:"menu_ids"` // 菜单权限ID列表（必填，空数组表示清空权限）
+	}
+	// 角色列表查询请求
+	QueryRoleListReq {
+		PageQuery // 继承分页查询基础结构体（包含page、page_size等）
+		RoleKey   *string `json:"role_key,optional"` // 角色标识（模糊查询）
+		RoleLabel *string `json:"role_label,optional"` // 角色名称（模糊查询）
+		Status    *int64  `json:"status,optional"` // 状态 0-正常 1-禁用（精确查询）
+	}
+)
+
+@server (
+	tags:       "角色管理"
+	prefix:     /admin-api/v1
+	group:      permission/role
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取角色列表"
+	@handler QueryRoleList
+	post /role/query_role_list (QueryRoleListReq) returns (PageResult)
+
+	@doc "获取角色详情"
+	@handler GetRole
+	get /role/get_role (GetRoleReq) returns (RoleVO)
+
+	@doc "创建角色"
+	@handler CreateRole
+	post /role/create_role (CreateRoleReq) returns (RoleVO)
+
+	@doc "更新角色信息"
+	@handler UpdateRole
+	put /role/update_role (UpdateRoleReq) returns (RoleVO)
+
+	@doc "删除角色"
+	@handler DeleteRole
+	delete /role/delete_role (DeleteRoleReq) returns (BatchResp)
+
+	@doc "查询角色权限配置"
+	@handler GetRolePermissions
+	get /role/get_role_permissions (GetRolePermissionsReq) returns (RolePermissionsResp)
+
+	@doc "更新角色菜单权限"
+	@handler UpdateRoleMenuPermissions
+	put /role/update_role_menu_permissions (UpdateRoleMenuPermissionsReq) returns (EmptyResp)
+
+	@doc "更新角色接口权限"
+	@handler UpdateRoleApiPermissions
+	put /role/update_role_api_permissions (UpdateRoleApiPermissionsReq) returns (EmptyResp)
+}
+

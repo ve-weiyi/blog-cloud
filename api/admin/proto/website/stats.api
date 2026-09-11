@@ -1,0 +1,95 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 数据统计 ====================
+type (
+	DashboardStats {
+		Date         string `json:"date"`
+		NewUsers     int64  `json:"new_users"`
+		TotalUsers   int64  `json:"total_users"`
+		ActiveUsers  int64  `json:"active_users"`
+		UvCount      int64  `json:"uv_count"`
+		PvCount      int64  `json:"pv_count"`
+		TotalUvCount int64  `json:"total_uv_count"`
+		TotalPvCount int64  `json:"total_pv_count"`
+	}
+	GetStatsDashboardResp {
+		UserCount      int64           `json:"user_count"`
+		ArticleCount   int64           `json:"article_count"`
+		MessageCount   int64           `json:"message_count"`
+		Today          *DashboardStats `json:"today"`
+		UvGrowthRate   float64         `json:"uv_growth_rate"`
+		PvGrowthRate   float64         `json:"pv_growth_rate"`
+		UserGrowthRate float64         `json:"user_growth_rate"`
+	}
+	CategoryOverviewVO {
+		Id           int64  `json:"id,optional"`
+		CategoryName string `json:"category_name"`
+		ArticleCount int64  `json:"article_count"`
+	}
+	TagOverviewVO {
+		Id           int64  `json:"id,optional"`
+		TagName      string `json:"tag_name"`
+		ArticleCount int64  `json:"article_count"`
+	}
+	ArticleViewVO {
+		Id           int64  `json:"id,optional"`
+		ArticleTitle string `json:"article_title"`
+		ViewCount    int64  `json:"view_count"`
+	}
+	ArticleStatisticsVO {
+		Date  string `json:"date"`
+		Count int64  `json:"count"`
+	}
+	GetArticleAnalyticsResp {
+		CategoryList      []*CategoryOverviewVO  `json:"category_list"`
+		TagList           []*TagOverviewVO       `json:"tag_list"`
+		ArticleViewRanks  []*ArticleViewVO       `json:"article_view_ranks"`
+		ArticleStatistics []*ArticleStatisticsVO `json:"article_statistics"`
+	}
+	GetVisitTrendReq {
+		StartDate string `json:"start_date"`
+		EndDate   string `json:"end_date,optional"`
+	}
+	GetVisitTrendResp {
+		List []*DashboardStats `json:"list"`
+	}
+	GetUserGeoStatsReq {
+		UserType int64 `json:"user_type,optional"`
+	}
+	GetUserGeoStatsResp {
+		Users    []*RegionStatVO `json:"users"`
+		Visitors []*RegionStatVO `json:"visitors"`
+	}
+	RegionStatVO {
+		Name  string `json:"name"`
+		Value int64  `json:"value"`
+	}
+)
+
+@server (
+	tags:       "数据统计"
+	prefix:     /admin-api/v1
+	group:      website/stats
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取仪表盘统计数据"
+	@handler GetStatsDashboard
+	get /stats/get_stats_dashboard (EmptyReq) returns (GetStatsDashboardResp)
+
+	@doc "获取访客数据趋势"
+	@handler GetVisitTrend
+	post /stats/get_visit_trend (GetVisitTrendReq) returns (GetVisitTrendResp)
+
+	@doc "获取文章分析数据"
+	@handler GetArticleAnalytics
+	get /stats/get_article_analytics (EmptyReq) returns (GetArticleAnalyticsResp)
+
+	@doc "获取用户地理分布"
+	@handler GetUserGeoStats
+	post /stats/get_user_geo_stats (GetUserGeoStatsReq) returns (GetUserGeoStatsResp)
+}
+

@@ -1,0 +1,65 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 页面管理 ====================
+type (
+	PageVO {
+		Id             int64    `json:"id,optional"`
+		PageName       string   `json:"page_name"`
+		PageLabel      string   `json:"page_label"`
+		PageCover      string   `json:"page_cover"`
+		IsCarousel     int64    `json:"is_carousel"`
+		CarouselCovers []string `json:"carousel_covers"`
+		CreatedAt      int64    `json:"created_at"`
+		UpdatedAt      int64    `json:"updated_at"`
+	}
+	CreatePageReq {
+		PageName       string   `json:"page_name"`
+		PageLabel      string   `json:"page_label"`
+		PageCover      string   `json:"page_cover"`
+		IsCarousel     int64    `json:"is_carousel,optional"`
+		CarouselCovers []string `json:"carousel_covers,optional"`
+	}
+	UpdatePageReq {
+		Id             int64    `json:"id"`
+		PageName       string   `json:"page_name"`
+		PageLabel      string   `json:"page_label"`
+		PageCover      string   `json:"page_cover"`
+		IsCarousel     int64    `json:"is_carousel,optional"`
+		CarouselCovers []string `json:"carousel_covers,optional"`
+	}
+	QueryPageListReq {
+		PageQuery
+		PageName *string `json:"page_name,optional"`
+	}
+	DeletePageReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "页面管理"
+	prefix:     /admin-api/v1
+	group:      website/page
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取页面列表"
+	@handler QueryPageList
+	post /page/query_page_list (QueryPageListReq) returns (PageResult)
+
+	@doc "创建页面"
+	@handler CreatePage
+	post /page/create_page (CreatePageReq) returns (PageVO)
+
+	@doc "更新页面"
+	@handler UpdatePage
+	put /page/update_page (UpdatePageReq) returns (PageVO)
+
+	@doc "删除页面"
+	@handler DeletePage
+	delete /page/delete_page (DeletePageReq) returns (BatchResp)
+}
+

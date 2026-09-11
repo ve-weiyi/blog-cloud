@@ -1,0 +1,52 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 留言管理 ====================
+type (
+	MessageVO {
+		Id             int64        `json:"id,optional"`
+		UserId         string       `json:"user_id"`
+		DeviceId       string       `json:"device_id"`
+		MessageContent string       `json:"message_content"`
+		Status         int64        `json:"status"`
+		CreatedAt      int64        `json:"created_at"`
+		UpdatedAt      int64        `json:"updated_at"`
+		UserInfo       *UserInfoVO  `json:"user_info"`
+		GuestInfo      *GuestInfoVO `json:"guest_info"`
+	}
+	QueryMessageListReq {
+		PageQuery
+		UserId *string `json:"user_id,optional"`
+		Status *int64  `json:"status,optional"`
+	}
+	UpdateMessageStatusReq {
+		Ids    []int64 `json:"ids"`
+		Status int64   `json:"status"`
+	}
+	DeleteMessageReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "留言管理"
+	prefix:     /admin-api/v1
+	group:      discussion/message
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取留言列表"
+	@handler QueryMessageList
+	post /message/query_message_list (QueryMessageListReq) returns (PageResult)
+
+	@doc "批量更新留言状态"
+	@handler UpdateMessageStatus
+	put /message/update_message_status (UpdateMessageStatusReq) returns (BatchResp)
+
+	@doc "批量删除留言"
+	@handler DeleteMessage
+	delete /message/delete_message (DeleteMessageReq) returns (BatchResp)
+}
+

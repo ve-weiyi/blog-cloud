@@ -1,0 +1,49 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 文件日志 ====================
+type (
+	UploadLogVO {
+		Id        int64        `json:"id,optional"`
+		UserId    string       `json:"user_id"`
+		DeviceId  string       `json:"device_id"`
+		FileBase  string       `json:"file_base"`
+		FileName  string       `json:"file_name"`
+		FileType  string       `json:"file_type"`
+		FileSize  int64        `json:"file_size"`
+		FileMd5   string       `json:"file_md5"`
+		FileUrl   string       `json:"file_url"`
+		CreatedAt int64        `json:"created_at"`
+		UpdatedAt int64        `json:"updated_at"`
+		UserInfo  *UserInfoVO  `json:"user_info"`
+		GuestInfo *GuestInfoVO `json:"guest_info"`
+	}
+	QueryUploadLogListReq {
+		PageQuery
+		FileBase *string `json:"file_base,optional"`
+		FileName *string `json:"file_name,optional"`
+		FileType *string `json:"file_type,optional"`
+	}
+	DeleteUploadLogReq {
+		Ids []int64 `json:"ids"`
+	}
+)
+
+@server (
+	tags:       "文件日志"
+	prefix:     /admin-api/v1
+	group:      syslog/upload_log
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取文件日志列表"
+	@handler QueryUploadLogList
+	post /upload_log/query_upload_log_list (QueryUploadLogListReq) returns (PageResult)
+
+	@doc "批量删除文件日志"
+	@handler DeleteUploadLog
+	delete /upload_log/delete_upload_log (DeleteUploadLogReq) returns (BatchResp)
+}
+

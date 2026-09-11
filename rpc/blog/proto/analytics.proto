@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package analyticsrpc;
+
+option go_package = "./analyticsrpc";
+
+// ============================================
+// 通用类型
+// ============================================
+
+message DailyStats {
+  string date = 1;
+  int64 new_users = 2;
+  int64 total_users = 3;
+  int64 active_users = 4;
+  int64 uv_count = 5;
+  int64 pv_count = 6;
+  int64 total_uv_count = 7;
+  int64 total_pv_count = 8;
+}
+
+message ArticleDailyStatistic {
+  string date = 1;
+  int64 count = 2;
+}
+
+message CategoryStat {
+  int64 id = 1;
+  string category_name = 2;
+  int64 article_count = 3;
+}
+
+message TagStat {
+  int64 id = 1;
+  string tag_name = 2;
+  int64 article_count = 3;
+}
+
+message ArticleRank {
+  int64 id = 1;
+  string article_title = 2;
+  int64 view_count = 3;
+}
+
+message RegionStat {
+  string name = 1;
+  int64 value = 2;
+}
+
+// ============================================
+// 1. 仪表盘统计
+// ============================================
+
+message GetDashboardStatsRequest {}
+
+message GetDashboardStatsResponse {
+  int64 user_count = 1;
+  int64 article_count = 2;
+  int64 message_count = 3;
+  DailyStats today = 4;
+  double uv_growth_rate = 5;
+  double pv_growth_rate = 6;
+  double user_growth_rate = 7;
+}
+
+// ============================================
+// 2. 文章分析
+// ============================================
+
+message GetArticleStatsRequest {}
+
+message GetArticleStatsResponse {
+  int64 category_count = 1;
+  int64 tag_count = 2;
+  repeated CategoryStat category_stats = 3;
+  repeated TagStat tag_stats = 4;
+  repeated ArticleRank article_ranks = 5;
+  repeated ArticleDailyStatistic daily_statistics = 6;
+}
+
+// ============================================
+// 3. 统计趋势
+// ============================================
+
+message GetStatsTrendRequest {
+  string start_date = 1;
+  string end_date = 2;
+}
+
+message GetStatsTrendResponse {
+  repeated DailyStats list = 1;
+}
+
+// ============================================
+// 4. 用户地理分布
+// ============================================
+
+message GetUserGeoStatsRequest {}
+
+message GetUserGeoStatsResponse {
+  repeated RegionStat users = 1;
+  repeated RegionStat visitors = 2;
+}
+
+// ============================================
+service AnalyticsService {
+  // 获取仪表盘统计数据
+  rpc GetDashboardStats(GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+  // 获取文章分析数据
+  rpc GetArticleStats(GetArticleStatsRequest) returns (GetArticleStatsResponse);
+  // 获取每日统计趋势
+  rpc GetStatsTrend(GetStatsTrendRequest) returns (GetStatsTrendResponse);
+  // 获取用户地理分布
+  rpc GetUserGeoStats(GetUserGeoStatsRequest) returns (GetUserGeoStatsResponse);
+}

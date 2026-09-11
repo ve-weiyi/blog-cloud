@@ -1,0 +1,56 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 访客管理 ====================
+type (
+	GuestItem {
+		Id        int64  `json:"id,optional"`
+		DeviceId  string `json:"device_id"` // 设备ID
+		Os        string `json:"os"` // 操作系统
+		Browser   string `json:"browser"` // 浏览器
+		IpAddress string `json:"ip_address"` // IP地址
+		IpSource  string `json:"ip_source"` // IP归属地
+		CreatedAt int64  `json:"created_at"` // 创建时间
+		UpdatedAt int64  `json:"updated_at"` // 更新时间
+	}
+	QueryGuestListReq {
+		PageQuery
+		DeviceId *string `json:"device_id,optional"` // 设备ID
+		IpSource *string `json:"ip_source,optional"` // IP归属地
+	}
+	GetGuestReq  {}
+	GetGuestResp {
+		Id        int64  `json:"id"` // 访客唯一ID
+		DeviceId  string `json:"device_id"` // 设备ID
+		Os        string `json:"os"` // 操作系统
+		Browser   string `json:"browser"` // 浏览器
+		IpAddress string `json:"ip_address"` // IP地址
+		IpSource  string `json:"ip_source"` // IP归属地
+	}
+)
+
+@server (
+	tags:   "访客管理"
+	prefix: /admin-api/v1
+	group:  account/guest
+)
+service admin-api {
+	@doc "获取游客信息"
+	@handler GetGuest
+	get /guest/get_guest (GetGuestReq) returns (GetGuestResp)
+}
+
+@server (
+	tags:       "访客管理"
+	prefix:     /admin-api/v1
+	group:      account/guest
+	authType:   apiKey
+	middleware: AdminAuth,Permission,OperationLog
+)
+service admin-api {
+	@doc "获取访客列表"
+	@handler QueryGuestList
+	post /guest/query_guest_list (QueryGuestListReq) returns (PageResult)
+}
+

@@ -26,11 +26,11 @@ func NewQueryMessageListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *QueryMessageListLogic) QueryMessageList(req *types.QueryMessageListReq) (resp *types.PageResult, err error) {
+func (l *QueryMessageListLogic) QueryMessageList(req *types.QueryMessageListReq) (resp *types.ListResult, err error) {
 	status := int64(1)
 
 	in := &discussionservice.ListMessagesRequest{
-		PageQuery: &discussionservice.PageQuery{
+		ListQuery: &discussionservice.ListQuery{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
@@ -69,10 +69,10 @@ func (l *QueryMessageListLogic) QueryMessageList(req *types.QueryMessageListReq)
 		})
 	}
 
-	resp = &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	resp = &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}
 	return

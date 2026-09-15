@@ -17,25 +17,24 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/middleware"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/middleware/permissionx"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/middleware/tracelogx"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/analyticsservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/configservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/chatservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/discussionservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/guestservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/mediaservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/notificationservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/resourceservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/socialservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/siteservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/statsservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/syslogservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 	"github.com/ve-weiyi/stompws/logws"
 	"github.com/ve-weiyi/stompws/server/client"
 	"github.com/ve-weiyi/vkit/adapter/storagex"
 	"github.com/ve-weiyi/vkit/adapter/storex"
 	"github.com/ve-weiyi/vkit/adapter/storex/captchastore"
 	"github.com/ve-weiyi/vkit/adapter/storex/tokenstore"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
 
 	"github.com/ve-weiyi/blog-cloud/infra/constants/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/interceptorx"
@@ -58,18 +57,18 @@ type ServiceContext struct {
 
 	StompHubServer *client.StompHubServer
 
-	UserAuthService     userauthservice.UserAuthService
+	AuthService         authservice.AuthService
+	ChatService         chatservice.ChatService
 	UserService         userservice.UserService
-	AnalyticsService    analyticsservice.AnalyticsService
+	StatsService        statsservice.StatsService
 	NotificationService notificationservice.NotificationService
 	SyslogService       syslogservice.SyslogService
 	GuestService        guestservice.GuestService
-	ArticleService      articleservice.ArticleService
+	ContentService      contentservice.ContentService
 	DiscussionService   discussionservice.DiscussionService
-	ResourceService     resourceservice.ResourceService
-	SocialService       socialservice.SocialService
-	ConfigService       configservice.ConfigService
-	PermissionService   permissionservice.PermissionService
+	MediaService        mediaservice.MediaService
+	SiteService         siteservice.SiteService
+	AccessService       accessservice.AccessService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -117,42 +116,42 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		zrpc.WithUnaryClientInterceptor(interceptorx.ClientErrorInterceptor),
 	)
 
-	userAuthService := userauthservice.NewUserAuthService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	authService := authservice.NewAuthService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	chatService := chatservice.NewChatService(zrpc.MustNewClient(c.AppRpcConf, options...))
 	userService := userservice.NewUserService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	analyticsService := analyticsservice.NewAnalyticsService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	statsService := statsservice.NewStatsService(zrpc.MustNewClient(c.AppRpcConf, options...))
 	notificationService := notificationservice.NewNotificationService(zrpc.MustNewClient(c.AppRpcConf, options...))
 	syslogService := syslogservice.NewSyslogService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	clientService := guestservice.NewGuestService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	articleService := articleservice.NewArticleService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	guestService := guestservice.NewGuestService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	contentService := contentservice.NewContentService(zrpc.MustNewClient(c.AppRpcConf, options...))
 	discussionService := discussionservice.NewDiscussionService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	resourceService := resourceservice.NewResourceService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	socialService := socialservice.NewSocialService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	configService := configservice.NewConfigService(zrpc.MustNewClient(c.AppRpcConf, options...))
-	permissionService := permissionservice.NewPermissionService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	mediaService := mediaservice.NewMediaService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	siteService := siteservice.NewSiteService(zrpc.MustNewClient(c.AppRpcConf, options...))
+	accessService := accessservice.NewAccessService(zrpc.MustNewClient(c.AppRpcConf, options...))
 
 	return &ServiceContext{
 		Config:              c,
 		AdminAuth:           middleware.NewAdminAuthMiddleware(tokenStore).Handle,
 		RateLimit:           middlewarex.NewRateLimitMiddleware(limitx.NewPeriodLimit(60, 10, rds, cachekey.RateLimitStrictPrefix)).Handle,
-		Permission:          middleware.NewPermissionMiddleware(permissionx.NewRbacEnforcer(rds, permissionService)).Handle,
-		OperationLog:        middleware.NewOperationLogMiddleware(doc.Spec(), tracelogx.NewTraceEnforcer(rds, permissionService), syslogService).Handle,
+		Permission:          middleware.NewPermissionMiddleware(permissionx.NewRbacEnforcer(rds, accessService)).Handle,
+		OperationLog:        middleware.NewOperationLogMiddleware(doc.Spec(), tracelogx.NewTraceEnforcer(rds, accessService), syslogService).Handle,
 		RedisClient:         rds,
 		TokenStore:          tokenStore,
 		CaptchaStore:        captchaStore,
 		StorageProvider:     storageProvider,
 		StompHubServer:      hub,
-		UserAuthService:     userAuthService,
+		AuthService:         authService,
+		ChatService:         chatService,
 		UserService:         userService,
-		AnalyticsService:    analyticsService,
+		StatsService:        statsService,
 		NotificationService: notificationService,
 		SyslogService:       syslogService,
-		GuestService:        clientService,
-		ArticleService:      articleService,
+		GuestService:        guestService,
+		ContentService:      contentService,
 		DiscussionService:   discussionService,
-		ResourceService:     resourceService,
-		SocialService:       socialService,
-		ConfigService:       configService,
-		PermissionService:   permissionService,
+		MediaService:        mediaService,
+		SiteService:         siteService,
+		AccessService:       accessService,
 	}
 }
 

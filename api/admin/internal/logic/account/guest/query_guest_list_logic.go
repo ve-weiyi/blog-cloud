@@ -25,9 +25,9 @@ func NewQueryGuestListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Qu
 	}
 }
 
-func (l *QueryGuestListLogic) QueryGuestList(req *types.QueryGuestListReq) (resp *types.PageResult, err error) {
+func (l *QueryGuestListLogic) QueryGuestList(req *types.QueryGuestListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.GuestService.ListGuests(l.ctx, &guestservice.ListGuestsRequest{
-		PageQuery: &guestservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &guestservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		DeviceId:  req.DeviceId,
 	})
 	if err != nil {
@@ -48,10 +48,10 @@ func (l *QueryGuestListLogic) QueryGuestList(req *types.QueryGuestListReq) (resp
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

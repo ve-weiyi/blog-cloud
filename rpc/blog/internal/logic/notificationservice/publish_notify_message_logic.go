@@ -8,12 +8,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
 	"github.com/ve-weiyi/vkit/adapter/mqx"
 	"github.com/ve-weiyi/vkit/x/jsonconv"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
 )
 
 type PublishNotifyMessageLogic struct {

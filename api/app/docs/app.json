@@ -7,21 +7,167 @@
   ],
   "schemes": [
     "http",
-    "https"
+    "https",
+    "ws",
+    "wss"
   ],
   "swagger": "2.0",
   "info": {
-    "description": "Blog APP 接口文档 - 小红书内容生成系统用户端API",
+    "description": "Blog APP 接口文档 - 博客系统用户端API",
     "title": "Blog APP API",
+    "termsOfService": "https://github.com/ve-weiyi/blog-cloud",
     "contact": {
       "name": "waynie.wei",
+      "url": "https://github.com/ve-weiyi/blog-cloud",
       "email": "791422171@qq.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/ve-weiyi/blog-cloud/main/LICENSE"
     },
     "version": "v1.0.0"
   },
   "basePath": "/",
   "paths": {
-    "/api/v1/album/get_album": {
+    "/api/v1/about-me": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "网站"
+        ],
+        "summary": "获取关于我的信息",
+        "operationId": "site/ConfigGetAboutMe",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/GetAboutMeResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/albums": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "相册"
+        ],
+        "summary": "获取相册列表",
+        "operationId": "media/AlbumQueryAlbumList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/albums/{album_id}/photos": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "照片"
+        ],
+        "summary": "获取相册下的照片列表",
+        "operationId": "media/PhotoQueryAlbumPhotoList",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "相册ID",
+            "name": "album_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/albums/{id}": {
       "get": {
         "security": [
           {
@@ -38,12 +184,12 @@
           "相册"
         ],
         "summary": "获取相册详情",
-        "operationId": "resource/AlbumGetAlbum",
+        "operationId": "media/AlbumGetAlbum",
         "parameters": [
           {
             "type": "integer",
-            "name": "album_id",
-            "in": "query",
+            "name": "id",
+            "in": "path",
             "required": true
           }
         ],
@@ -54,7 +200,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -72,15 +218,12 @@
         }
       }
     },
-    "/api/v1/album/query_album_list": {
-      "post": {
+    "/api/v1/articles": {
+      "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "consumes": [
-          "application/json"
         ],
         "produces": [
           "application/json"
@@ -89,20 +232,10 @@
           "https"
         ],
         "tags": [
-          "相册"
+          "文章"
         ],
-        "summary": "获取相册列表",
-        "operationId": "resource/AlbumQueryAlbumList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryAlbumListReq"
-            }
-          }
-        ],
+        "summary": "获取文章列表",
+        "operationId": "content/ArticleQueryArticleList",
         "responses": {
           "200": {
             "description": "",
@@ -110,12 +243,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/PageResult"
+                  "$ref": "#/definitions/ListResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -128,15 +261,12 @@
         }
       }
     },
-    "/api/v1/album/query_album_photo_list": {
-      "post": {
+    "/api/v1/articles/archived": {
+      "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "consumes": [
-          "application/json"
         ],
         "produces": [
           "application/json"
@@ -145,20 +275,10 @@
           "https"
         ],
         "tags": [
-          "相册"
+          "文章"
         ],
-        "summary": "获取相册下的照片列表",
-        "operationId": "resource/AlbumQueryAlbumPhotoList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryAlbumPhotoListReq"
-            }
-          }
-        ],
+        "summary": "获取归档文章列表",
+        "operationId": "content/ArticleQueryArchivedArticleList",
         "responses": {
           "200": {
             "description": "",
@@ -166,12 +286,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/PageResult"
+                  "$ref": "#/definitions/ListResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -184,7 +304,50 @@
         }
       }
     },
-    "/api/v1/article/get_article": {
+    "/api/v1/articles/recommended": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文章"
+        ],
+        "summary": "获取推荐文章列表",
+        "operationId": "content/ArticleQueryRecommendArticleList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/articles/{id}": {
       "get": {
         "security": [
           {
@@ -205,8 +368,8 @@
         "parameters": [
           {
             "type": "integer",
-            "name": "article_id",
-            "in": "query",
+            "name": "id",
+            "in": "path",
             "required": true
           }
         ],
@@ -217,7 +380,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -235,175 +398,7 @@
         }
       }
     },
-    "/api/v1/article/like_article": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文章"
-        ],
-        "summary": "点赞文章",
-        "operationId": "content/ArticleLikeArticle",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LikeArticleReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EmptyResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/article/query_archived_article_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文章"
-        ],
-        "summary": "获取归档文章列表",
-        "operationId": "content/ArticleQueryArchivedArticleList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryArchivedArticleListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/article/query_article_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文章"
-        ],
-        "summary": "获取文章列表",
-        "operationId": "content/ArticleQueryArticleList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryArticleListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/article/query_recommend_article_list": {
+    "/api/v1/articles/{id}/like": {
       "post": {
         "security": [
           {
@@ -422,8 +417,16 @@
         "tags": [
           "文章"
         ],
-        "summary": "获取推荐文章列表",
-        "operationId": "content/ArticleQueryRecommendArticleList",
+        "summary": "点赞文章",
+        "operationId": "content/ArticleLikeArticle",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -431,12 +434,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/PageResult"
+                  "$ref": "#/definitions/EmptyResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -449,7 +452,7 @@
         }
       }
     },
-    "/api/v1/auth/captcha": {
+    "/api/v1/auth/captchas": {
       "get": {
         "produces": [
           "application/json"
@@ -485,7 +488,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -503,7 +506,58 @@
         }
       }
     },
-    "/api/v1/auth/login/email": {
+    "/api/v1/auth/email-verification-codes": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "登录认证"
+        ],
+        "summary": "发送邮箱验证码",
+        "operationId": "account/AuthSendEmailCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendEmailCodeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/SendEmailCodeResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login-by-email": {
       "post": {
         "consumes": [
           "application/json"
@@ -536,7 +590,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -554,7 +608,7 @@
         }
       }
     },
-    "/api/v1/auth/login/mobile": {
+    "/api/v1/auth/login-by-mobile": {
       "post": {
         "consumes": [
           "application/json"
@@ -587,7 +641,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -605,7 +659,7 @@
         }
       }
     },
-    "/api/v1/auth/login/password": {
+    "/api/v1/auth/login-by-password": {
       "post": {
         "consumes": [
           "application/json"
@@ -638,7 +692,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -656,10 +710,10 @@
         }
       }
     },
-    "/api/v1/auth/logout": {
+    "/api/v1/auth/mobile-verification-codes": {
       "post": {
         "consumes": [
-          "application/x-www-form-urlencoded"
+          "application/json"
         ],
         "produces": [
           "application/json"
@@ -670,8 +724,18 @@
         "tags": [
           "登录认证"
         ],
-        "summary": "退出登录（需登录）",
-        "operationId": "account/AuthLogout",
+        "summary": "发送手机验证码",
+        "operationId": "account/AuthSendMobileCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendMobileCodeReq"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -679,12 +743,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/LogoutResp"
+                  "$ref": "#/definitions/SendMobileCodeResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -733,7 +797,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -791,7 +855,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -809,7 +873,7 @@
         }
       }
     },
-    "/api/v1/auth/password/reset": {
+    "/api/v1/auth/password-resets": {
       "post": {
         "consumes": [
           "application/json"
@@ -842,7 +906,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -893,7 +957,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -911,7 +975,7 @@
         }
       }
     },
-    "/api/v1/auth/register/email": {
+    "/api/v1/auth/register": {
       "post": {
         "consumes": [
           "application/json"
@@ -926,14 +990,14 @@
           "登录认证"
         ],
         "summary": "邮箱注册",
-        "operationId": "account/AuthEmailRegister",
+        "operationId": "account/AuthRegister",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/EmailRegisterReq"
+              "$ref": "#/definitions/RegisterReq"
             }
           }
         ],
@@ -944,12 +1008,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmailRegisterResp"
+                  "$ref": "#/definitions/RegisterResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -962,10 +1026,10 @@
         }
       }
     },
-    "/api/v1/auth/send/email": {
-      "post": {
+    "/api/v1/auth/session": {
+      "delete": {
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -976,18 +1040,8 @@
         "tags": [
           "登录认证"
         ],
-        "summary": "发送邮箱验证码",
-        "operationId": "account/AuthSendEmailCode",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SendEmailCodeReq"
-            }
-          }
-        ],
+        "summary": "退出登录（需登录）",
+        "operationId": "account/AuthLogout",
         "responses": {
           "200": {
             "description": "",
@@ -995,12 +1049,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/SendEmailCodeResp"
+                  "$ref": "#/definitions/LogoutResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -1013,152 +1067,12 @@
         }
       }
     },
-    "/api/v1/auth/send/mobile": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "登录认证"
-        ],
-        "summary": "发送手机验证码",
-        "operationId": "account/AuthSendMobileCode",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SendMobileCodeReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/SendMobileCodeResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/blog": {
+    "/api/v1/categories": {
       "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "网站"
-        ],
-        "summary": "获取博客前台首页信息",
-        "operationId": "website/ConfigGetBlogHomeInfo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetBlogHomeInfoResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/blog/get_about_me": {
-      "get": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "网站"
-        ],
-        "summary": "获取关于我的信息",
-        "operationId": "website/ConfigGetAboutMe",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetAboutMeResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/category/query_category_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
         ],
         "produces": [
           "application/json"
@@ -1171,16 +1085,6 @@
         ],
         "summary": "获取分类列表",
         "operationId": "content/CategoryQueryCategoryList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryCategoryListReq"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -1188,12 +1092,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/PageResult"
+                  "$ref": "#/definitions/ListResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -1206,7 +1110,48 @@
         }
       }
     },
-    "/api/v1/comment/create_comment": {
+    "/api/v1/comments": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "评论"
+        ],
+        "summary": "获取评论列表",
+        "operationId": "discussion/CommentQueryCommentList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "security": [
           {
@@ -1244,7 +1189,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -1262,15 +1207,12 @@
         }
       }
     },
-    "/api/v1/comment/like_comment": {
-      "post": {
+    "/api/v1/comments/recent": {
+      "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "consumes": [
-          "application/json"
         ],
         "produces": [
           "application/json"
@@ -1281,18 +1223,8 @@
         "tags": [
           "评论"
         ],
-        "summary": "点赞评论",
-        "operationId": "discussion/CommentLikeComment",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LikeCommentReq"
-            }
-          }
-        ],
+        "summary": "获取最新评论列表",
+        "operationId": "discussion/CommentQueryRecentCommentList",
         "responses": {
           "200": {
             "description": "",
@@ -1300,12 +1232,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/ListResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -1318,71 +1250,12 @@
         }
       }
     },
-    "/api/v1/comment/query_comment_list": {
-      "post": {
+    "/api/v1/comments/{comment_id}/replies": {
+      "get": {
         "security": [
           {
             "apiKey": []
           }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "评论"
-        ],
-        "summary": "获取评论列表",
-        "operationId": "discussion/CommentQueryCommentList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryCommentListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/comment/query_comment_reply_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
         ],
         "produces": [
           "application/json"
@@ -1397,12 +1270,10 @@
         "operationId": "discussion/CommentQueryCommentReplyList",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryCommentReplyListReq"
-            }
+            "type": "integer",
+            "name": "comment_id",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -1412,12 +1283,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/PageResult"
+                  "$ref": "#/definitions/ListResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -1430,63 +1301,7 @@
         }
       }
     },
-    "/api/v1/comment/query_recent_comment_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "评论"
-        ],
-        "summary": "获取最新评论列表",
-        "operationId": "discussion/CommentQueryRecentCommentList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryCommentListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/comment/update_comment": {
+    "/api/v1/comments/{id}": {
       "put": {
         "security": [
           {
@@ -1509,6 +1324,12 @@
         "operationId": "discussion/CommentUpdateComment",
         "parameters": [
           {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
             "name": "body",
             "in": "body",
             "required": true,
@@ -1524,7 +1345,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -1542,7 +1363,7 @@
         }
       }
     },
-    "/api/v1/friend/query_friend_list": {
+    "/api/v1/comments/{id}/like": {
       "post": {
         "security": [
           {
@@ -1550,7 +1371,7 @@
           }
         ],
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -1559,365 +1380,15 @@
           "https"
         ],
         "tags": [
-          "友链"
+          "评论"
         ],
-        "summary": "获取友链列表",
-        "operationId": "social/FriendQueryFriendList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryFriendListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/guest/get_guest": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "访客管理"
-        ],
-        "summary": "获取游客信息",
-        "operationId": "account/GuestGetGuest",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetGuestResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/message/create_message": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "留言"
-        ],
-        "summary": "创建留言",
-        "operationId": "discussion/MessageCreateMessage",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateMessageReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EmptyResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/message/query_message_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "留言"
-        ],
-        "summary": "获取留言列表",
-        "operationId": "discussion/MessageQueryMessageList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryMessageListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/page/query_page_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "页面"
-        ],
-        "summary": "获取页面列表",
-        "operationId": "website/PageQueryPageList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryPageListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/ping": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "健康检查",
-        "operationId": "ping",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PingResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/tag/query_tag_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "标签"
-        ],
-        "summary": "获取标签列表",
-        "operationId": "content/TagQueryTagList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryTagListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/talk/get_talk": {
-      "get": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "说说"
-        ],
-        "summary": "获取说说详情",
-        "operationId": "social/TalkGetTalk",
+        "summary": "点赞评论",
+        "operationId": "discussion/CommentLikeComment",
         "parameters": [
           {
             "type": "integer",
-            "name": "talk_id",
-            "in": "query",
+            "name": "id",
+            "in": "path",
             "required": true
           }
         ],
@@ -1928,63 +1399,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/Talk"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/talk/like_talk": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "说说"
-        ],
-        "summary": "点赞说说",
-        "operationId": "social/TalkLikeTalk",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LikeTalkReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2002,119 +1417,7 @@
         }
       }
     },
-    "/api/v1/talk/query_talk_list": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "说说"
-        ],
-        "summary": "获取说说列表",
-        "operationId": "social/TalkQueryTalkList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueryTalkListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PageResult"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/upload/get_upload_token": {
-      "post": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "文件上传"
-        ],
-        "summary": "获取上传凭证（前端直传）",
-        "operationId": "common/UploadGetUploadToken",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/GetUploadTokenReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetUploadTokenResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/upload/upload_file": {
+    "/api/v1/files": {
       "post": {
         "security": [
           {
@@ -2157,7 +1460,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2175,7 +1478,131 @@
         }
       }
     },
-    "/api/v1/user/me/bind_user_email": {
+    "/api/v1/friends": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "友链"
+        ],
+        "summary": "获取友链列表",
+        "operationId": "site/FriendQueryFriendList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guests/current": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "访客管理"
+        ],
+        "summary": "获取游客信息",
+        "operationId": "account/GuestGetGuest",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/GetGuestResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/home": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "首页"
+        ],
+        "summary": "获取博客前台首页信息",
+        "operationId": "site/HomeGetBlogHomeInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/GetBlogHomeInfoResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/bind-email": {
       "post": {
         "security": [
           {
@@ -2195,14 +1622,14 @@
           "个人中心"
         ],
         "summary": "绑定邮箱",
-        "operationId": "account/MeBindUserEmail",
+        "operationId": "account/MeBindMeEmail",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/BindUserEmailReq"
+              "$ref": "#/definitions/BindMeEmailReq"
             }
           }
         ],
@@ -2213,7 +1640,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2231,7 +1658,7 @@
         }
       }
     },
-    "/api/v1/user/me/bind_user_phone": {
+    "/api/v1/me/bind-mobile": {
       "post": {
         "security": [
           {
@@ -2251,14 +1678,14 @@
           "个人中心"
         ],
         "summary": "绑定手机号",
-        "operationId": "account/MeBindUserPhone",
+        "operationId": "account/MeBindMeMobile",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/BindUserPhoneReq"
+              "$ref": "#/definitions/BindMeMobileReq"
             }
           }
         ],
@@ -2269,7 +1696,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2287,7 +1714,7 @@
         }
       }
     },
-    "/api/v1/user/me/bind_user_third_party": {
+    "/api/v1/me/bind-third-party": {
       "post": {
         "security": [
           {
@@ -2307,14 +1734,14 @@
           "个人中心"
         ],
         "summary": "绑定第三方平台账号",
-        "operationId": "account/MeBindUserThirdParty",
+        "operationId": "account/MeBindMeThirdParty",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/BindUserThirdPartyReq"
+              "$ref": "#/definitions/BindMeThirdPartyReq"
             }
           }
         ],
@@ -2325,7 +1752,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2343,7 +1770,7 @@
         }
       }
     },
-    "/api/v1/user/me/deactivate_account": {
+    "/api/v1/me/deactivate": {
       "post": {
         "security": [
           {
@@ -2381,7 +1808,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2399,7 +1826,7 @@
         }
       }
     },
-    "/api/v1/user/me/get_user_like": {
+    "/api/v1/me/likes": {
       "get": {
         "security": [
           {
@@ -2416,7 +1843,7 @@
           "个人中心"
         ],
         "summary": "获取用户点赞集合",
-        "operationId": "account/MeGetUserLike",
+        "operationId": "account/MeGetMeLike",
         "responses": {
           "200": {
             "description": "",
@@ -2424,12 +1851,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/GetUserLikeResp"
+                  "$ref": "#/definitions/GetMeLikeResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -2442,7 +1869,7 @@
         }
       }
     },
-    "/api/v1/user/me/get_user_profile": {
+    "/api/v1/me/profile": {
       "get": {
         "security": [
           {
@@ -2459,7 +1886,7 @@
           "个人中心"
         ],
         "summary": "获取当前用户信息",
-        "operationId": "account/MeGetUserProfile",
+        "operationId": "account/MeGetMe",
         "responses": {
           "200": {
             "description": "",
@@ -2467,12 +1894,66 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/GetUserProfileResp"
+                  "$ref": "#/definitions/GetMeResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "个人中心"
+        ],
+        "summary": "更新当前用户信息",
+        "operationId": "account/MeUpdateMe",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateMeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/UpdateMeResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -2485,7 +1966,7 @@
         }
       }
     },
-    "/api/v1/user/me/reactivate_account": {
+    "/api/v1/me/reactivate": {
       "post": {
         "security": [
           {
@@ -2523,7 +2004,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2541,7 +2022,7 @@
         }
       }
     },
-    "/api/v1/user/me/unbind_user_third_party": {
+    "/api/v1/me/unbind-third-party": {
       "post": {
         "security": [
           {
@@ -2561,14 +2042,14 @@
           "个人中心"
         ],
         "summary": "解绑第三方平台账号",
-        "operationId": "account/MeUnbindUserThirdParty",
+        "operationId": "account/MeUnbindMeThirdParty",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UnbindUserThirdPartyReq"
+              "$ref": "#/definitions/UnbindMeThirdPartyReq"
             }
           }
         ],
@@ -2579,7 +2060,7 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
@@ -2597,8 +2078,49 @@
         }
       }
     },
-    "/api/v1/user/me/update_user_profile": {
-      "put": {
+    "/api/v1/messages": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "留言"
+        ],
+        "summary": "获取留言列表",
+        "operationId": "discussion/MessageQueryMessageList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
         "security": [
           {
             "apiKey": []
@@ -2614,17 +2136,17 @@
           "https"
         ],
         "tags": [
-          "个人中心"
+          "留言"
         ],
-        "summary": "更新当前用户信息",
-        "operationId": "account/MeUpdateUserProfile",
+        "summary": "创建留言",
+        "operationId": "discussion/MessageCreateMessage",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateUserProfileReq"
+              "$ref": "#/definitions/CreateMessageReq"
             }
           }
         ],
@@ -2635,12 +2157,12 @@
               "type": "object",
               "properties": {
                 "code": {
-                  "description": "business code",
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
                   "type": "integer",
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/UpdateUserProfileResp"
+                  "$ref": "#/definitions/EmptyResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -2653,7 +2175,332 @@
         }
       }
     },
-    "/api/v1/websocket": {
+    "/api/v1/pages": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "页面"
+        ],
+        "summary": "获取页面列表",
+        "operationId": "site/PageQueryPageList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ping": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "健康检查",
+        "operationId": "ping",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/PingResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "标签"
+        ],
+        "summary": "获取标签列表",
+        "operationId": "content/TagQueryTagList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talks": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "说说"
+        ],
+        "summary": "获取说说列表",
+        "operationId": "discussion/TalkQueryTalkList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talks/{id}": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "说说"
+        ],
+        "summary": "获取说说详情",
+        "operationId": "discussion/TalkGetTalk",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/Talk"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talks/{id}/like": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "说说"
+        ],
+        "summary": "点赞说说",
+        "operationId": "discussion/TalkLikeTalk",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/EmptyResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/upload-tokens": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文件上传"
+        ],
+        "summary": "获取上传凭证（前端直传）",
+        "operationId": "common/UploadCreateUploadToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUploadTokenReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/CreateUploadTokenResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ws": {
       "get": {
         "produces": [
           "application/json"
@@ -2668,8 +2515,7 @@
         "operationId": "common/WebsocketWebsocket",
         "responses": {
           "200": {
-            "description": "",
-            "schema": {}
+            "description": ""
           }
         }
       }
@@ -2719,7 +2565,7 @@
         "category_name",
         "tag_name_list",
         "like_count",
-        "views_count",
+        "view_count",
         "author",
         "last_article",
         "next_article",
@@ -2786,7 +2632,7 @@
             "article_cover",
             "article_title",
             "like_count",
-            "views_count",
+            "view_count",
             "created_at"
           ],
           "properties": {
@@ -2805,7 +2651,7 @@
             "like_count": {
               "type": "integer"
             },
-            "views_count": {
+            "view_count": {
               "type": "integer"
             }
           },
@@ -2827,7 +2673,7 @@
             "article_cover",
             "article_title",
             "like_count",
-            "views_count",
+            "view_count",
             "created_at"
           ],
           "properties": {
@@ -2846,7 +2692,7 @@
             "like_count": {
               "type": "integer"
             },
-            "views_count": {
+            "view_count": {
               "type": "integer"
             }
           },
@@ -2873,7 +2719,7 @@
         "updated_at": {
           "type": "integer"
         },
-        "views_count": {
+        "view_count": {
           "type": "integer"
         }
       }
@@ -2894,7 +2740,7 @@
         "category_name",
         "tag_name_list",
         "like_count",
-        "views_count"
+        "view_count"
       ],
       "properties": {
         "article_content": {
@@ -2939,7 +2785,7 @@
         "updated_at": {
           "type": "integer"
         },
-        "views_count": {
+        "view_count": {
           "type": "integer"
         }
       }
@@ -2951,7 +2797,7 @@
         "article_cover",
         "article_title",
         "like_count",
-        "views_count",
+        "view_count",
         "created_at"
       ],
       "properties": {
@@ -2970,12 +2816,12 @@
         "like_count": {
           "type": "integer"
         },
-        "views_count": {
+        "view_count": {
           "type": "integer"
         }
       }
     },
-    "BindUserEmailReq": {
+    "BindMeEmailReq": {
       "type": "object",
       "required": [
         "email",
@@ -2992,7 +2838,7 @@
         }
       }
     },
-    "BindUserPhoneReq": {
+    "BindMeMobileReq": {
       "type": "object",
       "required": [
         "mobile",
@@ -3009,7 +2855,7 @@
         }
       }
     },
-    "BindUserThirdPartyReq": {
+    "BindMeThirdPartyReq": {
       "type": "object",
       "required": [
         "platform",
@@ -3526,6 +3372,78 @@
         }
       }
     },
+    "CreateUploadTokenReq": {
+      "type": "object",
+      "required": [
+        "file_name"
+      ],
+      "properties": {
+        "expire_seconds": {
+          "description": "凭证有效期（秒），默认1小时",
+          "type": "integer",
+          "default": 3600,
+          "example": 3600
+        },
+        "file_base": {
+          "description": "文件目录",
+          "type": "string"
+        },
+        "file_name": {
+          "description": "文件名称",
+          "type": "string"
+        }
+      }
+    },
+    "CreateUploadTokenResp": {
+      "type": "object",
+      "required": [
+        "upload_url",
+        "token",
+        "policy",
+        "signature",
+        "file_key",
+        "access_url",
+        "expire_at",
+        "extra_data"
+      ],
+      "properties": {
+        "access_url": {
+          "description": "上传成功后的访问URL",
+          "type": "string"
+        },
+        "expire_at": {
+          "description": "凭证过期时间戳（秒）",
+          "type": "integer"
+        },
+        "extra_data": {
+          "description": "额外数据",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "file_key": {
+          "description": "文件Key/路径",
+          "type": "string"
+        },
+        "policy": {
+          "description": "上传策略",
+          "type": "string"
+        },
+        "signature": {
+          "description": "签名",
+          "type": "string"
+        },
+        "token": {
+          "description": "上传凭证/Token",
+          "type": "string"
+        },
+        "upload_url": {
+          "description": "上传地址",
+          "type": "string"
+        }
+      }
+    },
     "DeactivateAccountReq": {
       "type": "object",
       "required": [
@@ -3576,39 +3494,6 @@
           "type": "string"
         }
       }
-    },
-    "EmailRegisterReq": {
-      "type": "object",
-      "required": [
-        "email",
-        "password",
-        "code"
-      ],
-      "properties": {
-        "code": {
-          "description": "验证码",
-          "type": "string"
-        },
-        "email": {
-          "description": "邮箱",
-          "type": "string"
-        },
-        "nickname": {
-          "description": "昵称",
-          "type": "string"
-        },
-        "password": {
-          "description": "密码",
-          "type": "string"
-        },
-        "username": {
-          "description": "用户名",
-          "type": "string"
-        }
-      }
-    },
-    "EmailRegisterResp": {
-      "type": "object"
     },
     "EmptyReq": {
       "type": "object"
@@ -3755,7 +3640,7 @@
           "type": "integer"
         },
         "total_user_view_count": {
-          "description": "总服务量",
+          "description": "累计独立访客数（UV）",
           "type": "integer"
         },
         "website_config": {
@@ -3922,16 +3807,11 @@
       "type": "object",
       "required": [
         "captcha_key",
-        "captcha_base64",
-        "captcha_code"
+        "captcha_base64"
       ],
       "properties": {
         "captcha_base64": {
           "description": "验证码base64",
-          "type": "string"
-        },
-        "captcha_code": {
-          "description": "验证码",
           "type": "string"
         },
         "captcha_key": {
@@ -3980,100 +3860,10 @@
         }
       }
     },
-    "GetOauthAuthorizeUrlReq": {
+    "GetMeLikeReq": {
       "type": "object"
     },
-    "GetOauthAuthorizeUrlResp": {
-      "type": "object",
-      "required": [
-        "authorize_url"
-      ],
-      "properties": {
-        "authorize_url": {
-          "description": "授权地址",
-          "type": "string"
-        }
-      }
-    },
-    "GetTalkReq": {
-      "type": "object"
-    },
-    "GetUploadTokenReq": {
-      "type": "object",
-      "required": [
-        "file_name"
-      ],
-      "properties": {
-        "expire_seconds": {
-          "description": "凭证有效期（秒），默认1小时",
-          "type": "integer",
-          "default": 3600,
-          "example": 3600
-        },
-        "file_base": {
-          "description": "文件目录",
-          "type": "string"
-        },
-        "file_name": {
-          "description": "文件名称",
-          "type": "string"
-        }
-      }
-    },
-    "GetUploadTokenResp": {
-      "type": "object",
-      "required": [
-        "upload_url",
-        "token",
-        "policy",
-        "signature",
-        "file_key",
-        "access_url",
-        "expire_at",
-        "extra_data"
-      ],
-      "properties": {
-        "access_url": {
-          "description": "上传成功后的访问URL",
-          "type": "string"
-        },
-        "expire_at": {
-          "description": "凭证过期时间戳（秒）",
-          "type": "integer"
-        },
-        "extra_data": {
-          "description": "额外数据",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "file_key": {
-          "description": "文件Key/路径",
-          "type": "string"
-        },
-        "policy": {
-          "description": "上传策略",
-          "type": "string"
-        },
-        "signature": {
-          "description": "签名",
-          "type": "string"
-        },
-        "token": {
-          "description": "上传凭证/Token",
-          "type": "string"
-        },
-        "upload_url": {
-          "description": "上传地址",
-          "type": "string"
-        }
-      }
-    },
-    "GetUserLikeReq": {
-      "type": "object"
-    },
-    "GetUserLikeResp": {
+    "GetMeLikeResp": {
       "type": "object",
       "required": [
         "article_like_set",
@@ -4104,10 +3894,10 @@
         }
       }
     },
-    "GetUserProfileReq": {
+    "GetMeReq": {
       "type": "object"
     },
-    "GetUserProfileResp": {
+    "GetMeResp": {
       "type": "object",
       "required": [
         "user_id",
@@ -4189,6 +3979,24 @@
         }
       }
     },
+    "GetOauthAuthorizeUrlReq": {
+      "type": "object"
+    },
+    "GetOauthAuthorizeUrlResp": {
+      "type": "object",
+      "required": [
+        "authorize_url"
+      ],
+      "properties": {
+        "authorize_url": {
+          "description": "授权地址",
+          "type": "string"
+        }
+      }
+    },
+    "GetTalkReq": {
+      "type": "object"
+    },
     "GuestInfoVO": {
       "type": "object",
       "required": [
@@ -4221,60 +4029,58 @@
         }
       }
     },
-    "IdReq": {
-      "type": "object",
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer"
-        }
-      }
-    },
-    "IdsReq": {
-      "type": "object",
-      "required": [
-        "ids"
-      ],
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        }
-      }
-    },
     "LikeArticleReq": {
-      "type": "object",
-      "required": [
-        "article_id"
-      ],
-      "properties": {
-        "article_id": {
-          "type": "integer"
-        }
-      }
+      "type": "object"
     },
     "LikeCommentReq": {
+      "type": "object"
+    },
+    "LikeTalkReq": {
+      "type": "object"
+    },
+    "ListQuery": {
       "type": "object",
-      "required": [
-        "comment_id"
-      ],
       "properties": {
-        "comment_id": {
-          "type": "integer"
+        "page": {
+          "description": "当前页码",
+          "type": "integer",
+          "default": 1,
+          "example": 1
+        },
+        "page_size": {
+          "description": "每页数量",
+          "type": "integer",
+          "default": 20,
+          "example": 20
+        },
+        "sorts": {
+          "description": "排序",
+          "type": "array",
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "example": "[]"
         }
       }
     },
-    "LikeTalkReq": {
+    "ListResult": {
       "type": "object",
       "required": [
-        "talk_id"
+        "page",
+        "page_size",
+        "total",
+        "list"
       ],
       "properties": {
-        "talk_id": {
+        "list": {},
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "total": {
           "type": "integer"
         }
       }
@@ -4335,7 +4141,7 @@
           "type": "string"
         },
         "user_type": {
-          "description": "用户类型：user-普通用户 app-管理员",
+          "description": "用户类型：user-普通用户 admin-管理员",
           "type": "string"
         }
       }
@@ -4486,6 +4292,7 @@
         "page_name",
         "page_label",
         "page_cover",
+        "is_carousel",
         "created_at",
         "updated_at"
       ],
@@ -4520,60 +4327,14 @@
         }
       }
     },
-    "PageQuery": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "description": "当前页码",
-          "type": "integer",
-          "default": 1,
-          "example": 1
-        },
-        "page_size": {
-          "description": "每页数量",
-          "type": "integer",
-          "default": 20,
-          "example": 20
-        },
-        "sorts": {
-          "description": "排序",
-          "type": "array",
-          "default": "[]",
-          "items": {
-            "type": "string"
-          },
-          "example": "[]"
-        }
-      }
-    },
-    "PageResult": {
-      "type": "object",
-      "required": [
-        "page",
-        "page_size",
-        "total",
-        "list"
-      ],
-      "properties": {
-        "list": {},
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
     "PageVO": {
       "type": "object",
       "required": [
         "id",
         "page_name",
         "page_label",
-        "page_cover"
+        "page_cover",
+        "is_carousel"
       ],
       "properties": {
         "id": {
@@ -4697,16 +4458,7 @@
       }
     },
     "QueryAlbumPhotoListReq": {
-      "type": "object",
-      "required": [
-        "album_id"
-      ],
-      "properties": {
-        "album_id": {
-          "description": "相册ID",
-          "type": "integer"
-        }
-      }
+      "type": "object"
     },
     "QueryArchivedArticleListReq": {
       "type": "object",
@@ -4835,13 +4587,7 @@
     },
     "QueryCommentReplyListReq": {
       "type": "object",
-      "required": [
-        "comment_id"
-      ],
       "properties": {
-        "comment_id": {
-          "type": "integer"
-        },
         "page": {
           "description": "当前页码",
           "type": "integer",
@@ -5009,9 +4755,6 @@
     },
     "ReactivateAccountReq": {
       "type": "object",
-      "required": [
-        "verification_code"
-      ],
       "properties": {
         "email": {
           "description": "邮箱",
@@ -5022,7 +4765,7 @@
           "type": "string"
         },
         "verification_code": {
-          "description": "验证码（可选）",
+          "description": "验证码",
           "type": "string"
         }
       }
@@ -5060,6 +4803,39 @@
           "type": "string"
         }
       }
+    },
+    "RegisterReq": {
+      "type": "object",
+      "required": [
+        "email",
+        "password",
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "description": "验证码",
+          "type": "string"
+        },
+        "email": {
+          "description": "邮箱",
+          "type": "string"
+        },
+        "nickname": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "password": {
+          "description": "密码",
+          "type": "string"
+        },
+        "username": {
+          "description": "用户名",
+          "type": "string"
+        }
+      }
+    },
+    "RegisterResp": {
+      "type": "object"
     },
     "ResetPasswordReq": {
       "type": "object",
@@ -5223,7 +4999,7 @@
           "type": "integer"
         },
         "content": {
-          "description": "评论内容",
+          "description": "说说内容",
           "type": "string"
         },
         "created_at": {
@@ -5297,14 +5073,9 @@
       "required": [
         "name",
         "platform",
-        "authorize_url",
         "enabled"
       ],
       "properties": {
-        "authorize_url": {
-          "description": "授权地址",
-          "type": "string"
-        },
         "enabled": {
           "description": "是否启用",
           "type": "boolean"
@@ -5356,7 +5127,7 @@
         }
       }
     },
-    "UnbindUserThirdPartyReq": {
+    "UnbindMeThirdPartyReq": {
       "type": "object",
       "required": [
         "platform"
@@ -5371,15 +5142,11 @@
     "UpdateCommentReq": {
       "type": "object",
       "required": [
-        "comment_id",
         "comment_content"
       ],
       "properties": {
         "comment_content": {
           "type": "string"
-        },
-        "comment_id": {
-          "type": "integer"
         },
         "reply_user_id": {
           "type": "string"
@@ -5389,7 +5156,7 @@
         }
       }
     },
-    "UpdateUserProfileReq": {
+    "UpdateMeReq": {
       "type": "object",
       "properties": {
         "avatar": {
@@ -5414,7 +5181,7 @@
         }
       }
     },
-    "UpdateUserProfileResp": {
+    "UpdateMeResp": {
       "type": "object"
     },
     "UploadFileReq": {
@@ -5788,16 +5555,16 @@
       "name": "App-Name",
       "in": "header"
     },
+    "Authorization": {
+      "description": "授权token，用户登录凭证",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
     "Timestamp": {
       "description": "时间戳，用于校验请求是否过期",
       "type": "apiKey",
       "name": "Timestamp",
-      "in": "header"
-    },
-    "Token": {
-      "description": "token，用户登录凭证",
-      "type": "apiKey",
-      "name": "Token",
       "in": "header"
     },
     "Uid": {
@@ -5819,9 +5586,9 @@
       "in": "header"
     }
   },
-  "x-date": "2026-06-08 18:21:28",
+  "x-date": "2026-09-15 10:48:17",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.2"
 }

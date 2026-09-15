@@ -26,9 +26,9 @@ func NewQueryVisitLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *QueryVisitLogListLogic) QueryVisitLogList(req *types.QueryVisitLogListReq) (resp *types.PageResult, err error) {
+func (l *QueryVisitLogListLogic) QueryVisitLogList(req *types.QueryVisitLogListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.SyslogService.ListVisitLogs(l.ctx, &syslogservice.ListVisitLogsRequest{
-		PageQuery: &syslogservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &syslogservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		UserId:    req.UserId,
 		DeviceId:  req.DeviceId,
 		PageName:  req.PageName,
@@ -67,10 +67,10 @@ func (l *QueryVisitLogListLogic) QueryVisitLogList(req *types.QueryVisitLogListR
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

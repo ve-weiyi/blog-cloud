@@ -9,7 +9,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/notificationservice"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 )
 
 type ReactivateAccountLogic struct {
@@ -40,11 +40,11 @@ func (l *ReactivateAccountLogic) ReactivateAccount(req *types.ReactivateAccountR
 			return nil, err
 		}
 	} else if req.Mobile != "" {
-		_, err = l.svcCtx.NotificationService.VerifyPhoneCode(l.ctx, &notificationservice.VerifyPhoneCodeRequest{
-			Phone: req.Mobile,
-			Scene: "reactivate",
-			Code:  req.VerificationCode,
-			BizId: "", // 空值，使用默认规则 scene:mobile
+		_, err = l.svcCtx.NotificationService.VerifyMobileCode(l.ctx, &notificationservice.VerifyMobileCodeRequest{
+			Mobile: req.Mobile,
+			Scene:  "reactivate",
+			Code:   req.VerificationCode,
+			BizId:  "", // 空值，使用默认规则 scene:mobile
 		})
 		if err != nil {
 			return nil, err

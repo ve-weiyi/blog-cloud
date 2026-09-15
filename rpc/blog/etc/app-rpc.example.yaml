@@ -31,7 +31,7 @@ EmailConf:
   Port: 465
   Username: xxx@qq.com
   Password: xxx
-  Nickname: ve-blog
+  Nickname: blog
   IsSsl: true
 
 AppOAuthConf:

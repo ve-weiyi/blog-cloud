@@ -3,9 +3,7 @@ package notificationservicelogic
 import (
 	"time"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
 )
 
@@ -13,12 +11,12 @@ import (
 // NotifyTemplate 转换函数
 // ============================================
 
-func convertTNotifyTemplateToProto(m *model.TNotifyTemplate) *notificationrpc2.NotifyTemplate {
+func convertTNotifyTemplateToProto(m *model.TNotifyTemplate) *notificationrpc.NotifyTemplate {
 	if m == nil {
 		return nil
 	}
 
-	return &notificationrpc2.NotifyTemplate{
+	return &notificationrpc.NotifyTemplate{
 		Id:        m.Id,
 		Code:      m.Code,
 		Channel:   m.Channel,
@@ -31,7 +29,7 @@ func convertTNotifyTemplateToProto(m *model.TNotifyTemplate) *notificationrpc2.N
 	}
 }
 
-func convertProtoToTNotifyTemplate(p *notificationrpc2.CreateNotifyTemplateRequest) *model.TNotifyTemplate {
+func convertProtoToTNotifyTemplate(p *notificationrpc.CreateNotifyTemplateRequest) *model.TNotifyTemplate {
 	if p == nil {
 		return nil
 	}

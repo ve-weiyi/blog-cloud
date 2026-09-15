@@ -7,7 +7,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/guestservice"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 )
 
 func GetUserInfos(ctx context.Context, svcCtx *svc.ServiceContext, uids []string) (map[string]*types.UserInfoVO, error) {

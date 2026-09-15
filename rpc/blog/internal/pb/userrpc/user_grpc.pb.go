@@ -4,16 +4,13 @@
 // - protoc             v7.35.0
 // source: user.proto
 
-// proto 包名
-
 package userrpc
 
 import (
-	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	context "context"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,20 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_ListUsers_FullMethodName          = "/userrpc.UserService/ListUsers"
-	UserService_GetUser_FullMethodName            = "/userrpc.UserService/GetUser"
-	UserService_UpdateUserStatus_FullMethodName   = "/userrpc.UserService/UpdateUserStatus"
-	UserService_ResetUserPassword_FullMethodName  = "/userrpc.UserService/ResetUserPassword"
-	UserService_GetMeProfile_FullMethodName       = "/userrpc.UserService/GetMeProfile"
-	UserService_UpdateMe_FullMethodName           = "/userrpc.UserService/UpdateMe"
-	UserService_UpdateMeAvatar_FullMethodName     = "/userrpc.UserService/UpdateMeAvatar"
-	UserService_UpdateMePassword_FullMethodName   = "/userrpc.UserService/UpdateMePassword"
-	UserService_BindMeEmail_FullMethodName        = "/userrpc.UserService/BindMeEmail"
-	UserService_BindMePhone_FullMethodName        = "/userrpc.UserService/BindMePhone"
-	UserService_BindMeThirdParty_FullMethodName   = "/userrpc.UserService/BindMeThirdParty"
-	UserService_UnbindMeThirdParty_FullMethodName = "/userrpc.UserService/UnbindMeThirdParty"
-	UserService_DeactivateAccount_FullMethodName  = "/userrpc.UserService/DeactivateAccount"
-	UserService_ReactivateAccount_FullMethodName  = "/userrpc.UserService/ReactivateAccount"
+	UserService_ListUsers_FullMethodName          = "/blog.user.v1.UserService/ListUsers"
+	UserService_GetUser_FullMethodName            = "/blog.user.v1.UserService/GetUser"
+	UserService_PatchUser_FullMethodName          = "/blog.user.v1.UserService/PatchUser"
+	UserService_ResetUserPassword_FullMethodName  = "/blog.user.v1.UserService/ResetUserPassword"
+	UserService_GetMe_FullMethodName              = "/blog.user.v1.UserService/GetMe"
+	UserService_UpdateMe_FullMethodName           = "/blog.user.v1.UserService/UpdateMe"
+	UserService_UpdateMeAvatar_FullMethodName     = "/blog.user.v1.UserService/UpdateMeAvatar"
+	UserService_UpdateMePassword_FullMethodName   = "/blog.user.v1.UserService/UpdateMePassword"
+	UserService_BindMeEmail_FullMethodName        = "/blog.user.v1.UserService/BindMeEmail"
+	UserService_BindMeMobile_FullMethodName       = "/blog.user.v1.UserService/BindMeMobile"
+	UserService_BindMeThirdParty_FullMethodName   = "/blog.user.v1.UserService/BindMeThirdParty"
+	UserService_UnbindMeThirdParty_FullMethodName = "/blog.user.v1.UserService/UnbindMeThirdParty"
+	UserService_DeactivateAccount_FullMethodName  = "/blog.user.v1.UserService/DeactivateAccount"
+	UserService_ReactivateAccount_FullMethodName  = "/blog.user.v1.UserService/ReactivateAccount"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -47,11 +44,11 @@ type UserServiceClient interface {
 	// 查询用户详情
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// 更新用户状态
-	UpdateUserStatus(ctx context.Context, in *UpdateUserStatusRequest, opts ...grpc.CallOption) (*UpdateUserStatusResponse, error)
+	PatchUser(ctx context.Context, in *PatchUserRequest, opts ...grpc.CallOption) (*PatchUserResponse, error)
 	// 重置用户密码
 	ResetUserPassword(ctx context.Context, in *ResetUserPasswordRequest, opts ...grpc.CallOption) (*ResetUserPasswordResponse, error)
 	// 获取当前用户详细资料
-	GetMeProfile(ctx context.Context, in *GetMeProfileRequest, opts ...grpc.CallOption) (*GetMeProfileResponse, error)
+	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
 	// 更新当前用户基础信息
 	UpdateMe(ctx context.Context, in *UpdateMeRequest, opts ...grpc.CallOption) (*UpdateMeResponse, error)
 	// 更新当前用户头像
@@ -61,7 +58,7 @@ type UserServiceClient interface {
 	// 绑定当前用户邮箱
 	BindMeEmail(ctx context.Context, in *BindMeEmailRequest, opts ...grpc.CallOption) (*BindMeEmailResponse, error)
 	// 绑定当前用户手机号
-	BindMePhone(ctx context.Context, in *BindMePhoneRequest, opts ...grpc.CallOption) (*BindMePhoneResponse, error)
+	BindMeMobile(ctx context.Context, in *BindMeMobileRequest, opts ...grpc.CallOption) (*BindMeMobileResponse, error)
 	// 绑定当前用户第三方平台
 	BindMeThirdParty(ctx context.Context, in *BindMeThirdPartyRequest, opts ...grpc.CallOption) (*BindMeThirdPartyResponse, error)
 	// 解绑当前用户第三方平台
@@ -98,9 +95,9 @@ func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusRequest, opts ...grpc.CallOption) (*UpdateUserStatusResponse, error) {
-	out := new(UpdateUserStatusResponse)
-	err := c.cc.Invoke(ctx, UserService_UpdateUserStatus_FullMethodName, in, out, opts...)
+func (c *userServiceClient) PatchUser(ctx context.Context, in *PatchUserRequest, opts ...grpc.CallOption) (*PatchUserResponse, error) {
+	out := new(PatchUserResponse)
+	err := c.cc.Invoke(ctx, UserService_PatchUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,9 +113,9 @@ func (c *userServiceClient) ResetUserPassword(ctx context.Context, in *ResetUser
 	return out, nil
 }
 
-func (c *userServiceClient) GetMeProfile(ctx context.Context, in *GetMeProfileRequest, opts ...grpc.CallOption) (*GetMeProfileResponse, error) {
-	out := new(GetMeProfileResponse)
-	err := c.cc.Invoke(ctx, UserService_GetMeProfile_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error) {
+	out := new(GetMeResponse)
+	err := c.cc.Invoke(ctx, UserService_GetMe_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -161,9 +158,9 @@ func (c *userServiceClient) BindMeEmail(ctx context.Context, in *BindMeEmailRequ
 	return out, nil
 }
 
-func (c *userServiceClient) BindMePhone(ctx context.Context, in *BindMePhoneRequest, opts ...grpc.CallOption) (*BindMePhoneResponse, error) {
-	out := new(BindMePhoneResponse)
-	err := c.cc.Invoke(ctx, UserService_BindMePhone_FullMethodName, in, out, opts...)
+func (c *userServiceClient) BindMeMobile(ctx context.Context, in *BindMeMobileRequest, opts ...grpc.CallOption) (*BindMeMobileResponse, error) {
+	out := new(BindMeMobileResponse)
+	err := c.cc.Invoke(ctx, UserService_BindMeMobile_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -215,11 +212,11 @@ type UserServiceServer interface {
 	// 查询用户详情
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// 更新用户状态
-	UpdateUserStatus(context.Context, *UpdateUserStatusRequest) (*UpdateUserStatusResponse, error)
+	PatchUser(context.Context, *PatchUserRequest) (*PatchUserResponse, error)
 	// 重置用户密码
 	ResetUserPassword(context.Context, *ResetUserPasswordRequest) (*ResetUserPasswordResponse, error)
 	// 获取当前用户详细资料
-	GetMeProfile(context.Context, *GetMeProfileRequest) (*GetMeProfileResponse, error)
+	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
 	// 更新当前用户基础信息
 	UpdateMe(context.Context, *UpdateMeRequest) (*UpdateMeResponse, error)
 	// 更新当前用户头像
@@ -229,7 +226,7 @@ type UserServiceServer interface {
 	// 绑定当前用户邮箱
 	BindMeEmail(context.Context, *BindMeEmailRequest) (*BindMeEmailResponse, error)
 	// 绑定当前用户手机号
-	BindMePhone(context.Context, *BindMePhoneRequest) (*BindMePhoneResponse, error)
+	BindMeMobile(context.Context, *BindMeMobileRequest) (*BindMeMobileResponse, error)
 	// 绑定当前用户第三方平台
 	BindMeThirdParty(context.Context, *BindMeThirdPartyRequest) (*BindMeThirdPartyResponse, error)
 	// 解绑当前用户第三方平台
@@ -251,14 +248,14 @@ func (UnimplementedUserServiceServer) ListUsers(context.Context, *ListUsersReque
 func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateUserStatus(context.Context, *UpdateUserStatusRequest) (*UpdateUserStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserStatus not implemented")
+func (UnimplementedUserServiceServer) PatchUser(context.Context, *PatchUserRequest) (*PatchUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchUser not implemented")
 }
 func (UnimplementedUserServiceServer) ResetUserPassword(context.Context, *ResetUserPasswordRequest) (*ResetUserPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetUserPassword not implemented")
 }
-func (UnimplementedUserServiceServer) GetMeProfile(context.Context, *GetMeProfileRequest) (*GetMeProfileResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMeProfile not implemented")
+func (UnimplementedUserServiceServer) GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMe not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateMe(context.Context, *UpdateMeRequest) (*UpdateMeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMe not implemented")
@@ -272,8 +269,8 @@ func (UnimplementedUserServiceServer) UpdateMePassword(context.Context, *UpdateM
 func (UnimplementedUserServiceServer) BindMeEmail(context.Context, *BindMeEmailRequest) (*BindMeEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindMeEmail not implemented")
 }
-func (UnimplementedUserServiceServer) BindMePhone(context.Context, *BindMePhoneRequest) (*BindMePhoneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BindMePhone not implemented")
+func (UnimplementedUserServiceServer) BindMeMobile(context.Context, *BindMeMobileRequest) (*BindMeMobileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BindMeMobile not implemented")
 }
 func (UnimplementedUserServiceServer) BindMeThirdParty(context.Context, *BindMeThirdPartyRequest) (*BindMeThirdPartyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindMeThirdParty not implemented")
@@ -336,20 +333,20 @@ func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserStatusRequest)
+func _UserService_PatchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateUserStatus(ctx, in)
+		return srv.(UserServiceServer).PatchUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_UpdateUserStatus_FullMethodName,
+		FullMethod: UserService_PatchUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateUserStatus(ctx, req.(*UpdateUserStatusRequest))
+		return srv.(UserServiceServer).PatchUser(ctx, req.(*PatchUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -372,20 +369,20 @@ func _UserService_ResetUserPassword_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetMeProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMeProfileRequest)
+func _UserService_GetMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetMeProfile(ctx, in)
+		return srv.(UserServiceServer).GetMe(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_GetMeProfile_FullMethodName,
+		FullMethod: UserService_GetMe_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetMeProfile(ctx, req.(*GetMeProfileRequest))
+		return srv.(UserServiceServer).GetMe(ctx, req.(*GetMeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -462,20 +459,20 @@ func _UserService_BindMeEmail_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_BindMePhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BindMePhoneRequest)
+func _UserService_BindMeMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindMeMobileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).BindMePhone(ctx, in)
+		return srv.(UserServiceServer).BindMeMobile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_BindMePhone_FullMethodName,
+		FullMethod: UserService_BindMeMobile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).BindMePhone(ctx, req.(*BindMePhoneRequest))
+		return srv.(UserServiceServer).BindMeMobile(ctx, req.(*BindMeMobileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -556,7 +553,7 @@ func _UserService_ReactivateAccount_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "userrpc.UserService",
+	ServiceName: "blog.user.v1.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -568,16 +565,16 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_GetUser_Handler,
 		},
 		{
-			MethodName: "UpdateUserStatus",
-			Handler:    _UserService_UpdateUserStatus_Handler,
+			MethodName: "PatchUser",
+			Handler:    _UserService_PatchUser_Handler,
 		},
 		{
 			MethodName: "ResetUserPassword",
 			Handler:    _UserService_ResetUserPassword_Handler,
 		},
 		{
-			MethodName: "GetMeProfile",
-			Handler:    _UserService_GetMeProfile_Handler,
+			MethodName: "GetMe",
+			Handler:    _UserService_GetMe_Handler,
 		},
 		{
 			MethodName: "UpdateMe",
@@ -596,8 +593,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_BindMeEmail_Handler,
 		},
 		{
-			MethodName: "BindMePhone",
-			Handler:    _UserService_BindMePhone_Handler,
+			MethodName: "BindMeMobile",
+			Handler:    _UserService_BindMeMobile_Handler,
 		},
 		{
 			MethodName: "BindMeThirdParty",

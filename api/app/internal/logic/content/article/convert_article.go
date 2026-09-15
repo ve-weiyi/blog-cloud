@@ -2,10 +2,10 @@ package article
 
 import (
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
-func convertArticleHomeTypes(in *articleservice.Article) (out *types.ArticleHome) {
+func convertArticleHomeTypes(in *contentservice.Article) (out *types.ArticleHome) {
 	if in == nil {
 		return nil
 	}
@@ -34,13 +34,13 @@ func convertArticleHomeTypes(in *articleservice.Article) (out *types.ArticleHome
 		CategoryName:   categoryName,
 		TagNameList:    tags,
 		LikeCount:      in.LikeCount,
-		ViewsCount:     in.ViewCount,
+		ViewCount:      in.ViewCount,
 	}
 
 	return
 }
 
-func convertArticlePreviewTypes(in *articleservice.ArticlePreview) (out *types.ArticlePreview) {
+func convertArticlePreviewTypes(in *contentservice.ArticlePreview) (out *types.ArticlePreview) {
 	if in == nil {
 		return nil
 	}
@@ -50,7 +50,7 @@ func convertArticlePreviewTypes(in *articleservice.ArticlePreview) (out *types.A
 		ArticleCover: in.ArticleCover,
 		ArticleTitle: in.ArticleTitle,
 		LikeCount:    in.LikeCount,
-		ViewsCount:   in.ViewCount,
+		ViewCount:    in.ViewCount,
 		CreatedAt:    in.CreatedAt,
 	}
 	return

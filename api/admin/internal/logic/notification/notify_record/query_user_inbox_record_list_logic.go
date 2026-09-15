@@ -27,7 +27,7 @@ func NewQueryUserInboxRecordListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 func (l *QueryUserInboxRecordListLogic) QueryUserInboxRecordList(req *types.QueryUserInboxRecordListReq) (resp *types.QueryUserInboxRecordListResp, err error) {
 	out, err := l.svcCtx.NotificationService.ListUserInboxRecords(l.ctx, &notificationservice.ListUserInboxRecordsRequest{
-		PageQuery:  &notificationservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery:  &notificationservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		UserId:     req.UserId,
 		OnlyUnread: req.OnlyUnread,
 		Title:      req.Title,
@@ -37,7 +37,7 @@ func (l *QueryUserInboxRecordListLogic) QueryUserInboxRecordList(req *types.Quer
 	}
 
 	var list []*types.NotifyRecordVO
-	for _, v := range out.Records {
+	for _, v := range out.List {
 		list = append(list, &types.NotifyRecordVO{
 			Id:           v.Id,
 			MessageId:    v.MessageId,
@@ -58,9 +58,9 @@ func (l *QueryUserInboxRecordListLogic) QueryUserInboxRecordList(req *types.Quer
 	}
 
 	return &types.QueryUserInboxRecordListResp{
-		Page:        out.PageResult.Page,
-		PageSize:    out.PageResult.PageSize,
-		Total:       out.PageResult.Total,
+		Page:        out.ListResult.Page,
+		PageSize:    out.ListResult.PageSize,
+		Total:       out.ListResult.Total,
 		UnreadTotal: out.UnreadTotal,
 		List:        list,
 	}, nil

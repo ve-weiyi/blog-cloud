@@ -26,9 +26,9 @@ func NewQueryCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq) (resp *types.PageResult, err error) {
+func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.DiscussionService.ListComments(l.ctx, &discussionservice.ListCommentsRequest{
-		PageQuery: &discussionservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &discussionservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		UserId:    req.UserId,
 		Status:    req.Status,
 		Type:      req.Type,
@@ -73,10 +73,10 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

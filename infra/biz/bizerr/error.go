@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const bizErrorDomain = "ve-blog-biz-error"
+const bizErrorDomain = "blog-biz-error"
 
 // WithBizError 将 BizError 的业务错误码编码到 gRPC status 的 ErrorInfo details 中
 func WithBizError(err error) error {

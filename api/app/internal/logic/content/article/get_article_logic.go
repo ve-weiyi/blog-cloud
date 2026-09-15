@@ -8,7 +8,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/common/apiutils"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type GetArticleLogic struct {
@@ -27,21 +27,21 @@ func NewGetArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArt
 }
 
 func (l *GetArticleLogic) GetArticle(req *types.GetArticleReq) (resp *types.ArticleDetails, err error) {
-	_, err = l.svcCtx.ArticleService.IncrementArticleView(l.ctx, &articleservice.IncrementArticleViewRequest{
+	_, err = l.svcCtx.ContentService.IncrementArticleView(l.ctx, &contentservice.IncrementArticleViewRequest{
 		Id: req.ArticleId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	articleOut, err := l.svcCtx.ArticleService.GetArticle(l.ctx, &articleservice.GetArticleRequest{
+	articleOut, err := l.svcCtx.ContentService.GetArticle(l.ctx, &contentservice.GetArticleRequest{
 		Id: req.ArticleId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	relationOut, err := l.svcCtx.ArticleService.GetArticleRelation(l.ctx, &articleservice.GetArticleRelationRequest{
+	relationOut, err := l.svcCtx.ContentService.GetArticleRelation(l.ctx, &contentservice.GetArticleRelationRequest{
 		Id: req.ArticleId,
 	})
 	if err != nil {
@@ -66,7 +66,7 @@ func (l *GetArticleLogic) GetArticle(req *types.GetArticleReq) (resp *types.Arti
 		resp.RecommendArticleList = append(resp.RecommendArticleList, convertArticlePreviewTypes(v))
 	}
 
-	for _, v := range relationOut.Newests {
+	for _, v := range relationOut.Latest {
 		resp.NewestArticleList = append(resp.NewestArticleList, convertArticlePreviewTypes(v))
 	}
 

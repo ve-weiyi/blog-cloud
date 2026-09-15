@@ -26,10 +26,10 @@ func NewListCommentRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ListCommentRepliesLogic) ListCommentReplies(in *discussionrpc.ListCommentRepliesRequest) (*discussionrpc.ListCommentRepliesResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 
 	if in.TopicId != nil {
@@ -57,7 +57,7 @@ func (l *ListCommentRepliesLogic) ListCommentReplies(in *discussionrpc.ListComme
 	}
 
 	return &discussionrpc.ListCommentRepliesResponse{
-		PageResult: &discussionrpc.PageResult{
+		ListResult: &discussionrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,

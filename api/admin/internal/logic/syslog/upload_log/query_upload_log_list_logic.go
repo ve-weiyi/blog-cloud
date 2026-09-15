@@ -26,9 +26,9 @@ func NewQueryUploadLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *QueryUploadLogListLogic) QueryUploadLogList(req *types.QueryUploadLogListReq) (resp *types.PageResult, err error) {
+func (l *QueryUploadLogListLogic) QueryUploadLogList(req *types.QueryUploadLogListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.SyslogService.ListUploadLogs(l.ctx, &syslogservice.ListUploadLogsRequest{
-		PageQuery: &syslogservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &syslogservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		UserId:    nil,
 		FileType:  req.FileType,
 	})
@@ -70,10 +70,10 @@ func (l *QueryUploadLogListLogic) QueryUploadLogList(req *types.QueryUploadLogLi
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

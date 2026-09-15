@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type UpdateTagLogic struct {
@@ -26,7 +26,7 @@ func NewUpdateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateT
 }
 
 func (l *UpdateTagLogic) UpdateTag(req *types.UpdateTagReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.ArticleService.UpdateTag(l.ctx, &articleservice.UpdateTagRequest{
+	_, err = l.svcCtx.ContentService.UpdateTag(l.ctx, &contentservice.UpdateTagRequest{
 		Id:      req.Id,
 		TagName: req.TagName,
 	})

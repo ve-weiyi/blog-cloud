@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type UpdateCategoryLogic struct {
@@ -26,7 +26,7 @@ func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateCategoryLogic) UpdateCategory(req *types.UpdateCategoryReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.ArticleService.UpdateCategory(l.ctx, &articleservice.UpdateCategoryRequest{
+	_, err = l.svcCtx.ContentService.UpdateCategory(l.ctx, &contentservice.UpdateCategoryRequest{
 		Id:           req.Id,
 		CategoryName: req.CategoryName,
 	})

@@ -6,9 +6,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -26,7 +24,7 @@ func NewMarkAllRecordsReadLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *MarkAllRecordsReadLogic) MarkAllRecordsRead(in *notificationrpc2.MarkAllRecordsReadRequest) (*notificationrpc2.MarkAllRecordsReadResponse, error) {
+func (l *MarkAllRecordsReadLogic) MarkAllRecordsRead(in *notificationrpc.MarkAllRecordsReadRequest) (*notificationrpc.MarkAllRecordsReadResponse, error) {
 	fields := map[string]interface{}{
 		"status":  "read",
 		"read_at": time.Now(),

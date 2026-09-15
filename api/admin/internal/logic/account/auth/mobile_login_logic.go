@@ -8,8 +8,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/notificationservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
 )
 
 type MobileLoginLogic struct {
@@ -28,17 +28,17 @@ func NewMobileLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Mobil
 }
 
 func (l *MobileLoginLogic) MobileLogin(req *types.MobileLoginReq) (resp *types.LoginResp, err error) {
-	_, err = l.svcCtx.NotificationService.VerifyPhoneCode(l.ctx, &notificationservice.VerifyPhoneCodeRequest{
-		Phone: req.Mobile,
-		Scene: enums.CodeSceneMobileLogin,
-		Code:  req.Code,
-		BizId: "",
+	_, err = l.svcCtx.NotificationService.VerifyMobileCode(l.ctx, &notificationservice.VerifyMobileCodeRequest{
+		Mobile: req.Mobile,
+		Scene:  enums.CodeSceneMobileLogin,
+		Code:   req.Code,
+		BizId:  "",
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	out, err := l.svcCtx.UserAuthService.LoginByMobile(l.ctx, &userauthservice.LoginByMobileRequest{
+	out, err := l.svcCtx.AuthService.LoginByMobile(l.ctx, &authservice.LoginByMobileRequest{
 		Mobile: req.Mobile,
 	})
 	if err != nil {

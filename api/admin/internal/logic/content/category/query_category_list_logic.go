@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type QueryCategoryListLogic struct {
@@ -25,9 +25,9 @@ func NewQueryCategoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *QueryCategoryListLogic) QueryCategoryList(req *types.QueryCategoryListReq) (resp *types.PageResult, err error) {
-	out, err := l.svcCtx.ArticleService.ListCategories(l.ctx, &articleservice.ListCategoriesRequest{
-		PageQuery:    &articleservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+func (l *QueryCategoryListLogic) QueryCategoryList(req *types.QueryCategoryListReq) (resp *types.ListResult, err error) {
+	out, err := l.svcCtx.ContentService.ListCategories(l.ctx, &contentservice.ListCategoriesRequest{
+		ListQuery:    &contentservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		CategoryName: req.CategoryName,
 	})
 	if err != nil {
@@ -45,10 +45,10 @@ func (l *QueryCategoryListLogic) QueryCategoryList(req *types.QueryCategoryListR
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

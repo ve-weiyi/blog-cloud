@@ -5,9 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -26,7 +24,7 @@ func NewGetNotifyMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 根据ID查询通知消息
-func (l *GetNotifyMessageLogic) GetNotifyMessage(in *notificationrpc2.GetNotifyMessageRequest) (*notificationrpc2.GetNotifyMessageResponse, error) {
+func (l *GetNotifyMessageLogic) GetNotifyMessage(in *notificationrpc.GetNotifyMessageRequest) (*notificationrpc.GetNotifyMessageResponse, error) {
 	record, err := l.svcCtx.TNotifyMessageModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err

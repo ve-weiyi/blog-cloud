@@ -25,9 +25,9 @@ func NewQueryNotifyTemplateListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *QueryNotifyTemplateListLogic) QueryNotifyTemplateList(req *types.QueryNotifyTemplateListReq) (resp *types.PageResult, err error) {
+func (l *QueryNotifyTemplateListLogic) QueryNotifyTemplateList(req *types.QueryNotifyTemplateListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.NotificationService.ListNotifyTemplates(l.ctx, &notificationservice.ListNotifyTemplatesRequest{
-		PageQuery: &notificationservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &notificationservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		Channel:   req.Channel,
 	})
 	if err != nil {
@@ -35,7 +35,7 @@ func (l *QueryNotifyTemplateListLogic) QueryNotifyTemplateList(req *types.QueryN
 	}
 
 	var list []*types.NotifyTemplateVO
-	for _, v := range out.Templates {
+	for _, v := range out.List {
 		list = append(list, &types.NotifyTemplateVO{
 			Id:        v.Id,
 			Code:      v.Code,
@@ -49,10 +49,10 @@ func (l *QueryNotifyTemplateListLogic) QueryNotifyTemplateList(req *types.QueryN
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

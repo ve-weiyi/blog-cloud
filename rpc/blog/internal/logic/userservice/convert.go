@@ -19,7 +19,6 @@ func convertTUserToUser(user *model.TUser) *userrpc.User {
 		Id:           user.Id,
 		UserId:       user.UserId,
 		Username:     user.Username,
-		Password:     "",
 		Nickname:     user.Nickname,
 		Avatar:       user.Avatar,
 		Email:        stringPtr(user.Email),

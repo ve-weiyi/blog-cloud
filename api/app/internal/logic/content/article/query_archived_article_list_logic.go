@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type QueryArchivedArticleListLogic struct {
@@ -25,12 +25,12 @@ func NewQueryArchivedArticleListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *QueryArchivedArticleListLogic) QueryArchivedArticleList(req *types.QueryArchivedArticleListReq) (resp *types.PageResult, err error) {
+func (l *QueryArchivedArticleListLogic) QueryArchivedArticleList(req *types.QueryArchivedArticleListReq) (resp *types.ListResult, err error) {
 	isDelete := int64(0)
 	status := int64(1)
 
-	in := &articleservice.ListArticlesRequest{
-		PageQuery: &articleservice.PageQuery{
+	in := &contentservice.ListArticlesRequest{
+		ListQuery: &contentservice.ListQuery{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    []string{"created_at desc"},
@@ -39,7 +39,7 @@ func (l *QueryArchivedArticleListLogic) QueryArchivedArticleList(req *types.Quer
 		Status:   &status,
 	}
 
-	out, err := l.svcCtx.ArticleService.ListArticles(l.ctx, in)
+	out, err := l.svcCtx.ContentService.ListArticles(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -50,10 +50,10 @@ func (l *QueryArchivedArticleListLogic) QueryArchivedArticleList(req *types.Quer
 		list = append(list, m)
 	}
 
-	resp = &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	resp = &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}
 	return

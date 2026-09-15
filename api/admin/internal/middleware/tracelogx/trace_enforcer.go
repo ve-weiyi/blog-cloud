@@ -12,20 +12,20 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/infra/constants/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
 )
 
 var _ Enforcer = &TraceEnforcer{}
 
 type TraceEnforcer struct {
 	mu           sync.RWMutex
-	pr           permissionservice.PermissionService
+	pr           accessservice.AccessService
 	rds          *redis.Client
 	rules        []traceRule
 	policyLoaded bool
 }
 
-func NewTraceEnforcer(rds *redis.Client, pr permissionservice.PermissionService) *TraceEnforcer {
+func NewTraceEnforcer(rds *redis.Client, pr accessservice.AccessService) *TraceEnforcer {
 	h := &TraceEnforcer{pr: pr, rds: rds}
 	h.startSubscribe()
 	return h
@@ -85,7 +85,7 @@ func (s *TraceEnforcer) loadRulesFromRPC() error {
 
 	logx.Info("Loading trace rules from rpc...")
 
-	resp, err := s.pr.ListApis(context.Background(), &permissionservice.ListApisRequest{})
+	resp, err := s.pr.ListApis(context.Background(), &accessservice.ListApisRequest{})
 	if err != nil {
 		return err
 	}
@@ -170,8 +170,8 @@ func (r traceRule) match(segments []string, action string) bool {
 	return matchPathSegments(r.segments, segments)
 }
 
-func flattenApiTree(nodes []*permissionservice.Api) []*permissionservice.Api {
-	var result []*permissionservice.Api
+func flattenApiTree(nodes []*accessservice.Api) []*accessservice.Api {
+	var result []*accessservice.Api
 	for _, node := range nodes {
 		result = append(result, node)
 		if len(node.Children) > 0 {

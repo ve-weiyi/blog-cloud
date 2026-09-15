@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type GetArticleLogic struct {
@@ -26,7 +26,7 @@ func NewGetArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetArt
 }
 
 func (l *GetArticleLogic) GetArticle(req *types.GetArticleReq) (resp *types.ArticleVO, err error) {
-	out, err := l.svcCtx.ArticleService.GetArticle(l.ctx, &articleservice.GetArticleRequest{
+	out, err := l.svcCtx.ContentService.GetArticle(l.ctx, &contentservice.GetArticleRequest{
 		Id: req.Id,
 	})
 	if err != nil {
@@ -57,6 +57,6 @@ func (l *GetArticleLogic) GetArticle(req *types.GetArticleReq) (resp *types.Arti
 		CategoryName:   categoryName,
 		TagNameList:    tagNames,
 		LikeCount:      article.LikeCount,
-		ViewsCount:     article.ViewCount,
+		ViewCount:      article.ViewCount,
 	}, nil
 }

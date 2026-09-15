@@ -16,7 +16,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/infra/constants/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
 )
 
 // apiPermission 实现 gorbac.Permission，ID 格式为 "METHOD:PATH"
@@ -38,7 +38,7 @@ var _ Enforcer = &RbacEnforcer{}
 // RbacEnforcer 基于 gorbac 的 RBAC 权限执行器
 type RbacEnforcer struct {
 	mu  sync.RWMutex
-	pr  permissionservice.PermissionService
+	pr  accessservice.AccessService
 	rds *redis.Client
 
 	rbac         *gorbac.RBAC        // role -> permissions（全量加载，原子替换）
@@ -48,7 +48,7 @@ type RbacEnforcer struct {
 	policyLoaded bool
 }
 
-func NewRbacEnforcer(rds *redis.Client, pr permissionservice.PermissionService) *RbacEnforcer {
+func NewRbacEnforcer(rds *redis.Client, pr accessservice.AccessService) *RbacEnforcer {
 	h := &RbacEnforcer{
 		pr:          pr,
 		rds:         rds,
@@ -74,18 +74,18 @@ func (m *RbacEnforcer) LoadPolicy() error {
 
 	ctx := context.Background()
 
-	roleList, err := m.pr.ListRoles(ctx, &permissionservice.ListRolesRequest{})
+	roleList, err := m.pr.ListRoles(ctx, &accessservice.ListRolesRequest{})
 	if err != nil {
 		return err
 	}
 
-	apiList, err := m.pr.ListApis(ctx, &permissionservice.ListApisRequest{})
+	apiList, err := m.pr.ListApis(ctx, &accessservice.ListApisRequest{})
 	if err != nil {
 		return err
 	}
 
 	flatApis := flattenApiTree(apiList.List)
-	apis := make(map[int64]*permissionservice.Api, len(flatApis))
+	apis := make(map[int64]*accessservice.Api, len(flatApis))
 	for _, v := range flatApis {
 		apis[v.Id] = v
 	}
@@ -99,7 +99,7 @@ func (m *RbacEnforcer) LoadPolicy() error {
 		}
 		rk := roleKey(role.RoleKey, role.Id)
 
-		resource, err := m.pr.GetRoleResource(ctx, &permissionservice.GetRoleResourceRequest{RoleId: role.Id})
+		resource, err := m.pr.GetRoleResource(ctx, &accessservice.GetRoleResourceRequest{RoleId: role.Id})
 		if err != nil {
 			return err
 		}
@@ -245,7 +245,7 @@ func (m *RbacEnforcer) getUserRoles(userId string) ([]string, error) {
 	if m.pr == nil {
 		return nil, errors.New("permission service is nil")
 	}
-	resp, err := m.pr.GetUserRoles(context.Background(), &permissionservice.GetUserRolesRequest{UserId: userId})
+	resp, err := m.pr.ListUserRoles(context.Background(), &accessservice.ListUserRolesRequest{UserId: userId})
 	if err != nil {
 		return nil, err
 	}
@@ -326,8 +326,8 @@ func (m *RbacEnforcer) subscribe() error {
 	return errors.New("channel closed")
 }
 
-func flattenApiTree(nodes []*permissionservice.Api) []*permissionservice.Api {
-	var result []*permissionservice.Api
+func flattenApiTree(nodes []*accessservice.Api) []*accessservice.Api {
+	var result []*accessservice.Api
 	for _, node := range nodes {
 		result = append(result, node)
 		if len(node.Children) > 0 {

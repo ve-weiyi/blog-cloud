@@ -8,7 +8,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
 	"github.com/ve-weiyi/blog-cloud/infra/metax"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 )
 
 type LogoutLogic struct {
@@ -29,8 +29,8 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.LogoutResp, err error) {
 	uid, _ := metax.GetApiUserIdFromCtx(l.ctx)
 
-	in := userauthservice.LogoutRequest{}
-	_, err = l.svcCtx.UserAuthService.Logout(l.ctx, &in)
+	in := authservice.LogoutRequest{}
+	_, err = l.svcCtx.AuthService.Logout(l.ctx, &in)
 	if err != nil {
 		return
 	}

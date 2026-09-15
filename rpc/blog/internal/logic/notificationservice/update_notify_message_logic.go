@@ -6,9 +6,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -27,7 +25,7 @@ func NewUpdateNotifyMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 更新通知消息
-func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(in *notificationrpc2.UpdateNotifyMessageRequest) (*notificationrpc2.UpdateNotifyMessageResponse, error) {
+func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(in *notificationrpc.UpdateNotifyMessageRequest) (*notificationrpc.UpdateNotifyMessageResponse, error) {
 	fields := map[string]interface{}{
 		"title":       in.Title,
 		"content":     in.Content,

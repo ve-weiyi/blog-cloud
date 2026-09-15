@@ -3,24 +3,8 @@ package discussionservicelogic
 import (
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
+	"github.com/ve-weiyi/vkit/x/jsonconv"
 )
-
-func convertChatOut(in *model.TChat) *discussionrpc.Chat {
-	return &discussionrpc.Chat{
-		Id:        in.Id,
-		UserId:    in.UserId,
-		DeviceId:  in.DeviceId,
-		IpAddress: in.IpAddress,
-		IpSource:  in.IpSource,
-		Nickname:  in.Nickname,
-		Avatar:    in.Avatar,
-		Type:      in.Type,
-		Content:   in.Content,
-		Status:    in.Status,
-		CreatedAt: in.CreatedAt.UnixMilli(),
-		UpdatedAt: in.UpdatedAt.UnixMilli(),
-	}
-}
 
 func convertMessageOut(in *model.TMessage) *discussionrpc.Message {
 	return &discussionrpc.Message{
@@ -49,5 +33,22 @@ func convertCommentOut(in *model.TComment) *discussionrpc.Comment {
 		CreatedAt:      in.CreatedAt.UnixMilli(),
 		UpdatedAt:      in.UpdatedAt.UnixMilli(),
 		LikeCount:      in.LikeCount,
+	}
+}
+
+func convertTalkOut(in *model.TTalk) *discussionrpc.Talk {
+	var images []string
+	jsonconv.JsonToAny(in.Images, &images)
+
+	return &discussionrpc.Talk{
+		Id:        in.Id,
+		UserId:    in.UserId,
+		Content:   in.Content,
+		Images:    images,
+		IsTop:     in.IsTop,
+		Status:    in.Status,
+		CreatedAt: in.CreatedAt.UnixMilli(),
+		UpdatedAt: in.UpdatedAt.UnixMilli(),
+		LikeCount: in.LikeCount,
 	}
 }

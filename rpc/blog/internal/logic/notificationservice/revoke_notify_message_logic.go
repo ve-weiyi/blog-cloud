@@ -5,9 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -26,7 +24,7 @@ func NewRevokeNotifyMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 撤回通知消息
-func (l *RevokeNotifyMessageLogic) RevokeNotifyMessage(in *notificationrpc2.RevokeNotifyMessageRequest) (*notificationrpc2.RevokeNotifyMessageResponse, error) {
+func (l *RevokeNotifyMessageLogic) RevokeNotifyMessage(in *notificationrpc.RevokeNotifyMessageRequest) (*notificationrpc.RevokeNotifyMessageResponse, error) {
 	msg, err := l.svcCtx.TNotifyMessageModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err

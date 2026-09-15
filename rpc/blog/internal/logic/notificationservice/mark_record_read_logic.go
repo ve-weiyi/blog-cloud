@@ -6,9 +6,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -27,7 +25,7 @@ func NewMarkRecordReadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ma
 }
 
 // 标记单条 inbox 已读（按投递记录 id）
-func (l *MarkRecordReadLogic) MarkRecordRead(in *notificationrpc2.MarkRecordReadRequest) (*notificationrpc2.MarkRecordReadResponse, error) {
+func (l *MarkRecordReadLogic) MarkRecordRead(in *notificationrpc.MarkRecordReadRequest) (*notificationrpc.MarkRecordReadResponse, error) {
 	fields := map[string]interface{}{
 		"status":  "read",
 		"read_at": time.Now(),

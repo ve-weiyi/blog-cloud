@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type DeleteArticleLogic struct {
@@ -27,7 +27,7 @@ func NewDeleteArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 
 func (l *DeleteArticleLogic) DeleteArticle(req *types.DeleteArticleReq) (resp *types.BatchResp, err error) {
 	isDelete := int64(1)
-	_, err = l.svcCtx.ArticleService.PatchArticle(l.ctx, &articleservice.PatchArticleRequest{
+	_, err = l.svcCtx.ContentService.PatchArticle(l.ctx, &contentservice.PatchArticleRequest{
 		Id:       req.Id,
 		IsDelete: &isDelete,
 	})

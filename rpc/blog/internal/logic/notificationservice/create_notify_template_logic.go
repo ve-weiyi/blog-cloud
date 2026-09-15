@@ -5,9 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -26,7 +24,7 @@ func NewCreateNotifyTemplateLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 创建通知模板
-func (l *CreateNotifyTemplateLogic) CreateNotifyTemplate(in *notificationrpc2.CreateNotifyTemplateRequest) (*notificationrpc2.CreateNotifyTemplateResponse, error) {
+func (l *CreateNotifyTemplateLogic) CreateNotifyTemplate(in *notificationrpc.CreateNotifyTemplateRequest) (*notificationrpc.CreateNotifyTemplateResponse, error) {
 	template := convertProtoToTNotifyTemplate(in)
 
 	_, err := l.svcCtx.TNotifyTemplateModel.Insert(l.ctx, template)

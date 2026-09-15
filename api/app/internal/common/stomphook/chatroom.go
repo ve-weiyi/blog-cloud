@@ -9,12 +9,12 @@ import (
 
 	"github.com/go-stomp/stomp/v3/frame"
 
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/discussionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/chatservice"
 	"github.com/ve-weiyi/stompws/server/client"
 	"github.com/ve-weiyi/vkit/adapter/ipx"
 	"github.com/ve-weiyi/vkit/x/jsonconv"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
 )
@@ -24,14 +24,14 @@ type ChatRoomEventHook struct {
 	connectTime sync.Map // key: clientId, value: connectTime
 	onlineUser  sync.Map // key: clientId, value: *userservice.User
 
-	UserService       userservice.UserService
-	DiscussionService discussionservice.DiscussionService
+	UserService userservice.UserService
+	ChatService chatservice.ChatService
 }
 
-func NewChatRoomEventHook(userSvc userservice.UserService, discussionSvc discussionservice.DiscussionService) *ChatRoomEventHook {
+func NewChatRoomEventHook(userSvc userservice.UserService, chatSvc chatservice.ChatService) *ChatRoomEventHook {
 	return &ChatRoomEventHook{
-		UserService:       userSvc,
-		DiscussionService: discussionSvc,
+		UserService: userSvc,
+		ChatService: chatSvc,
 	}
 }
 
@@ -101,7 +101,7 @@ func (h *ChatRoomEventHook) OnSubscribe(server *client.StompHubServer, c *client
 	server.RouteMessage(nil, online)
 
 	// 3. 私发历史消息
-	out, err := h.DiscussionService.ListChats(context.Background(), &discussionservice.ListChatsRequest{
+	out, err := h.ChatService.ListChats(context.Background(), &chatservice.ListChatsRequest{
 		After:  time.Now().Add(-365 * 24 * time.Hour).UnixMilli(),
 		Before: time.Now().UnixMilli(),
 		Limit:  0,
@@ -132,9 +132,9 @@ func (h *ChatRoomEventHook) OnSubscribe(server *client.StompHubServer, c *client
 		Type: MessageTypeHistory,
 		Data: jsonconv.AnyToJsonNE(HistoryMessageEvent{
 			List:  list,
-			Page:  out.PageResult.Page,
-			Size:  out.PageResult.PageSize,
-			Total: out.PageResult.Total,
+			Page:  out.ListResult.Page,
+			Size:  out.ListResult.PageSize,
+			Total: out.ListResult.Total,
 		}),
 		TimeStamp: time.Now().UnixMilli(),
 	}))
@@ -190,7 +190,7 @@ func (h *ChatRoomEventHook) OnSend(server *client.StompHubServer, c *client.Clie
 		}
 
 		now := time.Now().UnixMilli()
-		out, err := h.DiscussionService.CreateChat(context.Background(), &discussionservice.CreateChatRequest{
+		out, err := h.ChatService.CreateChat(context.Background(), &chatservice.CreateChatRequest{
 			UserId:    userId,
 			DeviceId:  clientId,
 			IpAddress: ip,
@@ -231,7 +231,7 @@ func (h *ChatRoomEventHook) OnSend(server *client.StompHubServer, c *client.Clie
 		jsonconv.JsonToAny(event.Data, &edit)
 
 		now := time.Now().UnixMilli()
-		_, err := h.DiscussionService.UpdateChat(context.Background(), &discussionservice.UpdateChatRequest{
+		_, err := h.ChatService.UpdateChat(context.Background(), &chatservice.UpdateChatRequest{
 			Id:      edit.Id,
 			Type:    edit.Type,
 			Content: edit.Content,

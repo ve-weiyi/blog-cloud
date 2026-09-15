@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type LikeArticleLogic struct {
@@ -26,7 +26,7 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 }
 
 func (l *LikeArticleLogic) LikeArticle(req *types.LikeArticleReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.ArticleService.LikeArticle(l.ctx, &articleservice.LikeArticleRequest{
+	_, err = l.svcCtx.ContentService.LikeArticle(l.ctx, &contentservice.LikeArticleRequest{
 		Id: req.ArticleId,
 	})
 	if err != nil {

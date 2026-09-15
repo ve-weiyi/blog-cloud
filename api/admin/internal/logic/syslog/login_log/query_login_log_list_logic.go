@@ -26,9 +26,9 @@ func NewQueryLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *QueryLoginLogListLogic) QueryLoginLogList(req *types.QueryLoginLogListReq) (resp *types.PageResult, err error) {
+func (l *QueryLoginLogListLogic) QueryLoginLogList(req *types.QueryLoginLogListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.SyslogService.ListLoginLogs(l.ctx, &syslogservice.ListLoginLogsRequest{
-		PageQuery: &syslogservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &syslogservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		UserId:    req.UserId,
 	})
 	if err != nil {
@@ -65,10 +65,10 @@ func (l *QueryLoginLogListLogic) QueryLoginLogList(req *types.QueryLoginLogListR
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

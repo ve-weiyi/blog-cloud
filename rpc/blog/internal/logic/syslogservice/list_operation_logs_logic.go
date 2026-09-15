@@ -28,10 +28,10 @@ func NewListOperationLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 // 分页查询操作日志
 func (l *ListOperationLogsLogic) ListOperationLogs(in *syslogrpc.ListOperationLogsRequest) (*syslogrpc.ListOperationLogsResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 	if in.UserId != nil {
 		opts = append(opts, queryx.WithCondition("user_id = ?", *in.UserId))
@@ -62,7 +62,7 @@ func (l *ListOperationLogsLogic) ListOperationLogs(in *syslogrpc.ListOperationLo
 	}
 
 	return &syslogrpc.ListOperationLogsResponse{
-		PageResult: &syslogrpc.PageResult{
+		ListResult: &syslogrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,

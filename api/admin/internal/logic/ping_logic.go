@@ -26,7 +26,7 @@ func NewPingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PingLogic {
 func (l *PingLogic) Ping(req *types.PingReq) (resp *types.PingResp, err error) {
 	return &types.PingResp{
 		Env:         "development",
-		Name:        "ve-blog-admin-api",
+		Name:        "blog-admin-api",
 		Version:     "1.0.0",
 		Description: "Blog Admin API Service",
 		Runtime:     "Go",

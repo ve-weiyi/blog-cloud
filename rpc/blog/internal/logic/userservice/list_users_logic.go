@@ -27,10 +27,10 @@ func NewListUsersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListUse
 // 分页查询用户列表
 func (l *ListUsersLogic) ListUsers(in *userrpc.ListUsersRequest) (*userrpc.ListUsersResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 
 	if in.Username != nil && *in.Username != "" {
@@ -65,7 +65,7 @@ func (l *ListUsersLogic) ListUsers(in *userrpc.ListUsersRequest) (*userrpc.ListU
 	}
 
 	return &userrpc.ListUsersResponse{
-		PageResult: &userrpc.PageResult{
+		ListResult: &userrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,

@@ -7,9 +7,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
-
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 )
 
@@ -27,9 +25,9 @@ func NewBatchMarkRecordsReadLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-func (l *BatchMarkRecordsReadLogic) BatchMarkRecordsRead(in *notificationrpc2.BatchMarkRecordsReadRequest) (*notificationrpc2.BatchMarkRecordsReadResponse, error) {
+func (l *BatchMarkRecordsReadLogic) BatchMarkRecordsRead(in *notificationrpc.BatchMarkRecordsReadRequest) (*notificationrpc.BatchMarkRecordsReadResponse, error) {
 	if len(in.Ids) == 0 {
-		return &notificationrpc2.BatchMarkRecordsReadResponse{}, nil
+		return &notificationrpc.BatchMarkRecordsReadResponse{}, nil
 	}
 
 	placeholders := make([]string, len(in.Ids))

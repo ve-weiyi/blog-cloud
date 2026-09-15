@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type QueryTagListLogic struct {
@@ -25,9 +25,9 @@ func NewQueryTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Quer
 	}
 }
 
-func (l *QueryTagListLogic) QueryTagList(req *types.QueryTagListReq) (resp *types.PageResult, err error) {
-	in := &articleservice.ListTagsRequest{
-		PageQuery: &articleservice.PageQuery{
+func (l *QueryTagListLogic) QueryTagList(req *types.QueryTagListReq) (resp *types.ListResult, err error) {
+	in := &contentservice.ListTagsRequest{
+		ListQuery: &contentservice.ListQuery{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
@@ -35,7 +35,7 @@ func (l *QueryTagListLogic) QueryTagList(req *types.QueryTagListReq) (resp *type
 		TagName: req.TagName,
 	}
 
-	out, err := l.svcCtx.ArticleService.ListTags(l.ctx, in)
+	out, err := l.svcCtx.ContentService.ListTags(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -51,10 +51,10 @@ func (l *QueryTagListLogic) QueryTagList(req *types.QueryTagListReq) (resp *type
 		})
 	}
 
-	resp = &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	resp = &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}
 	return

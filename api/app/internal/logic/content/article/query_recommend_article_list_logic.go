@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type QueryRecommendArticleListLogic struct {
@@ -25,18 +25,18 @@ func NewQueryRecommendArticleListLogic(ctx context.Context, svcCtx *svc.ServiceC
 	}
 }
 
-func (l *QueryRecommendArticleListLogic) QueryRecommendArticleList(req *types.QueryRecommendArticleListReq) (resp *types.PageResult, err error) {
+func (l *QueryRecommendArticleListLogic) QueryRecommendArticleList(req *types.QueryRecommendArticleListReq) (resp *types.ListResult, err error) {
 	isTop := int64(1)
 	isDelete := int64(0)
 	status := int64(1)
 
-	in := &articleservice.ListArticlesRequest{
+	in := &contentservice.ListArticlesRequest{
 		IsTop:    &isTop,
 		IsDelete: &isDelete,
 		Status:   &status,
 	}
 
-	out, err := l.svcCtx.ArticleService.ListArticles(l.ctx, in)
+	out, err := l.svcCtx.ContentService.ListArticles(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
@@ -47,10 +47,10 @@ func (l *QueryRecommendArticleListLogic) QueryRecommendArticleList(req *types.Qu
 		list = append(list, m)
 	}
 
-	resp = &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	resp = &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}
 	return

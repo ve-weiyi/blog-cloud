@@ -6,12 +6,10 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
 	"github.com/ve-weiyi/vkit/adapter/gormx/queryx"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
 )
 
 type ListUserInboxRecordsLogic struct {
@@ -28,12 +26,12 @@ func NewListUserInboxRecordsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-func (l *ListUserInboxRecordsLogic) ListUserInboxRecords(in *notificationrpc2.ListUserInboxRecordsRequest) (*notificationrpc2.ListUserInboxRecordsResponse, error) {
+func (l *ListUserInboxRecordsLogic) ListUserInboxRecords(in *notificationrpc.ListUserInboxRecordsRequest) (*notificationrpc.ListUserInboxRecordsResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 
 	opts = append(opts, queryx.WithCondition("channel = ?", "inbox"))
@@ -49,7 +47,7 @@ func (l *ListUserInboxRecordsLogic) ListUserInboxRecords(in *notificationrpc2.Li
 		titleMsgIds = l.getMessageIdsByTitle(*in.Title)
 		if len(titleMsgIds) == 0 {
 			return &notificationrpc.ListUserInboxRecordsResponse{
-				PageResult:  &notificationrpc.PageResult{Page: 1, PageSize: 10, Total: 0},
+				ListResult:  &notificationrpc.ListResult{Page: 1, PageSize: 10, Total: 0},
 				UnreadTotal: 0,
 			}, nil
 		}
@@ -109,12 +107,12 @@ func (l *ListUserInboxRecordsLogic) ListUserInboxRecords(in *notificationrpc2.Li
 	}
 
 	return &notificationrpc.ListUserInboxRecordsResponse{
-		PageResult: &notificationrpc.PageResult{
+		ListResult: &notificationrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,
 		},
-		Records:     list,
+		List:        list,
 		UnreadTotal: unreadTotal,
 	}, nil
 }

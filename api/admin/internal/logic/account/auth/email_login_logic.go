@@ -8,8 +8,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/notificationservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
 )
 
 type EmailLoginLogic struct {
@@ -38,7 +38,7 @@ func (l *EmailLoginLogic) EmailLogin(req *types.EmailLoginReq) (resp *types.Logi
 		return nil, err
 	}
 
-	out, err := l.svcCtx.UserAuthService.LoginByEmail(l.ctx, &userauthservice.LoginByEmailRequest{
+	out, err := l.svcCtx.AuthService.LoginByEmail(l.ctx, &authservice.LoginByEmailRequest{
 		Email: req.Email,
 	})
 	if err != nil {

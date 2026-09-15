@@ -4,16 +4,13 @@
 // - protoc             v7.35.0
 // source: guest.proto
 
-// proto 包名
-
 package guestrpc
 
 import (
-	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	context "context"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GuestService_ListGuests_FullMethodName = "/guestrpc.GuestService/ListGuests"
-	GuestService_GetGuest_FullMethodName   = "/guestrpc.GuestService/GetGuest"
+	GuestService_ListGuests_FullMethodName = "/blog.guest.v1.GuestService/ListGuests"
+	GuestService_GetGuest_FullMethodName   = "/blog.guest.v1.GuestService/GetGuest"
 )
 
 // GuestServiceClient is the client API for GuestService service.
@@ -136,7 +133,7 @@ func _GuestService_GetGuest_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GuestService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "guestrpc.GuestService",
+	ServiceName: "blog.guest.v1.GuestService",
 	HandlerType: (*GuestServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

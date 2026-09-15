@@ -8,12 +8,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/mqx"
 	"github.com/ve-weiyi/vkit/x/jsonconv"
 	"github.com/ve-weiyi/vkit/x/patternx"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
 
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizerr"
@@ -84,7 +83,6 @@ func (l *SendEmailCodeLogic) SendEmailCode(in *notificationrpc.SendEmailCodeRequ
 	}
 
 	return &notificationrpc.SendEmailCodeResponse{
-		Id:   0,    // 消费者会创建记录
-		Code: code, // 返回验证码用于测试，生产环境可以移除
+		Id: 0, // 消费者会创建记录
 	}, nil
 }

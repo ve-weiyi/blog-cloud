@@ -28,10 +28,10 @@ func NewListVisitLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 // 分页查询访问日志
 func (l *ListVisitLogsLogic) ListVisitLogs(in *syslogrpc.ListVisitLogsRequest) (*syslogrpc.ListVisitLogsResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 	if in.UserId != nil {
 		opts = append(opts, queryx.WithCondition("user_id = ?", *in.UserId))
@@ -65,7 +65,7 @@ func (l *ListVisitLogsLogic) ListVisitLogs(in *syslogrpc.ListVisitLogsRequest) (
 	}
 
 	return &syslogrpc.ListVisitLogsResponse{
-		PageResult: &syslogrpc.PageResult{
+		ListResult: &syslogrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,

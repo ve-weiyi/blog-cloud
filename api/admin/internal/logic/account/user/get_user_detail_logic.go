@@ -7,9 +7,9 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 )
 
 type GetUserDetailLogic struct {
@@ -36,7 +36,7 @@ func (l *GetUserDetailLogic) GetUserDetail(req *types.GetUserDetailReq) (resp *t
 	}
 
 	var roleLabels []*types.UserRoleLabel
-	rolesResp, err := l.svcCtx.PermissionService.GetUsersRoles(l.ctx, &permissionservice.GetUsersRolesRequest{
+	rolesResp, err := l.svcCtx.AccessService.BatchGetUserRoles(l.ctx, &accessservice.BatchGetUserRolesRequest{
 		UserIds: []string{req.UserId},
 	})
 	if err != nil {

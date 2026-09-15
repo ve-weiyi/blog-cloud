@@ -26,11 +26,11 @@ func NewQueryCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq) (resp *types.PageResult, err error) {
+func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq) (resp *types.ListResult, err error) {
 	status := int64(1)
 
 	in := &discussionservice.ListCommentsRequest{
-		PageQuery: &discussionservice.PageQuery{
+		ListQuery: &discussionservice.ListQuery{
 			Page:     req.Page,
 			PageSize: req.PageSize,
 			Sorts:    req.Sorts,
@@ -71,7 +71,7 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 	for _, v := range out.List {
 		pageSize := int64(3)
 		replyOut, err := l.svcCtx.DiscussionService.ListCommentReplies(l.ctx, &discussionservice.ListCommentRepliesRequest{
-			PageQuery: &discussionservice.PageQuery{
+			ListQuery: &discussionservice.ListQuery{
 				Page:     1,
 				PageSize: pageSize,
 			},
@@ -143,15 +143,15 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 			GuestInfo:        vsm[v.DeviceId],
 			UserInfo:         usm[v.UserId],
 			ReplyUserInfo:    usm[v.ReplyUserId],
-			ReplyCount:       replyOut.PageResult.Total,
+			ReplyCount:       replyOut.ListResult.Total,
 			CommentReplyList: replies,
 		})
 	}
 
-	resp = &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	resp = &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}
 	return

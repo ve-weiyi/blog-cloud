@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type QueryArticleListLogic struct {
@@ -25,9 +25,9 @@ func NewQueryArticleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *QueryArticleListLogic) QueryArticleList(req *types.QueryArticleListReq) (resp *types.PageResult, err error) {
-	out, err := l.svcCtx.ArticleService.ListArticles(l.ctx, &articleservice.ListArticlesRequest{
-		PageQuery:    &articleservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+func (l *QueryArticleListLogic) QueryArticleList(req *types.QueryArticleListReq) (resp *types.ListResult, err error) {
+	out, err := l.svcCtx.ContentService.ListArticles(l.ctx, &contentservice.ListArticlesRequest{
+		ListQuery:    &contentservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		ArticleTitle: req.ArticleTitle,
 		ArticleType:  req.ArticleType,
 		CategoryName: req.CategoryName,
@@ -65,14 +65,14 @@ func (l *QueryArticleListLogic) QueryArticleList(req *types.QueryArticleListReq)
 			CategoryName:   categoryName,
 			TagNameList:    tagNames,
 			LikeCount:      v.LikeCount,
-			ViewsCount:     v.ViewCount,
+			ViewCount:      v.ViewCount,
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

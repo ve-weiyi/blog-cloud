@@ -7,11 +7,10 @@
 package discussionrpc
 
 import (
-	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	context "context"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,43 +19,35 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DiscussionService_ListChats_FullMethodName                = "/discussionrpc.DiscussionService/ListChats"
-	DiscussionService_GetChat_FullMethodName                  = "/discussionrpc.DiscussionService/GetChat"
-	DiscussionService_CreateChat_FullMethodName               = "/discussionrpc.DiscussionService/CreateChat"
-	DiscussionService_UpdateChat_FullMethodName               = "/discussionrpc.DiscussionService/UpdateChat"
-	DiscussionService_DeleteChat_FullMethodName               = "/discussionrpc.DiscussionService/DeleteChat"
-	DiscussionService_ListMessages_FullMethodName             = "/discussionrpc.DiscussionService/ListMessages"
-	DiscussionService_GetMessage_FullMethodName               = "/discussionrpc.DiscussionService/GetMessage"
-	DiscussionService_CreateMessage_FullMethodName            = "/discussionrpc.DiscussionService/CreateMessage"
-	DiscussionService_UpdateMessage_FullMethodName            = "/discussionrpc.DiscussionService/UpdateMessage"
-	DiscussionService_DeleteMessage_FullMethodName            = "/discussionrpc.DiscussionService/DeleteMessage"
-	DiscussionService_BatchUpdateMessageStatus_FullMethodName = "/discussionrpc.DiscussionService/BatchUpdateMessageStatus"
-	DiscussionService_ListComments_FullMethodName             = "/discussionrpc.DiscussionService/ListComments"
-	DiscussionService_ListCommentReplies_FullMethodName       = "/discussionrpc.DiscussionService/ListCommentReplies"
-	DiscussionService_GetComment_FullMethodName               = "/discussionrpc.DiscussionService/GetComment"
-	DiscussionService_CreateComment_FullMethodName            = "/discussionrpc.DiscussionService/CreateComment"
-	DiscussionService_UpdateComment_FullMethodName            = "/discussionrpc.DiscussionService/UpdateComment"
-	DiscussionService_DeleteComment_FullMethodName            = "/discussionrpc.DiscussionService/DeleteComment"
-	DiscussionService_BatchUpdateCommentStatus_FullMethodName = "/discussionrpc.DiscussionService/BatchUpdateCommentStatus"
-	DiscussionService_GetCommentReplyCount_FullMethodName     = "/discussionrpc.DiscussionService/GetCommentReplyCount"
-	DiscussionService_LikeComment_FullMethodName              = "/discussionrpc.DiscussionService/LikeComment"
-	DiscussionService_GetUserLikeComment_FullMethodName       = "/discussionrpc.DiscussionService/GetUserLikeComment"
+	DiscussionService_ListMessages_FullMethodName         = "/blog.discussion.v1.DiscussionService/ListMessages"
+	DiscussionService_GetMessage_FullMethodName           = "/blog.discussion.v1.DiscussionService/GetMessage"
+	DiscussionService_CreateMessage_FullMethodName        = "/blog.discussion.v1.DiscussionService/CreateMessage"
+	DiscussionService_UpdateMessage_FullMethodName        = "/blog.discussion.v1.DiscussionService/UpdateMessage"
+	DiscussionService_BatchDeleteMessages_FullMethodName  = "/blog.discussion.v1.DiscussionService/BatchDeleteMessages"
+	DiscussionService_BatchPatchMessages_FullMethodName   = "/blog.discussion.v1.DiscussionService/BatchPatchMessages"
+	DiscussionService_ListComments_FullMethodName         = "/blog.discussion.v1.DiscussionService/ListComments"
+	DiscussionService_ListCommentReplies_FullMethodName   = "/blog.discussion.v1.DiscussionService/ListCommentReplies"
+	DiscussionService_GetComment_FullMethodName           = "/blog.discussion.v1.DiscussionService/GetComment"
+	DiscussionService_CreateComment_FullMethodName        = "/blog.discussion.v1.DiscussionService/CreateComment"
+	DiscussionService_UpdateComment_FullMethodName        = "/blog.discussion.v1.DiscussionService/UpdateComment"
+	DiscussionService_BatchDeleteComments_FullMethodName  = "/blog.discussion.v1.DiscussionService/BatchDeleteComments"
+	DiscussionService_BatchPatchComments_FullMethodName   = "/blog.discussion.v1.DiscussionService/BatchPatchComments"
+	DiscussionService_GetCommentReplyCount_FullMethodName = "/blog.discussion.v1.DiscussionService/GetCommentReplyCount"
+	DiscussionService_LikeComment_FullMethodName          = "/blog.discussion.v1.DiscussionService/LikeComment"
+	DiscussionService_GetUserLikeComment_FullMethodName   = "/blog.discussion.v1.DiscussionService/GetUserLikeComment"
+	DiscussionService_ListTalks_FullMethodName            = "/blog.discussion.v1.DiscussionService/ListTalks"
+	DiscussionService_GetTalk_FullMethodName              = "/blog.discussion.v1.DiscussionService/GetTalk"
+	DiscussionService_CreateTalk_FullMethodName           = "/blog.discussion.v1.DiscussionService/CreateTalk"
+	DiscussionService_UpdateTalk_FullMethodName           = "/blog.discussion.v1.DiscussionService/UpdateTalk"
+	DiscussionService_BatchDeleteTalks_FullMethodName     = "/blog.discussion.v1.DiscussionService/BatchDeleteTalks"
+	DiscussionService_LikeTalk_FullMethodName             = "/blog.discussion.v1.DiscussionService/LikeTalk"
+	DiscussionService_GetUserLikeTalk_FullMethodName      = "/blog.discussion.v1.DiscussionService/GetUserLikeTalk"
 )
 
 // DiscussionServiceClient is the client API for DiscussionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DiscussionServiceClient interface {
-	// 查询聊天记录列表
-	ListChats(ctx context.Context, in *ListChatsRequest, opts ...grpc.CallOption) (*ListChatsResponse, error)
-	// 查询聊天记录
-	GetChat(ctx context.Context, in *GetChatRequest, opts ...grpc.CallOption) (*GetChatResponse, error)
-	// 创建聊天记录
-	CreateChat(ctx context.Context, in *CreateChatRequest, opts ...grpc.CallOption) (*CreateChatResponse, error)
-	// 更新聊天记录
-	UpdateChat(ctx context.Context, in *UpdateChatRequest, opts ...grpc.CallOption) (*UpdateChatResponse, error)
-	// 批量删除聊天记录
-	DeleteChat(ctx context.Context, in *DeleteChatRequest, opts ...grpc.CallOption) (*DeleteChatResponse, error)
 	// 查询留言列表
 	ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error)
 	// 查询留言
@@ -66,9 +57,9 @@ type DiscussionServiceClient interface {
 	// 更新留言
 	UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*UpdateMessageResponse, error)
 	// 批量删除留言
-	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
-	// 批量更新留言状态
-	BatchUpdateMessageStatus(ctx context.Context, in *BatchUpdateMessageStatusRequest, opts ...grpc.CallOption) (*BatchUpdateMessageStatusResponse, error)
+	BatchDeleteMessages(ctx context.Context, in *BatchDeleteMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteMessagesResponse, error)
+	// 部分更新留言（批量）
+	BatchPatchMessages(ctx context.Context, in *BatchPatchMessagesRequest, opts ...grpc.CallOption) (*BatchPatchMessagesResponse, error)
 	// 查询评论列表
 	ListComments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
 	// 查询评论回复列表
@@ -80,15 +71,29 @@ type DiscussionServiceClient interface {
 	// 更新评论
 	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*UpdateCommentResponse, error)
 	// 批量删除评论
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
-	// 批量更新评论状态
-	BatchUpdateCommentStatus(ctx context.Context, in *BatchUpdateCommentStatusRequest, opts ...grpc.CallOption) (*BatchUpdateCommentStatusResponse, error)
+	BatchDeleteComments(ctx context.Context, in *BatchDeleteCommentsRequest, opts ...grpc.CallOption) (*BatchDeleteCommentsResponse, error)
+	// 部分更新评论（批量）
+	BatchPatchComments(ctx context.Context, in *BatchPatchCommentsRequest, opts ...grpc.CallOption) (*BatchPatchCommentsResponse, error)
 	// 查询评论回复数量
 	GetCommentReplyCount(ctx context.Context, in *GetCommentReplyCountRequest, opts ...grpc.CallOption) (*GetCommentReplyCountResponse, error)
 	// 点赞评论
 	LikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error)
 	// 查询用户点赞的评论
 	GetUserLikeComment(ctx context.Context, in *GetUserLikeCommentRequest, opts ...grpc.CallOption) (*GetUserLikeCommentResponse, error)
+	// 分页查询说说列表
+	ListTalks(ctx context.Context, in *ListTalksRequest, opts ...grpc.CallOption) (*ListTalksResponse, error)
+	// 查询说说详情
+	GetTalk(ctx context.Context, in *GetTalkRequest, opts ...grpc.CallOption) (*GetTalkResponse, error)
+	// 创建说说
+	CreateTalk(ctx context.Context, in *CreateTalkRequest, opts ...grpc.CallOption) (*CreateTalkResponse, error)
+	// 更新说说
+	UpdateTalk(ctx context.Context, in *UpdateTalkRequest, opts ...grpc.CallOption) (*UpdateTalkResponse, error)
+	// 批量删除说说
+	BatchDeleteTalks(ctx context.Context, in *BatchDeleteTalksRequest, opts ...grpc.CallOption) (*BatchDeleteTalksResponse, error)
+	// 点赞说说
+	LikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error)
+	// 查询用户点赞的说说
+	GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error)
 }
 
 type discussionServiceClient struct {
@@ -97,51 +102,6 @@ type discussionServiceClient struct {
 
 func NewDiscussionServiceClient(cc grpc.ClientConnInterface) DiscussionServiceClient {
 	return &discussionServiceClient{cc}
-}
-
-func (c *discussionServiceClient) ListChats(ctx context.Context, in *ListChatsRequest, opts ...grpc.CallOption) (*ListChatsResponse, error) {
-	out := new(ListChatsResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_ListChats_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *discussionServiceClient) GetChat(ctx context.Context, in *GetChatRequest, opts ...grpc.CallOption) (*GetChatResponse, error) {
-	out := new(GetChatResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_GetChat_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *discussionServiceClient) CreateChat(ctx context.Context, in *CreateChatRequest, opts ...grpc.CallOption) (*CreateChatResponse, error) {
-	out := new(CreateChatResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_CreateChat_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *discussionServiceClient) UpdateChat(ctx context.Context, in *UpdateChatRequest, opts ...grpc.CallOption) (*UpdateChatResponse, error) {
-	out := new(UpdateChatResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_UpdateChat_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *discussionServiceClient) DeleteChat(ctx context.Context, in *DeleteChatRequest, opts ...grpc.CallOption) (*DeleteChatResponse, error) {
-	out := new(DeleteChatResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_DeleteChat_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *discussionServiceClient) ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error) {
@@ -180,18 +140,18 @@ func (c *discussionServiceClient) UpdateMessage(ctx context.Context, in *UpdateM
 	return out, nil
 }
 
-func (c *discussionServiceClient) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
-	out := new(DeleteMessageResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_DeleteMessage_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) BatchDeleteMessages(ctx context.Context, in *BatchDeleteMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteMessagesResponse, error) {
+	out := new(BatchDeleteMessagesResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_BatchDeleteMessages_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *discussionServiceClient) BatchUpdateMessageStatus(ctx context.Context, in *BatchUpdateMessageStatusRequest, opts ...grpc.CallOption) (*BatchUpdateMessageStatusResponse, error) {
-	out := new(BatchUpdateMessageStatusResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_BatchUpdateMessageStatus_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) BatchPatchMessages(ctx context.Context, in *BatchPatchMessagesRequest, opts ...grpc.CallOption) (*BatchPatchMessagesResponse, error) {
+	out := new(BatchPatchMessagesResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_BatchPatchMessages_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -243,18 +203,18 @@ func (c *discussionServiceClient) UpdateComment(ctx context.Context, in *UpdateC
 	return out, nil
 }
 
-func (c *discussionServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error) {
-	out := new(DeleteCommentResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_DeleteComment_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) BatchDeleteComments(ctx context.Context, in *BatchDeleteCommentsRequest, opts ...grpc.CallOption) (*BatchDeleteCommentsResponse, error) {
+	out := new(BatchDeleteCommentsResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_BatchDeleteComments_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *discussionServiceClient) BatchUpdateCommentStatus(ctx context.Context, in *BatchUpdateCommentStatusRequest, opts ...grpc.CallOption) (*BatchUpdateCommentStatusResponse, error) {
-	out := new(BatchUpdateCommentStatusResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_BatchUpdateCommentStatus_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) BatchPatchComments(ctx context.Context, in *BatchPatchCommentsRequest, opts ...grpc.CallOption) (*BatchPatchCommentsResponse, error) {
+	out := new(BatchPatchCommentsResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_BatchPatchComments_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -288,20 +248,73 @@ func (c *discussionServiceClient) GetUserLikeComment(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *discussionServiceClient) ListTalks(ctx context.Context, in *ListTalksRequest, opts ...grpc.CallOption) (*ListTalksResponse, error) {
+	out := new(ListTalksResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_ListTalks_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) GetTalk(ctx context.Context, in *GetTalkRequest, opts ...grpc.CallOption) (*GetTalkResponse, error) {
+	out := new(GetTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_GetTalk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) CreateTalk(ctx context.Context, in *CreateTalkRequest, opts ...grpc.CallOption) (*CreateTalkResponse, error) {
+	out := new(CreateTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_CreateTalk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) UpdateTalk(ctx context.Context, in *UpdateTalkRequest, opts ...grpc.CallOption) (*UpdateTalkResponse, error) {
+	out := new(UpdateTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_UpdateTalk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) BatchDeleteTalks(ctx context.Context, in *BatchDeleteTalksRequest, opts ...grpc.CallOption) (*BatchDeleteTalksResponse, error) {
+	out := new(BatchDeleteTalksResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_BatchDeleteTalks_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) LikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error) {
+	out := new(LikeTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_LikeTalk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *discussionServiceClient) GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error) {
+	out := new(GetUserLikeTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_GetUserLikeTalk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DiscussionServiceServer is the server API for DiscussionService service.
 // All implementations must embed UnimplementedDiscussionServiceServer
 // for forward compatibility
 type DiscussionServiceServer interface {
-	// 查询聊天记录列表
-	ListChats(context.Context, *ListChatsRequest) (*ListChatsResponse, error)
-	// 查询聊天记录
-	GetChat(context.Context, *GetChatRequest) (*GetChatResponse, error)
-	// 创建聊天记录
-	CreateChat(context.Context, *CreateChatRequest) (*CreateChatResponse, error)
-	// 更新聊天记录
-	UpdateChat(context.Context, *UpdateChatRequest) (*UpdateChatResponse, error)
-	// 批量删除聊天记录
-	DeleteChat(context.Context, *DeleteChatRequest) (*DeleteChatResponse, error)
 	// 查询留言列表
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
 	// 查询留言
@@ -311,9 +324,9 @@ type DiscussionServiceServer interface {
 	// 更新留言
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*UpdateMessageResponse, error)
 	// 批量删除留言
-	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
-	// 批量更新留言状态
-	BatchUpdateMessageStatus(context.Context, *BatchUpdateMessageStatusRequest) (*BatchUpdateMessageStatusResponse, error)
+	BatchDeleteMessages(context.Context, *BatchDeleteMessagesRequest) (*BatchDeleteMessagesResponse, error)
+	// 部分更新留言（批量）
+	BatchPatchMessages(context.Context, *BatchPatchMessagesRequest) (*BatchPatchMessagesResponse, error)
 	// 查询评论列表
 	ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error)
 	// 查询评论回复列表
@@ -325,15 +338,29 @@ type DiscussionServiceServer interface {
 	// 更新评论
 	UpdateComment(context.Context, *UpdateCommentRequest) (*UpdateCommentResponse, error)
 	// 批量删除评论
-	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
-	// 批量更新评论状态
-	BatchUpdateCommentStatus(context.Context, *BatchUpdateCommentStatusRequest) (*BatchUpdateCommentStatusResponse, error)
+	BatchDeleteComments(context.Context, *BatchDeleteCommentsRequest) (*BatchDeleteCommentsResponse, error)
+	// 部分更新评论（批量）
+	BatchPatchComments(context.Context, *BatchPatchCommentsRequest) (*BatchPatchCommentsResponse, error)
 	// 查询评论回复数量
 	GetCommentReplyCount(context.Context, *GetCommentReplyCountRequest) (*GetCommentReplyCountResponse, error)
 	// 点赞评论
 	LikeComment(context.Context, *LikeCommentRequest) (*LikeCommentResponse, error)
 	// 查询用户点赞的评论
 	GetUserLikeComment(context.Context, *GetUserLikeCommentRequest) (*GetUserLikeCommentResponse, error)
+	// 分页查询说说列表
+	ListTalks(context.Context, *ListTalksRequest) (*ListTalksResponse, error)
+	// 查询说说详情
+	GetTalk(context.Context, *GetTalkRequest) (*GetTalkResponse, error)
+	// 创建说说
+	CreateTalk(context.Context, *CreateTalkRequest) (*CreateTalkResponse, error)
+	// 更新说说
+	UpdateTalk(context.Context, *UpdateTalkRequest) (*UpdateTalkResponse, error)
+	// 批量删除说说
+	BatchDeleteTalks(context.Context, *BatchDeleteTalksRequest) (*BatchDeleteTalksResponse, error)
+	// 点赞说说
+	LikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error)
+	// 查询用户点赞的说说
+	GetUserLikeTalk(context.Context, *GetUserLikeTalkRequest) (*GetUserLikeTalkResponse, error)
 	mustEmbedUnimplementedDiscussionServiceServer()
 }
 
@@ -341,21 +368,6 @@ type DiscussionServiceServer interface {
 type UnimplementedDiscussionServiceServer struct {
 }
 
-func (UnimplementedDiscussionServiceServer) ListChats(context.Context, *ListChatsRequest) (*ListChatsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListChats not implemented")
-}
-func (UnimplementedDiscussionServiceServer) GetChat(context.Context, *GetChatRequest) (*GetChatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChat not implemented")
-}
-func (UnimplementedDiscussionServiceServer) CreateChat(context.Context, *CreateChatRequest) (*CreateChatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateChat not implemented")
-}
-func (UnimplementedDiscussionServiceServer) UpdateChat(context.Context, *UpdateChatRequest) (*UpdateChatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateChat not implemented")
-}
-func (UnimplementedDiscussionServiceServer) DeleteChat(context.Context, *DeleteChatRequest) (*DeleteChatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteChat not implemented")
-}
 func (UnimplementedDiscussionServiceServer) ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMessages not implemented")
 }
@@ -368,11 +380,11 @@ func (UnimplementedDiscussionServiceServer) CreateMessage(context.Context, *Crea
 func (UnimplementedDiscussionServiceServer) UpdateMessage(context.Context, *UpdateMessageRequest) (*UpdateMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMessage not implemented")
 }
-func (UnimplementedDiscussionServiceServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
+func (UnimplementedDiscussionServiceServer) BatchDeleteMessages(context.Context, *BatchDeleteMessagesRequest) (*BatchDeleteMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteMessages not implemented")
 }
-func (UnimplementedDiscussionServiceServer) BatchUpdateMessageStatus(context.Context, *BatchUpdateMessageStatusRequest) (*BatchUpdateMessageStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchUpdateMessageStatus not implemented")
+func (UnimplementedDiscussionServiceServer) BatchPatchMessages(context.Context, *BatchPatchMessagesRequest) (*BatchPatchMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchPatchMessages not implemented")
 }
 func (UnimplementedDiscussionServiceServer) ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListComments not implemented")
@@ -389,11 +401,11 @@ func (UnimplementedDiscussionServiceServer) CreateComment(context.Context, *Crea
 func (UnimplementedDiscussionServiceServer) UpdateComment(context.Context, *UpdateCommentRequest) (*UpdateCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
 }
-func (UnimplementedDiscussionServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
+func (UnimplementedDiscussionServiceServer) BatchDeleteComments(context.Context, *BatchDeleteCommentsRequest) (*BatchDeleteCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteComments not implemented")
 }
-func (UnimplementedDiscussionServiceServer) BatchUpdateCommentStatus(context.Context, *BatchUpdateCommentStatusRequest) (*BatchUpdateCommentStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchUpdateCommentStatus not implemented")
+func (UnimplementedDiscussionServiceServer) BatchPatchComments(context.Context, *BatchPatchCommentsRequest) (*BatchPatchCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchPatchComments not implemented")
 }
 func (UnimplementedDiscussionServiceServer) GetCommentReplyCount(context.Context, *GetCommentReplyCountRequest) (*GetCommentReplyCountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentReplyCount not implemented")
@@ -403,6 +415,27 @@ func (UnimplementedDiscussionServiceServer) LikeComment(context.Context, *LikeCo
 }
 func (UnimplementedDiscussionServiceServer) GetUserLikeComment(context.Context, *GetUserLikeCommentRequest) (*GetUserLikeCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserLikeComment not implemented")
+}
+func (UnimplementedDiscussionServiceServer) ListTalks(context.Context, *ListTalksRequest) (*ListTalksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTalks not implemented")
+}
+func (UnimplementedDiscussionServiceServer) GetTalk(context.Context, *GetTalkRequest) (*GetTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTalk not implemented")
+}
+func (UnimplementedDiscussionServiceServer) CreateTalk(context.Context, *CreateTalkRequest) (*CreateTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTalk not implemented")
+}
+func (UnimplementedDiscussionServiceServer) UpdateTalk(context.Context, *UpdateTalkRequest) (*UpdateTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTalk not implemented")
+}
+func (UnimplementedDiscussionServiceServer) BatchDeleteTalks(context.Context, *BatchDeleteTalksRequest) (*BatchDeleteTalksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteTalks not implemented")
+}
+func (UnimplementedDiscussionServiceServer) LikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LikeTalk not implemented")
+}
+func (UnimplementedDiscussionServiceServer) GetUserLikeTalk(context.Context, *GetUserLikeTalkRequest) (*GetUserLikeTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserLikeTalk not implemented")
 }
 func (UnimplementedDiscussionServiceServer) mustEmbedUnimplementedDiscussionServiceServer() {}
 
@@ -415,96 +448,6 @@ type UnsafeDiscussionServiceServer interface {
 
 func RegisterDiscussionServiceServer(s grpc.ServiceRegistrar, srv DiscussionServiceServer) {
 	s.RegisterService(&DiscussionService_ServiceDesc, srv)
-}
-
-func _DiscussionService_ListChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListChatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DiscussionServiceServer).ListChats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DiscussionService_ListChats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).ListChats(ctx, req.(*ListChatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DiscussionService_GetChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetChatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DiscussionServiceServer).GetChat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DiscussionService_GetChat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).GetChat(ctx, req.(*GetChatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DiscussionService_CreateChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateChatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DiscussionServiceServer).CreateChat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DiscussionService_CreateChat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).CreateChat(ctx, req.(*CreateChatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DiscussionService_UpdateChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DiscussionServiceServer).UpdateChat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DiscussionService_UpdateChat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).UpdateChat(ctx, req.(*UpdateChatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DiscussionService_DeleteChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteChatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DiscussionServiceServer).DeleteChat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DiscussionService_DeleteChat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).DeleteChat(ctx, req.(*DeleteChatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _DiscussionService_ListMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -579,38 +522,38 @@ func _DiscussionService_UpdateMessage_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteMessageRequest)
+func _DiscussionService_BatchDeleteMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteMessagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).DeleteMessage(ctx, in)
+		return srv.(DiscussionServiceServer).BatchDeleteMessages(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_DeleteMessage_FullMethodName,
+		FullMethod: DiscussionService_BatchDeleteMessages_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).DeleteMessage(ctx, req.(*DeleteMessageRequest))
+		return srv.(DiscussionServiceServer).BatchDeleteMessages(ctx, req.(*BatchDeleteMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_BatchUpdateMessageStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchUpdateMessageStatusRequest)
+func _DiscussionService_BatchPatchMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchPatchMessagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).BatchUpdateMessageStatus(ctx, in)
+		return srv.(DiscussionServiceServer).BatchPatchMessages(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_BatchUpdateMessageStatus_FullMethodName,
+		FullMethod: DiscussionService_BatchPatchMessages_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).BatchUpdateMessageStatus(ctx, req.(*BatchUpdateMessageStatusRequest))
+		return srv.(DiscussionServiceServer).BatchPatchMessages(ctx, req.(*BatchPatchMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -705,38 +648,38 @@ func _DiscussionService_UpdateComment_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCommentRequest)
+func _DiscussionService_BatchDeleteComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).DeleteComment(ctx, in)
+		return srv.(DiscussionServiceServer).BatchDeleteComments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_DeleteComment_FullMethodName,
+		FullMethod: DiscussionService_BatchDeleteComments_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
+		return srv.(DiscussionServiceServer).BatchDeleteComments(ctx, req.(*BatchDeleteCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_BatchUpdateCommentStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchUpdateCommentStatusRequest)
+func _DiscussionService_BatchPatchComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchPatchCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).BatchUpdateCommentStatus(ctx, in)
+		return srv.(DiscussionServiceServer).BatchPatchComments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_BatchUpdateCommentStatus_FullMethodName,
+		FullMethod: DiscussionService_BatchPatchComments_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).BatchUpdateCommentStatus(ctx, req.(*BatchUpdateCommentStatusRequest))
+		return srv.(DiscussionServiceServer).BatchPatchComments(ctx, req.(*BatchPatchCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -795,33 +738,139 @@ func _DiscussionService_GetUserLikeComment_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DiscussionService_ListTalks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTalksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).ListTalks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_ListTalks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).ListTalks(ctx, req.(*ListTalksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_GetTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTalkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).GetTalk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_GetTalk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).GetTalk(ctx, req.(*GetTalkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_CreateTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTalkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).CreateTalk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_CreateTalk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).CreateTalk(ctx, req.(*CreateTalkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_UpdateTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTalkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).UpdateTalk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_UpdateTalk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).UpdateTalk(ctx, req.(*UpdateTalkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_BatchDeleteTalks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteTalksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).BatchDeleteTalks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_BatchDeleteTalks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).BatchDeleteTalks(ctx, req.(*BatchDeleteTalksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_LikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeTalkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).LikeTalk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_LikeTalk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).LikeTalk(ctx, req.(*LikeTalkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DiscussionService_GetUserLikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserLikeTalkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscussionServiceServer).GetUserLikeTalk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscussionService_GetUserLikeTalk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscussionServiceServer).GetUserLikeTalk(ctx, req.(*GetUserLikeTalkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DiscussionService_ServiceDesc is the grpc.ServiceDesc for DiscussionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DiscussionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "discussionrpc.DiscussionService",
+	ServiceName: "blog.discussion.v1.DiscussionService",
 	HandlerType: (*DiscussionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListChats",
-			Handler:    _DiscussionService_ListChats_Handler,
-		},
-		{
-			MethodName: "GetChat",
-			Handler:    _DiscussionService_GetChat_Handler,
-		},
-		{
-			MethodName: "CreateChat",
-			Handler:    _DiscussionService_CreateChat_Handler,
-		},
-		{
-			MethodName: "UpdateChat",
-			Handler:    _DiscussionService_UpdateChat_Handler,
-		},
-		{
-			MethodName: "DeleteChat",
-			Handler:    _DiscussionService_DeleteChat_Handler,
-		},
 		{
 			MethodName: "ListMessages",
 			Handler:    _DiscussionService_ListMessages_Handler,
@@ -839,12 +888,12 @@ var DiscussionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DiscussionService_UpdateMessage_Handler,
 		},
 		{
-			MethodName: "DeleteMessage",
-			Handler:    _DiscussionService_DeleteMessage_Handler,
+			MethodName: "BatchDeleteMessages",
+			Handler:    _DiscussionService_BatchDeleteMessages_Handler,
 		},
 		{
-			MethodName: "BatchUpdateMessageStatus",
-			Handler:    _DiscussionService_BatchUpdateMessageStatus_Handler,
+			MethodName: "BatchPatchMessages",
+			Handler:    _DiscussionService_BatchPatchMessages_Handler,
 		},
 		{
 			MethodName: "ListComments",
@@ -867,12 +916,12 @@ var DiscussionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DiscussionService_UpdateComment_Handler,
 		},
 		{
-			MethodName: "DeleteComment",
-			Handler:    _DiscussionService_DeleteComment_Handler,
+			MethodName: "BatchDeleteComments",
+			Handler:    _DiscussionService_BatchDeleteComments_Handler,
 		},
 		{
-			MethodName: "BatchUpdateCommentStatus",
-			Handler:    _DiscussionService_BatchUpdateCommentStatus_Handler,
+			MethodName: "BatchPatchComments",
+			Handler:    _DiscussionService_BatchPatchComments_Handler,
 		},
 		{
 			MethodName: "GetCommentReplyCount",
@@ -885,6 +934,34 @@ var DiscussionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserLikeComment",
 			Handler:    _DiscussionService_GetUserLikeComment_Handler,
+		},
+		{
+			MethodName: "ListTalks",
+			Handler:    _DiscussionService_ListTalks_Handler,
+		},
+		{
+			MethodName: "GetTalk",
+			Handler:    _DiscussionService_GetTalk_Handler,
+		},
+		{
+			MethodName: "CreateTalk",
+			Handler:    _DiscussionService_CreateTalk_Handler,
+		},
+		{
+			MethodName: "UpdateTalk",
+			Handler:    _DiscussionService_UpdateTalk_Handler,
+		},
+		{
+			MethodName: "BatchDeleteTalks",
+			Handler:    _DiscussionService_BatchDeleteTalks_Handler,
+		},
+		{
+			MethodName: "LikeTalk",
+			Handler:    _DiscussionService_LikeTalk_Handler,
+		},
+		{
+			MethodName: "GetUserLikeTalk",
+			Handler:    _DiscussionService_GetUserLikeTalk_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -7,6 +7,7 @@ help:
 	@echo "  make docker-deps    - 启动依赖服务(MySQL→Redis→RabbitMQ)"
 	@echo "  make docker-app     - 启动 App 容器服务"
 	@echo "  make docker-up      - 启动所有容器服务(deps+app)"
+	@echo "  make docker-deps-down - 停止依赖服务"
 	@echo "  make docker-down    - 停止所有容器服务"
 	@echo "  make run-app-rpc   - 启动 RPC 服务"
 	@echo "  make run-app-api   - 启动博客前台服务"
@@ -46,6 +47,16 @@ docker-up:
 	@$(MAKE) docker-deps
 	@$(MAKE) docker-app
 
+# 停止依赖服务
+docker-deps-down:
+	@echo "停止 RabbitMQ..."
+	docker compose -f ../deploy/docker-compose/rabbitmq/rabbitmq.yaml down
+	@echo "停止 Redis..."
+	docker compose -f ../deploy/docker-compose/redis/redis.yaml down
+	@echo "停止 MySQL..."
+	docker compose -f ../deploy/docker-compose/mysql/mysql.yaml down
+	@echo "依赖服务已停止！"
+
 # 停止所有容器服务
 docker-down:
 	@echo "停止 App 服务..."
@@ -80,7 +91,7 @@ k8s-down:
 
 # 启动 RPC 服务（开发模式）
 run-app-rpc:
-	go run rpc/blog/app.go -f rpc/blog/etc/app-rpc.yaml
+	go run rpc/blog/blog.go -f rpc/blog/etc/app-rpc.yaml
 
 # 启动博客前台服务（开发模式）
 run-app-api:
@@ -93,7 +104,7 @@ run-admin-api:
 # 编译所有服务
 build:
 	@echo "编译 RPC 服务..."
-	go build -o bin/blog-rpc rpc/blog/app.go
+	go build -o bin/blog-rpc rpc/blog/blog.go
 	@echo "编译博客前台服务..."
 	go build -o bin/blog-api api/app/app.go
 	@echo "编译管理后台服务..."

@@ -4,16 +4,13 @@
 // - protoc             v7.35.0
 // source: syslog.proto
 
-// proto 包名
-
 package syslogrpc
 
 import (
-	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	context "context"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,19 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SyslogService_ListLoginLogs_FullMethodName      = "/syslogrpc.SyslogService/ListLoginLogs"
-	SyslogService_CreateLoginLog_FullMethodName     = "/syslogrpc.SyslogService/CreateLoginLog"
-	SyslogService_UpdateLoginLog_FullMethodName     = "/syslogrpc.SyslogService/UpdateLoginLog"
-	SyslogService_DeleteLoginLog_FullMethodName     = "/syslogrpc.SyslogService/DeleteLoginLog"
-	SyslogService_ListOperationLogs_FullMethodName  = "/syslogrpc.SyslogService/ListOperationLogs"
-	SyslogService_CreateOperationLog_FullMethodName = "/syslogrpc.SyslogService/CreateOperationLog"
-	SyslogService_DeleteOperationLog_FullMethodName = "/syslogrpc.SyslogService/DeleteOperationLog"
-	SyslogService_ListUploadLogs_FullMethodName     = "/syslogrpc.SyslogService/ListUploadLogs"
-	SyslogService_CreateUploadLog_FullMethodName    = "/syslogrpc.SyslogService/CreateUploadLog"
-	SyslogService_DeleteUploadLog_FullMethodName    = "/syslogrpc.SyslogService/DeleteUploadLog"
-	SyslogService_ListVisitLogs_FullMethodName      = "/syslogrpc.SyslogService/ListVisitLogs"
-	SyslogService_CreateVisitLog_FullMethodName     = "/syslogrpc.SyslogService/CreateVisitLog"
-	SyslogService_DeleteVisitLog_FullMethodName     = "/syslogrpc.SyslogService/DeleteVisitLog"
+	SyslogService_ListLoginLogs_FullMethodName            = "/blog.syslog.v1.SyslogService/ListLoginLogs"
+	SyslogService_CreateLoginLog_FullMethodName           = "/blog.syslog.v1.SyslogService/CreateLoginLog"
+	SyslogService_BatchDeleteLoginLogs_FullMethodName     = "/blog.syslog.v1.SyslogService/BatchDeleteLoginLogs"
+	SyslogService_ListOperationLogs_FullMethodName        = "/blog.syslog.v1.SyslogService/ListOperationLogs"
+	SyslogService_CreateOperationLog_FullMethodName       = "/blog.syslog.v1.SyslogService/CreateOperationLog"
+	SyslogService_BatchDeleteOperationLogs_FullMethodName = "/blog.syslog.v1.SyslogService/BatchDeleteOperationLogs"
+	SyslogService_ListUploadLogs_FullMethodName           = "/blog.syslog.v1.SyslogService/ListUploadLogs"
+	SyslogService_CreateUploadLog_FullMethodName          = "/blog.syslog.v1.SyslogService/CreateUploadLog"
+	SyslogService_BatchDeleteUploadLogs_FullMethodName    = "/blog.syslog.v1.SyslogService/BatchDeleteUploadLogs"
+	SyslogService_ListVisitLogs_FullMethodName            = "/blog.syslog.v1.SyslogService/ListVisitLogs"
+	SyslogService_CreateVisitLog_FullMethodName           = "/blog.syslog.v1.SyslogService/CreateVisitLog"
+	SyslogService_BatchDeleteVisitLogs_FullMethodName     = "/blog.syslog.v1.SyslogService/BatchDeleteVisitLogs"
 )
 
 // SyslogServiceClient is the client API for SyslogService service.
@@ -45,28 +41,26 @@ type SyslogServiceClient interface {
 	ListLoginLogs(ctx context.Context, in *ListLoginLogsRequest, opts ...grpc.CallOption) (*ListLoginLogsResponse, error)
 	// 创建用户登录日志
 	CreateLoginLog(ctx context.Context, in *CreateLoginLogRequest, opts ...grpc.CallOption) (*CreateLoginLogResponse, error)
-	// 更新登出时间
-	UpdateLoginLog(ctx context.Context, in *UpdateLoginLogRequest, opts ...grpc.CallOption) (*UpdateLoginLogResponse, error)
 	// 批量删除用户登录日志
-	DeleteLoginLog(ctx context.Context, in *DeleteLoginLogRequest, opts ...grpc.CallOption) (*DeleteLoginLogResponse, error)
+	BatchDeleteLoginLogs(ctx context.Context, in *BatchDeleteLoginLogsRequest, opts ...grpc.CallOption) (*BatchDeleteLoginLogsResponse, error)
 	// 分页查询操作日志
 	ListOperationLogs(ctx context.Context, in *ListOperationLogsRequest, opts ...grpc.CallOption) (*ListOperationLogsResponse, error)
 	// 创建操作日志
 	CreateOperationLog(ctx context.Context, in *CreateOperationLogRequest, opts ...grpc.CallOption) (*CreateOperationLogResponse, error)
 	// 批量删除操作日志
-	DeleteOperationLog(ctx context.Context, in *DeleteOperationLogRequest, opts ...grpc.CallOption) (*DeleteOperationLogResponse, error)
+	BatchDeleteOperationLogs(ctx context.Context, in *BatchDeleteOperationLogsRequest, opts ...grpc.CallOption) (*BatchDeleteOperationLogsResponse, error)
 	// 分页查询文件上传日志
 	ListUploadLogs(ctx context.Context, in *ListUploadLogsRequest, opts ...grpc.CallOption) (*ListUploadLogsResponse, error)
 	// 创建文件上传日志
 	CreateUploadLog(ctx context.Context, in *CreateUploadLogRequest, opts ...grpc.CallOption) (*CreateUploadLogResponse, error)
 	// 批量删除文件上传日志
-	DeleteUploadLog(ctx context.Context, in *DeleteUploadLogRequest, opts ...grpc.CallOption) (*DeleteUploadLogResponse, error)
+	BatchDeleteUploadLogs(ctx context.Context, in *BatchDeleteUploadLogsRequest, opts ...grpc.CallOption) (*BatchDeleteUploadLogsResponse, error)
 	// 分页查询访问日志
 	ListVisitLogs(ctx context.Context, in *ListVisitLogsRequest, opts ...grpc.CallOption) (*ListVisitLogsResponse, error)
 	// 创建访问日志
 	CreateVisitLog(ctx context.Context, in *CreateVisitLogRequest, opts ...grpc.CallOption) (*CreateVisitLogResponse, error)
 	// 批量删除访问日志
-	DeleteVisitLog(ctx context.Context, in *DeleteVisitLogRequest, opts ...grpc.CallOption) (*DeleteVisitLogResponse, error)
+	BatchDeleteVisitLogs(ctx context.Context, in *BatchDeleteVisitLogsRequest, opts ...grpc.CallOption) (*BatchDeleteVisitLogsResponse, error)
 }
 
 type syslogServiceClient struct {
@@ -95,18 +89,9 @@ func (c *syslogServiceClient) CreateLoginLog(ctx context.Context, in *CreateLogi
 	return out, nil
 }
 
-func (c *syslogServiceClient) UpdateLoginLog(ctx context.Context, in *UpdateLoginLogRequest, opts ...grpc.CallOption) (*UpdateLoginLogResponse, error) {
-	out := new(UpdateLoginLogResponse)
-	err := c.cc.Invoke(ctx, SyslogService_UpdateLoginLog_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *syslogServiceClient) DeleteLoginLog(ctx context.Context, in *DeleteLoginLogRequest, opts ...grpc.CallOption) (*DeleteLoginLogResponse, error) {
-	out := new(DeleteLoginLogResponse)
-	err := c.cc.Invoke(ctx, SyslogService_DeleteLoginLog_FullMethodName, in, out, opts...)
+func (c *syslogServiceClient) BatchDeleteLoginLogs(ctx context.Context, in *BatchDeleteLoginLogsRequest, opts ...grpc.CallOption) (*BatchDeleteLoginLogsResponse, error) {
+	out := new(BatchDeleteLoginLogsResponse)
+	err := c.cc.Invoke(ctx, SyslogService_BatchDeleteLoginLogs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -131,9 +116,9 @@ func (c *syslogServiceClient) CreateOperationLog(ctx context.Context, in *Create
 	return out, nil
 }
 
-func (c *syslogServiceClient) DeleteOperationLog(ctx context.Context, in *DeleteOperationLogRequest, opts ...grpc.CallOption) (*DeleteOperationLogResponse, error) {
-	out := new(DeleteOperationLogResponse)
-	err := c.cc.Invoke(ctx, SyslogService_DeleteOperationLog_FullMethodName, in, out, opts...)
+func (c *syslogServiceClient) BatchDeleteOperationLogs(ctx context.Context, in *BatchDeleteOperationLogsRequest, opts ...grpc.CallOption) (*BatchDeleteOperationLogsResponse, error) {
+	out := new(BatchDeleteOperationLogsResponse)
+	err := c.cc.Invoke(ctx, SyslogService_BatchDeleteOperationLogs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,9 +143,9 @@ func (c *syslogServiceClient) CreateUploadLog(ctx context.Context, in *CreateUpl
 	return out, nil
 }
 
-func (c *syslogServiceClient) DeleteUploadLog(ctx context.Context, in *DeleteUploadLogRequest, opts ...grpc.CallOption) (*DeleteUploadLogResponse, error) {
-	out := new(DeleteUploadLogResponse)
-	err := c.cc.Invoke(ctx, SyslogService_DeleteUploadLog_FullMethodName, in, out, opts...)
+func (c *syslogServiceClient) BatchDeleteUploadLogs(ctx context.Context, in *BatchDeleteUploadLogsRequest, opts ...grpc.CallOption) (*BatchDeleteUploadLogsResponse, error) {
+	out := new(BatchDeleteUploadLogsResponse)
+	err := c.cc.Invoke(ctx, SyslogService_BatchDeleteUploadLogs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,9 +170,9 @@ func (c *syslogServiceClient) CreateVisitLog(ctx context.Context, in *CreateVisi
 	return out, nil
 }
 
-func (c *syslogServiceClient) DeleteVisitLog(ctx context.Context, in *DeleteVisitLogRequest, opts ...grpc.CallOption) (*DeleteVisitLogResponse, error) {
-	out := new(DeleteVisitLogResponse)
-	err := c.cc.Invoke(ctx, SyslogService_DeleteVisitLog_FullMethodName, in, out, opts...)
+func (c *syslogServiceClient) BatchDeleteVisitLogs(ctx context.Context, in *BatchDeleteVisitLogsRequest, opts ...grpc.CallOption) (*BatchDeleteVisitLogsResponse, error) {
+	out := new(BatchDeleteVisitLogsResponse)
+	err := c.cc.Invoke(ctx, SyslogService_BatchDeleteVisitLogs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -202,28 +187,26 @@ type SyslogServiceServer interface {
 	ListLoginLogs(context.Context, *ListLoginLogsRequest) (*ListLoginLogsResponse, error)
 	// 创建用户登录日志
 	CreateLoginLog(context.Context, *CreateLoginLogRequest) (*CreateLoginLogResponse, error)
-	// 更新登出时间
-	UpdateLoginLog(context.Context, *UpdateLoginLogRequest) (*UpdateLoginLogResponse, error)
 	// 批量删除用户登录日志
-	DeleteLoginLog(context.Context, *DeleteLoginLogRequest) (*DeleteLoginLogResponse, error)
+	BatchDeleteLoginLogs(context.Context, *BatchDeleteLoginLogsRequest) (*BatchDeleteLoginLogsResponse, error)
 	// 分页查询操作日志
 	ListOperationLogs(context.Context, *ListOperationLogsRequest) (*ListOperationLogsResponse, error)
 	// 创建操作日志
 	CreateOperationLog(context.Context, *CreateOperationLogRequest) (*CreateOperationLogResponse, error)
 	// 批量删除操作日志
-	DeleteOperationLog(context.Context, *DeleteOperationLogRequest) (*DeleteOperationLogResponse, error)
+	BatchDeleteOperationLogs(context.Context, *BatchDeleteOperationLogsRequest) (*BatchDeleteOperationLogsResponse, error)
 	// 分页查询文件上传日志
 	ListUploadLogs(context.Context, *ListUploadLogsRequest) (*ListUploadLogsResponse, error)
 	// 创建文件上传日志
 	CreateUploadLog(context.Context, *CreateUploadLogRequest) (*CreateUploadLogResponse, error)
 	// 批量删除文件上传日志
-	DeleteUploadLog(context.Context, *DeleteUploadLogRequest) (*DeleteUploadLogResponse, error)
+	BatchDeleteUploadLogs(context.Context, *BatchDeleteUploadLogsRequest) (*BatchDeleteUploadLogsResponse, error)
 	// 分页查询访问日志
 	ListVisitLogs(context.Context, *ListVisitLogsRequest) (*ListVisitLogsResponse, error)
 	// 创建访问日志
 	CreateVisitLog(context.Context, *CreateVisitLogRequest) (*CreateVisitLogResponse, error)
 	// 批量删除访问日志
-	DeleteVisitLog(context.Context, *DeleteVisitLogRequest) (*DeleteVisitLogResponse, error)
+	BatchDeleteVisitLogs(context.Context, *BatchDeleteVisitLogsRequest) (*BatchDeleteVisitLogsResponse, error)
 	mustEmbedUnimplementedSyslogServiceServer()
 }
 
@@ -237,11 +220,8 @@ func (UnimplementedSyslogServiceServer) ListLoginLogs(context.Context, *ListLogi
 func (UnimplementedSyslogServiceServer) CreateLoginLog(context.Context, *CreateLoginLogRequest) (*CreateLoginLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLoginLog not implemented")
 }
-func (UnimplementedSyslogServiceServer) UpdateLoginLog(context.Context, *UpdateLoginLogRequest) (*UpdateLoginLogResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoginLog not implemented")
-}
-func (UnimplementedSyslogServiceServer) DeleteLoginLog(context.Context, *DeleteLoginLogRequest) (*DeleteLoginLogResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteLoginLog not implemented")
+func (UnimplementedSyslogServiceServer) BatchDeleteLoginLogs(context.Context, *BatchDeleteLoginLogsRequest) (*BatchDeleteLoginLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteLoginLogs not implemented")
 }
 func (UnimplementedSyslogServiceServer) ListOperationLogs(context.Context, *ListOperationLogsRequest) (*ListOperationLogsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOperationLogs not implemented")
@@ -249,8 +229,8 @@ func (UnimplementedSyslogServiceServer) ListOperationLogs(context.Context, *List
 func (UnimplementedSyslogServiceServer) CreateOperationLog(context.Context, *CreateOperationLogRequest) (*CreateOperationLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOperationLog not implemented")
 }
-func (UnimplementedSyslogServiceServer) DeleteOperationLog(context.Context, *DeleteOperationLogRequest) (*DeleteOperationLogResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteOperationLog not implemented")
+func (UnimplementedSyslogServiceServer) BatchDeleteOperationLogs(context.Context, *BatchDeleteOperationLogsRequest) (*BatchDeleteOperationLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteOperationLogs not implemented")
 }
 func (UnimplementedSyslogServiceServer) ListUploadLogs(context.Context, *ListUploadLogsRequest) (*ListUploadLogsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUploadLogs not implemented")
@@ -258,8 +238,8 @@ func (UnimplementedSyslogServiceServer) ListUploadLogs(context.Context, *ListUpl
 func (UnimplementedSyslogServiceServer) CreateUploadLog(context.Context, *CreateUploadLogRequest) (*CreateUploadLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUploadLog not implemented")
 }
-func (UnimplementedSyslogServiceServer) DeleteUploadLog(context.Context, *DeleteUploadLogRequest) (*DeleteUploadLogResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUploadLog not implemented")
+func (UnimplementedSyslogServiceServer) BatchDeleteUploadLogs(context.Context, *BatchDeleteUploadLogsRequest) (*BatchDeleteUploadLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteUploadLogs not implemented")
 }
 func (UnimplementedSyslogServiceServer) ListVisitLogs(context.Context, *ListVisitLogsRequest) (*ListVisitLogsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVisitLogs not implemented")
@@ -267,8 +247,8 @@ func (UnimplementedSyslogServiceServer) ListVisitLogs(context.Context, *ListVisi
 func (UnimplementedSyslogServiceServer) CreateVisitLog(context.Context, *CreateVisitLogRequest) (*CreateVisitLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVisitLog not implemented")
 }
-func (UnimplementedSyslogServiceServer) DeleteVisitLog(context.Context, *DeleteVisitLogRequest) (*DeleteVisitLogResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteVisitLog not implemented")
+func (UnimplementedSyslogServiceServer) BatchDeleteVisitLogs(context.Context, *BatchDeleteVisitLogsRequest) (*BatchDeleteVisitLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteVisitLogs not implemented")
 }
 func (UnimplementedSyslogServiceServer) mustEmbedUnimplementedSyslogServiceServer() {}
 
@@ -319,38 +299,20 @@ func _SyslogService_CreateLoginLog_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogService_UpdateLoginLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateLoginLogRequest)
+func _SyslogService_BatchDeleteLoginLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteLoginLogsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogServiceServer).UpdateLoginLog(ctx, in)
+		return srv.(SyslogServiceServer).BatchDeleteLoginLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogService_UpdateLoginLog_FullMethodName,
+		FullMethod: SyslogService_BatchDeleteLoginLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogServiceServer).UpdateLoginLog(ctx, req.(*UpdateLoginLogRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SyslogService_DeleteLoginLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteLoginLogRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyslogServiceServer).DeleteLoginLog(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyslogService_DeleteLoginLog_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogServiceServer).DeleteLoginLog(ctx, req.(*DeleteLoginLogRequest))
+		return srv.(SyslogServiceServer).BatchDeleteLoginLogs(ctx, req.(*BatchDeleteLoginLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -391,20 +353,20 @@ func _SyslogService_CreateOperationLog_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogService_DeleteOperationLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteOperationLogRequest)
+func _SyslogService_BatchDeleteOperationLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteOperationLogsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogServiceServer).DeleteOperationLog(ctx, in)
+		return srv.(SyslogServiceServer).BatchDeleteOperationLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogService_DeleteOperationLog_FullMethodName,
+		FullMethod: SyslogService_BatchDeleteOperationLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogServiceServer).DeleteOperationLog(ctx, req.(*DeleteOperationLogRequest))
+		return srv.(SyslogServiceServer).BatchDeleteOperationLogs(ctx, req.(*BatchDeleteOperationLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -445,20 +407,20 @@ func _SyslogService_CreateUploadLog_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogService_DeleteUploadLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUploadLogRequest)
+func _SyslogService_BatchDeleteUploadLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteUploadLogsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogServiceServer).DeleteUploadLog(ctx, in)
+		return srv.(SyslogServiceServer).BatchDeleteUploadLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogService_DeleteUploadLog_FullMethodName,
+		FullMethod: SyslogService_BatchDeleteUploadLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogServiceServer).DeleteUploadLog(ctx, req.(*DeleteUploadLogRequest))
+		return srv.(SyslogServiceServer).BatchDeleteUploadLogs(ctx, req.(*BatchDeleteUploadLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -499,20 +461,20 @@ func _SyslogService_CreateVisitLog_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyslogService_DeleteVisitLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteVisitLogRequest)
+func _SyslogService_BatchDeleteVisitLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteVisitLogsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyslogServiceServer).DeleteVisitLog(ctx, in)
+		return srv.(SyslogServiceServer).BatchDeleteVisitLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyslogService_DeleteVisitLog_FullMethodName,
+		FullMethod: SyslogService_BatchDeleteVisitLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyslogServiceServer).DeleteVisitLog(ctx, req.(*DeleteVisitLogRequest))
+		return srv.(SyslogServiceServer).BatchDeleteVisitLogs(ctx, req.(*BatchDeleteVisitLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -521,7 +483,7 @@ func _SyslogService_DeleteVisitLog_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SyslogService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "syslogrpc.SyslogService",
+	ServiceName: "blog.syslog.v1.SyslogService",
 	HandlerType: (*SyslogServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -533,12 +495,8 @@ var SyslogService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyslogService_CreateLoginLog_Handler,
 		},
 		{
-			MethodName: "UpdateLoginLog",
-			Handler:    _SyslogService_UpdateLoginLog_Handler,
-		},
-		{
-			MethodName: "DeleteLoginLog",
-			Handler:    _SyslogService_DeleteLoginLog_Handler,
+			MethodName: "BatchDeleteLoginLogs",
+			Handler:    _SyslogService_BatchDeleteLoginLogs_Handler,
 		},
 		{
 			MethodName: "ListOperationLogs",
@@ -549,8 +507,8 @@ var SyslogService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyslogService_CreateOperationLog_Handler,
 		},
 		{
-			MethodName: "DeleteOperationLog",
-			Handler:    _SyslogService_DeleteOperationLog_Handler,
+			MethodName: "BatchDeleteOperationLogs",
+			Handler:    _SyslogService_BatchDeleteOperationLogs_Handler,
 		},
 		{
 			MethodName: "ListUploadLogs",
@@ -561,8 +519,8 @@ var SyslogService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyslogService_CreateUploadLog_Handler,
 		},
 		{
-			MethodName: "DeleteUploadLog",
-			Handler:    _SyslogService_DeleteUploadLog_Handler,
+			MethodName: "BatchDeleteUploadLogs",
+			Handler:    _SyslogService_BatchDeleteUploadLogs_Handler,
 		},
 		{
 			MethodName: "ListVisitLogs",
@@ -573,8 +531,8 @@ var SyslogService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyslogService_CreateVisitLog_Handler,
 		},
 		{
-			MethodName: "DeleteVisitLog",
-			Handler:    _SyslogService_DeleteVisitLog_Handler,
+			MethodName: "BatchDeleteVisitLogs",
+			Handler:    _SyslogService_BatchDeleteVisitLogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

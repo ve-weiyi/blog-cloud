@@ -7,11 +7,10 @@
 package notificationrpc
 
 import (
-	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	context "context"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,28 +19,28 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	NotificationService_ListNotifyTemplates_FullMethodName  = "/notificationrpc.NotificationService/ListNotifyTemplates"
-	NotificationService_GetNotifyTemplate_FullMethodName    = "/notificationrpc.NotificationService/GetNotifyTemplate"
-	NotificationService_CreateNotifyTemplate_FullMethodName = "/notificationrpc.NotificationService/CreateNotifyTemplate"
-	NotificationService_UpdateNotifyTemplate_FullMethodName = "/notificationrpc.NotificationService/UpdateNotifyTemplate"
-	NotificationService_DeleteNotifyTemplate_FullMethodName = "/notificationrpc.NotificationService/DeleteNotifyTemplate"
-	NotificationService_ListNotifyMessages_FullMethodName   = "/notificationrpc.NotificationService/ListNotifyMessages"
-	NotificationService_GetNotifyMessage_FullMethodName     = "/notificationrpc.NotificationService/GetNotifyMessage"
-	NotificationService_CreateNotifyMessage_FullMethodName  = "/notificationrpc.NotificationService/CreateNotifyMessage"
-	NotificationService_UpdateNotifyMessage_FullMethodName  = "/notificationrpc.NotificationService/UpdateNotifyMessage"
-	NotificationService_DeleteNotifyMessage_FullMethodName  = "/notificationrpc.NotificationService/DeleteNotifyMessage"
-	NotificationService_PublishNotifyMessage_FullMethodName = "/notificationrpc.NotificationService/PublishNotifyMessage"
-	NotificationService_RevokeNotifyMessage_FullMethodName  = "/notificationrpc.NotificationService/RevokeNotifyMessage"
-	NotificationService_ListNotifyRecords_FullMethodName    = "/notificationrpc.NotificationService/ListNotifyRecords"
-	NotificationService_DeleteNotifyRecords_FullMethodName  = "/notificationrpc.NotificationService/DeleteNotifyRecords"
-	NotificationService_ListUserInboxRecords_FullMethodName = "/notificationrpc.NotificationService/ListUserInboxRecords"
-	NotificationService_MarkRecordRead_FullMethodName       = "/notificationrpc.NotificationService/MarkRecordRead"
-	NotificationService_BatchMarkRecordsRead_FullMethodName = "/notificationrpc.NotificationService/BatchMarkRecordsRead"
-	NotificationService_MarkAllRecordsRead_FullMethodName   = "/notificationrpc.NotificationService/MarkAllRecordsRead"
-	NotificationService_SendPhoneCode_FullMethodName        = "/notificationrpc.NotificationService/SendPhoneCode"
-	NotificationService_VerifyPhoneCode_FullMethodName      = "/notificationrpc.NotificationService/VerifyPhoneCode"
-	NotificationService_SendEmailCode_FullMethodName        = "/notificationrpc.NotificationService/SendEmailCode"
-	NotificationService_VerifyEmailCode_FullMethodName      = "/notificationrpc.NotificationService/VerifyEmailCode"
+	NotificationService_ListNotifyTemplates_FullMethodName        = "/blog.notification.v1.NotificationService/ListNotifyTemplates"
+	NotificationService_GetNotifyTemplate_FullMethodName          = "/blog.notification.v1.NotificationService/GetNotifyTemplate"
+	NotificationService_CreateNotifyTemplate_FullMethodName       = "/blog.notification.v1.NotificationService/CreateNotifyTemplate"
+	NotificationService_UpdateNotifyTemplate_FullMethodName       = "/blog.notification.v1.NotificationService/UpdateNotifyTemplate"
+	NotificationService_BatchDeleteNotifyTemplates_FullMethodName = "/blog.notification.v1.NotificationService/BatchDeleteNotifyTemplates"
+	NotificationService_ListNotifyMessages_FullMethodName         = "/blog.notification.v1.NotificationService/ListNotifyMessages"
+	NotificationService_GetNotifyMessage_FullMethodName           = "/blog.notification.v1.NotificationService/GetNotifyMessage"
+	NotificationService_CreateNotifyMessage_FullMethodName        = "/blog.notification.v1.NotificationService/CreateNotifyMessage"
+	NotificationService_UpdateNotifyMessage_FullMethodName        = "/blog.notification.v1.NotificationService/UpdateNotifyMessage"
+	NotificationService_BatchDeleteNotifyMessages_FullMethodName  = "/blog.notification.v1.NotificationService/BatchDeleteNotifyMessages"
+	NotificationService_PublishNotifyMessage_FullMethodName       = "/blog.notification.v1.NotificationService/PublishNotifyMessage"
+	NotificationService_RevokeNotifyMessage_FullMethodName        = "/blog.notification.v1.NotificationService/RevokeNotifyMessage"
+	NotificationService_ListNotifyRecords_FullMethodName          = "/blog.notification.v1.NotificationService/ListNotifyRecords"
+	NotificationService_BatchDeleteNotifyRecords_FullMethodName   = "/blog.notification.v1.NotificationService/BatchDeleteNotifyRecords"
+	NotificationService_ListUserInboxRecords_FullMethodName       = "/blog.notification.v1.NotificationService/ListUserInboxRecords"
+	NotificationService_MarkRecordRead_FullMethodName             = "/blog.notification.v1.NotificationService/MarkRecordRead"
+	NotificationService_BatchMarkRecordsRead_FullMethodName       = "/blog.notification.v1.NotificationService/BatchMarkRecordsRead"
+	NotificationService_MarkAllRecordsRead_FullMethodName         = "/blog.notification.v1.NotificationService/MarkAllRecordsRead"
+	NotificationService_SendMobileCode_FullMethodName             = "/blog.notification.v1.NotificationService/SendMobileCode"
+	NotificationService_VerifyMobileCode_FullMethodName           = "/blog.notification.v1.NotificationService/VerifyMobileCode"
+	NotificationService_SendEmailCode_FullMethodName              = "/blog.notification.v1.NotificationService/SendEmailCode"
+	NotificationService_VerifyEmailCode_FullMethodName            = "/blog.notification.v1.NotificationService/VerifyEmailCode"
 )
 
 // NotificationServiceClient is the client API for NotificationService service.
@@ -56,8 +55,8 @@ type NotificationServiceClient interface {
 	CreateNotifyTemplate(ctx context.Context, in *CreateNotifyTemplateRequest, opts ...grpc.CallOption) (*CreateNotifyTemplateResponse, error)
 	// 更新通知模板
 	UpdateNotifyTemplate(ctx context.Context, in *UpdateNotifyTemplateRequest, opts ...grpc.CallOption) (*UpdateNotifyTemplateResponse, error)
-	// 删除通知模板
-	DeleteNotifyTemplate(ctx context.Context, in *DeleteNotifyTemplateRequest, opts ...grpc.CallOption) (*DeleteNotifyTemplateResponse, error)
+	// 批量删除通知模板
+	BatchDeleteNotifyTemplates(ctx context.Context, in *BatchDeleteNotifyTemplatesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyTemplatesResponse, error)
 	// 分页查询通知消息列表
 	ListNotifyMessages(ctx context.Context, in *ListNotifyMessagesRequest, opts ...grpc.CallOption) (*ListNotifyMessagesResponse, error)
 	// 查询通知消息详情
@@ -67,7 +66,7 @@ type NotificationServiceClient interface {
 	// 更新通知消息
 	UpdateNotifyMessage(ctx context.Context, in *UpdateNotifyMessageRequest, opts ...grpc.CallOption) (*UpdateNotifyMessageResponse, error)
 	// 批量删除通知消息
-	DeleteNotifyMessage(ctx context.Context, in *DeleteNotifyMessageRequest, opts ...grpc.CallOption) (*DeleteNotifyMessageResponse, error)
+	BatchDeleteNotifyMessages(ctx context.Context, in *BatchDeleteNotifyMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyMessagesResponse, error)
 	// 发布通知消息
 	PublishNotifyMessage(ctx context.Context, in *PublishNotifyMessageRequest, opts ...grpc.CallOption) (*PublishNotifyMessageResponse, error)
 	// 撤销通知消息
@@ -75,7 +74,7 @@ type NotificationServiceClient interface {
 	// 分页查询投递记录列表
 	ListNotifyRecords(ctx context.Context, in *ListNotifyRecordsRequest, opts ...grpc.CallOption) (*ListNotifyRecordsResponse, error)
 	// 批量删除投递记录
-	DeleteNotifyRecords(ctx context.Context, in *DeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*DeleteNotifyRecordsResponse, error)
+	BatchDeleteNotifyRecords(ctx context.Context, in *BatchDeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyRecordsResponse, error)
 	// 查询用户 inbox 投递列表
 	ListUserInboxRecords(ctx context.Context, in *ListUserInboxRecordsRequest, opts ...grpc.CallOption) (*ListUserInboxRecordsResponse, error)
 	// 标记单条 inbox 已读
@@ -85,9 +84,9 @@ type NotificationServiceClient interface {
 	// 全部标记 inbox 已读
 	MarkAllRecordsRead(ctx context.Context, in *MarkAllRecordsReadRequest, opts ...grpc.CallOption) (*MarkAllRecordsReadResponse, error)
 	// 发送手机验证码
-	SendPhoneCode(ctx context.Context, in *SendPhoneCodeRequest, opts ...grpc.CallOption) (*SendPhoneCodeResponse, error)
+	SendMobileCode(ctx context.Context, in *SendMobileCodeRequest, opts ...grpc.CallOption) (*SendMobileCodeResponse, error)
 	// 校验手机验证码
-	VerifyPhoneCode(ctx context.Context, in *VerifyPhoneCodeRequest, opts ...grpc.CallOption) (*VerifyPhoneCodeResponse, error)
+	VerifyMobileCode(ctx context.Context, in *VerifyMobileCodeRequest, opts ...grpc.CallOption) (*VerifyMobileCodeResponse, error)
 	// 发送邮箱验证码
 	SendEmailCode(ctx context.Context, in *SendEmailCodeRequest, opts ...grpc.CallOption) (*SendEmailCodeResponse, error)
 	// 校验邮箱验证码
@@ -138,9 +137,9 @@ func (c *notificationServiceClient) UpdateNotifyTemplate(ctx context.Context, in
 	return out, nil
 }
 
-func (c *notificationServiceClient) DeleteNotifyTemplate(ctx context.Context, in *DeleteNotifyTemplateRequest, opts ...grpc.CallOption) (*DeleteNotifyTemplateResponse, error) {
-	out := new(DeleteNotifyTemplateResponse)
-	err := c.cc.Invoke(ctx, NotificationService_DeleteNotifyTemplate_FullMethodName, in, out, opts...)
+func (c *notificationServiceClient) BatchDeleteNotifyTemplates(ctx context.Context, in *BatchDeleteNotifyTemplatesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyTemplatesResponse, error) {
+	out := new(BatchDeleteNotifyTemplatesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_BatchDeleteNotifyTemplates_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -183,9 +182,9 @@ func (c *notificationServiceClient) UpdateNotifyMessage(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *notificationServiceClient) DeleteNotifyMessage(ctx context.Context, in *DeleteNotifyMessageRequest, opts ...grpc.CallOption) (*DeleteNotifyMessageResponse, error) {
-	out := new(DeleteNotifyMessageResponse)
-	err := c.cc.Invoke(ctx, NotificationService_DeleteNotifyMessage_FullMethodName, in, out, opts...)
+func (c *notificationServiceClient) BatchDeleteNotifyMessages(ctx context.Context, in *BatchDeleteNotifyMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyMessagesResponse, error) {
+	out := new(BatchDeleteNotifyMessagesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_BatchDeleteNotifyMessages_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -219,9 +218,9 @@ func (c *notificationServiceClient) ListNotifyRecords(ctx context.Context, in *L
 	return out, nil
 }
 
-func (c *notificationServiceClient) DeleteNotifyRecords(ctx context.Context, in *DeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*DeleteNotifyRecordsResponse, error) {
-	out := new(DeleteNotifyRecordsResponse)
-	err := c.cc.Invoke(ctx, NotificationService_DeleteNotifyRecords_FullMethodName, in, out, opts...)
+func (c *notificationServiceClient) BatchDeleteNotifyRecords(ctx context.Context, in *BatchDeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyRecordsResponse, error) {
+	out := new(BatchDeleteNotifyRecordsResponse)
+	err := c.cc.Invoke(ctx, NotificationService_BatchDeleteNotifyRecords_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -264,18 +263,18 @@ func (c *notificationServiceClient) MarkAllRecordsRead(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *notificationServiceClient) SendPhoneCode(ctx context.Context, in *SendPhoneCodeRequest, opts ...grpc.CallOption) (*SendPhoneCodeResponse, error) {
-	out := new(SendPhoneCodeResponse)
-	err := c.cc.Invoke(ctx, NotificationService_SendPhoneCode_FullMethodName, in, out, opts...)
+func (c *notificationServiceClient) SendMobileCode(ctx context.Context, in *SendMobileCodeRequest, opts ...grpc.CallOption) (*SendMobileCodeResponse, error) {
+	out := new(SendMobileCodeResponse)
+	err := c.cc.Invoke(ctx, NotificationService_SendMobileCode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *notificationServiceClient) VerifyPhoneCode(ctx context.Context, in *VerifyPhoneCodeRequest, opts ...grpc.CallOption) (*VerifyPhoneCodeResponse, error) {
-	out := new(VerifyPhoneCodeResponse)
-	err := c.cc.Invoke(ctx, NotificationService_VerifyPhoneCode_FullMethodName, in, out, opts...)
+func (c *notificationServiceClient) VerifyMobileCode(ctx context.Context, in *VerifyMobileCodeRequest, opts ...grpc.CallOption) (*VerifyMobileCodeResponse, error) {
+	out := new(VerifyMobileCodeResponse)
+	err := c.cc.Invoke(ctx, NotificationService_VerifyMobileCode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -312,8 +311,8 @@ type NotificationServiceServer interface {
 	CreateNotifyTemplate(context.Context, *CreateNotifyTemplateRequest) (*CreateNotifyTemplateResponse, error)
 	// 更新通知模板
 	UpdateNotifyTemplate(context.Context, *UpdateNotifyTemplateRequest) (*UpdateNotifyTemplateResponse, error)
-	// 删除通知模板
-	DeleteNotifyTemplate(context.Context, *DeleteNotifyTemplateRequest) (*DeleteNotifyTemplateResponse, error)
+	// 批量删除通知模板
+	BatchDeleteNotifyTemplates(context.Context, *BatchDeleteNotifyTemplatesRequest) (*BatchDeleteNotifyTemplatesResponse, error)
 	// 分页查询通知消息列表
 	ListNotifyMessages(context.Context, *ListNotifyMessagesRequest) (*ListNotifyMessagesResponse, error)
 	// 查询通知消息详情
@@ -323,7 +322,7 @@ type NotificationServiceServer interface {
 	// 更新通知消息
 	UpdateNotifyMessage(context.Context, *UpdateNotifyMessageRequest) (*UpdateNotifyMessageResponse, error)
 	// 批量删除通知消息
-	DeleteNotifyMessage(context.Context, *DeleteNotifyMessageRequest) (*DeleteNotifyMessageResponse, error)
+	BatchDeleteNotifyMessages(context.Context, *BatchDeleteNotifyMessagesRequest) (*BatchDeleteNotifyMessagesResponse, error)
 	// 发布通知消息
 	PublishNotifyMessage(context.Context, *PublishNotifyMessageRequest) (*PublishNotifyMessageResponse, error)
 	// 撤销通知消息
@@ -331,7 +330,7 @@ type NotificationServiceServer interface {
 	// 分页查询投递记录列表
 	ListNotifyRecords(context.Context, *ListNotifyRecordsRequest) (*ListNotifyRecordsResponse, error)
 	// 批量删除投递记录
-	DeleteNotifyRecords(context.Context, *DeleteNotifyRecordsRequest) (*DeleteNotifyRecordsResponse, error)
+	BatchDeleteNotifyRecords(context.Context, *BatchDeleteNotifyRecordsRequest) (*BatchDeleteNotifyRecordsResponse, error)
 	// 查询用户 inbox 投递列表
 	ListUserInboxRecords(context.Context, *ListUserInboxRecordsRequest) (*ListUserInboxRecordsResponse, error)
 	// 标记单条 inbox 已读
@@ -341,9 +340,9 @@ type NotificationServiceServer interface {
 	// 全部标记 inbox 已读
 	MarkAllRecordsRead(context.Context, *MarkAllRecordsReadRequest) (*MarkAllRecordsReadResponse, error)
 	// 发送手机验证码
-	SendPhoneCode(context.Context, *SendPhoneCodeRequest) (*SendPhoneCodeResponse, error)
+	SendMobileCode(context.Context, *SendMobileCodeRequest) (*SendMobileCodeResponse, error)
 	// 校验手机验证码
-	VerifyPhoneCode(context.Context, *VerifyPhoneCodeRequest) (*VerifyPhoneCodeResponse, error)
+	VerifyMobileCode(context.Context, *VerifyMobileCodeRequest) (*VerifyMobileCodeResponse, error)
 	// 发送邮箱验证码
 	SendEmailCode(context.Context, *SendEmailCodeRequest) (*SendEmailCodeResponse, error)
 	// 校验邮箱验证码
@@ -367,8 +366,8 @@ func (UnimplementedNotificationServiceServer) CreateNotifyTemplate(context.Conte
 func (UnimplementedNotificationServiceServer) UpdateNotifyTemplate(context.Context, *UpdateNotifyTemplateRequest) (*UpdateNotifyTemplateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotifyTemplate not implemented")
 }
-func (UnimplementedNotificationServiceServer) DeleteNotifyTemplate(context.Context, *DeleteNotifyTemplateRequest) (*DeleteNotifyTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNotifyTemplate not implemented")
+func (UnimplementedNotificationServiceServer) BatchDeleteNotifyTemplates(context.Context, *BatchDeleteNotifyTemplatesRequest) (*BatchDeleteNotifyTemplatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteNotifyTemplates not implemented")
 }
 func (UnimplementedNotificationServiceServer) ListNotifyMessages(context.Context, *ListNotifyMessagesRequest) (*ListNotifyMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNotifyMessages not implemented")
@@ -382,8 +381,8 @@ func (UnimplementedNotificationServiceServer) CreateNotifyMessage(context.Contex
 func (UnimplementedNotificationServiceServer) UpdateNotifyMessage(context.Context, *UpdateNotifyMessageRequest) (*UpdateNotifyMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotifyMessage not implemented")
 }
-func (UnimplementedNotificationServiceServer) DeleteNotifyMessage(context.Context, *DeleteNotifyMessageRequest) (*DeleteNotifyMessageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNotifyMessage not implemented")
+func (UnimplementedNotificationServiceServer) BatchDeleteNotifyMessages(context.Context, *BatchDeleteNotifyMessagesRequest) (*BatchDeleteNotifyMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteNotifyMessages not implemented")
 }
 func (UnimplementedNotificationServiceServer) PublishNotifyMessage(context.Context, *PublishNotifyMessageRequest) (*PublishNotifyMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishNotifyMessage not implemented")
@@ -394,8 +393,8 @@ func (UnimplementedNotificationServiceServer) RevokeNotifyMessage(context.Contex
 func (UnimplementedNotificationServiceServer) ListNotifyRecords(context.Context, *ListNotifyRecordsRequest) (*ListNotifyRecordsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNotifyRecords not implemented")
 }
-func (UnimplementedNotificationServiceServer) DeleteNotifyRecords(context.Context, *DeleteNotifyRecordsRequest) (*DeleteNotifyRecordsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNotifyRecords not implemented")
+func (UnimplementedNotificationServiceServer) BatchDeleteNotifyRecords(context.Context, *BatchDeleteNotifyRecordsRequest) (*BatchDeleteNotifyRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchDeleteNotifyRecords not implemented")
 }
 func (UnimplementedNotificationServiceServer) ListUserInboxRecords(context.Context, *ListUserInboxRecordsRequest) (*ListUserInboxRecordsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserInboxRecords not implemented")
@@ -409,11 +408,11 @@ func (UnimplementedNotificationServiceServer) BatchMarkRecordsRead(context.Conte
 func (UnimplementedNotificationServiceServer) MarkAllRecordsRead(context.Context, *MarkAllRecordsReadRequest) (*MarkAllRecordsReadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MarkAllRecordsRead not implemented")
 }
-func (UnimplementedNotificationServiceServer) SendPhoneCode(context.Context, *SendPhoneCodeRequest) (*SendPhoneCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendPhoneCode not implemented")
+func (UnimplementedNotificationServiceServer) SendMobileCode(context.Context, *SendMobileCodeRequest) (*SendMobileCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMobileCode not implemented")
 }
-func (UnimplementedNotificationServiceServer) VerifyPhoneCode(context.Context, *VerifyPhoneCodeRequest) (*VerifyPhoneCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VerifyPhoneCode not implemented")
+func (UnimplementedNotificationServiceServer) VerifyMobileCode(context.Context, *VerifyMobileCodeRequest) (*VerifyMobileCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyMobileCode not implemented")
 }
 func (UnimplementedNotificationServiceServer) SendEmailCode(context.Context, *SendEmailCodeRequest) (*SendEmailCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendEmailCode not implemented")
@@ -506,20 +505,20 @@ func _NotificationService_UpdateNotifyTemplate_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_DeleteNotifyTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNotifyTemplateRequest)
+func _NotificationService_BatchDeleteNotifyTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteNotifyTemplatesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).DeleteNotifyTemplate(ctx, in)
+		return srv.(NotificationServiceServer).BatchDeleteNotifyTemplates(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificationService_DeleteNotifyTemplate_FullMethodName,
+		FullMethod: NotificationService_BatchDeleteNotifyTemplates_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).DeleteNotifyTemplate(ctx, req.(*DeleteNotifyTemplateRequest))
+		return srv.(NotificationServiceServer).BatchDeleteNotifyTemplates(ctx, req.(*BatchDeleteNotifyTemplatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -596,20 +595,20 @@ func _NotificationService_UpdateNotifyMessage_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_DeleteNotifyMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNotifyMessageRequest)
+func _NotificationService_BatchDeleteNotifyMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteNotifyMessagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).DeleteNotifyMessage(ctx, in)
+		return srv.(NotificationServiceServer).BatchDeleteNotifyMessages(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificationService_DeleteNotifyMessage_FullMethodName,
+		FullMethod: NotificationService_BatchDeleteNotifyMessages_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).DeleteNotifyMessage(ctx, req.(*DeleteNotifyMessageRequest))
+		return srv.(NotificationServiceServer).BatchDeleteNotifyMessages(ctx, req.(*BatchDeleteNotifyMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -668,20 +667,20 @@ func _NotificationService_ListNotifyRecords_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_DeleteNotifyRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNotifyRecordsRequest)
+func _NotificationService_BatchDeleteNotifyRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchDeleteNotifyRecordsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).DeleteNotifyRecords(ctx, in)
+		return srv.(NotificationServiceServer).BatchDeleteNotifyRecords(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificationService_DeleteNotifyRecords_FullMethodName,
+		FullMethod: NotificationService_BatchDeleteNotifyRecords_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).DeleteNotifyRecords(ctx, req.(*DeleteNotifyRecordsRequest))
+		return srv.(NotificationServiceServer).BatchDeleteNotifyRecords(ctx, req.(*BatchDeleteNotifyRecordsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -758,38 +757,38 @@ func _NotificationService_MarkAllRecordsRead_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_SendPhoneCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendPhoneCodeRequest)
+func _NotificationService_SendMobileCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMobileCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).SendPhoneCode(ctx, in)
+		return srv.(NotificationServiceServer).SendMobileCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificationService_SendPhoneCode_FullMethodName,
+		FullMethod: NotificationService_SendMobileCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).SendPhoneCode(ctx, req.(*SendPhoneCodeRequest))
+		return srv.(NotificationServiceServer).SendMobileCode(ctx, req.(*SendMobileCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_VerifyPhoneCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyPhoneCodeRequest)
+func _NotificationService_VerifyMobileCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyMobileCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).VerifyPhoneCode(ctx, in)
+		return srv.(NotificationServiceServer).VerifyMobileCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificationService_VerifyPhoneCode_FullMethodName,
+		FullMethod: NotificationService_VerifyMobileCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).VerifyPhoneCode(ctx, req.(*VerifyPhoneCodeRequest))
+		return srv.(NotificationServiceServer).VerifyMobileCode(ctx, req.(*VerifyMobileCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -834,7 +833,7 @@ func _NotificationService_VerifyEmailCode_Handler(srv interface{}, ctx context.C
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var NotificationService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "notificationrpc.NotificationService",
+	ServiceName: "blog.notification.v1.NotificationService",
 	HandlerType: (*NotificationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -854,8 +853,8 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NotificationService_UpdateNotifyTemplate_Handler,
 		},
 		{
-			MethodName: "DeleteNotifyTemplate",
-			Handler:    _NotificationService_DeleteNotifyTemplate_Handler,
+			MethodName: "BatchDeleteNotifyTemplates",
+			Handler:    _NotificationService_BatchDeleteNotifyTemplates_Handler,
 		},
 		{
 			MethodName: "ListNotifyMessages",
@@ -874,8 +873,8 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NotificationService_UpdateNotifyMessage_Handler,
 		},
 		{
-			MethodName: "DeleteNotifyMessage",
-			Handler:    _NotificationService_DeleteNotifyMessage_Handler,
+			MethodName: "BatchDeleteNotifyMessages",
+			Handler:    _NotificationService_BatchDeleteNotifyMessages_Handler,
 		},
 		{
 			MethodName: "PublishNotifyMessage",
@@ -890,8 +889,8 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NotificationService_ListNotifyRecords_Handler,
 		},
 		{
-			MethodName: "DeleteNotifyRecords",
-			Handler:    _NotificationService_DeleteNotifyRecords_Handler,
+			MethodName: "BatchDeleteNotifyRecords",
+			Handler:    _NotificationService_BatchDeleteNotifyRecords_Handler,
 		},
 		{
 			MethodName: "ListUserInboxRecords",
@@ -910,12 +909,12 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NotificationService_MarkAllRecordsRead_Handler,
 		},
 		{
-			MethodName: "SendPhoneCode",
-			Handler:    _NotificationService_SendPhoneCode_Handler,
+			MethodName: "SendMobileCode",
+			Handler:    _NotificationService_SendMobileCode_Handler,
 		},
 		{
-			MethodName: "VerifyPhoneCode",
-			Handler:    _NotificationService_VerifyPhoneCode_Handler,
+			MethodName: "VerifyMobileCode",
+			Handler:    _NotificationService_VerifyMobileCode_Handler,
 		},
 		{
 			MethodName: "SendEmailCode",

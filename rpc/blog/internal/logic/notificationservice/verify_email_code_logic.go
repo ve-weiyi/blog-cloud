@@ -6,11 +6,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/vkit/x/patternx"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
 
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizerr"
@@ -31,7 +29,7 @@ func NewVerifyEmailCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *V
 }
 
 // 校验邮件验证码
-func (l *VerifyEmailCodeLogic) VerifyEmailCode(in *notificationrpc2.VerifyEmailCodeRequest) (*notificationrpc.VerifyEmailCodeResponse, error) {
+func (l *VerifyEmailCodeLogic) VerifyEmailCode(in *notificationrpc.VerifyEmailCodeRequest) (*notificationrpc.VerifyEmailCodeResponse, error) {
 	// 校验邮箱格式
 	if !patternx.IsValidEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")

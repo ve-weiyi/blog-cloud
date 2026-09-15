@@ -5,11 +5,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	notificationrpc2 "github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/gormx/queryx"
-
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/internal/pb/notificationrpc"
 )
 
 type ListNotifyTemplatesLogic struct {
@@ -27,12 +25,12 @@ func NewListNotifyTemplatesLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 分页查询通知模板列表
-func (l *ListNotifyTemplatesLogic) ListNotifyTemplates(in *notificationrpc2.ListNotifyTemplatesRequest) (*notificationrpc2.ListNotifyTemplatesResponse, error) {
+func (l *ListNotifyTemplatesLogic) ListNotifyTemplates(in *notificationrpc.ListNotifyTemplatesRequest) (*notificationrpc.ListNotifyTemplatesResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
-		opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+	if in.ListQuery != nil {
+		opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
+		opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 
 	// 可选过滤条件
@@ -52,11 +50,11 @@ func (l *ListNotifyTemplatesLogic) ListNotifyTemplates(in *notificationrpc2.List
 	}
 
 	return &notificationrpc.ListNotifyTemplatesResponse{
-		PageResult: &notificationrpc.PageResult{
+		ListResult: &notificationrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,
 		},
-		Templates: list,
+		List: list,
 	}, nil
 }

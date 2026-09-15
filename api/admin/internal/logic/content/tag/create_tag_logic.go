@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type CreateTagLogic struct {
@@ -26,7 +26,7 @@ func NewCreateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateT
 }
 
 func (l *CreateTagLogic) CreateTag(req *types.CreateTagReq) (resp *types.TagVO, err error) {
-	out, err := l.svcCtx.ArticleService.CreateTag(l.ctx, &articleservice.CreateTagRequest{
+	out, err := l.svcCtx.ContentService.CreateTag(l.ctx, &contentservice.CreateTagRequest{
 		TagName: req.TagName,
 	})
 	if err != nil {

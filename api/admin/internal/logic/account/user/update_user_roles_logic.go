@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
 )
 
 type UpdateUserRolesLogic struct {
@@ -26,7 +26,7 @@ func NewUpdateUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 func (l *UpdateUserRolesLogic) UpdateUserRoles(req *types.UpdateUserRolesReq) (resp *types.UpdateUserRolesResp, err error) {
-	out, err := l.svcCtx.PermissionService.UpdateUserRoles(l.ctx, &permissionservice.UpdateUserRolesRequest{
+	_, err = l.svcCtx.AccessService.UpdateUserRoles(l.ctx, &accessservice.UpdateUserRolesRequest{
 		UserId:  req.UserId,
 		RoleIds: req.RoleIds,
 	})
@@ -34,7 +34,5 @@ func (l *UpdateUserRolesLogic) UpdateUserRoles(req *types.UpdateUserRolesReq) (r
 		return nil, err
 	}
 
-	return &types.UpdateUserRolesResp{
-		Success: out.Success,
-	}, nil
+	return &types.UpdateUserRolesResp{}, nil
 }

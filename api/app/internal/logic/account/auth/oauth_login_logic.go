@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 )
 
 type OauthLoginLogic struct {
@@ -26,7 +26,7 @@ func NewOauthLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OauthL
 }
 
 func (l *OauthLoginLogic) OauthLogin(req *types.OauthLoginReq) (resp *types.LoginResp, err error) {
-	out, err := l.svcCtx.UserAuthService.LoginByOAuth(l.ctx, &userauthservice.LoginByOAuthRequest{
+	out, err := l.svcCtx.AuthService.LoginByOAuth(l.ctx, &authservice.LoginByOAuthRequest{
 		Platform: req.Platform,
 		Code:     req.Code,
 	})

@@ -25,9 +25,9 @@ func NewQueryNotifyMessageListLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *QueryNotifyMessageListLogic) QueryNotifyMessageList(req *types.QueryNotifyMessageListReq) (resp *types.PageResult, err error) {
+func (l *QueryNotifyMessageListLogic) QueryNotifyMessageList(req *types.QueryNotifyMessageListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.NotificationService.ListNotifyMessages(l.ctx, &notificationservice.ListNotifyMessagesRequest{
-		PageQuery:  &notificationservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery:  &notificationservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 		Category:   req.Category,
 		Level:      req.Level,
 		Status:     req.Status,
@@ -38,7 +38,7 @@ func (l *QueryNotifyMessageListLogic) QueryNotifyMessageList(req *types.QueryNot
 	}
 
 	var list []*types.NotifyMessageVO
-	for _, v := range out.Messages {
+	for _, v := range out.List {
 		list = append(list, &types.NotifyMessageVO{
 			Id:          v.Id,
 			Title:       v.Title,
@@ -55,10 +55,10 @@ func (l *QueryNotifyMessageListLogic) QueryNotifyMessageList(req *types.QueryNot
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

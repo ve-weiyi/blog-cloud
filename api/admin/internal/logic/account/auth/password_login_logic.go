@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 )
 
 type PasswordLoginLogic struct {
@@ -26,7 +26,7 @@ func NewPasswordLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pas
 }
 
 func (l *PasswordLoginLogic) PasswordLogin(req *types.PasswordLoginReq) (resp *types.LoginResp, err error) {
-	out, err := l.svcCtx.UserAuthService.LoginByPassword(l.ctx, &userauthservice.LoginByPasswordRequest{
+	out, err := l.svcCtx.AuthService.LoginByPassword(l.ctx, &authservice.LoginByPasswordRequest{
 		Account:  req.Account,
 		Password: req.Password,
 	})

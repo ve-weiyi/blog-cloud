@@ -3,11 +3,11 @@
   <h1>blog-cloud</h1>
   <p>🚀 基于 Go-Zero 微服务架构的现代化博客系统</p>
 
-  <img src="https://img.shields.io/badge/Go-1.25-blue?logo=go" />
+  <img src="https://img.shields.io/badge/Go-1.26-blue?logo=go" />
   <img src="https://img.shields.io/badge/Go--Zero-1.10-yellow?logo=go" />
   <img src="https://img.shields.io/badge/gRPC-1.81-brightgreen" />
   <img src="https://img.shields.io/badge/GORM-1.31-red" />
-  <img src="https://img.shields.io/badge/Redis-9.19-purple?logo=redis" />
+  <img src="https://img.shields.io/badge/Redis-9.20-purple?logo=redis" />
   <img src="https://img.shields.io/badge/MySQL-8.0-orange?logo=mysql" />
   <img src="https://img.shields.io/badge/Docker-blue?logo=docker" />
   <img src="https://img.shields.io/badge/K8s-blue?logo=kubernetes" />
@@ -33,7 +33,7 @@
 
 ## 📚 项目简介
 
-ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + Go-Zero 微服务架构，前端使用 Vue 3 + TypeScript 技术栈。支持 OAuth2.0 多端登录、RBAC 权限管理、Markdown 文章编辑、WebSocket 实时聊天等丰富功能。
+blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + Go-Zero 微服务架构，前端使用 Vue 3 + TypeScript 技术栈。支持 OAuth2.0 多端登录、RBAC 权限管理、Markdown 文章编辑、WebSocket 实时聊天等丰富功能。
 
 ### ✨ 核心亮点
 
@@ -47,44 +47,43 @@ ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + 
 ## 🏗️ 系统架构
 
 ```
-                              ┌──────────────────────────┐
-                              │   Nginx (veweiyi.cn)      │
-                              │  ├─ blog.veweiyi.cn       │
-                              │  └─ admin.veweiyi.cn       │
-                              └────────────┬─────────────┘
-                                           │ HTTP
-                     ┌─────────────────────┼─────────────────────┐
-                     │                     │                     │
-              ┌──────▼──────┐       ┌──────▼──────┐       ┌──────▼──────┐
-              │  blog-api    │       │  admin-api   │       │  WebSocket  │
-              │  :9420       │       │  :9421       │       │  Stomp 聊天  │
-              │  前台 API     │       │  后台 API     │       │  实时推送    │
-              └──────┬──────┘       └──────┬──────┘       └─────────────┘
-                     │  gRPC                │  gRPC
-                     └──────────┬───────────┘
+                   ┌─────────────────────────┐
+                   │   Nginx (veweiyi.cn)    │
+                   │ ├─ blog.veweiyi.cn      │
+                   │ └─ admin.veweiyi.cn     │
+                   └────────────┬────────────┘
+                                │ HTTP
+          ┌─────────────────────┼─────────────────────┐
+          │                     │                     │
+   ┌──────▼──────┐       ┌──────▼──────┐       ┌──────▼──────┐
+   │  blog-api   │       │  admin-api  │       │  WebSocket  │
+   │    :9420    │       │    :9421    │       │ Stomp 聊天  │
+   │  前台 API   │       │  后台 API   │       │  实时推送   │
+   └──────┬──────┘       └──────┬──────┘       └─────────────┘
+          │  gRPC               │  gRPC
+          └─────────────────────┘
                                 │
-                     ┌──────────▼──────────┐
-                     │    app-rpc  :9120    │
-                     │    核心业务服务        │
-                     │  ┌────────────────┐  │
-                     │  │ 用户 · 权限 · RBAC│  │
-                     │  │ 文章 · 评论 · 标签│  │
-                     │  │ 说说 · 友链 · 相册│  │
-                     │  │ 统计 · 通知 · 消息│  │
-                     │  └────────────────┘  │
-                     └──────────┬───────────┘
+          ┌─────────────────────▼─────────────────────┐
+          │              app-rpc  :9120               │
+          │          核心业务服务（156 RPC）          │
+          │    ┌─────────────────────────────────┐    │
+          │    │  用户 · 访客 · 认证 · 访问控制  │    │
+          │    │    内容 · 媒体 · 讨论 · 聊天    │    │
+          │    │    站点 · 通知 · 日志 · 统计    │    │
+          │    └─────────────────────────────────┘    │
+          └─────────────────────┬─────────────────────┘
                                 │
           ┌─────────────────────┼─────────────────────┐
           │                     │                     │
-   ┌──────▼──────┐      ┌──────▼──────┐      ┌──────▼──────┐
-   │    MySQL    │      │    Redis    │      │  RabbitMQ   │
-   │    :3306    │      │    :6379    │      │    :5672    │
-   └─────────────┘      └─────────────┘      └─────────────┘
+   ┌──────▼──────┐       ┌──────▼──────┐       ┌──────▼──────┐
+   │    MySQL    │       │    Redis    │       │  RabbitMQ   │
+   │    :3306    │       │    :6379    │       │    :5672    │
+   └─────────────┘       └─────────────┘       └─────────────┘
 
-   ┌──────────────┐     ┌──────────────┐
-   │    Nacos     │     │     EFK      │
-   │  配置/注册中心 │     │   日志收集    │
-   └──────────────┘     └──────────────┘
+ ┌────────────────┐                          ┌────────────────┐
+ │     Nacos      │                          │      EFK       │
+ │ 配置/注册中心  │                          │    日志收集    │
+ └────────────────┘                          └────────────────┘
 ```
 
 ## 🛠️ 技术栈
@@ -93,7 +92,7 @@ ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + 
 
 | 技术 | 说明 | 版本 |
 |------|------|------|
-| Go | 编程语言 | 1.25+ |
+| Go | 编程语言 | 1.26+ |
 | Go-Zero | 微服务框架 | 1.10 |
 | gRPC | RPC 框架 | 1.81 |
 | GORM | ORM 框架 | 1.31 |
@@ -134,7 +133,7 @@ ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + 
 | 项目 | 说明 | 仓库 |
 |------|------|------|
 | blog-cloud | 博客后端（go-zero 微服务版） | [GitHub](https://github.com/ve-weiyi/blog-cloud) |
-| ve-blog-gin | 博客后端（Gin 单体版） | [GitHub](https://github.com/ve-weiyi/ve-blog-gin) |
+| blog-gin | 博客后端（Gin 单体版） | [GitHub](https://github.com/ve-weiyi/blog-gin) |
 | blog-app | 博客前台 | [GitHub](https://github.com/ve-weiyi/blog-app) |
 | blog-admin | 博客后台 | [GitHub](https://github.com/ve-weiyi/blog-admin) |
 
@@ -142,45 +141,32 @@ ve-blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + 
 
 ```
 blog-cloud/
-├── service/
-│   ├── app/
-│   │   ├── api/              # 前台 API 服务
-│   │   │   ├── docs/         # Swagger 文档
-│   │   │   ├── etc/          # 配置文件
-│   │   │   ├── internal/     # handler / logic / middleware
-│   │   │   └── proto/        # API 接口定义 (.api)
-│   │   ├── model/            # GORM 数据模型
-│   │   └── rpc/              # 核心 RPC 服务 (gRPC)
-│   │       ├── client/       # RPC 客户端
-│   │       ├── etc/          # 配置文件
-│   │       └── internal/     # logic / server / mq
-│   └── admin/
-│       └── api/              # 后台 API 服务
-├── infra/                    # 基础设施（拦截器、中间件）
-├── vkit/                     # 本地工具包
-├── stompws/                  # WebSocket 聊天室（Stomp 协议）
-├── goctlx/                   # 代码生成工具
-├── deploy/
-│   ├── docker/               # Dockerfile
-│   ├── docker-compose/       # Docker Compose 编排
-│   │   ├── mysql/            # MySQL
-│   │   ├── redis/            # Redis
-│   │   ├── rabbitmq/         # RabbitMQ
-│   │   └── app/              # 应用服务
-│   ├── k8s/                  # Kubernetes 部署
-│   │   ├── app/              # 应用 Deployment + Ingress
-│   │   ├── mysql/            # MySQL StatefulSet
-│   │   ├── redis/            # Redis StatefulSet
-│   │   ├── nacos/            # Nacos 配置中心
-│   │   └── efk/              # EFK 日志收集
-│   └── sql/                  # 数据库初始化脚本
-├── Makefile                  # 开发/构建/部署一条龙
+├── api/
+│   ├── admin/                # 后台 API 服务 (:9421)
+│   │   ├── docs/             # Swagger 文档
+│   │   ├── etc/              # 配置文件
+│   │   └── internal/         # handler / logic / middleware / svc
+│   └── app/                  # 前台 API 服务 (:9420)
+│       ├── docs/             # Swagger 文档
+│       ├── etc/              # 配置文件
+│       └── internal/         # handler / logic / middleware / svc
+├── rpc/
+│   └── blog/                 # 核心 RPC 服务 (:9120)
+│       ├── client/           # gRPC 客户端
+│       ├── etc/              # 配置文件
+│       ├── model/            # GORM 数据模型
+│       └── internal/         # logic / server / svc / mq / pb
+├── infra/                    # 基础设施（拦截器、中间件、响应封装）
+├── lint.sh                   # 静态检查脚本
+├── Makefile                  # 开发 / 构建 / 部署一条龙
 └── go.mod
 ```
 
+> `vkit/`、`stompws/`、`goctlx/`、`deploy/`、`protocol/` 是 monorepo 根目录下的**同级子模块**，不在本仓库内。
+
 ## ⚙️ 环境要求
 
-- **Go**: 1.25+
+- **Go**: 1.26+（工作区模式；本模块 `go.mod` 声明 1.25.8）
 - **MySQL**: 8.0+
 - **Redis**: 6.2+
 - **Docker**: 20.10+（可选，容器化部署）

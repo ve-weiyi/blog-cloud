@@ -28,14 +28,14 @@ func NewListGuestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListGu
 // 分页查询游客信息列表
 func (l *ListGuestsLogic) ListGuests(in *guestrpc.ListGuestsRequest) (*guestrpc.ListGuestsResponse, error) {
 	var opts []queryx.Option
-	if in.PageQuery != nil {
-		if in.PageQuery.Page > 0 {
-			opts = append(opts, queryx.WithPage(int(in.PageQuery.Page)))
+	if in.ListQuery != nil {
+		if in.ListQuery.Page > 0 {
+			opts = append(opts, queryx.WithPage(int(in.ListQuery.Page)))
 		}
-		if in.PageQuery.PageSize > 0 {
-			opts = append(opts, queryx.WithSize(int(in.PageQuery.PageSize)))
+		if in.ListQuery.PageSize > 0 {
+			opts = append(opts, queryx.WithSize(int(in.ListQuery.PageSize)))
 		}
-		opts = append(opts, queryx.WithSorts(in.PageQuery.Sorts...))
+		opts = append(opts, queryx.WithSorts(in.ListQuery.Sorts...))
 	}
 	if in.DeviceId != nil {
 		opts = append(opts, queryx.WithCondition("device_id = ?", *in.DeviceId))
@@ -59,7 +59,7 @@ func (l *ListGuestsLogic) ListGuests(in *guestrpc.ListGuestsRequest) (*guestrpc.
 	}
 
 	return &guestrpc.ListGuestsResponse{
-		PageResult: &guestrpc.PageResult{
+		ListResult: &guestrpc.ListResult{
 			Page:     int64(page),
 			PageSize: int64(size),
 			Total:    total,

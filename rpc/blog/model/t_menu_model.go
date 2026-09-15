@@ -44,7 +44,7 @@ type (
 		Name       string    `gorm:"column:name;type:varchar(64);not null;default:'';comment:路由名称" json:"name"`                                     // 路由名称
 		Component  string    `gorm:"column:component;type:varchar(256);not null;default:'';comment:路由组件" json:"component"`                          // 路由组件
 		Redirect   string    `gorm:"column:redirect;type:varchar(256);not null;default:'';comment:路由重定向" json:"redirect"`                           // 路由重定向
-		Type       string    `gorm:"column:type;type:varchar(64);not null;default:0;comment:菜单类型" json:"type"`                                      // 菜单类型
+		Type       string    `gorm:"column:type;type:varchar(64);not null;default:'';comment:菜单类型" json:"type"`                                     // 菜单类型
 		Title      string    `gorm:"column:title;type:varchar(64);not null;default:'';comment:菜单标题" json:"title"`                                   // 菜单标题
 		Icon       string    `gorm:"column:icon;type:varchar(64);not null;default:'';comment:菜单图标" json:"icon"`                                     // 菜单图标
 		Rank       int64     `gorm:"column:rank;type:bigint;not null;default:0;comment:排序" json:"rank"`                                             // 排序

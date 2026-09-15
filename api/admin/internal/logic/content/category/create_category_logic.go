@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type CreateCategoryLogic struct {
@@ -26,7 +26,7 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp *types.CategoryVO, err error) {
-	out, err := l.svcCtx.ArticleService.CreateCategory(l.ctx, &articleservice.CreateCategoryRequest{
+	out, err := l.svcCtx.ContentService.CreateCategory(l.ctx, &contentservice.CreateCategoryRequest{
 		CategoryName: req.CategoryName,
 	})
 	if err != nil {

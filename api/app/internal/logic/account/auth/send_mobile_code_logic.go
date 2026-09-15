@@ -26,10 +26,10 @@ func NewSendMobileCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 func (l *SendMobileCodeLogic) SendMobileCode(req *types.SendMobileCodeReq) (resp *types.SendMobileCodeResp, err error) {
-	_, err = l.svcCtx.NotificationService.SendPhoneCode(l.ctx, &notificationservice.SendPhoneCodeRequest{
-		Phone: req.Mobile,
-		Scene: req.Type,
-		BizId: "",
+	_, err = l.svcCtx.NotificationService.SendMobileCode(l.ctx, &notificationservice.SendMobileCodeRequest{
+		Mobile: req.Mobile,
+		Scene:  req.Type,
+		BizId:  "",
 	})
 	if err != nil {
 		return nil, err

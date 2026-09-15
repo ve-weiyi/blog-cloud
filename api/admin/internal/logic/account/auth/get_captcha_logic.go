@@ -25,7 +25,7 @@ func NewGetCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCap
 }
 
 func (l *GetCaptchaLogic) GetCaptcha(req *types.GetCaptchaReq) (resp *types.GetCaptchaResp, err error) {
-	id, base64, answer, err := l.svcCtx.CaptchaStore.GetMathImageCaptcha(int(req.Height), int(req.Width))
+	id, base64, _, err := l.svcCtx.CaptchaStore.GetMathImageCaptcha(int(req.Height), int(req.Width))
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +33,5 @@ func (l *GetCaptchaLogic) GetCaptcha(req *types.GetCaptchaReq) (resp *types.GetC
 	return &types.GetCaptchaResp{
 		CaptchaKey:    id,
 		CaptchaBase64: base64,
-		CaptchaCode:   answer,
 	}, nil
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/articleservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/contentservice"
 )
 
 type CreateArticleLogic struct {
@@ -26,7 +26,7 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *types.ArticleVO, err error) {
-	out, err := l.svcCtx.ArticleService.CreateArticle(l.ctx, &articleservice.CreateArticleRequest{
+	out, err := l.svcCtx.ContentService.CreateArticle(l.ctx, &contentservice.CreateArticleRequest{
 		ArticleCover:   req.ArticleCover,
 		ArticleTitle:   req.ArticleTitle,
 		ArticleContent: req.ArticleContent,

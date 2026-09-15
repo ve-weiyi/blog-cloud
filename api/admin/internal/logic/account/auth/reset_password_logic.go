@@ -8,8 +8,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/enums"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/authservice"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/notificationservice"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userauthservice"
 )
 
 type ResetPasswordLogic struct {
@@ -40,13 +40,13 @@ func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordReq) (resp *t
 	}
 
 	// 调用 RPC 重置密码
-	in := userauthservice.ResetPasswordRequest{
+	in := authservice.ResetPasswordRequest{
 		Email:           req.Email,
 		Password:        req.Password,
 		ConfirmPassword: req.ConfirmPassword,
 	}
 
-	_, err = l.svcCtx.UserAuthService.ResetPassword(l.ctx, &in)
+	_, err = l.svcCtx.AuthService.ResetPassword(l.ctx, &in)
 	if err != nil {
 		return nil, err
 	}

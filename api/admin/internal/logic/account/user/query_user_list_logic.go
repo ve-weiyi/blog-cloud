@@ -7,9 +7,9 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
-	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/permissionservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/accessservice"
 
-	"github.com/ve-weiyi/blog-cloud/service/app/rpc/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 )
 
 type QueryUserListLogic struct {
@@ -27,9 +27,9 @@ func NewQueryUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Que
 	}
 }
 
-func (l *QueryUserListLogic) QueryUserList(req *types.QueryUserListReq) (resp *types.PageResult, err error) {
+func (l *QueryUserListLogic) QueryUserList(req *types.QueryUserListReq) (resp *types.ListResult, err error) {
 	out, err := l.svcCtx.UserService.ListUsers(l.ctx, &userservice.ListUsersRequest{
-		PageQuery: &userservice.PageQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
+		ListQuery: &userservice.ListQuery{Page: req.Page, PageSize: req.PageSize, Sorts: req.Sorts},
 	})
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (l *QueryUserListLogic) QueryUserList(req *types.QueryUserListReq) (resp *t
 
 	roleMap := make(map[string][]*types.UserRoleLabel)
 	if len(userIds) > 0 {
-		rolesResp, err := l.svcCtx.PermissionService.GetUsersRoles(l.ctx, &permissionservice.GetUsersRolesRequest{
+		rolesResp, err := l.svcCtx.AccessService.BatchGetUserRoles(l.ctx, &accessservice.BatchGetUserRolesRequest{
 			UserIds: userIds,
 		})
 		if err != nil {
@@ -81,10 +81,10 @@ func (l *QueryUserListLogic) QueryUserList(req *types.QueryUserListReq) (resp *t
 		})
 	}
 
-	return &types.PageResult{
-		Page:     out.PageResult.Page,
-		PageSize: out.PageResult.PageSize,
-		Total:    out.PageResult.Total,
+	return &types.ListResult{
+		Page:     out.ListResult.Page,
+		PageSize: out.ListResult.PageSize,
+		Total:    out.ListResult.Total,
 		List:     list,
 	}, nil
 }

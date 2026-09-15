@@ -26,16 +26,16 @@ import (
 	"github.com/ve-weiyi/stompws/logws"
 	"github.com/ve-weiyi/stompws/server/client"
 	"github.com/ve-weiyi/vkit/adapter/storagex"
-	"github.com/ve-weiyi/vkit/adapter/storex"
-	"github.com/ve-weiyi/vkit/adapter/storex/captchastore"
-	"github.com/ve-weiyi/vkit/adapter/storex/tokenstore"
 
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/client/userservice"
 
+	"github.com/ve-weiyi/blog-cloud/infra/captchax"
 	"github.com/ve-weiyi/blog-cloud/infra/constants/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/interceptorx"
 	"github.com/ve-weiyi/blog-cloud/infra/limitx"
 	"github.com/ve-weiyi/blog-cloud/infra/middlewarex"
+	"github.com/ve-weiyi/blog-cloud/infra/storex"
+	"github.com/ve-weiyi/blog-cloud/infra/tokenx"
 )
 
 type ServiceContext struct {
@@ -46,8 +46,8 @@ type ServiceContext struct {
 	VisitLog  rest.Middleware
 
 	RedisClient     *redis.Client
-	TokenStore      tokenstore.TokenStore
-	CaptchaStore    *captchastore.CaptchaStore
+	TokenManager    tokenx.Manager
+	CaptchaStore    *captchax.Store
 	StorageProvider storagex.StorageProvider
 	StompHubServer  *client.StompHubServer
 
@@ -70,20 +70,20 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 
-	tokenStore := tokenstore.NewJwtTokenStore(
-		storex.NewRedisStore(rds, storex.WithPrefix(cachekey.TokenStorePrefixApp)),
-		c.Name,
-		c.Name,
-		2*3600,
-		7*24*3600,
-	)
+	// 图形验证码 15 分钟过期
+	captchaStore := captchax.New(storex.NewRedisStore(rds), cachekey.CaptchaStorePrefixApp, 15*time.Minute)
 
-	captchaStore := captchastore.NewCaptchaStore(
-		captchastore.WithStore(
-			storex.NewRedisStore(rds, storex.WithPrefix(cachekey.CaptchaStorePrefixApp)),
-			15*time.Minute,
-		),
-	)
+	tokenManager, err := tokenx.New(tokenx.Config{
+		Signer:          tokenx.NewJWTSigner([]byte(c.Name), c.Name),
+		Store:           tokenx.NewRedisStore(rds),
+		LoginMode:       tokenx.SinglePoint,
+		KeyPrefix:       cachekey.TokenStorePrefixApp,
+		AccessTokenTTL:  2 * time.Hour,
+		RefreshTokenTTL: 7 * 24 * time.Hour,
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	storageProvider := storagex.NewStorageProvider(&c.StorageConfig)
 
@@ -112,17 +112,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			stomphook.NewChatRoomEventHook(userService, chatService),
 			stomphook.NewOnlineCatchupHook(tracker),
 		),
-		client.WithAuthenticator(stomphook.NewSignAuthenticator(tokenStore)),
+		client.WithAuthenticator(stomphook.NewSignAuthenticator(tokenManager)),
 		client.WithLogger(logws.NewDefaultLogger()),
 	)
 
 	return &ServiceContext{
 		Config:              c,
-		UserAuth:            middleware.NewUserAuthMiddleware(tokenStore).Handle,
+		UserAuth:            middleware.NewUserAuthMiddleware(tokenManager).Handle,
 		RateLimit:           middlewarex.NewRateLimitMiddleware(limitx.NewPeriodLimit(60, 5, rds, cachekey.RateLimitStrictPrefix)).Handle,
 		VisitLog:            middleware.NewVisitLogMiddleware(visitx.NewVisitEnforcer(), syslogService).Handle,
 		RedisClient:         rds,
-		TokenStore:          tokenStore,
+		TokenManager:        tokenManager,
 		CaptchaStore:        captchaStore,
 		StorageProvider:     storageProvider,
 		StompHubServer:      hub,

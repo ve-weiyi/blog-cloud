@@ -1,19 +1,21 @@
 package stomphook
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/go-stomp/stomp/v3/frame"
 
 	"github.com/ve-weiyi/stompws/server/client"
-	"github.com/ve-weiyi/vkit/adapter/storex/tokenstore"
+
+	"github.com/ve-weiyi/blog-cloud/infra/tokenx"
 )
 
 type SignAuthenticator struct {
-	verifier tokenstore.TokenStore
+	verifier tokenx.Manager
 }
 
-func NewSignAuthenticator(verifier tokenstore.TokenStore) *SignAuthenticator {
+func NewSignAuthenticator(verifier tokenx.Manager) *SignAuthenticator {
 	return &SignAuthenticator{
 		verifier: verifier,
 	}
@@ -35,7 +37,7 @@ func (a *SignAuthenticator) Authenticate(c *client.Client, f *frame.Frame) (stri
 	}
 
 	// token校验
-	err := a.verifier.ValidateToken(login, passcode)
+	err := a.verifier.Validate(context.Background(), login, clientId, passcode)
 	if err != nil {
 		return "", "", fmt.Errorf("stomp auth failed: %v", err)
 	}

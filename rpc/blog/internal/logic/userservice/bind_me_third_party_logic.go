@@ -40,7 +40,7 @@ func (l *BindMeThirdPartyLogic) BindMeThirdParty(in *userrpc.BindMeThirdPartyReq
 	}
 
 	// 获取第三方用户信息
-	info, err := auth.GetAuthUserInfo(in.Code)
+	info, err := auth.GetAuthUserInfo(l.ctx, in.Code)
 	if err != nil {
 		return nil, err
 	}

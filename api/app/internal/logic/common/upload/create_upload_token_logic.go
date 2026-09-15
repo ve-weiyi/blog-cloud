@@ -3,6 +3,7 @@ package upload
 import (
 	"context"
 	"path/filepath"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -35,7 +36,8 @@ func (l *CreateUploadTokenLogic) CreateUploadToken(req *types.CreateUploadTokenR
 	}
 
 	// 获取上传凭证
-	token, err := l.svcCtx.StorageProvider.GetUploadToken(l.ctx, filepath.Join(req.FileBase, req.FileName), expireSeconds)
+	token, err := l.svcCtx.StorageProvider.UploadToken(l.ctx, filepath.Join(req.FileBase, req.FileName),
+		time.Duration(expireSeconds)*time.Second)
 	if err != nil {
 		l.Errorf("Failed to get upload token: %v", err)
 		return nil, err

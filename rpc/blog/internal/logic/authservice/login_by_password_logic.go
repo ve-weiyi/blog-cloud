@@ -2,7 +2,6 @@ package authservicelogic
 
 import (
 	"context"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -10,9 +9,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
-	"github.com/ve-weiyi/vkit/adapter/mqx"
 	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/jsonconv"
 	"github.com/ve-weiyi/vkit/x/patternx"
 
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizcode"
@@ -65,17 +62,13 @@ func onLogin(ctx context.Context, svcCtx *svc.ServiceContext, user *model.TUser,
 	}
 
 	did, _ := metax.GetDeviceIdFromCtx(ctx)
-	if mq.LoginProducer != nil {
-		mq.LoginProducer.Send(ctx, &mqx.Message{
-			Topic: mq.LoginQueue,
-			Key:   mq.LoginRoutingKey,
-			Body: []byte(jsonconv.AnyToJsonNE(mq.LoginEvent{
-				UserId:    user.UserId,
-				DeviceId:  did,
-				LoginType: loginType,
-			})),
-			Timestamp: time.Now(),
-		})
+	// 推送登录日志消息，失败不影响登录流程
+	if err := mq.PublishLoginEvent(ctx, &mq.LoginEvent{
+		UserId:    user.UserId,
+		DeviceId:  did,
+		LoginType: loginType,
+	}); err != nil {
+		logx.WithContext(ctx).Errorf("发送登录日志消息失败: %v", err)
 	}
 
 	resp = &authrpc.LoginResponse{

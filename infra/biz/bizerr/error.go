@@ -1,6 +1,7 @@
 package bizerr
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -44,7 +45,9 @@ func FromStatus(err error) error {
 		}
 	}
 
-	return fmt.Errorf(st.Message())
+	// st.Message() 是来自对端的任意文本，用 errors.New 而非 fmt.Errorf，
+	// 避免其中的 % 被当作格式动词解析
+	return errors.New(st.Message())
 }
 
 func asBizError(err error, target **BizError) bool {

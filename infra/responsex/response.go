@@ -1,77 +1,63 @@
 package responsex
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
-	"github.com/go-sql-driver/mysql"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizerr"
+	"github.com/ve-weiyi/blog-cloud/infra/biz/httperr"
 )
 
 type Body struct {
 	Code        int64       `json:"code"`
-	Msg         string      `json:"msg"`
+	Message     string      `json:"message"`
 	Data        interface{} `json:"data,omitempty"`
 	EncryptData string      `json:"encrypt_data,omitempty"`
 	TraceId     string      `json:"trace_id"`
 }
 
-// Response 统一封装成功响应值.
+// Response 统一封装响应.
+// err 类型决定行为:
+//   - *httperr.HttpError: Code 直接作为 HTTP 响应状态码
+//   - *bizerr.BizError:   HTTP 200，body.code 为业务状态码（保持向后兼容）
+//   - 其他错误:            HTTP 500
 func Response(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 	if err != nil {
+		var httpErr *httperr.HttpError
 		var bizErr *bizerr.BizError
-		var unmarshalErr *json.UnmarshalTypeError
-		var mysqlErr *mysql.MySQLError
 
 		switch {
+		case errors.As(err, &httpErr):
+			httpx.WriteJsonCtx(r.Context(), w, int(httpErr.Code), Body{
+				Code:    httpErr.Code,
+				Message: httpErr.Message,
+				TraceId: GetTraceId(r),
+			})
 		case errors.As(err, &bizErr):
-			body := Body{
+			httpx.OkJsonCtx(r.Context(), w, Body{
 				Code:    bizErr.Code,
-				Msg:     bizErr.Error(),
-				Data:    nil,
+				Message: bizErr.Error(),
 				TraceId: GetTraceId(r),
-			}
-			httpx.OkJsonCtx(r.Context(), w, body)
-		case errors.As(err, &unmarshalErr):
-			body := Body{
-				Code:    http.StatusInternalServerError,
-				Msg:     unmarshalErr.Error(),
-				Data:    nil,
-				TraceId: GetTraceId(r),
-			}
-			httpx.OkJsonCtx(r.Context(), w, body)
-		case errors.As(err, &mysqlErr):
-			body := Body{
-				Code:    http.StatusInternalServerError,
-				Msg:     mysqlErr.Error(),
-				Data:    nil,
-				TraceId: GetTraceId(r),
-			}
-			httpx.OkJsonCtx(r.Context(), w, body)
+			})
 		default:
-			body := Body{
+			httpx.WriteJsonCtx(r.Context(), w, http.StatusInternalServerError, Body{
 				Code:    http.StatusInternalServerError,
-				Msg:     err.Error(),
-				Data:    nil,
+				Message: err.Error(),
 				TraceId: GetTraceId(r),
-			}
-			httpx.OkJsonCtx(r.Context(), w, body)
+			})
 		}
 		return
 	}
 
-	// 2. err为nil的情况，返回成功响应
-	body := Body{
+	httpx.OkJsonCtx(r.Context(), w, Body{
 		Code:    http.StatusOK,
-		Msg:     "successful!",
+		Message: "successful!",
 		Data:    resp,
 		TraceId: GetTraceId(r),
-	}
-	httpx.OkJsonCtx(r.Context(), w, body)
+	})
 }
 
 // GetTraceId 获取TraceId.

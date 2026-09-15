@@ -44,7 +44,7 @@ func (l *VerifyMobileCodeLogic) VerifyMobileCode(in *notificationrpc.VerifyMobil
 	}
 
 	// 验证验证码
-	success, err := l.svcCtx.CodeStore.Verify(key, in.Code)
+	success, err := l.svcCtx.OTPStore.Verify(l.ctx, key, in.Code)
 	if err != nil {
 		return &notificationrpc.VerifyMobileCodeResponse{
 			Success: false,

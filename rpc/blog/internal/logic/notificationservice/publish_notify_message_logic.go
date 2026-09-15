@@ -2,6 +2,7 @@ package notificationservicelogic
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -11,8 +12,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
-	"github.com/ve-weiyi/vkit/adapter/mqx"
-	"github.com/ve-weiyi/vkit/x/jsonconv"
 )
 
 type PublishNotifyMessageLogic struct {
@@ -52,21 +51,13 @@ func (l *PublishNotifyMessageLogic) PublishNotifyMessage(in *notificationrpc.Pub
 	}
 
 	// 通过 MQ 异步投递 delivery 记录，避免大量用户时接口阻塞
-	if mq.InboxProducer != nil {
-		event := &mq.InboxMessageEvent{MessageId: msg.Id}
-		err = mq.InboxProducer.Send(l.ctx, &mqx.Message{
-			Topic:     mq.InboxQueue,
-			Key:       mq.InboxRoutingKey,
-			Body:      []byte(jsonconv.AnyToJsonNE(event)),
-			Timestamp: time.Now(),
-		})
-		if err != nil {
-			l.Logger.Errorf("发送站内信投递消息失败: %v", err)
-			return nil, err
-		}
-	} else {
+	event := &mq.InboxMessageEvent{MessageId: msg.Id}
+	err = mq.PublishInboxMessageEvent(l.ctx, event)
+	if err == nil {
+		// 已交给消费者异步投递
+	} else if errors.Is(err, mq.ErrUnavailable) {
 		// MQ 不可用时降级为同步投递
-		l.Logger.Infof("InboxProducer 未初始化，使用同步投递")
+		l.Logger.Infof("消息队列未就绪，降级为同步投递")
 		recipients := l.resolveRecipients(msg)
 		now := time.Now()
 		for _, userId := range recipients {
@@ -83,6 +74,9 @@ func (l *PublishNotifyMessageLogic) PublishNotifyMessage(in *notificationrpc.Pub
 				l.Errorf("PublishNotifyMessage Insert delivery error: %v", err)
 			}
 		}
+	} else {
+		l.Logger.Errorf("发送站内信投递消息失败: %v", err)
+		return nil, err
 	}
 
 	return &notificationrpc.PublishNotifyMessageResponse{

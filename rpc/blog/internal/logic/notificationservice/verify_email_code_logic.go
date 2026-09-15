@@ -44,7 +44,7 @@ func (l *VerifyEmailCodeLogic) VerifyEmailCode(in *notificationrpc.VerifyEmailCo
 	}
 
 	// 验证验证码
-	success, err := l.svcCtx.CodeStore.Verify(key, in.Code)
+	success, err := l.svcCtx.OTPStore.Verify(l.ctx, key, in.Code)
 	if err != nil {
 		return &notificationrpc.VerifyEmailCodeResponse{
 			Success: false,

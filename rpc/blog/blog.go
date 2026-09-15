@@ -88,37 +88,42 @@ func main() {
 		}
 	}
 
-	ctx := svc.NewServiceContext(c)
+	svcCtx := svc.NewServiceContext(c)
 
-	// 初始化消息队列并注册消费者
-	mq.Init(ctx)
-	mqlogic.RegisterMqConsumers(ctx)
+	// 初始化消息队列并启动消费者
+	mq.Init(c.RabbitMQConf)
+	defer mq.Close()
+	mq.StartEmailSubscriber(mqlogic.NewConsumeEmailMessageLogic(svcCtx).Consume)
+	mq.StartSmsSubscriber(mqlogic.NewConsumeSmsMessageLogic(svcCtx).Consume)
+	mq.StartInboxSubscriber(mqlogic.NewConsumeInboxMessageLogic(svcCtx).Consume)
+	mq.StartLoginSubscriber(mqlogic.NewConsumeLoginLogic(svcCtx).Consume)
+	mq.StartLogoutSubscriber(mqlogic.NewConsumeLogoutLogic(svcCtx).Consume)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		// 用户
-		userrpc.RegisterUserServiceServer(grpcServer, userserviceServer.NewUserServiceServer(ctx))
+		userrpc.RegisterUserServiceServer(grpcServer, userserviceServer.NewUserServiceServer(svcCtx))
 		// 访客
-		guestrpc.RegisterGuestServiceServer(grpcServer, guestserviceServer.NewGuestServiceServer(ctx))
+		guestrpc.RegisterGuestServiceServer(grpcServer, guestserviceServer.NewGuestServiceServer(svcCtx))
 		// 认证
-		authrpc.RegisterAuthServiceServer(grpcServer, authserviceServer.NewAuthServiceServer(ctx))
+		authrpc.RegisterAuthServiceServer(grpcServer, authserviceServer.NewAuthServiceServer(svcCtx))
 		// 访问控制
-		accessrpc.RegisterAccessServiceServer(grpcServer, accessserviceServer.NewAccessServiceServer(ctx))
+		accessrpc.RegisterAccessServiceServer(grpcServer, accessserviceServer.NewAccessServiceServer(svcCtx))
 		// 内容
-		contentrpc.RegisterContentServiceServer(grpcServer, contentserviceServer.NewContentServiceServer(ctx))
+		contentrpc.RegisterContentServiceServer(grpcServer, contentserviceServer.NewContentServiceServer(svcCtx))
 		// 媒体
-		mediarpc.RegisterMediaServiceServer(grpcServer, mediaserviceServer.NewMediaServiceServer(ctx))
+		mediarpc.RegisterMediaServiceServer(grpcServer, mediaserviceServer.NewMediaServiceServer(svcCtx))
 		// 讨论
-		discussionrpc.RegisterDiscussionServiceServer(grpcServer, discussionserviceServer.NewDiscussionServiceServer(ctx))
+		discussionrpc.RegisterDiscussionServiceServer(grpcServer, discussionserviceServer.NewDiscussionServiceServer(svcCtx))
 		// 聊天
-		chatrpc.RegisterChatServiceServer(grpcServer, chatserviceServer.NewChatServiceServer(ctx))
+		chatrpc.RegisterChatServiceServer(grpcServer, chatserviceServer.NewChatServiceServer(svcCtx))
 		// 站点
-		siterpc.RegisterSiteServiceServer(grpcServer, siteserviceServer.NewSiteServiceServer(ctx))
+		siterpc.RegisterSiteServiceServer(grpcServer, siteserviceServer.NewSiteServiceServer(svcCtx))
 		// 通知
-		notificationrpc.RegisterNotificationServiceServer(grpcServer, notificationserviceServer.NewNotificationServiceServer(ctx))
+		notificationrpc.RegisterNotificationServiceServer(grpcServer, notificationserviceServer.NewNotificationServiceServer(svcCtx))
 		// 日志
-		syslogrpc.RegisterSyslogServiceServer(grpcServer, syslogserviceServer.NewSyslogServiceServer(ctx))
+		syslogrpc.RegisterSyslogServiceServer(grpcServer, syslogserviceServer.NewSyslogServiceServer(svcCtx))
 		// 统计
-		statsrpc.RegisterStatsServiceServer(grpcServer, statsserviceServer.NewStatsServiceServer(ctx))
+		statsrpc.RegisterStatsServiceServer(grpcServer, statsserviceServer.NewStatsServiceServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

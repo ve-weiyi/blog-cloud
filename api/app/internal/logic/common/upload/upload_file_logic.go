@@ -43,10 +43,11 @@ func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq, r *http.Request) 
 
 	start := time.Now()
 	// 使用 StorageProvider 上传
-	fileURL, err := l.svcCtx.StorageProvider.Upload(l.ctx, f, h.Filename)
+	result, err := l.svcCtx.StorageProvider.Upload(l.ctx, f, h.Filename)
 	if err != nil {
 		return nil, err
 	}
+	fileURL := result.AccessURL
 
 	// 记录上传日志
 	uid, _ := metax.GetApiUserIdFromCtx(l.ctx)

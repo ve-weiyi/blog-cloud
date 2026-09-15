@@ -35,7 +35,8 @@ func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.LogoutResp, err 
 		return
 	}
 
-	err = l.svcCtx.TokenStore.RevokeToken(uid, false)
+	deviceId, _ := metax.GetApiDeviceIdFromCtx(l.ctx)
+	err = l.svcCtx.TokenManager.Revoke(l.ctx, uid, deviceId)
 	if err != nil {
 		return nil, err
 	}

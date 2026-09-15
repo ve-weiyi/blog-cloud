@@ -2,16 +2,16 @@ package notificationservicelogic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/blog-cloud/infra/otpx"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/adapter/mqx"
-	"github.com/ve-weiyi/vkit/x/jsonconv"
 	"github.com/ve-weiyi/vkit/x/patternx"
 
 	"github.com/ve-weiyi/blog-cloud/infra/biz/bizcode"
@@ -55,31 +55,24 @@ func (l *SendEmailCodeLogic) SendEmailCode(in *notificationrpc.SendEmailCodeRequ
 	expire := time.Duration(expireSeconds) * time.Second
 
 	// 生成6位验证码并存储到Redis
-	code, err := l.svcCtx.CodeStore.Generate(key, 6, expire)
+	code, err := l.svcCtx.OTPStore.Generate(l.ctx, key, otpx.WithLength(6), otpx.WithExpire(expire))
 	if err != nil {
 		return nil, err
 	}
 
-	if mq.EmailProducer != nil {
-		// 构造 Email 消息事件
-		emailEvent := &mq.EmailMessageEvent{
-			Email: in.Email,
-			Scene: in.Scene,
-			BizId: in.BizId,
-			Params: map[string]string{
-				"code": code,
-				"time": fmt.Sprintf("%d", expireSeconds/60),
-			},
-		}
-		err = mq.EmailProducer.Send(l.ctx, &mqx.Message{
-			Topic:     mq.EmailQueue,
-			Key:       mq.EmailRoutingKey,
-			Body:      []byte(jsonconv.AnyToJsonNE(emailEvent)),
-			Timestamp: time.Now(),
-		})
-		if err != nil {
-			return nil, err
-		}
+	// 构造 Email 消息事件
+	emailEvent := &mq.EmailMessageEvent{
+		Email: in.Email,
+		Scene: in.Scene,
+		BizId: in.BizId,
+		Params: map[string]string{
+			"code": code,
+			"time": fmt.Sprintf("%d", expireSeconds/60),
+		},
+	}
+	// MQ 未就绪时跳过投递；投递失败则向上报错
+	if err = mq.PublishEmailMessageEvent(l.ctx, emailEvent); err != nil && !errors.Is(err, mq.ErrUnavailable) {
+		return nil, err
 	}
 
 	return &notificationrpc.SendEmailCodeResponse{

@@ -42,7 +42,7 @@ func (l *LoginByOAuthLogic) LoginByOAuth(in *authrpc.LoginByOAuthRequest) (*auth
 		return nil, fmt.Errorf("platform %s is not support", in.Platform)
 	}
 
-	info, err := auth.GetAuthUserInfo(in.Code)
+	info, err := auth.GetAuthUserInfo(l.ctx, in.Code)
 	if err != nil {
 		return nil, err
 	}

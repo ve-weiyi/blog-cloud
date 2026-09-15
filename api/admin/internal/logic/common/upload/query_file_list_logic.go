@@ -2,6 +2,7 @@ package upload
 
 import (
 	"context"
+	"path/filepath"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,23 +27,23 @@ func NewQueryFileListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Que
 }
 
 func (l *QueryFileListLogic) QueryFileList(req *types.QueryFileListReq) (resp *types.QueryFileListResp, err error) {
-	files, err := l.svcCtx.StorageProvider.ListFiles(l.ctx, req.FileBase, 100)
+	result, err := l.svcCtx.StorageProvider.List(l.ctx, req.FileBase, "", 100)
 	if err != nil {
 		return nil, err
 	}
 
 	var filtered []*types.FileInfoVO
-	for _, f := range files {
+	for _, f := range result.Files {
 		if req.Keyword != "" && !strings.Contains(f.FileName, req.Keyword) {
 			continue
 		}
 		filtered = append(filtered, &types.FileInfoVO{
-			FileBase:  f.FilePath,
+			FileBase:  f.FileKey,
 			FileName:  f.FileName,
-			FileType:  f.FileType,
+			FileType:  filepath.Ext(f.FileName),
 			FileSize:  f.FileSize,
 			FileUrl:   f.FileURL,
-			UpdatedAt: f.UpTime.UnixMilli(),
+			UpdatedAt: f.LastModified.UnixMilli(),
 		})
 	}
 

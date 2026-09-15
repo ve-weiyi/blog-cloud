@@ -7,6 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
+	"github.com/ve-weiyi/blog-cloud/infra/metax"
 )
 
 type RefreshTokenLogic struct {
@@ -25,7 +26,8 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.LoginResp, err error) {
-	tk, err := l.svcCtx.TokenStore.RefreshToken(req.UserId, req.RefreshToken)
+	deviceId, _ := metax.GetApiDeviceIdFromCtx(l.ctx)
+	tk, err := l.svcCtx.TokenManager.Refresh(l.ctx, req.UserId, deviceId, req.RefreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -33,13 +35,6 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *type
 	return &types.LoginResp{
 		UserId: req.UserId,
 		Scope:  l.svcCtx.Config.Name,
-		Token: &types.Token{
-			TokenType:        tk.TokenType,
-			AccessToken:      tk.AccessToken,
-			ExpiresIn:        tk.ExpiresIn,
-			RefreshToken:     tk.RefreshToken,
-			RefreshExpiresIn: tk.RefreshExpiresIn,
-			RefreshExpiresAt: tk.RefreshExpiresAt,
-		},
+		Token:  toToken(tk),
 	}, nil
 }

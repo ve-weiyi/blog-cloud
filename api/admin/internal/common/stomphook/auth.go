@@ -1,19 +1,21 @@
 package stomphook
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/go-stomp/stomp/v3/frame"
 
 	"github.com/ve-weiyi/stompws/server/client"
-	"github.com/ve-weiyi/vkit/adapter/storex/tokenstore"
+
+	"github.com/ve-weiyi/blog-cloud/infra/tokenx"
 )
 
 type JwtAuthenticator struct {
-	store tokenstore.TokenStore
+	store tokenx.Manager
 }
 
-func NewJwtAuthenticator(store tokenstore.TokenStore) *JwtAuthenticator {
+func NewJwtAuthenticator(store tokenx.Manager) *JwtAuthenticator {
 	return &JwtAuthenticator{
 		store: store,
 	}
@@ -35,7 +37,7 @@ func (a *JwtAuthenticator) Authenticate(c *client.Client, f *frame.Frame) (strin
 		return "", "", fmt.Errorf("stomp auth failed: missing header: 'client'")
 	}
 	// 校验jwt
-	err := a.store.ValidateToken(login, passcode)
+	err := a.store.Validate(context.Background(), login, clientId, passcode)
 	if err != nil {
 		return "", "", fmt.Errorf("stomp auth failed: %v", err)
 	}

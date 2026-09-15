@@ -6,7 +6,10 @@ import (
 	"github.com/mikespook/gorbac/v2"
 )
 
-func newTestEnforcer(userRoles map[string][]string, rolePerms map[string][]string) *RbacEnforcer {
+// registered 是「已注册接口」全集，用于填充 allPerms。
+// Enforce 对未注册的接口按设计放行（见 rbac_enforcer.go 的 unregistered 分支），
+// 因此被拒绝的用例必须先把接口登记进来，否则会走放行分支而测不到鉴权。
+func newTestEnforcer(userRoles map[string][]string, rolePerms map[string][]string, registered []string) *RbacEnforcer {
 	rbac := gorbac.New()
 	for role, perms := range rolePerms {
 		r := gorbac.NewStdRole(role)
@@ -15,9 +18,16 @@ func newTestEnforcer(userRoles map[string][]string, rolePerms map[string][]strin
 		}
 		_ = rbac.Add(r)
 	}
+
+	allPerms := make(map[string]struct{}, len(registered))
+	for _, perm := range registered {
+		allPerms[perm] = struct{}{}
+	}
+
 	return &RbacEnforcer{
 		rbac:         rbac,
 		userRoles:    userRoles,
+		allPerms:     allPerms,
 		policyLoaded: true,
 	}
 }
@@ -33,6 +43,12 @@ func TestEnforce(t *testing.T) {
 			"admin":  {"GET:/api/v1/users", "GET:/api/v1/users/:id"},
 			"viewer": {"GET:/api/v1/posts"},
 			"editor": {"POST:/api/v1/posts"},
+		},
+		[]string{
+			"GET:/api/v1/users", "GET:/api/v1/users/:id",
+			"GET:/api/v1/posts", "POST:/api/v1/posts",
+			// 已注册但未授予任何角色 —— 覆盖"接口存在但无权访问"的拒绝路径
+			"POST:/api/v1/users", "DELETE:/api/v1/posts",
 		},
 	)
 

@@ -2,15 +2,12 @@ package authservicelogic
 
 import (
 	"context"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/adapter/mqx"
-	"github.com/ve-weiyi/vkit/x/jsonconv"
 
 	"github.com/ve-weiyi/blog-cloud/infra/metax"
 )
@@ -41,18 +38,13 @@ func (l *LogoutLogic) Logout(in *authrpc.LogoutRequest) (*authrpc.LogoutResponse
 		return nil, err
 	}
 
-	// 推送退出登录消息
-	if mq.LogoutProducer != nil {
-		mq.LogoutProducer.Send(l.ctx, &mqx.Message{
-			Topic: mq.LogoutQueue,
-			Key:   mq.LogoutRoutingKey,
-			Body: []byte(jsonconv.AnyToJsonNE(mq.LogoutEvent{
-				UserId:     uid,
-				DeviceId:   did,
-				LogoutType: "user logout",
-			})),
-			Timestamp: time.Now(),
-		})
+	// 推送退出登录消息，失败不影响登出流程
+	if err := mq.PublishLogoutEvent(l.ctx, &mq.LogoutEvent{
+		UserId:     uid,
+		DeviceId:   did,
+		LogoutType: "user logout",
+	}); err != nil {
+		l.Logger.Errorf("发送登出消息失败: %v", err)
 	}
 
 	return &authrpc.LogoutResponse{}, nil

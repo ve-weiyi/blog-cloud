@@ -14,13 +14,14 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
+	"github.com/ve-weiyi/blog-cloud/infra/otpx"
+	"github.com/ve-weiyi/blog-cloud/infra/storex"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/config"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/model"
 	"github.com/ve-weiyi/vkit/adapter/gormx/gormlogx"
 	"github.com/ve-weiyi/vkit/adapter/mail"
 	"github.com/ve-weiyi/vkit/adapter/oauthx"
 	"github.com/ve-weiyi/vkit/adapter/smsx"
-	"github.com/ve-weiyi/vkit/adapter/storex/codestore"
 
 	"github.com/ve-weiyi/blog-cloud/infra/dbnotify"
 )
@@ -37,7 +38,7 @@ type ServiceContext struct {
 	// OAuth 服务提供商 map[platform]OAuthProvider
 	OAuthProviders map[string]oauthx.OAuthProvider
 
-	CodeStore *codestore.CodeStore
+	OTPStore *otpx.Store
 
 	// account models
 	TUserModel      model.TUserModel
@@ -110,7 +111,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EmailDeliver:   emailDeliver,
 		SmsProvider:    smsProvider,
 		OAuthProviders: NewOAuthProviders(c.AppOAuthConf),
-		CodeStore:      nil,
+		OTPStore:       otpx.New(storex.NewRedisStore(rds)),
 		// account models
 		TUserModel:      model.NewTUserModel(db),
 		TUserOauthModel: model.NewTUserOauthModel(db),

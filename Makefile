@@ -1,10 +1,11 @@
-.PHONY: help deps docker-deps docker-app docker-up docker-deps-down docker-down run-app-rpc run-app-api run-admin-api build clean k8s-up k8s-down
+.PHONY: help deps init-config docker-deps docker-app docker-up docker-deps-down docker-down run-app-rpc run-app-api run-admin-api build clean k8s-up k8s-down
 
 # 默认目标
 help:
 	@echo "可用命令："
 	@echo "  make deps        - 安装依赖"
-	@echo "  make docker-deps    - 启动依赖服务(MySQL→Redis→RabbitMQ)"
+	@echo "  make init-config - 从 *.example.yaml 生成本地配置（已存在则跳过）"
+	@echo "  make docker-deps    - 启动依赖服务(MySQL→Redis→RabbitMQ→Nacos→MinIO)"
 	@echo "  make docker-app     - 启动 App 容器服务"
 	@echo "  make docker-up      - 启动所有容器服务(deps+app)"
 	@echo "  make docker-deps-down - 停止依赖服务"
@@ -26,6 +27,19 @@ deps:
 # 安装grpc工具(使用goctl)
 	goctl env check --install --verbose --force
 
+# 从 *.example.yaml 生成本地运行时配置。
+# 这些 *.yaml 在 .gitignore 中，不入库；各人按需改端口、库名与凭证。
+init-config:
+	@for base in rpc/blog/etc/app-rpc api/app/etc/app-api api/admin/etc/admin-api; do \
+		src="$$base.example.yaml"; dst="$$base.yaml"; \
+		if [ -f "$$dst" ]; then \
+			echo "  已存在，跳过: $$dst"; \
+		else \
+			cp "$$src" "$$dst"; \
+			echo "  已生成: $$dst"; \
+		fi; \
+	done
+
 # 启动依赖服务
 docker-deps:
 	@echo "启动 MySQL..."
@@ -34,6 +48,10 @@ docker-deps:
 	docker compose -f ../deploy/docker-compose/redis/redis.yaml up -d
 	@echo "启动 RabbitMQ..."
 	docker compose -f ../deploy/docker-compose/rabbitmq/rabbitmq.yaml up -d
+	@echo "启动 Nacos..."
+	docker compose -f ../deploy/docker-compose/nacos/nacos.yaml up -d
+	@echo "启动 MinIO..."
+	docker compose -f ../deploy/docker-compose/minio/minio.yaml up -d
 	@echo "依赖服务启动完成！"
 
 # 启动 App 容器服务
@@ -49,6 +67,10 @@ docker-up:
 
 # 停止依赖服务
 docker-deps-down:
+	@echo "停止 MinIO..."
+	docker compose -f ../deploy/docker-compose/minio/minio.yaml down
+	@echo "停止 Nacos..."
+	docker compose -f ../deploy/docker-compose/nacos/nacos.yaml down
 	@echo "停止 RabbitMQ..."
 	docker compose -f ../deploy/docker-compose/rabbitmq/rabbitmq.yaml down
 	@echo "停止 Redis..."

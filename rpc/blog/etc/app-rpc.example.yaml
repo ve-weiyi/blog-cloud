@@ -9,15 +9,15 @@ Log:
 MysqlConf:
   Host: 127.0.0.1
   Port: "3306"
-  Username: root
-  Password: root
+  Username: veweiyi
+  Password: mysql7914
   Dbname: ve_blog
   Config: charset=utf8mb4&parseTime=True&loc=Local
 
 RedisConf:
   Host: 127.0.0.1
   Port: "6379"
-  Password: ""
+  Password: redis7914
   DB: 0
 
 RabbitMQConf:
@@ -27,15 +27,34 @@ RabbitMQConf:
   Password: guest
 
 EmailConf:
-  Host: smtp.qq.com
-  Port: 465
-  Username: xxx@qq.com
-  Password: xxx
-  Nickname: blog
-  IsSsl: true
+  host: smtp.qq.com
+  port: 465
+  username: xxx@qq.com
+  password: xxx
+  nickname: blog
+  is_ssl: true
 
+# 短信配置。provider: aliyun | tencent | mock（默认 mock，不实际发送）
+# 注意键名是下划线形式 —— 该结构体的 json tag 为 snake_case，PascalCase 映射不上
+SmsConf:
+  provider: mock
+  sign_name: xxx
+  # aliyun 需要
+  access_key: xxx
+  secret_key: xxx
+  # tencent 需要
+  region: xxx
+  sdk_app_id: xxx
+  # 模板映射：scene -> 模板号
+  templates:
+    login: xxx
+    register: xxx
+    reset_password: xxx
+    bind_mobile: xxx
+
+# 键名同 SmsConf，须与结构体的 json tag 一致（client_id / client_secret）
 AppOAuthConf:
   github:
-    ClientId: xxx
-    ClientSecret: xxx
-    RedirectUri: xxx
+    client_id: xxx
+    client_secret: xxx
+    redirect_uri: xxx

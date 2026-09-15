@@ -16,15 +16,13 @@ Log:
   Path: runtime/blog-api/log
 # 文件上传配置
 StorageConfig:
-  provider: qiniu
-  endpoint: s3.cn-south-1.qiniucs.com
-  bucket: veweiyi
-  access_key: gyoAZPHHZrwXt4HhG7SNRaxRShJPhEKvxJJKhDUV
-  secret_key: OqbepkdXNm0pKfZMy1ziPqdYjZMCtdzRIrz1Hlhi
-  region: huanan
-  cdn_domain: https://static.veweiyi.cn
-  base_path: blog
-  is_private: false
+  Provider: minio
+  Minio:
+    Endpoint: 127.0.0.1:9000
+    Bucket: blog
+    AccessKey: veweiyi
+    SecretKey: minio7914
+    Secure: false
 
 RedisConf:
   db: 0

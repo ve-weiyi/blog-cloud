@@ -203,14 +203,28 @@ func (m *RbacEnforcer) Enforce(user string, resource string, action string) (boo
 }
 
 // InvalidateUser 主动失效用户角色缓存
+//
+// 权限撤销必须生效：内存缓存清掉后，读取顺序是「内存 -> Redis -> RPC」，
+// 若 Redis 里的旧角色没能删掉，下一次读取会把它重新回填进内存，
+// 使被撤销的权限在 userRoleTTL 内继续可用。
+// 因此删除失败不能静默，并重试一次以覆盖瞬时抖动。
 func (m *RbacEnforcer) InvalidateUser(userId string) {
 	m.mu.Lock()
 	delete(m.userRoles, userId)
 	m.mu.Unlock()
 
-	if m.rds != nil {
-		_ = m.rds.Del(context.Background(), cachekey.UserRoleCacheKey(userId)).Err()
+	if m.rds == nil {
+		return
 	}
+
+	key := cachekey.UserRoleCacheKey(userId)
+	var err error
+	for attempt := 0; attempt < 2; attempt++ {
+		if err = m.rds.Del(context.Background(), key).Err(); err == nil {
+			return
+		}
+	}
+	logx.Errorf("[Perm] invalidate user role cache failed: userId=%s key=%s err=%v", userId, key, err)
 }
 
 // getUserRoles 获取用户角色：内存缓存 -> Redis -> RPC

@@ -9,6 +9,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/config"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/handler"
+	"github.com/ve-weiyi/blog-cloud/api/app/internal/job"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/plugins"
 	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
@@ -71,6 +72,10 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	server.Use(ctx.VisitLog)
+
+	// 启动定时任务
+	job.Init(ctx)
+	defer job.Stop()
 
 	handler.RegisterHandlers(server, ctx)
 	plugins.RegisterPluginHandlers(server, ctx)

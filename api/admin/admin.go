@@ -9,6 +9,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/config"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/handler"
+	"github.com/ve-weiyi/blog-cloud/api/admin/internal/job"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/plugins"
 	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
@@ -70,6 +71,11 @@ func main() {
 	server.Use(middlewarex.NewDeviceTokenMiddleware().Handle)
 
 	ctx := svc.NewServiceContext(c)
+
+	// 启动定时任务
+	job.Init(ctx)
+	defer job.Stop()
+
 	handler.RegisterHandlers(server, ctx)
 	plugins.RegisterPluginHandlers(server, ctx)
 

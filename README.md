@@ -64,7 +64,7 @@ blog 是一个功能完善的现代化全栈博客系统，后端采用 Go + Go-
           └─────────────────────┘
                                 │
           ┌─────────────────────▼─────────────────────┐
-          │              app-rpc  :9120               │
+          │              blog-rpc :9120               │
           │          核心业务服务（156 RPC）          │
           │    ┌─────────────────────────────────┐    │
           │    │  用户 · 访客 · 认证 · 访问控制  │    │
@@ -183,7 +183,7 @@ make deps
 make docker-deps
 
 # 3. 启动服务（三个终端，先 RPC 后 API）
-make run-app-rpc       # 终端1: RPC 核心服务
+make run-blog-rpc      # 终端1: RPC 核心服务
 make run-app-api       # 终端2: 前台 API → http://localhost:9420/api/v1/swagger/index.html
 make run-admin-api     # 终端3: 后台 API → http://localhost:9421/admin-api/v1/swagger/index.html
 ```
@@ -212,7 +212,7 @@ make help             # 查看所有命令
 
 # 开发
 make deps             # 安装依赖
-make run-app-rpc      # 启动 RPC 服务
+make run-blog-rpc     # 启动 RPC 服务
 make run-app-api      # 启动前台 API
 make run-admin-api    # 启动后台 API
 make build            # 编译所有服务

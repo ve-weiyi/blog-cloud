@@ -1,4 +1,4 @@
-.PHONY: help deps init-config docker-deps docker-app docker-up docker-deps-down docker-down run-app-rpc run-app-api run-admin-api build clean k8s-up k8s-down
+.PHONY: help deps init-config docker-deps docker-app docker-up docker-deps-down docker-down run-blog-rpc run-app-api run-admin-api build clean k8s-up k8s-down
 
 # 默认目标
 help:
@@ -10,7 +10,7 @@ help:
 	@echo "  make docker-up      - 启动所有容器服务(deps+app)"
 	@echo "  make docker-deps-down - 停止依赖服务"
 	@echo "  make docker-down    - 停止所有容器服务"
-	@echo "  make run-app-rpc   - 启动 RPC 服务"
+	@echo "  make run-blog-rpc  - 启动 RPC 服务"
 	@echo "  make run-app-api   - 启动博客前台服务"
 	@echo "  make run-admin-api - 启动管理后台服务"
 	@echo "  make build         - 编译所有服务"
@@ -30,7 +30,7 @@ deps:
 # 从 *.example.yaml 生成本地运行时配置。
 # 这些 *.yaml 在 .gitignore 中，不入库；各人按需改端口、库名与凭证。
 init-config:
-	@for base in rpc/blog/etc/app-rpc api/app/etc/app-api api/admin/etc/admin-api; do \
+	@for base in rpc/blog/etc/blog-rpc api/app/etc/app-api api/admin/etc/admin-api; do \
 		src="$$base.example.yaml"; dst="$$base.yaml"; \
 		if [ -f "$$dst" ]; then \
 			echo "  已存在，跳过: $$dst"; \
@@ -112,8 +112,8 @@ k8s-down:
 	@echo "K8s 资源已移除！"
 
 # 启动 RPC 服务（开发模式）
-run-app-rpc:
-	go run rpc/blog/blog.go -f rpc/blog/etc/app-rpc.yaml
+run-blog-rpc:
+	go run rpc/blog/blog.go -f rpc/blog/etc/blog-rpc.yaml
 
 # 启动博客前台服务（开发模式）
 run-app-api:

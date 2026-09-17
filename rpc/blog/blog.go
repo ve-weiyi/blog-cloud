@@ -13,6 +13,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/infra/interceptorx"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/config"
+	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/job"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/mq/mqlogic"
 	"github.com/ve-weiyi/blog-cloud/rpc/blog/internal/pb/accessrpc"
@@ -89,6 +90,10 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
+
+	// 启动定时任务
+	job.Init(svcCtx)
+	defer job.Stop()
 
 	// 初始化消息队列并启动消费者
 	mq.Init(c.RabbitMQConf)

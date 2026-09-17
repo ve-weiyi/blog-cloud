@@ -41,7 +41,7 @@ default.etcd
 config.yaml
 app-api.yaml
 admin-api.yaml
-app-rpc.yaml
+blog-rpc.yaml
 test.*
 any_test.go
 blog-veweiyi.sql

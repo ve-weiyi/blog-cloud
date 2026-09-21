@@ -1,0 +1,48 @@
+Name: admin-api
+Host: 0.0.0.0
+Port: 9421
+Timeout: 5000
+# 健康检查
+DevServer:
+  Enabled: true
+  Port: 6061
+  HealthPath: "/ping"
+  MetricsPath: "/metrics"
+  EnableMetrics: true
+# 日志配置
+Log:
+  Mode: file
+  Encoding: json
+  Path: runtime/admin-api/log
+# 文件上传配置
+StorageConfig:
+  Provider: minio
+  Minio:
+    Endpoint: minio:9000
+    Bucket: blog
+    AccessKey: blog
+    SecretKey: blog-minio-2026
+    Secure: false
+    # 图片对外地址即由此域名决定，须与 ingress/minio.yaml 的主机名一致
+    CDNDomain: https://minio.veweiyi.cn
+
+RedisConf:
+  db: 0
+  host: redis
+  port: "6379"
+  password: blog-redis-2026
+
+# etcd模式（集群内 etcd，未启用认证）
+# AppRpcConf:
+#   Etcd:
+#     Hosts:
+#      - "etcd:2379"
+#     Key: "blog/app.rpc"
+#   NonBlock: true
+#   Timeout: 5000
+
+# 直连模式
+AppRpcConf:
+  Endpoints:
+    - blog-rpc:9120
+  Timeout: 5000

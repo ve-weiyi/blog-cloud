@@ -1,0 +1,60 @@
+Name: app.rpc
+ListenOn: 0.0.0.0:9120
+Mode: dev
+
+Log:
+  Mode: console
+  Encoding: plain
+
+MysqlConf:
+  Host: mysql
+  Port: "3306"
+  Username: blog
+  Password: blog-mysql-2026
+  Dbname: blog
+  Config: charset=utf8mb4&parseTime=True&loc=Local
+
+RedisConf:
+  Host: redis
+  Port: "6379"
+  Password: blog-redis-2026
+  DB: 0
+
+RabbitMQConf:
+  Host: rabbitmq
+  Port: "5672"
+  Username: blog
+  Password: blog-rabbitmq-2026
+
+EmailConf:
+  host: smtp.qq.com
+  port: 465
+  username: xxx@qq.com
+  password: xxx
+  nickname: blog
+  is_ssl: true
+
+# 短信配置。provider: aliyun | tencent | mock（默认 mock，不实际发送）
+# 注意键名是下划线形式 —— 该结构体的 json tag 为 snake_case，PascalCase 映射不上
+SmsConf:
+  provider: mock
+  sign_name: xxx
+  # aliyun 需要
+  access_key: xxx
+  secret_key: xxx
+  # tencent 需要
+  region: xxx
+  sdk_app_id: xxx
+  # 模板映射：scene -> 模板号
+  templates:
+    login: xxx
+    register: xxx
+    reset_password: xxx
+    bind_mobile: xxx
+
+# 键名同 SmsConf，须与结构体的 json tag 一致（client_id / client_secret）
+AppOAuthConf:
+  github:
+    client_id: xxx
+    client_secret: xxx
+    redirect_uri: xxx

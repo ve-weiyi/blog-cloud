@@ -1,8 +1,0 @@
-package types
-
-type QueryVisitLogReq struct {
-	PageQuery
-	UserId     string `json:"user_id,optional"`     // 用户id
-	TerminalId string `json:"terminal_id,optional"` // 终端id
-	PageName   string `json:"page_name,optional"`   // 页面
-}

@@ -1,0 +1,17 @@
+# 锁文件
+package-lock.json
+yarn.lock
+
+# 编译产物
+dist/
+build/
+out/
+
+# 大 map/min 文件
+*.map
+*.min.js
+*.bundle.js
+
+# 依赖
+node_modules/
+*.pb.go

@@ -1,0 +1,27 @@
+package tag
+
+import (
+	"net/http"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
+
+	"github.com/ve-weiyi/blog-cloud/api/app/internal/logic/content/tag"
+	"github.com/ve-weiyi/blog-cloud/api/app/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/api/app/internal/types"
+	"github.com/ve-weiyi/blog-cloud/infra/responsex"
+)
+
+// 获取标签列表
+func QueryTagListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.QueryTagListReq
+		if err := httpx.Parse(r, &req); err != nil {
+			responsex.RequestInvalid(r, w, err)
+			return
+		}
+
+		l := tag.NewQueryTagListLogic(r.Context(), svcCtx)
+		resp, err := l.QueryTagList(&req)
+		responsex.Response(r, w, resp, err)
+	}
+}

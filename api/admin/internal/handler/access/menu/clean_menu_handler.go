@@ -1,0 +1,27 @@
+package menu
+
+import (
+	"net/http"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
+
+	"github.com/ve-weiyi/blog-cloud/api/admin/internal/logic/access/menu"
+	"github.com/ve-weiyi/blog-cloud/api/admin/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/api/admin/internal/types"
+	"github.com/ve-weiyi/blog-cloud/infra/responsex"
+)
+
+// 清空菜单列表
+func CleanMenuHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.CleanMenuReq
+		if err := httpx.Parse(r, &req); err != nil {
+			responsex.RequestInvalid(r, w, err)
+			return
+		}
+
+		l := menu.NewCleanMenuLogic(r.Context(), svcCtx)
+		resp, err := l.CleanMenu(&req)
+		responsex.Response(r, w, resp, err)
+	}
+}

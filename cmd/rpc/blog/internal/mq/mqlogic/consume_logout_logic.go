@@ -30,9 +30,9 @@ func (l *ConsumeLogoutLogic) Consume(ctx context.Context, event *mq.LogoutEvent)
 	// 查找最近的登录记录（未登出的）
 	exists, _, err := l.svcCtx.TLoginLogModel.FindListAndTotal(ctx, 1, 1, "id desc", "user_id = ? AND device_id = ? AND logout_at IS NULL", event.UserId, event.DeviceId)
 	if err != nil {
-		// 如果找不到登录记录，不返回错误，只记录日志
+		// 查询失败不能当成「没有登录记录」：交给重试，耗尽后按订阅策略丢弃。
 		logger.Errorf("查找登录记录失败: userId=%s, error=%v", event.UserId, err)
-		return nil
+		return err
 	}
 	if len(exists) == 0 {
 		logger.Infof("未找到登录记录: userId=%s", event.UserId)

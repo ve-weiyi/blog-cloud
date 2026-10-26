@@ -68,7 +68,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *authrpc.LoginByPasswordReques
 
 // publishLoginEvent 发布登录日志事件；失败只记录日志，不影响登录流程。
 func publishLoginEvent(ctx context.Context, svcCtx *svc.ServiceContext, userId, deviceId, loginType string, status int64, reason string) {
-	if err := svcCtx.MQ.Login.Publish(ctx, &mq.LoginEvent{
+	if _, err := mq.LoginMessage.Publish(ctx, svcCtx.MQ.Publisher, &mq.LoginEvent{
 		UserId:     userId,
 		DeviceId:   deviceId,
 		LoginType:  loginType,

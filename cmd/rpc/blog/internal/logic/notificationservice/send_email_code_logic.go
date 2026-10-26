@@ -13,7 +13,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
 	"github.com/ve-weiyi/vkit/x/patternx"
 
-	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 )
@@ -60,24 +59,18 @@ func (l *SendEmailCodeLogic) SendEmailCode(in *notificationrpc.SendEmailCodeRequ
 		return nil, err
 	}
 
-	eventID, err := identityx.NewID()
-	if err != nil {
-		return nil, err
-	}
-
 	// 构造 Email 消息事件
 	emailEvent := &mq.EmailMessageEvent{
-		EventId: eventID,
-		Email:   in.Email,
-		Scene:   in.Scene,
-		BizId:   in.BizId,
+		Email: in.Email,
+		Scene: in.Scene,
+		BizId: in.BizId,
 		Params: map[string]string{
 			"code": code,
 			"time": fmt.Sprintf("%d", expireSeconds/60),
 		},
 	}
 	// 验证码已写入 Redis，投递失败必须让调用方知道，否则用户拿不到码却收到发送成功
-	if err = l.svcCtx.MQ.Email.Publish(l.ctx, emailEvent); err != nil {
+	if _, err = mq.EmailMessage.Publish(l.ctx, l.svcCtx.MQ.Publisher, emailEvent); err != nil {
 		l.Errorf("publish email code message failed: %v", err)
 		return nil, bizerr.NewBizError(bizcode.CodeServiceUnavailable, "邮件服务暂不可用，请稍后重试")
 	}

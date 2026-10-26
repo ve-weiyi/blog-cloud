@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/proc"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -14,7 +18,9 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/job"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/mqlogic"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/outbox"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/accessrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/chatrpc"
@@ -41,6 +47,7 @@ import (
 	userserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/userservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/interceptorx"
+	"github.com/ve-weiyi/blog-cloud/infra/metrics"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
 )
 
@@ -92,18 +99,36 @@ func main() {
 
 	svcCtx := svc.NewServiceContext(c)
 
-	// 启动定时任务
-	job.Init(svcCtx)
-	defer job.Stop()
+	// 先声明消费拓扑，再启动 outbox relay：relay 可能立刻发布积压事件，
+	// 队列尚未绑定时消息会被 exchange 直接丢弃。
+	// 两者失败都属于「不修就不会好」的部署错误，启动即失败；
+	// broker 抖动由懒连接与 relay 退避重试兜底，不受影响。
+	if !startMQ(svcCtx) {
+		panic("mq: notification subscriptions unavailable")
+	}
+	relay, err := startOutboxRelay(svcCtx)
+	if err != nil {
+		panic(fmt.Errorf("outbox relay: %w", err))
+	}
 
-	// 启动消息消费者。MQ 关闭必须注册为关闭监听：go-zero 收到信号后会直接杀进程，
-	// main 不返回，defer 不会执行。
-	svcCtx.MQ.Email.Subscribe(mqlogic.NewConsumeEmailMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Sms.Subscribe(mqlogic.NewConsumeSmsMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Inbox.Subscribe(mqlogic.NewConsumeInboxMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Login.Subscribe(mqlogic.NewConsumeLoginLogic(svcCtx).Consume)
-	svcCtx.MQ.Logout.Subscribe(mqlogic.NewConsumeLogoutLogic(svcCtx).Consume)
-	proc.AddShutdownListener(svcCtx.MQ.Close)
+	jobs := job.New()
+	jobs.Add(job.Task{Name: "outbox-relay", Start: relay.Start, Stop: relay.Stop})
+	jobs.Start()
+
+	stopJobs := func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		jobs.Stop(ctx)
+	}
+
+	// 关闭顺序：先停后台任务（relay 可能正在发布），再释放 MQ/Redis/DB。
+	// go-zero 的多个 shutdown listener 是并发执行的，顺序只能靠合并成一个来保证。
+	shutdown := func() {
+		stopJobs()
+		svcCtx.Close()
+	}
+	defer shutdown()
+	proc.AddShutdownListener(shutdown)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		// 用户
@@ -143,4 +168,51 @@ func main() {
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
+}
+
+// startOutboxRelay 构造 outbox relay；发布器缺失或 outbox 表不可用时返回错误。
+func startOutboxRelay(svcCtx *svc.ServiceContext) (*outbox.Relay, error) {
+	if svcCtx.MQ == nil || svcCtx.MQ.Publisher == nil {
+		return nil, errors.New("mq publisher is unavailable")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := svcCtx.Outbox.Ping(ctx); err != nil {
+		return nil, err
+	}
+	return outbox.NewRelay(svcCtx.Outbox, svcCtx.MQ.Publisher,
+		outbox.WithMetrics(metrics.NewOutbox())), nil
+}
+
+// startMQ 注册事件处理器并启动通知域与审计域的订阅。
+// 返回通知域订阅是否全部就绪；未就绪时不启动 outbox relay，避免消息被无绑定的 exchange 丢弃。
+func startMQ(svcCtx *svc.ServiceContext) bool {
+	if svcCtx.MQ == nil || svcCtx.MQ.Runtime == nil {
+		logx.Error("[mq] runtime unavailable, consumers disabled")
+		return false
+	}
+
+	router, err := svcCtx.MQ.Runtime.NewRouter()
+	if err != nil {
+		logx.Errorf("[mq] create router: %v", err)
+		return false
+	}
+	if err := mqlogic.Register(router, svcCtx); err != nil {
+		// 注册失败意味着处理器缺失：宁可不启动订阅，也不要让该事件在运行期
+		// 全部按失败策略处理（死信或丢弃）。
+		logx.Errorf("[mq] register handlers: %v", err)
+		return false
+	}
+
+	notificationReady := true
+	for _, spec := range mq.Subscriptions() {
+		if err := svcCtx.MQ.Runtime.Start(router, spec); err != nil {
+			logx.Errorf("[mq] start subscription %s: %v", spec.Group, err)
+			if spec.Destination == mq.NotificationExchange {
+				notificationReady = false
+			}
+		}
+	}
+	return notificationReady
 }

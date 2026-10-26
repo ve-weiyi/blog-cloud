@@ -39,7 +39,7 @@ func (l *LogoutLogic) Logout(in *authrpc.LogoutRequest) (*authrpc.LogoutResponse
 	}
 
 	// 推送退出登录消息，失败不影响登出流程
-	if err := l.svcCtx.MQ.Logout.Publish(l.ctx, &mq.LogoutEvent{
+	if _, err := mq.LogoutMessage.Publish(l.ctx, l.svcCtx.MQ.Publisher, &mq.LogoutEvent{
 		UserId:     uid,
 		DeviceId:   did,
 		LogoutType: "user logout",

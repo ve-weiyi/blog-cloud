@@ -16,6 +16,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/outbox"
 	"github.com/ve-weiyi/blog-cloud/model"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
@@ -35,6 +36,7 @@ type ServiceContext struct {
 	GormDB *gorm.DB
 	Redis  *redis.Client
 	MQ     *mq.Client
+	Outbox *outbox.GORMStore
 
 	EmailDeliver emailx.IEmailDeliver
 	SmsProvider  smsx.SmsProvider
@@ -125,6 +127,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GormDB:         db,
 		Redis:          rds,
 		MQ:             mq.NewClient(c.RabbitMQConf),
+		Outbox:         outbox.NewGORMStore(db),
 		EmailDeliver:   emailDeliver,
 		SmsProvider:    smsProvider,
 		OAuthProviders: oAuthProviders,
@@ -165,6 +168,25 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TLoginLogModel:     model.NewTLoginLogModel(db),
 		TOperationLogModel: model.NewTOperationLogModel(db),
 		TUploadLogModel:    model.NewTUploadLogModel(db),
+	}
+}
+
+// Close 按依赖顺序释放资源：先停 MQ（等待在途消费完成），再关 Redis 与数据库。
+// 幂等：重复调用安全。
+func (s *ServiceContext) Close() {
+	if s == nil {
+		return
+	}
+	if s.MQ != nil {
+		s.MQ.Close()
+	}
+	if s.Redis != nil {
+		_ = s.Redis.Close()
+	}
+	if s.GormDB != nil {
+		if db, err := s.GormDB.DB(); err == nil {
+			_ = db.Close()
+		}
 	}
 }
 

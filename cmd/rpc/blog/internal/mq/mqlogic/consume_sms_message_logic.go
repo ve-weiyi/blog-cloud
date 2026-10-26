@@ -2,6 +2,7 @@ package mqlogic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -11,9 +12,10 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 
-	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/model"
+	mqx "github.com/ve-weiyi/vkit/adapter/mqx"
+	eventx "github.com/ve-weiyi/vkit/adapter/mqx/event"
 )
 
 // ConsumeSmsMessageLogic SMS 消费者逻辑
@@ -32,14 +34,9 @@ func (l *ConsumeSmsMessageLogic) Consume(ctx context.Context, event *mq.SmsMessa
 	logger := logx.WithContext(ctx)
 	logger.Infof("收到短信消息: mobile=%s, scene=%s", event.Mobile, event.Scene)
 
-	bizID := event.EventId
+	bizID := eventx.EventIDFrom(ctx)
 	if bizID == "" {
-		// 旧格式消息没有事件 ID：本次仍可投递，但无法跨重投去重
-		var err error
-		bizID, err = identityx.NewID()
-		if err != nil {
-			return err
-		}
+		return mqx.Permanent(errors.New("mq: event id is missing"))
 	}
 
 	delivery, err := findDelivery(ctx, l.svcCtx.TNotifyRecordModel, bizID, enums.NotifyChannelSms)

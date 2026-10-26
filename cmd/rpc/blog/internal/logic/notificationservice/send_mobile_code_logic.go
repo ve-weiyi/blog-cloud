@@ -13,7 +13,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
 	"github.com/ve-weiyi/vkit/x/patternx"
 
-	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 )
@@ -60,24 +59,18 @@ func (l *SendMobileCodeLogic) SendMobileCode(in *notificationrpc.SendMobileCodeR
 		return nil, err
 	}
 
-	eventID, err := identityx.NewID()
-	if err != nil {
-		return nil, err
-	}
-
 	// 构造 SMS 消息事件
 	smsEvent := &mq.SmsMessageEvent{
-		EventId: eventID,
-		Mobile:  in.Mobile,
-		Scene:   in.Scene,
-		BizId:   in.BizId,
+		Mobile: in.Mobile,
+		Scene:  in.Scene,
+		BizId:  in.BizId,
 		Params: map[string]string{
 			"code": code,
 			"time": fmt.Sprintf("%d", expireSeconds/60),
 		},
 	}
 	// 验证码已写入 Redis，投递失败必须让调用方知道，否则用户拿不到码却收到发送成功
-	if err = l.svcCtx.MQ.Sms.Publish(l.ctx, smsEvent); err != nil {
+	if _, err = mq.SmsMessage.Publish(l.ctx, l.svcCtx.MQ.Publisher, smsEvent); err != nil {
 		l.Errorf("publish sms code message failed: %v", err)
 		return nil, bizerr.NewBizError(bizcode.CodeServiceUnavailable, "短信服务暂不可用，请稍后重试")
 	}

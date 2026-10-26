@@ -494,7 +494,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// WebSocket消息
 				Method:  http.MethodGet,
-				Path:    "/ws",
+				Path:    "/websocket",
 				Handler: commonwebsocket.WebsocketHandler(serverCtx),
 			},
 		},

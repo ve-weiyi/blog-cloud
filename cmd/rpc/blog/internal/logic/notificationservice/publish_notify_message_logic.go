@@ -6,13 +6,15 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/mqlogic"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 )
+
+var errAlreadyPublished = errors.New("notification already published")
 
 type PublishNotifyMessageLogic struct {
 	ctx    context.Context
@@ -39,35 +41,37 @@ func (l *PublishNotifyMessageLogic) PublishNotifyMessage(in *notificationrpc.Pub
 		return &notificationrpc.PublishNotifyMessageResponse{Success: false}, nil
 	}
 
+	now := time.Now()
 	fields := map[string]interface{}{
 		"status":       enums.NoticeStatusPublished,
-		"published_at": time.Now(),
-		"updated_at":   time.Now(),
+		"published_at": now,
+		"updated_at":   now,
 	}
 
-	// WHERE 带上原状态：先 FindById 判状态、再按 id 更新不是原子的。
-	// 两次并发发布会同时通过上面那道判断，各自入队一条投递事件。
-	affected, err := l.svcCtx.TNotifyMessageModel.UpdateFields(l.ctx, fields, "id = ? AND status = ?", in.Id, enums.NoticeStatusDraft)
+	// 事件 ID 与信封在这里生成；随后与状态变更同事务写入 outbox。
+	event, err := mq.InboxMessage.Message(&mq.InboxMessageEvent{MessageId: msg.Id})
 	if err != nil {
 		return nil, err
 	}
-	if affected == 0 {
+
+	// WHERE 带上原状态：先 FindById 判状态、再按 id 更新不是原子的。
+	// 状态变更与 outbox 事件必须同事务提交，避免「库内已发布、消息从未发出」。
+	err = l.svcCtx.GormDB.WithContext(l.ctx).Transaction(func(tx *gorm.DB) error {
+		affected, err := l.svcCtx.TNotifyMessageModel.WithTx(tx).
+			UpdateFields(l.ctx, fields, "id = ? AND status = ?", in.Id, enums.NoticeStatusDraft)
+		if err != nil {
+			return err
+		}
+		if affected == 0 {
+			return errAlreadyPublished
+		}
+		return l.svcCtx.Outbox.Enqueue(l.ctx, tx, event)
+	})
+	if errors.Is(err, errAlreadyPublished) {
 		// 已被并发发布，本次不产生副作用
 		return &notificationrpc.PublishNotifyMessageResponse{Success: false}, nil
 	}
-
-	// 通过 MQ 异步投递 delivery 记录，避免大量用户时接口阻塞
-	err = l.svcCtx.MQ.Inbox.Publish(l.ctx, &mq.InboxMessageEvent{MessageId: msg.Id})
-	if errors.Is(err, mq.ErrUnavailable) {
-		// MQ 不可用时降级为同步投递。这里复用消费者逻辑，而不是再写一遍扇出：
-		// 两份实现必然分叉——此处就曾缺过消费者后来补上的"跳过非已发布消息"判断。
-		l.Logger.Infof("消息队列未就绪，降级为同步投递")
-		if cerr := mqlogic.NewConsumeInboxMessageLogic(l.svcCtx).Consume(l.ctx, &mq.InboxMessageEvent{MessageId: msg.Id}); cerr != nil {
-			l.Logger.Errorf("降级同步投递失败: %v", cerr)
-			return nil, cerr
-		}
-	} else if err != nil {
-		l.Logger.Errorf("发送站内信投递消息失败: %v", err)
+	if err != nil {
 		return nil, err
 	}
 

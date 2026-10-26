@@ -8718,7 +8718,7 @@
         }
       }
     },
-    "/admin-api/v1/ws": {
+    "/admin-api/v1/websocket": {
       "get": {
         "produces": [
           "application/json"
@@ -13955,7 +13955,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-10-19 18:28:08",
+  "x-date": "2026-10-27 10:34:37",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -11,8 +11,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/model"
 	"github.com/ve-weiyi/vkit/adapter/iplocx"
-	"github.com/ve-weiyi/vkit/x/patternx"
 	"github.com/ve-weiyi/vkit/x/randomx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 
 	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
@@ -37,7 +37,7 @@ func NewLoginByMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Log
 
 // 手机验证码登录
 func (l *LoginByMobileLogic) LoginByMobile(in *authrpc.LoginByMobileRequest) (*authrpc.LoginResponse, error) {
-	if !patternx.IsValidMobile(in.Mobile) {
+	if !validatex.IsMobile(in.Mobile) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "手机号格式不正确")
 	}
 

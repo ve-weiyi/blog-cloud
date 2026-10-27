@@ -9,8 +9,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
-	"github.com/ve-weiyi/blog-cloud/infra/collectx"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/vkit/x/collectx"
 )
 
 type QueryCommentReplyListLogic struct {
@@ -47,25 +47,19 @@ func (l *QueryCommentReplyListLogic) QueryCommentReplyList(req *types.QueryComme
 		return nil, err
 	}
 
-	usm, err := collectx.BatchQueryMulti(out.List,
-		func(v *discussionservice.Comment) []string {
+	usm, err := enrich.GetUserInfos(l.ctx, l.svcCtx,
+		collectx.DistinctMany(out.List, func(v *discussionservice.Comment) []string {
 			return []string{v.UserId, v.ReplyUserId}
-		},
-		func(ids []string) (map[string]*types.UserInfoVO, error) {
-			return enrich.GetUserInfos(l.ctx, l.svcCtx, ids)
-		},
+		}),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	vsm, err := collectx.BatchQuery(out.List,
-		func(v *discussionservice.Comment) string {
+	vsm, err := enrich.GetGuests(l.ctx, l.svcCtx,
+		collectx.Distinct(out.List, func(v *discussionservice.Comment) string {
 			return v.DeviceId
-		},
-		func(ids []string) (map[string]*types.GuestInfoVO, error) {
-			return enrich.GetGuests(l.ctx, l.svcCtx, ids)
-		},
+		}),
 	)
 	if err != nil {
 		return nil, err

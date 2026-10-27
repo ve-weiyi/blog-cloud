@@ -15,7 +15,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
-	"github.com/ve-weiyi/vkit/x/patternx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type BindMeEmailLogic struct {
@@ -38,7 +38,7 @@ func (l *BindMeEmailLogic) BindMeEmail(in *userrpc.BindMeEmailRequest) (*userrpc
 	if err != nil || userID == "" {
 		return nil, bizerr.NewBizError(bizcode.CodeUnauthenticated, "缺少用户身份")
 	}
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 

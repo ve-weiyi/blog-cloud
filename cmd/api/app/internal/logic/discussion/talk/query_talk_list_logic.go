@@ -9,7 +9,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
-	"github.com/ve-weiyi/blog-cloud/infra/collectx"
+	"github.com/ve-weiyi/vkit/x/collectx"
 )
 
 type QueryTalkListLogic struct {
@@ -44,13 +44,10 @@ func (l *QueryTalkListLogic) QueryTalkList(req *types.QueryTalkListReq) (resp *t
 		return nil, err
 	}
 
-	usm, err := collectx.BatchQuery(out.List,
-		func(v *discussionservice.Talk) string {
+	usm, err := enrich.GetUserInfos(l.ctx, l.svcCtx,
+		collectx.Distinct(out.List, func(v *discussionservice.Talk) string {
 			return v.UserId
-		},
-		func(ids []string) (map[string]*types.UserInfoVO, error) {
-			return enrich.GetUserInfos(l.ctx, l.svcCtx, ids)
-		},
+		}),
 	)
 	if err != nil {
 		return nil, err

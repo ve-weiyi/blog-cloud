@@ -17,8 +17,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/syslogservice"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 	"github.com/ve-weiyi/blog-cloud/infra/http/routex"
-	"github.com/ve-weiyi/blog-cloud/infra/redactx"
 	"github.com/ve-weiyi/vkit/x/jsonv"
+	"github.com/ve-weiyi/vkit/x/redactx"
 	"github.com/ve-weiyi/vkit/x/strx"
 )
 

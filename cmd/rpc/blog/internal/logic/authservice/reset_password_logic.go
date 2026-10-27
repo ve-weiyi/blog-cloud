@@ -10,7 +10,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/patternx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 
 	"github.com/ve-weiyi/blog-cloud/infra/auth/passwordx"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
@@ -34,7 +34,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 // 重置密码
 func (l *ResetPasswordLogic) ResetPassword(in *authrpc.ResetPasswordRequest) (*authrpc.ResetPasswordResponse, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 

@@ -12,7 +12,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/model"
 	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/patternx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
@@ -39,9 +39,9 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *authrpc.LoginByPasswordReques
 	var user *model.TUser
 	var err error
 	switch {
-	case patternx.IsValidEmail(in.Account):
+	case validatex.IsEmail(in.Account):
 		user, err = l.svcCtx.TUserModel.FindOneByEmail(l.ctx, in.Account)
-	case patternx.IsValidMobile(in.Account):
+	case validatex.IsMobile(in.Account):
 		user, err = l.svcCtx.TUserModel.FindOneByMobile(l.ctx, in.Account)
 	default:
 		user, err = l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Account)

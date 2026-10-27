@@ -14,8 +14,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/model"
 	"github.com/ve-weiyi/vkit/adapter/iplocx"
 	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/patternx"
 	"github.com/ve-weiyi/vkit/x/randomx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 
 	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/passwordx"
@@ -42,7 +42,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 用户注册
 func (l *RegisterLogic) Register(in *authrpc.RegisterRequest) (*authrpc.RegisterResponse, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 	if err := passwordx.ValidatePassword(in.Password); err != nil {

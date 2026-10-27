@@ -16,6 +16,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/model"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/vkit/x/jsonv"
 
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/notifyx"
 )
@@ -78,7 +79,7 @@ func (l *ConsumeInboxMessageLogic) Consume(ctx context.Context, event *mq.InboxM
 		}
 
 		// 幂等：跳过已投递的用户。查询与插入同处一个事务，避免查重窗口。
-		existing, err := l.svcCtx.TNotifyRecordModel.WithTx(tx).FindALL(ctx,
+		existing, err := l.svcCtx.TNotifyRecordModel.WithTx(tx).FindAll(ctx,
 			"message_id = ? AND channel = ?", event.MessageId, enums.NotifyChannelInbox)
 		if err != nil {
 			return err
@@ -155,7 +156,7 @@ func (l *ConsumeInboxMessageLogic) Consume(ctx context.Context, event *mq.InboxM
 func (l *ConsumeInboxMessageLogic) resolveRecipients(ctx context.Context, msg *model.TNotifyMessage) ([]string, error) {
 	switch msg.TargetType {
 	case enums.NotifyTargetTypeAll:
-		users, err := l.svcCtx.TUserModel.FindALL(ctx, "status = ?", enums.UserStatusNormal)
+		users, err := l.svcCtx.TUserModel.FindAll(ctx, "status = ?", enums.UserStatusNormal)
 		if err != nil {
 			return nil, fmt.Errorf("查询全量用户: %w", err)
 		}
@@ -168,7 +169,10 @@ func (l *ConsumeInboxMessageLogic) resolveRecipients(ctx context.Context, msg *m
 		if msg.TargetIds == nil || *msg.TargetIds == "" {
 			return nil, nil
 		}
-		raw := strings.Split(*msg.TargetIds, ",")
+		var raw []string
+		if err := jsonv.JsonToAny(*msg.TargetIds, &raw); err != nil {
+			return nil, nil
+		}
 		ids := make([]string, 0, len(raw))
 		seen := make(map[string]struct{}, len(raw))
 		for _, id := range raw {

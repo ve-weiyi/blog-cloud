@@ -1,12 +1,14 @@
 package notificationservicelogic
 
 import (
+	"strings"
 	"time"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/model"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/vkit/x/jsonv"
 )
 
 // ============================================
@@ -64,7 +66,7 @@ func convertTNotifyMessageToProto(m *model.TNotifyMessage) *notificationrpc.Noti
 		Category:    m.Category,
 		Level:       m.Level,
 		TargetType:  m.TargetType,
-		TargetIds:   stringPtr(m.TargetIds),
+		TargetIds:   targetIDsFromJSON(m.TargetIds),
 		Status:      m.Status,
 		PublishedBy: m.PublishedBy,
 		CreatedAt:   m.CreatedAt.UnixMilli(),
@@ -89,7 +91,7 @@ func convertProtoToTNotifyMessage(p *notificationrpc.CreateNotifyMessageRequest)
 		Category:   p.Category,
 		Level:      p.Level,
 		TargetType: p.TargetType,
-		TargetIds:  stringToPtr(p.TargetIds),
+		TargetIds:  targetIDsToJSON(p.TargetIds),
 		Status:     enums.NoticeStatusDraft,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
@@ -126,6 +128,42 @@ func convertTNotifyRecordToProto(m *model.TNotifyRecord) *notificationrpc.Notify
 	}
 
 	return d
+}
+
+// targetIDsToJSON 把逗号分隔的目标用户列表转成 JSON 数组；空内容写 NULL。
+func targetIDsToJSON(raw string) *string {
+	ids := splitTargetIDs(raw)
+	if len(ids) == 0 {
+		return nil
+	}
+	s, err := jsonv.AnyToJson(ids)
+	if err != nil {
+		return nil
+	}
+	return &s
+}
+
+// targetIDsFromJSON 把 JSON 数组还原成逗号分隔字符串。
+func targetIDsFromJSON(raw *string) string {
+	if raw == nil || *raw == "" {
+		return ""
+	}
+	var ids []string
+	if err := jsonv.JsonToAny(*raw, &ids); err != nil {
+		return ""
+	}
+	return strings.Join(ids, ",")
+}
+
+func splitTargetIDs(raw string) []string {
+	parts := strings.Split(raw, ",")
+	ids := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			ids = append(ids, p)
+		}
+	}
+	return ids
 }
 
 func stringPtr(s *string) string {

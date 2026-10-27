@@ -59,7 +59,7 @@ func (l *LoginByOAuthLogic) LoginByOAuth(in *authrpc.LoginByOAuthRequest) (*auth
 		return nil, fmt.Errorf("open_id is empty")
 	}
 
-	userOauth, err := l.svcCtx.TUserOauthModel.FindOneByPlatformOpenId(l.ctx, in.Platform, info.OpenId)
+	userOauth, err := l.svcCtx.TUserOauthModel.FindOneByOpenIdPlatform(l.ctx, info.OpenId, in.Platform)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

@@ -8,6 +8,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/model"
 )
 
@@ -30,13 +31,12 @@ func (l *ConsumeLoginLogic) Consume(ctx context.Context, event *mq.LoginEvent) e
 
 	// 记录登录日志
 	loginLog := &model.TLoginLog{
-		Id:         0,
 		UserId:     event.UserId,
 		DeviceId:   event.DeviceId,
+		EventType:  enums.AuthEventLogin,
 		LoginType:  event.LoginType,
 		Status:     event.Status,
 		FailReason: event.FailReason,
-		LogoutAt:   nil,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}

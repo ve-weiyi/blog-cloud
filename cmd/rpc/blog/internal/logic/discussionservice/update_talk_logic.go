@@ -27,7 +27,8 @@ func (l *UpdateTalkLogic) UpdateTalk(in *discussionrpc.UpdateTalkRequest) (*disc
 		return nil, err
 	}
 	entity.Content = in.Content
-	entity.Images = jsonv.AnyToJsonNE(in.Images)
+	images := jsonv.AnyToJsonNE(in.Images)
+	entity.Images = &images
 	entity.IsTop = in.IsTop
 	entity.Status = in.Status
 

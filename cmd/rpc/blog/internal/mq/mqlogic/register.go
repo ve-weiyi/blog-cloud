@@ -15,6 +15,7 @@ func Register(router *event.Router, svcCtx *svc.ServiceContext) error {
 		event.HandleEvent(router, mq.InboxMessage, NewConsumeInboxMessageLogic(svcCtx).Consume),
 		event.HandleEvent(router, mq.LoginMessage, NewConsumeLoginLogic(svcCtx).Consume),
 		event.HandleEvent(router, mq.LogoutMessage, NewConsumeLogoutLogic(svcCtx).Consume),
+		event.HandleEvent(router, mq.LikeMessage, NewConsumeLikeLogic(svcCtx).Consume),
 	} {
 		if err != nil {
 			return err

@@ -54,8 +54,8 @@ func (l *UpdateMeLogic) UpdateMe(in *userrpc.UpdateMeRequest) (*userrpc.UpdateMe
 		}
 
 		info := userInfo{}
-		if user.Info != "" {
-			if err := json.Unmarshal([]byte(user.Info), &info); err != nil {
+		if user.Info != nil {
+			if err := json.Unmarshal([]byte(*user.Info), &info); err != nil {
 				return nil, err
 			}
 		}

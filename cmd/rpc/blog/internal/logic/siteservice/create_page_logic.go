@@ -27,12 +27,13 @@ func NewCreatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 
 // 创建页面
 func (l *CreatePageLogic) CreatePage(in *siterpc.CreatePageRequest) (*siterpc.CreatePageResponse, error) {
+	covers := jsonv.AnyToJsonNE(in.CarouselCovers)
 	entity := &model.TPage{
 		PageName:       in.PageName,
 		PageLabel:      in.PageLabel,
 		PageCover:      in.PageCover,
 		IsCarousel:     in.IsCarousel,
-		CarouselCovers: jsonv.AnyToJsonNE(in.CarouselCovers),
+		CarouselCovers: &covers,
 	}
 
 	_, err := l.svcCtx.TPageModel.Insert(l.ctx, entity)

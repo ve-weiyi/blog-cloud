@@ -27,13 +27,12 @@ func NewGetUserLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询用户点赞的评论
 func (l *GetUserLikeCommentLogic) GetUserLikeComment(in *discussionrpc.GetUserLikeCommentRequest) (*discussionrpc.GetUserLikeCommentResponse, error) {
-	likeKey := cachekey.GetUserLikeCommentKey(in.UserId)
-	result, err := l.svcCtx.Redis.SMembers(l.ctx, likeKey).Result()
+	result, err := l.svcCtx.Redis.SMembers(l.ctx, cachekey.GetUserLikeCommentKey(in.UserId)).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]int64, 0)
+	ids := make([]int64, 0, len(result))
 	for _, v := range result {
 		ids = append(ids, cast.ToInt64(v))
 	}

@@ -2,6 +2,8 @@ package mqlogic
 
 import (
 	"context"
+	"encoding/json"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -32,7 +34,7 @@ type fakeRecordModel struct {
 
 func (f *fakeRecordModel) WithTx(*gorm.DB) model.TNotifyRecordModel { return f }
 
-func (f *fakeRecordModel) FindALL(_ context.Context, _ string, _ ...interface{}) ([]*model.TNotifyRecord, error) {
+func (f *fakeRecordModel) FindAll(_ context.Context, _ string, _ ...interface{}) ([]*model.TNotifyRecord, error) {
 	return f.existing, nil
 }
 
@@ -116,13 +118,15 @@ func newTestLogic(t *testing.T, msg *model.TNotifyMessage, rec *fakeRecordModel)
 }
 
 func userIDsMsg(ids string) *model.TNotifyMessage {
+	raw, _ := json.Marshal(strings.Split(ids, ","))
+	targetIds := string(raw)
 	return &model.TNotifyMessage{
 		Id:         7,
 		Title:      "维护通知",
 		Category:   "maintenance",
 		Level:      "info",
 		TargetType: "user_ids",
-		TargetIds:  &ids,
+		TargetIds:  &targetIds,
 		Status:     "published",
 	}
 }

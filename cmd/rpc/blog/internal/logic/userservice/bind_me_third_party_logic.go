@@ -64,7 +64,7 @@ func (l *BindMeThirdPartyLogic) BindMeThirdParty(in *userrpc.BindMeThirdPartyReq
 	}
 
 	// 查找这个第三方账号是否已绑定用户
-	oa, err := l.svcCtx.TUserOauthModel.FindOneByPlatformOpenId(l.ctx, in.Platform, info.OpenId)
+	oa, err := l.svcCtx.TUserOauthModel.FindOneByOpenIdPlatform(l.ctx, info.OpenId, in.Platform)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

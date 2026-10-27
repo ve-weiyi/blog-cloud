@@ -52,7 +52,7 @@ func (l *GetDashboardStatsLogic) GetDashboardStats(in *statsrpc.GetDashboardStat
 
 	todayStats := buildRealtimeDailyStats(deps, today)
 
-	yesterdayRecord, err := l.svcCtx.TDailyStatsModel.FindOneByDate(l.ctx, yesterday)
+	yesterdayRecord, err := l.svcCtx.TDailyStatsModel.FindOneByDate(l.ctx, parseDay(yesterday))
 	var uvGrowthRate, pvGrowthRate, userGrowthRate float64
 	if err == nil {
 		if yesterdayRecord.UvCount != 0 {

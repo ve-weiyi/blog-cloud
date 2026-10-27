@@ -10,6 +10,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 )
 
 type BatchDeleteArticlesLogic struct {
@@ -31,6 +32,10 @@ func (l *BatchDeleteArticlesLogic) BatchDeleteArticles(in *contentrpc.BatchDelet
 	var rows int64
 	err := l.svcCtx.GormDB.Transaction(func(tx *gorm.DB) error {
 		if _, err := l.svcCtx.TArticleTagModel.WithTx(tx).DeleteBatch(l.ctx, "article_id in (?)", in.Ids); err != nil {
+			return err
+		}
+
+		if _, err := l.svcCtx.TLikeModel.WithTx(tx).DeleteBatch(l.ctx, "target_type = ? AND target_id in (?)", enums.LikeTargetArticle, in.Ids); err != nil {
 			return err
 		}
 

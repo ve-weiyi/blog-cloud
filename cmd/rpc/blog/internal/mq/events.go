@@ -12,18 +12,22 @@ import (
 const (
 	NotificationExchange = "blog.notification"
 	AuditExchange        = "blog.audit"
+	InteractionExchange  = "blog.interaction"
 	NotificationDLQ      = "blog.notification.dlq"
+	InteractionDLQ       = "blog.interaction.dlq"
 
 	EmailRoutingKey  = "notification.email"
 	SmsRoutingKey    = "notification.sms"
 	InboxRoutingKey  = "notification.inbox"
 	LoginRoutingKey  = "audit.login"
 	LogoutRoutingKey = "audit.logout"
+	LikeRoutingKey   = "interaction.like"
 
-	EmailQueue = "blog.rpc.notification.email"
-	SmsQueue   = "blog.rpc.notification.sms"
-	InboxQueue = "blog.rpc.notification.inbox"
-	AuditQueue = "blog.rpc.audit"
+	EmailQueue       = "blog.rpc.notification.email"
+	SmsQueue         = "blog.rpc.notification.sms"
+	InboxQueue       = "blog.rpc.notification.inbox"
+	AuditQueue       = "blog.rpc.audit"
+	InteractionQueue = "blog.rpc.interaction"
 
 	producer = "blog-rpc"
 )
@@ -62,6 +66,20 @@ type SmsMessageEvent struct {
 	Params map[string]string `json:"params,omitempty"`
 }
 
+// 点赞事件携带的动作值。
+const (
+	LikeActionLike   = "like"
+	LikeActionUnlike = "unlike"
+)
+
+// LikeEvent 点赞事件：动作在发布端按实时状态判定，消费端只做幂等收敛。
+type LikeEvent struct {
+	UserId     string `json:"user_id"`
+	TargetType int64  `json:"target_type"`
+	TargetId   int64  `json:"target_id"`
+	Action     string `json:"action"` // like | unlike
+}
+
 // InboxMessageEvent 站内信投递事件：消费后为每个目标用户创建 delivery 记录。
 type InboxMessageEvent struct {
 	MessageId int64 `json:"message_id"`
@@ -84,6 +102,9 @@ var (
 		event.WithProducer(producer), event.WithVersion("v1"))
 	LogoutMessage = event.NewEventSpec[LogoutEvent](
 		AuditExchange, LogoutRoutingKey,
+		event.WithProducer(producer), event.WithVersion("v1"))
+	LikeMessage = event.NewEventSpec[LikeEvent](
+		InteractionExchange, LikeRoutingKey,
 		event.WithProducer(producer), event.WithVersion("v1"))
 )
 
@@ -137,6 +158,34 @@ func Subscriptions() []mqx.SubscriptionSpec {
 		NewSmsSubscription(),
 		NewInboxSubscription(),
 		NewAuditSubscription(),
+		NewInteractionSubscription(),
+	}
+}
+
+// NewInteractionSubscription 返回点赞队列订阅规格。
+// 点赞以 Redis 为实时状态，落库失败进入死信，不静默丢弃：
+// 丢失的明细会让「谁点过」无法从库中重建。
+func NewInteractionSubscription() mqx.SubscriptionSpec {
+	return mqx.SubscriptionSpec{
+		Destination: InteractionExchange,
+		BindingKey:  "interaction.#",
+		Group:       InteractionQueue,
+		Concurrency: 4,
+		MaxInFlight: 20,
+		Retry: mqx.RetryPolicy{
+			MaxAttempts:  3,
+			InitialDelay: 200 * time.Millisecond,
+			MaxDelay:     2 * time.Second,
+			MaxElapsed:   10 * time.Second,
+			Jitter:       0.2,
+		},
+		DeadLetter: mqx.DeadLetterPolicy{
+			Enabled:     true,
+			Destination: InteractionDLQ,
+			RoutingKey:  "interaction.#",
+			IncludeMeta: true,
+		},
+		OnExhausted: mqx.ExhaustedDeadLetter,
 	}
 }
 

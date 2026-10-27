@@ -10,18 +10,15 @@ import (
 // ==================== LoginLog 转换 ====================
 
 func convertLoginLogOut(in *model.TLoginLog) *syslogrpc.LoginLog {
-	logoutAt := int64(0)
-	if in.LogoutAt != nil {
-		logoutAt = in.LogoutAt.UnixMilli()
-	}
 	return &syslogrpc.LoginLog{
 		Id:         in.Id,
 		UserId:     in.UserId,
 		DeviceId:   in.DeviceId,
+		EventType:  in.EventType,
 		LoginType:  in.LoginType,
+		LogoutType: in.LogoutType,
 		Status:     in.Status,
 		FailReason: in.FailReason,
-		LogoutAt:   logoutAt,
 		CreatedAt:  in.CreatedAt.UnixMilli(),
 		UpdatedAt:  in.UpdatedAt.UnixMilli(),
 	}
@@ -35,7 +32,9 @@ func convertLoginLogIn(in *syslogrpc.CreateLoginLogRequest) *model.TLoginLog {
 	return &model.TLoginLog{
 		UserId:     in.UserId,
 		DeviceId:   in.DeviceId,
+		EventType:  in.EventType,
 		LoginType:  in.LoginType,
+		LogoutType: in.LogoutType,
 		Status:     in.Status,
 		FailReason: failReason,
 	}

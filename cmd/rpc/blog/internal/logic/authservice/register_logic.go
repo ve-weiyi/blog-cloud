@@ -100,7 +100,7 @@ func (l *RegisterLogic) Register(in *authrpc.RegisterRequest) (*authrpc.Register
 			Email:        &in.Email,
 			Mobile:       nil,
 			Status:       enums.UserStatusNormal,
-			Info:         "",
+			Info:         nil,
 			RegisterType: enums.LoginTypeEmail,
 			IpAddress:    ip,
 			IpSource:     ipSource,

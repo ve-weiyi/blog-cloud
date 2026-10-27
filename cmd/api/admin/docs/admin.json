@@ -10728,11 +10728,12 @@
       "required": [
         "user_id",
         "device_id",
+        "event_type",
         "login_type",
+        "logout_type",
         "status",
         "fail_reason",
         "login_at",
-        "logout_at",
         "user_info",
         "guest_info"
       ],
@@ -10740,6 +10741,10 @@
         "device_id": {
           "description": "终端id",
           "type": "string"
+        },
+        "event_type": {
+          "description": "事件类型：1-登录 2-登出",
+          "type": "integer"
         },
         "fail_reason": {
           "description": "失败原因",
@@ -10783,16 +10788,16 @@
           "type": "integer"
         },
         "login_at": {
-          "description": "登录时间（对应 proto 的 created_at）",
+          "description": "事件时间（对应 proto 的 created_at）",
           "type": "integer"
         },
         "login_type": {
-          "description": "登录类型",
+          "description": "登录类型（登出事件为空）",
           "type": "string"
         },
-        "logout_at": {
-          "description": "登出时间",
-          "type": "integer"
+        "logout_type": {
+          "description": "登出类型（登录事件为空）",
+          "type": "string"
         },
         "status": {
           "description": "登录状态：0-失败 1-成功",
@@ -11503,7 +11508,7 @@
       ],
       "properties": {
         "cost": {
-          "type": "string"
+          "type": "integer"
         },
         "created_at": {
           "type": "integer"
@@ -13955,7 +13960,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-10-27 10:34:37",
+  "x-date": "2026-10-27 16:45:42",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -44,7 +44,7 @@ func (l *ListRolesLogic) ListRoles(in *accessrpc.ListRolesRequest) (*accessrpc.L
 	size := int(in.ListQuery.GetPageSize())
 
 	if size <= 0 {
-		list, err := l.svcCtx.TRoleModel.FindALL(l.ctx, conditions, args...)
+		list, err := l.svcCtx.TRoleModel.FindAll(l.ctx, conditions, args...)
 		if err != nil {
 			return nil, err
 		}

@@ -61,6 +61,7 @@ type ServiceContext struct {
 	TCategoryModel   model.TCategoryModel
 	TTagModel        model.TTagModel
 	TArticleTagModel model.TArticleTagModel
+	TLikeModel       model.TLikeModel
 
 	// message models
 	TChatModel    model.TChatModel
@@ -146,6 +147,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TCategoryModel:   model.NewTCategoryModel(db),
 		TTagModel:        model.NewTTagModel(db),
 		TArticleTagModel: model.NewTArticleTagModel(db),
+		TLikeModel:       model.NewTLikeModel(db),
 		// message models
 		TChatModel:    model.NewTChatModel(db),
 		TCommentModel: model.NewTCommentModel(db),

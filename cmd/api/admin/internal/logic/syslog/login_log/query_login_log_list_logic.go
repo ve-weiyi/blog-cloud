@@ -54,14 +54,15 @@ func (l *QueryLoginLogListLogic) QueryLoginLogList(req *types.QueryLoginLogListR
 	var list []*types.LoginLogVO
 	for _, v := range out.List {
 		list = append(list, &types.LoginLogVO{
-			Id:        v.Id,
-			UserId:    v.UserId,
-			DeviceId:  v.DeviceId,
-			LoginType: v.LoginType,
-			LoginAt:   v.CreatedAt,
-			LogoutAt:  v.LogoutAt,
-			UserInfo:  usm[v.UserId],
-			GuestInfo: vsm[v.DeviceId],
+			Id:         v.Id,
+			UserId:     v.UserId,
+			DeviceId:   v.DeviceId,
+			EventType:  v.EventType,
+			LoginType:  v.LoginType,
+			LogoutType: v.LogoutType,
+			LoginAt:    v.CreatedAt,
+			UserInfo:   usm[v.UserId],
+			GuestInfo:  vsm[v.DeviceId],
 		})
 	}
 

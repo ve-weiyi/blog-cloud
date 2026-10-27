@@ -35,7 +35,8 @@ func (l *UpdatePageLogic) UpdatePage(in *siterpc.UpdatePageRequest) (*siterpc.Up
 	entity.PageLabel = in.PageLabel
 	entity.PageCover = in.PageCover
 	entity.IsCarousel = in.IsCarousel
-	entity.CarouselCovers = jsonv.AnyToJsonNE(in.CarouselCovers)
+	covers := jsonv.AnyToJsonNE(in.CarouselCovers)
+	entity.CarouselCovers = &covers
 
 	_, err = l.svcCtx.TPageModel.Update(l.ctx, entity)
 	if err != nil {

@@ -205,14 +205,13 @@ func startMQ(svcCtx *svc.ServiceContext) bool {
 		return false
 	}
 
-	notificationReady := true
+	// 任一订阅未就绪都不启动 relay：没有绑定的 exchange 会静默丢消息。
+	allReady := true
 	for _, spec := range mq.Subscriptions() {
 		if err := svcCtx.MQ.Runtime.Start(router, spec); err != nil {
 			logx.Errorf("[mq] start subscription %s: %v", spec.Group, err)
-			if spec.Destination == mq.NotificationExchange {
-				notificationReady = false
-			}
+			allReady = false
 		}
 	}
-	return notificationReady
+	return allReady
 }

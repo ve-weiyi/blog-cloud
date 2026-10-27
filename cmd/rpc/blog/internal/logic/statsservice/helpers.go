@@ -2,6 +2,7 @@ package statsservicelogic
 
 import (
 	"context"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -52,10 +53,19 @@ func getActiveUsersCount(deps realtimeStatsDeps, date string) int64 {
 	return count
 }
 
+// parseDay 把 YYYY-MM-DD 解析为当天零点；解析失败返回零值，查询自然查不到。
+func parseDay(day string) time.Time {
+	t, err := time.Parse("2006-01-02", day)
+	if err != nil {
+		return time.Time{}
+	}
+	return t
+}
+
 func getDayCount(deps realtimeStatsDeps, key string, day string) int64 {
 	count, err := deps.redis.ZScore(deps.ctx, key, day).Result()
 	if err != nil {
-		record, err := deps.dailyStatsModel.FindOneByDate(deps.ctx, day)
+		record, err := deps.dailyStatsModel.FindOneByDate(deps.ctx, parseDay(day))
 		if err != nil {
 			return 0
 		}

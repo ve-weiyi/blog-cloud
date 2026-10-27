@@ -25,7 +25,7 @@ func NewGetStatsTrendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 // 查询统计趋势（日期范围内的每日数据）
 func (l *GetStatsTrendLogic) GetStatsTrend(in *statsrpc.GetStatsTrendRequest) (*statsrpc.GetStatsTrendResponse, error) {
-	records, err := l.svcCtx.TDailyStatsModel.FindALL(l.ctx,
+	records, err := l.svcCtx.TDailyStatsModel.FindAll(l.ctx,
 		"`date` >= ? AND `date` <= ?",
 		in.GetStartDate(), in.GetEndDate())
 	if err != nil {
@@ -35,7 +35,7 @@ func (l *GetStatsTrendLogic) GetStatsTrend(in *statsrpc.GetStatsTrendRequest) (*
 	list := make([]*statsrpc.DailyStats, 0, len(records))
 	for _, r := range records {
 		list = append(list, &statsrpc.DailyStats{
-			Date:         r.Date,
+			Date:         r.Date.Format("2006-01-02"),
 			NewUsers:     r.NewUsers,
 			TotalUsers:   r.TotalUsers,
 			ActiveUsers:  r.ActiveUsers,

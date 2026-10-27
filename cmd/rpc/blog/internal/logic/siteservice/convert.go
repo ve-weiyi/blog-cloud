@@ -18,8 +18,10 @@ func convertPageOut(in *model.TPage) *siterpc.Page {
 		CreatedAt:  in.CreatedAt.UnixMilli(),
 		UpdatedAt:  in.UpdatedAt.UnixMilli(),
 	}
-	if err := jsonv.JsonToAny(in.CarouselCovers, &out.CarouselCovers); err != nil {
-		logx.Errorf("convert page %d carousel covers: %v", in.Id, err)
+	if in.CarouselCovers != nil {
+		if err := jsonv.JsonToAny(*in.CarouselCovers, &out.CarouselCovers); err != nil {
+			logx.Errorf("convert page %d carousel covers: %v", in.Id, err)
+		}
 	}
 	return out
 }

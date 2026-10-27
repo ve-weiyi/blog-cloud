@@ -28,3 +28,15 @@ func IsMobileCodeScene(scene string) bool {
 		return false
 	}
 }
+
+// 认证事件类型 (t_login_log.event_type)
+const (
+	AuthEventLogin  int64 = 1 // 登录
+	AuthEventLogout int64 = 2 // 登出
+)
+
+// 认证事件结果 (t_login_log.status)
+const (
+	AuthResultFail    int64 = 0 // 失败
+	AuthResultSuccess int64 = 1 // 成功
+)

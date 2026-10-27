@@ -8,10 +8,12 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/model"
 )
 
 // ConsumeLogoutLogic 登出消费者逻辑
-// 监听登出事件，更新登录日志的登出时间
+// 监听登出事件，追加一条登出记录；登录记录只作为事件保留，不再回写。
 type ConsumeLogoutLogic struct {
 	svcCtx *svc.ServiceContext
 }
@@ -27,31 +29,21 @@ func (l *ConsumeLogoutLogic) Consume(ctx context.Context, event *mq.LogoutEvent)
 	logger.Infof("收到登出消息: userId=%s, did=%s, logoutType=%s",
 		event.UserId, event.DeviceId, event.LogoutType)
 
-	// 查找最近的登录记录（未登出的）
-	exists, _, err := l.svcCtx.TLoginLogModel.FindListAndTotal(ctx, 1, 1, "id desc", "user_id = ? AND device_id = ? AND logout_at IS NULL", event.UserId, event.DeviceId)
-	if err != nil {
-		// 查询失败不能当成「没有登录记录」：交给重试，耗尽后按订阅策略丢弃。
-		logger.Errorf("查找登录记录失败: userId=%s, error=%v", event.UserId, err)
-		return err
-	}
-	if len(exists) == 0 {
-		logger.Infof("未找到登录记录: userId=%s", event.UserId)
-		return nil
-	}
-	loginLog := exists[0]
-
-	// 更新登出时间
 	now := time.Now()
-	loginLog.LogoutAt = &now
-	loginLog.UpdatedAt = now
+	logout := &model.TLoginLog{
+		UserId:     event.UserId,
+		DeviceId:   event.DeviceId,
+		EventType:  enums.AuthEventLogout,
+		LogoutType: event.LogoutType,
+		Status:     enums.AuthResultSuccess,
+		CreatedAt:  now,
+		UpdatedAt:  now,
+	}
 
-	_, err = l.svcCtx.TLoginLogModel.Update(ctx, loginLog)
-	if err != nil {
-		logger.Errorf("更新登出时间失败: %v", err)
+	if _, err := l.svcCtx.TLoginLogModel.Insert(ctx, logout); err != nil {
+		logger.Errorf("插入登出记录失败: %v", err)
 		return err
 	}
 
-	logger.Infof("用户登出成功: userId=%s, did=%s, logoutType=%s",
-		event.UserId, event.DeviceId, event.LogoutType)
 	return nil
 }

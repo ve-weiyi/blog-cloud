@@ -35,13 +35,12 @@ func (l *GetUserLikeArticleLogic) GetUserLikeArticle(in *contentrpc.GetUserLikeA
 		return nil, bizerr.NewBizError(bizcode.CodeUnauthenticated, "缺少用户身份")
 	}
 
-	likeKey := cachekey.GetUserLikeArticleKey(uid)
-	result, err := l.svcCtx.Redis.SMembers(l.ctx, likeKey).Result()
+	result, err := l.svcCtx.Redis.SMembers(l.ctx, cachekey.GetUserLikeArticleKey(uid)).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]int64, 0)
+	ids := make([]int64, 0, len(result))
 	for _, v := range result {
 		ids = append(ids, cast.ToInt64(v))
 	}

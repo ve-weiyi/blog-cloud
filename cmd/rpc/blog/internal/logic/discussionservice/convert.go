@@ -39,7 +39,9 @@ func convertCommentOut(in *model.TComment) *discussionrpc.Comment {
 
 func convertTalkOut(in *model.TTalk) *discussionrpc.Talk {
 	var images []string
-	jsonv.JsonToAny(in.Images, &images)
+	if in.Images != nil {
+		jsonv.JsonToAny(*in.Images, &images)
+	}
 
 	return &discussionrpc.Talk{
 		Id:        in.Id,

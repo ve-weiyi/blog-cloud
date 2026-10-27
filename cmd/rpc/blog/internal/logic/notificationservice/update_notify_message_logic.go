@@ -33,7 +33,7 @@ func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(in *notificationrpc.Updat
 		"category":    in.Category,
 		"level":       in.Level,
 		"target_type": in.TargetType,
-		"target_ids":  in.TargetIds,
+		"target_ids":  targetIDsToJSON(in.TargetIds),
 		"updated_at":  time.Now(),
 	}
 

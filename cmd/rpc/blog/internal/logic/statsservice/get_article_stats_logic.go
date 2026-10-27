@@ -86,7 +86,7 @@ func (l *GetArticleStatsLogic) getCategoryStats() ([]*statsrpc.CategoryStat, err
 		countMap[r.CategoryID] = r.ArticleCount
 	}
 
-	categories, err := l.svcCtx.TCategoryModel.FindALL(l.ctx, "")
+	categories, err := l.svcCtx.TCategoryModel.FindAll(l.ctx, "")
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (l *GetArticleStatsLogic) getTagStats() ([]*statsrpc.TagStat, error) {
 		countMap[r.TagID] = r.ArticleCount
 	}
 
-	tags, err := l.svcCtx.TTagModel.FindALL(l.ctx, "")
+	tags, err := l.svcCtx.TTagModel.FindAll(l.ctx, "")
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func (l *GetArticleStatsLogic) getArticleRanks(limit int64) ([]*statsrpc.Article
 		viewCounts[id] = int64(item.Score)
 	}
 
-	articles, err := l.svcCtx.TArticleModel.FindALL(l.ctx, "id IN ?", ids)
+	articles, err := l.svcCtx.TArticleModel.FindAll(l.ctx, "id IN ?", ids)
 	if err != nil {
 		return nil, err
 	}

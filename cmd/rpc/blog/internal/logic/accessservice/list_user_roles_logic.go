@@ -26,7 +26,7 @@ func NewListUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 // 查询用户角色
 func (l *ListUserRolesLogic) ListUserRoles(in *accessrpc.ListUserRolesRequest) (*accessrpc.ListUserRolesResponse, error) {
-	urs, err := l.svcCtx.TUserRoleModel.FindALL(l.ctx, "user_id = ?", in.UserId)
+	urs, err := l.svcCtx.TUserRoleModel.FindAll(l.ctx, "user_id = ?", in.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (l *ListUserRolesLogic) ListUserRoles(in *accessrpc.ListUserRolesRequest) (
 		return &accessrpc.ListUserRolesResponse{}, nil
 	}
 
-	roles, err := l.svcCtx.TRoleModel.FindALL(l.ctx, "id in (?)", roleIds)
+	roles, err := l.svcCtx.TRoleModel.FindAll(l.ctx, "id in (?)", roleIds)
 	if err != nil {
 		return nil, err
 	}

@@ -110,11 +110,12 @@ type LoginLogVO struct {
 	Id         int64        `json:"id,optional"`
 	UserId     string       `json:"user_id"`     // 用户id
 	DeviceId   string       `json:"device_id"`   // 终端id
-	LoginType  string       `json:"login_type"`  // 登录类型
+	EventType  int64        `json:"event_type"`  // 事件类型：1-登录 2-登出
+	LoginType  string       `json:"login_type"`  // 登录类型（登出事件为空）
+	LogoutType string       `json:"logout_type"` // 登出类型（登录事件为空）
 	Status     int64        `json:"status"`      // 登录状态：0-失败 1-成功
 	FailReason string       `json:"fail_reason"` // 失败原因
-	LoginAt    int64        `json:"login_at"`    // 登录时间（对应 proto 的 created_at）
-	LogoutAt   int64        `json:"logout_at"`   // 登出时间
+	LoginAt    int64        `json:"login_at"`    // 事件时间（对应 proto 的 created_at）
 	UserInfo   *UserInfoVO  `json:"user_info"`   // 用户信息
 	GuestInfo  *GuestInfoVO `json:"guest_info"`  // 游客信息
 }
@@ -184,7 +185,7 @@ type OperationLogVO struct {
 	RequestData    string       `json:"request_data"`
 	ResponseData   string       `json:"response_data"`
 	ResponseStatus int64        `json:"response_status"`
-	Cost           string       `json:"cost"`
+	Cost           int64        `json:"cost"`
 	CreatedAt      int64        `json:"created_at"`
 	UpdatedAt      int64        `json:"updated_at"`
 	UserInfo       *UserInfoVO  `json:"user_info"`

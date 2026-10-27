@@ -93,7 +93,7 @@ func (h *ArticleHelper) convertArticleQuery(in *contentrpc.ListArticlesRequest) 
 		tag, findErr := h.svcCtx.TTagModel.FindOneByTagName(h.ctx, *in.TagName)
 		switch {
 		case findErr == nil:
-			ats, err := h.svcCtx.TArticleTagModel.FindALL(h.ctx, "tag_id = ?", tag.Id)
+			ats, err := h.svcCtx.TArticleTagModel.FindAll(h.ctx, "tag_id = ?", tag.Id)
 			if err != nil {
 				return 0, 0, "", "", nil, err
 			}
@@ -205,7 +205,7 @@ func (h *ArticleHelper) findCategoryGroupArticle(list []*model.TArticle) (map[in
 	for _, v := range list {
 		categoryIds = append(categoryIds, v.CategoryId)
 	}
-	cs, err := h.svcCtx.TCategoryModel.FindALL(h.ctx, "id IN ?", categoryIds)
+	cs, err := h.svcCtx.TCategoryModel.FindAll(h.ctx, "id IN ?", categoryIds)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (h *ArticleHelper) findTagGroupArticle(list []*model.TArticle) (map[int64][
 	for _, v := range list {
 		articleIds = append(articleIds, v.Id)
 	}
-	ats, err := h.svcCtx.TArticleTagModel.FindALL(h.ctx, "article_id in (?)", articleIds)
+	ats, err := h.svcCtx.TArticleTagModel.FindAll(h.ctx, "article_id in (?)", articleIds)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func (h *ArticleHelper) findTagGroupArticle(list []*model.TArticle) (map[int64][
 	for _, v := range ats {
 		tagIds = append(tagIds, v.TagId)
 	}
-	ts, err := h.svcCtx.TTagModel.FindALL(h.ctx, "id in (?)", tagIds)
+	ts, err := h.svcCtx.TTagModel.FindAll(h.ctx, "id in (?)", tagIds)
 	if err != nil {
 		return nil, err
 	}
@@ -375,7 +375,7 @@ func (h *ArticleHelper) getArticleViewCounts(records []*model.TArticle) (map[int
 		return counts, nil
 	}
 
-	articles, err := h.svcCtx.TArticleModel.FindALL(h.ctx, "id IN ?", missing)
+	articles, err := h.svcCtx.TArticleModel.FindAll(h.ctx, "id IN ?", missing)
 	if err != nil {
 		return nil, err
 	}

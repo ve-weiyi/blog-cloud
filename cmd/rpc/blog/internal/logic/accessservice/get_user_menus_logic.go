@@ -26,7 +26,7 @@ func NewGetUserMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetU
 
 // 查询用户菜单权限
 func (l *GetUserMenusLogic) GetUserMenus(in *accessrpc.GetUserMenusRequest) (*accessrpc.GetUserMenusResponse, error) {
-	urs, err := l.svcCtx.TUserRoleModel.FindALL(l.ctx, "user_id = ?", in.UserId)
+	urs, err := l.svcCtx.TUserRoleModel.FindAll(l.ctx, "user_id = ?", in.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (l *GetUserMenusLogic) GetUserMenus(in *accessrpc.GetUserMenusRequest) (*ac
 		return &accessrpc.GetUserMenusResponse{}, nil
 	}
 
-	rLinks, err := l.svcCtx.TRoleMenuModel.FindALL(l.ctx, "role_id in (?)", roleIds)
+	rLinks, err := l.svcCtx.TRoleMenuModel.FindAll(l.ctx, "role_id in (?)", roleIds)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (l *GetUserMenusLogic) GetUserMenus(in *accessrpc.GetUserMenusRequest) (*ac
 		return &accessrpc.GetUserMenusResponse{}, nil
 	}
 
-	menus, err := l.svcCtx.TMenuModel.FindALL(l.ctx, "id in (?)", menuIds)
+	menus, err := l.svcCtx.TMenuModel.FindAll(l.ctx, "id in (?)", menuIds)
 	if err != nil {
 		return nil, err
 	}

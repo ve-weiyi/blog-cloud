@@ -23,10 +23,11 @@ func NewCreateTalkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 }
 
 func (l *CreateTalkLogic) CreateTalk(in *discussionrpc.CreateTalkRequest) (*discussionrpc.CreateTalkResponse, error) {
+	images := jsonv.AnyToJsonNE(in.Images)
 	entity := &model.TTalk{
 		UserId:  in.UserId,
 		Content: in.Content,
-		Images:  jsonv.AnyToJsonNE(in.Images),
+		Images:  &images,
 		IsTop:   in.IsTop,
 		Status:  in.Status,
 	}

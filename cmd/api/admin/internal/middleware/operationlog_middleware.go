@@ -3,7 +3,6 @@ package middleware
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -126,7 +125,7 @@ func (m *OperationLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc 
 			RequestData:    requestData,
 			ResponseData:   responseData,
 			ResponseStatus: int64(rec.statusCode),
-			Cost:           fmt.Sprintf("%v", time.Since(start)),
+			Cost:           time.Since(start).Milliseconds(),
 		}
 
 		if _, err = m.sr.CreateOperationLog(r.Context(), op); err != nil {

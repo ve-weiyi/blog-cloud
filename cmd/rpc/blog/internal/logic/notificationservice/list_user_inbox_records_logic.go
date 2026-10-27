@@ -153,7 +153,7 @@ func (l *ListUserInboxRecordsLogic) getMessageMap(deliveries []*model.TNotifyRec
 	}
 	inClause += ")"
 
-	msgs, err := l.svcCtx.TNotifyMessageModel.FindALL(l.ctx, inClause, ids...)
+	msgs, err := l.svcCtx.TNotifyMessageModel.FindAll(l.ctx, inClause, ids...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func (l *ListUserInboxRecordsLogic) getMessageMap(deliveries []*model.TNotifyRec
 }
 
 func (l *ListUserInboxRecordsLogic) getMessageIdsByTitle(title string) ([]int64, error) {
-	msgs, err := l.svcCtx.TNotifyMessageModel.FindALL(l.ctx, "title LIKE ?", "%"+title+"%")
+	msgs, err := l.svcCtx.TNotifyMessageModel.FindAll(l.ctx, "title LIKE ?", "%"+title+"%")
 	if err != nil {
 		return nil, err
 	}

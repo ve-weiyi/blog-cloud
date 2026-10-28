@@ -26,7 +26,7 @@ func NewResetUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordReq) (resp *types.EmptyResp, err error) {
+func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordReq) (resp *types.ResetUserPasswordResp, err error) {
 	_, err = l.svcCtx.UserService.ResetUserPassword(l.ctx, &userservice.ResetUserPasswordRequest{
 		UserId:      req.UserId,
 		NewPassword: req.NewPassword,
@@ -39,5 +39,5 @@ func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordR
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return &types.ResetUserPasswordResp{}, nil
 }

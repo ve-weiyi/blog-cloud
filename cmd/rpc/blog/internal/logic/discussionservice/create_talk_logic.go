@@ -6,6 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/model"
 	"github.com/ve-weiyi/vkit/x/jsonv"
 
@@ -35,5 +36,11 @@ func (l *CreateTalkLogic) CreateTalk(in *discussionrpc.CreateTalkRequest) (*disc
 	if err != nil {
 		return nil, err
 	}
-	return &discussionrpc.CreateTalkResponse{Id: entity.Id}, nil
+
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetTalk, []int64{entity.Id})
+	if err != nil {
+		return nil, err
+	}
+
+	return &discussionrpc.CreateTalkResponse{Id: entity.Id, Talk: convertTalkOut(entity, lm, lcm)}, nil
 }

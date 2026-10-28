@@ -33,6 +33,7 @@ func (l *CreateNotifyTemplateLogic) CreateNotifyTemplate(in *notificationrpc.Cre
 	}
 
 	return &notificationrpc.CreateNotifyTemplateResponse{
-		Id: template.Id,
+		Id:       template.Id,
+		Template: convertTNotifyTemplateToProto(template),
 	}, nil
 }

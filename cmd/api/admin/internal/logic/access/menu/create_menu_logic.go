@@ -48,13 +48,5 @@ func (l *CreateMenuLogic) CreateMenu(req *types.CreateMenuReq) (resp *types.Menu
 		return nil, err
 	}
 
-	return &types.MenuVO{
-		Id:        out.Id,
-		ParentId:  req.ParentId,
-		Path:      req.Path,
-		Name:      req.Name,
-		Component: req.Component,
-		Redirect:  req.Redirect,
-		MenuMeta:  req.MenuMeta,
-	}, nil
+	return convertMenuVO(out.Menu), nil
 }

@@ -32,5 +32,8 @@ func (l *CreateTagLogic) CreateTag(in *contentrpc.CreateTagRequest) (*contentrpc
 		return nil, err
 	}
 
-	return &contentrpc.CreateTagResponse{Id: entity.Id}, nil
+	return &contentrpc.CreateTagResponse{
+		Id:  entity.Id,
+		Tag: convertTagOut(entity),
+	}, nil
 }

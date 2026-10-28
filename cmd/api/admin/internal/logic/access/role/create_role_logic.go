@@ -38,13 +38,5 @@ func (l *CreateRoleLogic) CreateRole(req *types.CreateRoleReq) (resp *types.Role
 		return nil, err
 	}
 
-	return &types.RoleVO{
-		Id:          out.Id,
-		ParentId:    req.ParentId,
-		RoleKey:     req.RoleKey,
-		RoleLabel:   req.RoleLabel,
-		RoleComment: req.RoleComment,
-		IsDefault:   req.IsDefault,
-		Status:      req.Status,
-	}, nil
+	return convertRoleVO(out.Role), nil
 }

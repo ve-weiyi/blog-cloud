@@ -33,6 +33,7 @@ func (l *CreateNotifyMessageLogic) CreateNotifyMessage(in *notificationrpc.Creat
 	}
 
 	return &notificationrpc.CreateNotifyMessageResponse{
-		Id: msg.Id,
+		Id:      msg.Id,
+		Message: convertTNotifyMessageToProto(msg),
 	}, nil
 }

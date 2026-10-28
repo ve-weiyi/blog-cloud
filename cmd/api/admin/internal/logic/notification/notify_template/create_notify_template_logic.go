@@ -38,22 +38,15 @@ func (l *CreateNotifyTemplateLogic) CreateNotifyTemplate(req *types.CreateNotify
 		return nil, err
 	}
 
-	detail, err := l.svcCtx.NotificationService.GetNotifyTemplate(l.ctx, &notificationservice.GetNotifyTemplateRequest{
-		Id: out.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	return &types.NotifyTemplateVO{
-		Id:        detail.Template.Id,
-		Code:      detail.Template.Code,
-		Channel:   detail.Template.Channel,
-		Scene:     detail.Template.Scene,
-		Title:     detail.Template.Title,
-		Content:   detail.Template.Content,
-		Enabled:   detail.Template.Enabled,
-		CreatedAt: detail.Template.CreatedAt,
-		UpdatedAt: detail.Template.UpdatedAt,
+		Id:        out.Template.Id,
+		Code:      out.Template.Code,
+		Channel:   out.Template.Channel,
+		Scene:     out.Template.Scene,
+		Title:     out.Template.Title,
+		Content:   out.Template.Content,
+		Enabled:   out.Template.Enabled,
+		CreatedAt: out.Template.CreatedAt,
+		UpdatedAt: out.Template.UpdatedAt,
 	}, nil
 }

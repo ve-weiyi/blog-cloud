@@ -39,17 +39,5 @@ func (l *GetTalkLogic) GetTalk(req *types.GetTalkReq) (resp *types.TalkVO, err e
 		return nil, err
 	}
 
-	return &types.TalkVO{
-		Id:           out.Talk.Id,
-		UserId:       out.Talk.UserId,
-		Content:      out.Talk.Content,
-		ImgList:      out.Talk.Images,
-		IsTop:        out.Talk.IsTop,
-		Status:       out.Talk.Status,
-		LikeCount:    out.Talk.LikeCount,
-		CommentCount: out.Talk.CommentCount,
-		CreatedAt:    out.Talk.CreatedAt,
-		UpdatedAt:    out.Talk.UpdatedAt,
-		UserInfo:     usm[out.Talk.UserId],
-	}, nil
+	return convertTalkVO(out.Talk, usm), nil
 }

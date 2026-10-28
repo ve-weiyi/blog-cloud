@@ -32,5 +32,5 @@ func (l *CreateFriendLogic) CreateFriend(in *siterpc.CreateFriendRequest) (*site
 	if err != nil {
 		return nil, err
 	}
-	return &siterpc.CreateFriendResponse{Id: entity.Id}, nil
+	return &siterpc.CreateFriendResponse{Id: entity.Id, Friend: convertFriendOut(entity)}, nil
 }

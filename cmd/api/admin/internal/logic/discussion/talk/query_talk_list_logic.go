@@ -47,19 +47,7 @@ func (l *QueryTalkListLogic) QueryTalkList(req *types.QueryTalkListReq) (resp *t
 
 	var list []*types.TalkVO
 	for _, v := range out.List {
-		list = append(list, &types.TalkVO{
-			Id:           v.Id,
-			UserId:       v.UserId,
-			Content:      v.Content,
-			ImgList:      v.Images,
-			IsTop:        v.IsTop,
-			Status:       v.Status,
-			LikeCount:    v.LikeCount,
-			CommentCount: v.CommentCount,
-			CreatedAt:    v.CreatedAt,
-			UpdatedAt:    v.UpdatedAt,
-			UserInfo:     usm[v.UserId],
-		})
+		list = append(list, convertTalkVO(v, usm))
 	}
 
 	return &types.ListResult{

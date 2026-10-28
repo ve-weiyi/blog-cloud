@@ -43,6 +43,7 @@ func (l *UpdateNotifyTemplateLogic) UpdateNotifyTemplate(in *notificationrpc.Upd
 	}
 
 	return &notificationrpc.UpdateNotifyTemplateResponse{
-		Success: true,
+		Success:  true,
+		Template: convertTNotifyTemplateToProto(template),
 	}, nil
 }

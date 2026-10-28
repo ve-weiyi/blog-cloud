@@ -26,7 +26,7 @@ func NewUpdateNotifyMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(req *types.UpdateNotifyMessageReq) (resp *types.NotifyMessageVO, err error) {
-	_, err = l.svcCtx.NotificationService.UpdateNotifyMessage(l.ctx, &notificationservice.UpdateNotifyMessageRequest{
+	out, err := l.svcCtx.NotificationService.UpdateNotifyMessage(l.ctx, &notificationservice.UpdateNotifyMessageRequest{
 		Id:         req.Id,
 		Title:      req.Title,
 		Content:    req.Content,
@@ -34,13 +34,6 @@ func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(req *types.UpdateNotifyMe
 		Level:      req.Level,
 		TargetType: req.TargetType,
 		TargetIds:  req.TargetIds,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	out, err := l.svcCtx.NotificationService.GetNotifyMessage(l.ctx, &notificationservice.GetNotifyMessageRequest{
-		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err

@@ -26,7 +26,7 @@ func NewUpdateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateArticleLogic) UpdateArticle(req *types.UpdateArticleReq) (resp *types.ArticleVO, err error) {
-	_, err = l.svcCtx.ContentService.UpdateArticle(l.ctx, &contentservice.UpdateArticleRequest{
+	out, err := l.svcCtx.ContentService.UpdateArticle(l.ctx, &contentservice.UpdateArticleRequest{
 		Id:             req.Id,
 		ArticleCover:   req.ArticleCover,
 		ArticleTitle:   req.ArticleTitle,
@@ -37,13 +37,6 @@ func (l *UpdateArticleLogic) UpdateArticle(req *types.UpdateArticleReq) (resp *t
 		Status:         req.Status,
 		CategoryName:   req.CategoryName,
 		TagNames:       req.TagNameList,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	out, err := l.svcCtx.ContentService.GetArticle(l.ctx, &contentservice.GetArticleRequest{
-		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err

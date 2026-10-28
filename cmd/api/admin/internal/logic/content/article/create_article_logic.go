@@ -48,7 +48,5 @@ func (l *CreateArticleLogic) CreateArticle(req *types.CreateArticleReq) (resp *t
 		return nil, err
 	}
 
-	return &types.ArticleVO{
-		Id: out.Id,
-	}, nil
+	return convertArticleVO(out.Article), nil
 }

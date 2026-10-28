@@ -27,7 +27,7 @@ func NewUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq) (resp *types.EmptyResp, err error) {
+func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq) (resp *types.UpdateUserStatusResp, err error) {
 	_, err = l.svcCtx.UserService.PatchUser(l.ctx, &userservice.PatchUserRequest{
 		UserId: req.UserId,
 		Status: req.Status,
@@ -42,5 +42,5 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq)
 		}
 	}
 
-	return &types.EmptyResp{}, nil
+	return &types.UpdateUserStatusResp{}, nil
 }

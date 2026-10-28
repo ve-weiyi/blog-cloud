@@ -45,5 +45,6 @@ func (l *CreateAlbumLogic) CreateAlbum(in *mediarpc.CreateAlbumRequest) (*mediar
 		return nil, err
 	}
 
-	return &mediarpc.CreateAlbumResponse{Id: entity.Id}, nil
+	// 新相册还没有照片，计数为空
+	return &mediarpc.CreateAlbumResponse{Id: entity.Id, Album: convertAlbumOut(entity, map[int64]int{})}, nil
 }

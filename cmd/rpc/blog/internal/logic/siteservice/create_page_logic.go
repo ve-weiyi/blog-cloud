@@ -41,5 +41,5 @@ func (l *CreatePageLogic) CreatePage(in *siterpc.CreatePageRequest) (*siterpc.Cr
 		return nil, err
 	}
 
-	return &siterpc.CreatePageResponse{Id: entity.Id}, nil
+	return &siterpc.CreatePageResponse{Id: entity.Id, Page: convertPageOut(entity)}, nil
 }

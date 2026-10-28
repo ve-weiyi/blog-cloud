@@ -42,7 +42,14 @@ func (l *UpdateNotifyMessageLogic) UpdateNotifyMessage(in *notificationrpc.Updat
 		return nil, err
 	}
 
+	// 部分更新不持有实体，回读一次
+	msg, err := l.svcCtx.TNotifyMessageModel.FindById(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
 	return &notificationrpc.UpdateNotifyMessageResponse{
 		Success: true,
+		Message: convertTNotifyMessageToProto(msg),
 	}, nil
 }

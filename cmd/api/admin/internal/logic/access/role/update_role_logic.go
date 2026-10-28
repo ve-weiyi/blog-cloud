@@ -25,8 +25,8 @@ func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateRoleLogic) UpdateRole(req *types.UpdateRoleReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.AccessService.UpdateRole(l.ctx, &accessservice.UpdateRoleRequest{
+func (l *UpdateRoleLogic) UpdateRole(req *types.UpdateRoleReq) (resp *types.RoleVO, err error) {
+	out, err := l.svcCtx.AccessService.UpdateRole(l.ctx, &accessservice.UpdateRoleRequest{
 		Id:          req.Id,
 		ParentId:    req.ParentId,
 		RoleKey:     req.RoleKey,
@@ -39,5 +39,5 @@ func (l *UpdateRoleLogic) UpdateRole(req *types.UpdateRoleReq) (resp *types.Empt
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return convertRoleVO(out.Role), nil
 }

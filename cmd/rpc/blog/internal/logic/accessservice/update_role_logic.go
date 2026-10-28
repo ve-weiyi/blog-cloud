@@ -53,5 +53,11 @@ func (l *UpdateRoleLogic) UpdateRole(in *accessrpc.UpdateRoleRequest) (*accessrp
 		return nil, err
 	}
 
-	return &accessrpc.UpdateRoleResponse{Success: true}, nil
+	// 更新后回读：返回体需要包含未在请求中的字段（创建时间等）
+	entity, err := l.svcCtx.TRoleModel.FindById(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &accessrpc.UpdateRoleResponse{Success: true, Role: convertRoleOut(entity)}, nil
 }

@@ -40,5 +40,11 @@ func (l *UpdateApiLogic) UpdateApi(in *accessrpc.UpdateApiRequest) (*accessrpc.U
 		return nil, err
 	}
 
-	return &accessrpc.UpdateApiResponse{Success: true}, nil
+	// 更新后回读：返回体需要包含未在请求中的字段（创建时间等）
+	entity, err := l.svcCtx.TApiModel.FindById(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &accessrpc.UpdateApiResponse{Success: true, Api: convertApiOut(entity)}, nil
 }

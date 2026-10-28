@@ -51,5 +51,5 @@ func (l *CreatePhotoLogic) CreatePhoto(in *mediarpc.CreatePhotoRequest) (*mediar
 		return nil, err
 	}
 
-	return &mediarpc.CreatePhotoResponse{Id: entity.Id}, nil
+	return &mediarpc.CreatePhotoResponse{Id: entity.Id, Photo: convertPhotoOut(entity)}, nil
 }

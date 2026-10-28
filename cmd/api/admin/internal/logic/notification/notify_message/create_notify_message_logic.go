@@ -38,25 +38,18 @@ func (l *CreateNotifyMessageLogic) CreateNotifyMessage(req *types.CreateNotifyMe
 		return nil, err
 	}
 
-	detail, err := l.svcCtx.NotificationService.GetNotifyMessage(l.ctx, &notificationservice.GetNotifyMessageRequest{
-		Id: out.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	return &types.NotifyMessageVO{
-		Id:          detail.Message.Id,
-		Title:       detail.Message.Title,
-		Content:     detail.Message.Content,
-		Category:    detail.Message.Category,
-		Level:       detail.Message.Level,
-		TargetType:  detail.Message.TargetType,
-		TargetIds:   detail.Message.TargetIds,
-		Status:      detail.Message.Status,
-		PublishedAt: detail.Message.PublishedAt,
-		PublishedBy: detail.Message.PublishedBy,
-		CreatedAt:   detail.Message.CreatedAt,
-		UpdatedAt:   detail.Message.UpdatedAt,
+		Id:          out.Message.Id,
+		Title:       out.Message.Title,
+		Content:     out.Message.Content,
+		Category:    out.Message.Category,
+		Level:       out.Message.Level,
+		TargetType:  out.Message.TargetType,
+		TargetIds:   out.Message.TargetIds,
+		Status:      out.Message.Status,
+		PublishedAt: out.Message.PublishedAt,
+		PublishedBy: out.Message.PublishedBy,
+		CreatedAt:   out.Message.CreatedAt,
+		UpdatedAt:   out.Message.UpdatedAt,
 	}, nil
 }

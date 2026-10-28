@@ -8,7 +8,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/likes"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 )
@@ -38,15 +37,10 @@ func (l *LikeCommentLogic) LikeComment(in *discussionrpc.LikeCommentRequest) (*d
 		return nil, err
 	}
 
-	err = likes.Toggle(l.ctx, likes.Deps{
-		Redis:  l.svcCtx.Redis,
-		DB:     l.svcCtx.GormDB,
-		Outbox: l.svcCtx.Outbox,
-	}, enums.LikeTargetComment, in.Id, uid,
-		cachekey.GetUserLikeCommentKey(uid), cachekey.CommentLikeCountKey)
+	changed, err := likes.Like(l.ctx, l.svcCtx.LikeDeps(), enums.LikeTargetComment, in.Id, uid)
 	if err != nil {
 		return nil, err
 	}
 
-	return &discussionrpc.LikeCommentResponse{Success: true}, nil
+	return &discussionrpc.LikeCommentResponse{Liked: true, Changed: changed}, nil
 }

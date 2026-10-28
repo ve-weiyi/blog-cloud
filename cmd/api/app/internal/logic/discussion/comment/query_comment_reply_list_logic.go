@@ -80,6 +80,7 @@ func (l *QueryCommentReplyListLogic) QueryCommentReplyList(req *types.QueryComme
 			Type:           v.Type,
 			CreatedAt:      v.CreatedAt,
 			LikeCount:      v.LikeCount,
+			Liked:          v.Liked,
 			GuestInfo:      vsm[v.DeviceId],
 			UserInfo:       usm[v.UserId],
 			ReplyUserInfo:  usm[v.ReplyUserId],

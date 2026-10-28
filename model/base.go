@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // Table 是所有表共用的数据访问方法，由 baseModel 统一实现。
@@ -12,6 +13,8 @@ type Table[T any] interface {
 	// 插入
 	Insert(ctx context.Context, in *T) (rows int64, err error)
 	InsertBatch(ctx context.Context, in ...*T) (rows int64, err error)
+	// 插入，唯一键冲突时不修改任何列、返回 0 行
+	InsertIgnore(ctx context.Context, in *T) (rows int64, err error)
 	// 删除
 	Delete(ctx context.Context, id int64) (rows int64, err error)
 	DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error)
@@ -58,6 +61,16 @@ func (m *baseModel[T]) Insert(ctx context.Context, in *T) (rows int64, err error
 }
 
 // 插入记录（批量操作）
+// 插入记录，唯一键冲突时忽略冲突行
+func (m *baseModel[T]) InsertIgnore(ctx context.Context, in *T) (rows int64, err error) {
+	result := m.scope(ctx).Clauses(clause.OnConflict{DoNothing: true}).Create(&in)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return result.RowsAffected, nil
+}
+
 func (m *baseModel[T]) InsertBatch(ctx context.Context, in ...*T) (rows int64, err error) {
 	result := m.scope(ctx).CreateInBatches(&in, len(in))
 	if result.Error != nil {

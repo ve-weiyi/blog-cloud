@@ -15,8 +15,9 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/likes"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
 	"github.com/ve-weiyi/blog-cloud/model"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
@@ -123,11 +124,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 
+	mqClient, err := mq.NewClient(c.RabbitMQConf)
+	if err != nil {
+		panic(err)
+	}
+
 	return &ServiceContext{
 		Config:         c,
 		GormDB:         db,
 		Redis:          rds,
-		MQ:             mq.NewClient(c.RabbitMQConf),
+		MQ:             mqClient,
 		Outbox:         outbox.NewGORMStore(db),
 		EmailDeliver:   emailDeliver,
 		SmsProvider:    smsProvider,
@@ -175,6 +181,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 // Close 按依赖顺序释放资源：先停 MQ（等待在途消费完成），再关 Redis 与数据库。
 // 幂等：重复调用安全。
+// LikeDeps 返回点赞模块的依赖组合。
+func (s *ServiceContext) LikeDeps() likes.Deps {
+	return likes.Deps{DB: s.GormDB, Likes: s.TLikeModel}
+}
+
 func (s *ServiceContext) Close() {
 	if s == nil {
 		return

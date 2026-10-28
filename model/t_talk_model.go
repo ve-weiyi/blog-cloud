@@ -24,7 +24,6 @@ type (
 		Images    *string   `gorm:"column:images;type:json;comment:图片" json:"images"`                                                  // 图片
 		IsTop     int64     `gorm:"column:is_top;type:tinyint;not null;default:0;comment:是否置顶" json:"is_top"`                          // 是否置顶
 		Status    int64     `gorm:"column:status;type:tinyint;not null;default:1;comment:状态 1.公开 2.私密" json:"status"`                  // 状态 1.公开 2.私密
-		LikeCount int64     `gorm:"column:like_count;type:bigint;not null;default:0;comment:点赞数" json:"like_count"`                    // 点赞数
 		CreatedAt time.Time `gorm:"column:created_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"` // 创建时间
 		UpdatedAt time.Time `gorm:"column:updated_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"` // 更新时间
 	}

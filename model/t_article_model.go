@@ -29,7 +29,6 @@ type (
 		IsTop          int64     `gorm:"column:is_top;type:tinyint(1);not null;default:0;comment:是否置顶 0否 1是" json:"is_top"`                                                // 是否置顶 0否 1是
 		IsDelete       int64     `gorm:"column:is_delete;type:tinyint(1);not null;index:idx_delete_status_id,priority:1;default:0;comment:是否删除  0否 1是" json:"is_delete"`   // 是否删除  0否 1是
 		Status         int64     `gorm:"column:status;type:tinyint;not null;index:idx_delete_status_id,priority:2;default:1;comment:状态值 1公开 2私密 3草稿 4评论可见" json:"status"`  // 状态值 1公开 2私密 3草稿 4评论可见
-		LikeCount      int64     `gorm:"column:like_count;type:bigint;not null;default:0;comment:点赞数" json:"like_count"`                                                   // 点赞数
 		ViewCount      int64     `gorm:"column:view_count;type:bigint;not null;default:0;comment:查看数" json:"view_count"`                                                   // 查看数
 		CreatedAt      time.Time `gorm:"column:created_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:发表时间" json:"created_at"`                                // 发表时间
 		UpdatedAt      time.Time `gorm:"column:updated_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                // 更新时间

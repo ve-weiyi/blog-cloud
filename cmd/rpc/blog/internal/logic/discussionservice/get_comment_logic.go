@@ -7,6 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 )
 
 type GetCommentLogic struct {
@@ -30,5 +31,10 @@ func (l *GetCommentLogic) GetComment(in *discussionrpc.GetCommentRequest) (*disc
 		return nil, err
 	}
 
-	return &discussionrpc.GetCommentResponse{Comment: convertCommentOut(entity)}, nil
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetComment, []int64{entity.Id})
+	if err != nil {
+		return nil, err
+	}
+
+	return &discussionrpc.GetCommentResponse{Comment: convertCommentOut(entity, lm, lcm)}, nil
 }

@@ -83,10 +83,10 @@ func (s *ContentServiceServer) LikeArticle(ctx context.Context, in *contentrpc.L
 	return l.LikeArticle(in)
 }
 
-// 查询用户点赞的文章
-func (s *ContentServiceServer) GetUserLikeArticle(ctx context.Context, in *contentrpc.GetUserLikeArticleRequest) (*contentrpc.GetUserLikeArticleResponse, error) {
-	l := contentservicelogic.NewGetUserLikeArticleLogic(ctx, s.svcCtx)
-	return l.GetUserLikeArticle(in)
+// 取消点赞文章
+func (s *ContentServiceServer) UnlikeArticle(ctx context.Context, in *contentrpc.LikeArticleRequest) (*contentrpc.LikeArticleResponse, error) {
+	l := contentservicelogic.NewUnlikeArticleLogic(ctx, s.svcCtx)
+	return l.UnlikeArticle(in)
 }
 
 // 分页查询分类列表

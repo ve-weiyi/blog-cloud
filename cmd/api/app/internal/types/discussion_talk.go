@@ -24,6 +24,7 @@ type Talk struct {
 	Status       int64       `json:"status"`        // 状态 1.公开 2.私密
 	LikeCount    int64       `json:"like_count"`    // 点赞量
 	CommentCount int64       `json:"comment_count"` // 评论量
+	Liked        bool        `json:"liked"`         // 当前用户是否已赞
 	CreatedAt    int64       `json:"created_at"`    // 创建时间
 	UpdatedAt    int64       `json:"updated_at"`    // 更新时间
 	UserInfo     *UserInfoVO `json:"user_info"`     // 用户信息

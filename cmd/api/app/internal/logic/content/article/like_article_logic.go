@@ -25,14 +25,13 @@ func NewLikeArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeA
 	}
 }
 
-func (l *LikeArticleLogic) LikeArticle(req *types.LikeArticleReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.ContentService.LikeArticle(l.ctx, &contentservice.LikeArticleRequest{
+func (l *LikeArticleLogic) LikeArticle(req *types.LikeArticleReq) (resp *types.LikeResult, err error) {
+	out, err := l.svcCtx.ContentService.LikeArticle(l.ctx, &contentservice.LikeArticleRequest{
 		Id: req.ArticleId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.EmptyResp{}
-	return
+	return &types.LikeResult{Liked: out.Liked, Changed: out.Changed}, nil
 }

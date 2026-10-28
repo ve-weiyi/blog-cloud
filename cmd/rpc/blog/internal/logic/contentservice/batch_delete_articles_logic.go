@@ -47,13 +47,10 @@ func (l *BatchDeleteArticlesLogic) BatchDeleteArticles(in *contentrpc.BatchDelet
 		return nil, err
 	}
 
-	// 计数缓存是派生数据，清理失败只记录日志
+	// 浏览量缓存是派生数据，清理失败只记录日志
 	members := make([]interface{}, 0, len(in.Ids))
 	for _, id := range in.Ids {
 		members = append(members, fmt.Sprintf("%d", id))
-	}
-	if err := l.svcCtx.Redis.ZRem(l.ctx, cachekey.ArticleLikeCountKey, members...).Err(); err != nil {
-		l.Errorf("清理文章点赞计数缓存失败: %v", err)
 	}
 	if err := l.svcCtx.Redis.ZRem(l.ctx, cachekey.ArticleViewCountKey, members...).Err(); err != nil {
 		l.Errorf("清理文章浏览量缓存失败: %v", err)

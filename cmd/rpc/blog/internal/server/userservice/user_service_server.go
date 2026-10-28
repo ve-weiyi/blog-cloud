@@ -7,10 +7,9 @@ package server
 import (
 	"context"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/userservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/userrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/userservice"
 )
 
 type UserServiceServer struct {

@@ -1,11 +1,9 @@
 // Package mq 是消息队列的传输层与事件契约。
-//
-// 本包只依赖 config 与 vkit；消费者在 mqlogic 子包（它依赖 svc），
-// 本包不得反向依赖 svc —— 否则与 svc → mq 成环。
 package mq
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,15 +17,15 @@ import (
 
 // Client 持有事件运行时与共享发布器。
 //
-// 启动策略：只有 MQ 允许降级 —— RabbitMQ 不可用时记录错误并继续启动，
-// 发布返回 ErrUnavailable、订阅等待重连；其余依赖（DB/Redis/邮件/短信）失败即失败。
+// 构造成功即保证 Runtime 与 Publisher 非 nil。运行期的 broker 抖动不在这里兜底：
+// 发布返回 ErrUnavailable，订阅断开由 Runtime 自行重建。
 type Client struct {
 	Runtime   *event.Runtime
 	Publisher mqx.Publisher
 }
 
 // NewClient 建立 RabbitMQ 连接与事件运行时。
-func NewClient(c config.RabbitMQConf) *Client {
+func NewClient(c config.RabbitMQConf) (*Client, error) {
 	logger := newSlogLogger()
 	broker, err := rabbitmqx.NewBroker(&rabbitmqx.Config{
 		URL:          rabbitmqx.BuildAMQPURL(c.Host, c.Port, c.Username, c.Password),
@@ -37,21 +35,23 @@ func NewClient(c config.RabbitMQConf) *Client {
 		Metrics:      metrics.NewMQX(),
 	})
 	if err != nil {
-		logx.Errorf("[mq] create broker: %v", err)
-		return &Client{}
+		return nil, fmt.Errorf("mq: create broker: %w", err)
 	}
 
 	runtime := event.NewRuntime(broker, logger, event.WithMessagingSystem("rabbitmq"))
 	publisher, err := runtime.NewPublisher()
 	if err != nil {
-		logx.Errorf("[mq] create publisher: %v", err)
+		closeCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = runtime.Close(closeCtx)
+		return nil, fmt.Errorf("mq: create publisher: %w", err)
 	}
-	return &Client{Runtime: runtime, Publisher: publisher}
+	return &Client{Runtime: runtime, Publisher: publisher}, nil
 }
 
 // Close 先停止订阅、等待在途处理，再关闭连接。
 func (c *Client) Close() {
-	if c == nil || c.Runtime == nil {
+	if c == nil {
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

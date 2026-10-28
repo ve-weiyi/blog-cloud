@@ -29,7 +29,7 @@ const (
 	ContentService_BatchDeleteArticles_FullMethodName   = "/blog.content.v1.ContentService/BatchDeleteArticles"
 	ContentService_IncrementArticleView_FullMethodName  = "/blog.content.v1.ContentService/IncrementArticleView"
 	ContentService_LikeArticle_FullMethodName           = "/blog.content.v1.ContentService/LikeArticle"
-	ContentService_GetUserLikeArticle_FullMethodName    = "/blog.content.v1.ContentService/GetUserLikeArticle"
+	ContentService_UnlikeArticle_FullMethodName         = "/blog.content.v1.ContentService/UnlikeArticle"
 	ContentService_ListCategories_FullMethodName        = "/blog.content.v1.ContentService/ListCategories"
 	ContentService_GetCategory_FullMethodName           = "/blog.content.v1.ContentService/GetCategory"
 	ContentService_CreateCategory_FullMethodName        = "/blog.content.v1.ContentService/CreateCategory"
@@ -66,8 +66,8 @@ type ContentServiceClient interface {
 	IncrementArticleView(ctx context.Context, in *IncrementArticleViewRequest, opts ...grpc.CallOption) (*IncrementArticleViewResponse, error)
 	// 点赞文章
 	LikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error)
-	// 查询用户点赞的文章
-	GetUserLikeArticle(ctx context.Context, in *GetUserLikeArticleRequest, opts ...grpc.CallOption) (*GetUserLikeArticleResponse, error)
+	// 取消点赞文章
+	UnlikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error)
 	// 分页查询分类列表
 	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
 	// 查询分类详情
@@ -188,9 +188,9 @@ func (c *contentServiceClient) LikeArticle(ctx context.Context, in *LikeArticleR
 	return out, nil
 }
 
-func (c *contentServiceClient) GetUserLikeArticle(ctx context.Context, in *GetUserLikeArticleRequest, opts ...grpc.CallOption) (*GetUserLikeArticleResponse, error) {
-	out := new(GetUserLikeArticleResponse)
-	err := c.cc.Invoke(ctx, ContentService_GetUserLikeArticle_FullMethodName, in, out, opts...)
+func (c *contentServiceClient) UnlikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error) {
+	out := new(LikeArticleResponse)
+	err := c.cc.Invoke(ctx, ContentService_UnlikeArticle_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -311,8 +311,8 @@ type ContentServiceServer interface {
 	IncrementArticleView(context.Context, *IncrementArticleViewRequest) (*IncrementArticleViewResponse, error)
 	// 点赞文章
 	LikeArticle(context.Context, *LikeArticleRequest) (*LikeArticleResponse, error)
-	// 查询用户点赞的文章
-	GetUserLikeArticle(context.Context, *GetUserLikeArticleRequest) (*GetUserLikeArticleResponse, error)
+	// 取消点赞文章
+	UnlikeArticle(context.Context, *LikeArticleRequest) (*LikeArticleResponse, error)
 	// 分页查询分类列表
 	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
 	// 查询分类详情
@@ -370,8 +370,8 @@ func (UnimplementedContentServiceServer) IncrementArticleView(context.Context, *
 func (UnimplementedContentServiceServer) LikeArticle(context.Context, *LikeArticleRequest) (*LikeArticleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeArticle not implemented")
 }
-func (UnimplementedContentServiceServer) GetUserLikeArticle(context.Context, *GetUserLikeArticleRequest) (*GetUserLikeArticleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserLikeArticle not implemented")
+func (UnimplementedContentServiceServer) UnlikeArticle(context.Context, *LikeArticleRequest) (*LikeArticleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeArticle not implemented")
 }
 func (UnimplementedContentServiceServer) ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
@@ -596,20 +596,20 @@ func _ContentService_LikeArticle_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ContentService_GetUserLikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserLikeArticleRequest)
+func _ContentService_UnlikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeArticleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ContentServiceServer).GetUserLikeArticle(ctx, in)
+		return srv.(ContentServiceServer).UnlikeArticle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ContentService_GetUserLikeArticle_FullMethodName,
+		FullMethod: ContentService_UnlikeArticle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).GetUserLikeArticle(ctx, req.(*GetUserLikeArticleRequest))
+		return srv.(ContentServiceServer).UnlikeArticle(ctx, req.(*LikeArticleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -842,8 +842,8 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ContentService_LikeArticle_Handler,
 		},
 		{
-			MethodName: "GetUserLikeArticle",
-			Handler:    _ContentService_GetUserLikeArticle_Handler,
+			MethodName: "UnlikeArticle",
+			Handler:    _ContentService_UnlikeArticle_Handler,
 		},
 		{
 			MethodName: "ListCategories",

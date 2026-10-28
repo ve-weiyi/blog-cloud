@@ -35,6 +35,7 @@ func convertArticleHomeTypes(in *contentservice.Article) (out *types.ArticleHome
 		TagNameList:    tags,
 		LikeCount:      in.LikeCount,
 		ViewCount:      in.ViewCount,
+		Liked:          in.Liked,
 	}
 
 	return
@@ -51,6 +52,7 @@ func convertArticlePreviewTypes(in *contentservice.ArticlePreview) (out *types.A
 		ArticleTitle: in.ArticleTitle,
 		LikeCount:    in.LikeCount,
 		ViewCount:    in.ViewCount,
+		Liked:        in.Liked,
 		CreatedAt:    in.CreatedAt,
 	}
 	return

@@ -18,6 +18,7 @@ type ArticleHome struct {
 	TagNameList    []string `json:"tag_name_list"`
 	LikeCount      int64    `json:"like_count"`
 	ViewCount      int64    `json:"view_count"`
+	Liked          bool     `json:"liked"` // 当前用户是否已赞
 }
 
 type ArticlePreview struct {
@@ -26,6 +27,7 @@ type ArticlePreview struct {
 	ArticleTitle string `json:"article_title"`
 	LikeCount    int64  `json:"like_count"`
 	ViewCount    int64  `json:"view_count"`
+	Liked        bool   `json:"liked"` // 当前用户是否已赞
 	CreatedAt    int64  `json:"created_at"`
 }
 
@@ -50,6 +52,7 @@ type Comment struct {
 	Type             int64           `json:"type"`
 	CreatedAt        int64           `json:"created_at"`
 	LikeCount        int64           `json:"like_count"`
+	Liked            bool            `json:"liked"` // 当前用户是否已赞
 	GuestInfo        *GuestInfoVO    `json:"guest_info"`
 	UserInfo         *UserInfoVO     `json:"user_info"`
 	ReplyUserInfo    *UserInfoVO     `json:"reply_user_info"`
@@ -82,6 +85,7 @@ type CommentReply struct {
 	Type           int64        `json:"type"`
 	CreatedAt      int64        `json:"created_at"`
 	LikeCount      int64        `json:"like_count"`
+	Liked          bool         `json:"liked"` // 当前用户是否已赞
 	GuestInfo      *GuestInfoVO `json:"guest_info"`
 	UserInfo       *UserInfoVO  `json:"user_info"`
 	ReplyUserInfo  *UserInfoVO  `json:"reply_user_info"`
@@ -118,6 +122,11 @@ type GuestInfoVO struct {
 	Browser   string `json:"browser"`    // 浏览器
 	IpAddress string `json:"ip_address"` // IP地址
 	IpSource  string `json:"ip_source"`  // IP归属地
+}
+
+type LikeResult struct {
+	Liked   bool `json:"liked"`
+	Changed bool `json:"changed"`
 }
 
 type ListQuery struct {

@@ -12,25 +12,22 @@ import (
 const (
 	NotificationExchange = "blog.notification"
 	AuditExchange        = "blog.audit"
-	InteractionExchange  = "blog.interaction"
 	NotificationDLQ      = "blog.notification.dlq"
-	InteractionDLQ       = "blog.interaction.dlq"
 
 	EmailRoutingKey  = "notification.email"
 	SmsRoutingKey    = "notification.sms"
 	InboxRoutingKey  = "notification.inbox"
 	LoginRoutingKey  = "audit.login"
 	LogoutRoutingKey = "audit.logout"
-	LikeRoutingKey   = "interaction.like"
 
-	EmailQueue       = "blog.rpc.notification.email"
-	SmsQueue         = "blog.rpc.notification.sms"
-	InboxQueue       = "blog.rpc.notification.inbox"
-	AuditQueue       = "blog.rpc.audit"
-	InteractionQueue = "blog.rpc.interaction"
-
-	producer = "blog-rpc"
+	EmailQueue = "blog.rpc.notification.email"
+	SmsQueue   = "blog.rpc.notification.sms"
+	InboxQueue = "blog.rpc.notification.inbox"
+	AuditQueue = "blog.rpc.audit"
 )
+
+// producerName 写入事件信封，标识事件来源。
+const producerName = "blog-rpc"
 
 // LoginEvent 登录日志事件。
 type LoginEvent struct {
@@ -66,46 +63,38 @@ type SmsMessageEvent struct {
 	Params map[string]string `json:"params,omitempty"`
 }
 
-// 点赞事件携带的动作值。
-const (
-	LikeActionLike   = "like"
-	LikeActionUnlike = "unlike"
-)
-
-// LikeEvent 点赞事件：动作在发布端按实时状态判定，消费端只做幂等收敛。
-type LikeEvent struct {
-	UserId     string `json:"user_id"`
-	TargetType int64  `json:"target_type"`
-	TargetId   int64  `json:"target_id"`
-	Action     string `json:"action"` // like | unlike
-}
-
 // InboxMessageEvent 站内信投递事件：消费后为每个目标用户创建 delivery 记录。
 type InboxMessageEvent struct {
 	MessageId int64 `json:"message_id"`
 }
+
+// 发布语义：事件按「是否必须与库内状态同生共死」分两类。
+//
+//   - 事务性：通知发布、通知重投、点赞。事件与状态变更同事务提交，再由 relay 投递；
+//     这些事件丢失后无法由业务状态补偿。
+//   - 直接：验证码（Redis 已落码，发布失败让用户重发）、登录/登出日志
+//     （可丢失的观测数据）。失败语义由各自生产者决定。
+//
+// 新增事件时先确定归属，再选择发布方式。
 
 // 事件类型与目的地、routing key 的绑定。发布与订阅统一使用这些值，
 // 类型与绑定不匹配会在编译期报错。
 var (
 	EmailMessage = event.NewEventSpec[EmailMessageEvent](
 		NotificationExchange, EmailRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
+		event.WithProducer(producerName), event.WithVersion("v1"))
 	SmsMessage = event.NewEventSpec[SmsMessageEvent](
 		NotificationExchange, SmsRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
+		event.WithProducer(producerName), event.WithVersion("v1"))
 	InboxMessage = event.NewEventSpec[InboxMessageEvent](
 		NotificationExchange, InboxRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
+		event.WithProducer(producerName), event.WithVersion("v1"))
 	LoginMessage = event.NewEventSpec[LoginEvent](
 		AuditExchange, LoginRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
+		event.WithProducer(producerName), event.WithVersion("v1"))
 	LogoutMessage = event.NewEventSpec[LogoutEvent](
 		AuditExchange, LogoutRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
-	LikeMessage = event.NewEventSpec[LikeEvent](
-		InteractionExchange, LikeRoutingKey,
-		event.WithProducer(producer), event.WithVersion("v1"))
+		event.WithProducer(producerName), event.WithVersion("v1"))
 )
 
 // 通知域按事件拆队列：站内信扇出可能长时间占用 worker，
@@ -151,44 +140,6 @@ func NewInboxSubscription() mqx.SubscriptionSpec {
 	return newNotificationSpec(InboxQueue, InboxRoutingKey, 4, 20)
 }
 
-// Subscriptions 返回本进程要启动的全部订阅规格。
-func Subscriptions() []mqx.SubscriptionSpec {
-	return []mqx.SubscriptionSpec{
-		NewEmailSubscription(),
-		NewSmsSubscription(),
-		NewInboxSubscription(),
-		NewAuditSubscription(),
-		NewInteractionSubscription(),
-	}
-}
-
-// NewInteractionSubscription 返回点赞队列订阅规格。
-// 点赞以 Redis 为实时状态，落库失败进入死信，不静默丢弃：
-// 丢失的明细会让「谁点过」无法从库中重建。
-func NewInteractionSubscription() mqx.SubscriptionSpec {
-	return mqx.SubscriptionSpec{
-		Destination: InteractionExchange,
-		BindingKey:  "interaction.#",
-		Group:       InteractionQueue,
-		Concurrency: 4,
-		MaxInFlight: 20,
-		Retry: mqx.RetryPolicy{
-			MaxAttempts:  3,
-			InitialDelay: 200 * time.Millisecond,
-			MaxDelay:     2 * time.Second,
-			MaxElapsed:   10 * time.Second,
-			Jitter:       0.2,
-		},
-		DeadLetter: mqx.DeadLetterPolicy{
-			Enabled:     true,
-			Destination: InteractionDLQ,
-			RoutingKey:  "interaction.#",
-			IncludeMeta: true,
-		},
-		OnExhausted: mqx.ExhaustedDeadLetter,
-	}
-}
-
 // NewAuditSubscription 返回审计域订阅规格。
 // 登录/登出日志是观测数据：失败重试后显式丢弃，不阻塞登录流程。
 // 并发设为 1：登出依赖同一设备的登录记录，必须按 login -> logout 顺序处理。
@@ -209,5 +160,15 @@ func NewAuditSubscription() mqx.SubscriptionSpec {
 			Jitter:       0.2,
 		},
 		OnExhausted: mqx.ExhaustedDiscard,
+	}
+}
+
+// Subscriptions 返回本进程要启动的全部订阅规格。
+func Subscriptions() []mqx.SubscriptionSpec {
+	return []mqx.SubscriptionSpec{
+		NewEmailSubscription(),
+		NewSmsSubscription(),
+		NewInboxSubscription(),
+		NewAuditSubscription(),
 	}
 }

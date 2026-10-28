@@ -25,13 +25,13 @@ func NewLikeCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeC
 	}
 }
 
-func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.DiscussionService.LikeComment(l.ctx, &discussionservice.LikeCommentRequest{
+func (l *LikeCommentLogic) LikeComment(req *types.LikeCommentReq) (resp *types.LikeResult, err error) {
+	out, err := l.svcCtx.DiscussionService.LikeComment(l.ctx, &discussionservice.LikeCommentRequest{
 		Id: req.CommentId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return &types.LikeResult{Liked: out.Liked, Changed: out.Changed}, nil
 }

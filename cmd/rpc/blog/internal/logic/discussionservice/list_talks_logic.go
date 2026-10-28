@@ -6,6 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/store/queryx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
@@ -39,8 +40,17 @@ func (l *ListTalksLogic) ListTalks(in *discussionrpc.ListTalksRequest) (*discuss
 	}
 
 	var list []*discussionrpc.Talk
+	ids := make([]int64, 0, len(records))
 	for _, v := range records {
-		list = append(list, convertTalkOut(v))
+		ids = append(ids, v.Id)
+	}
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetTalk, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range records {
+		list = append(list, convertTalkOut(v, lm, lcm))
 	}
 
 	return &discussionrpc.ListTalksResponse{

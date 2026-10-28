@@ -8,7 +8,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/likes"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 )
@@ -38,15 +37,10 @@ func (l *LikeArticleLogic) LikeArticle(in *contentrpc.LikeArticleRequest) (*cont
 		return nil, err
 	}
 
-	err = likes.Toggle(l.ctx, likes.Deps{
-		Redis:  l.svcCtx.Redis,
-		DB:     l.svcCtx.GormDB,
-		Outbox: l.svcCtx.Outbox,
-	}, enums.LikeTargetArticle, in.Id, uid,
-		cachekey.GetUserLikeArticleKey(uid), cachekey.ArticleLikeCountKey)
+	changed, err := likes.Like(l.ctx, l.svcCtx.LikeDeps(), enums.LikeTargetArticle, in.Id, uid)
 	if err != nil {
 		return nil, err
 	}
 
-	return &contentrpc.LikeArticleResponse{Success: true}, nil
+	return &contentrpc.LikeArticleResponse{Liked: true, Changed: changed}, nil
 }

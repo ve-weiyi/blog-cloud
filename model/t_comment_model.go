@@ -29,7 +29,6 @@ type (
 		Type           int64     `gorm:"column:type;type:tinyint;not null;index:idx_type_topic_created,priority:1;default:0;comment:评论类型 1.文章 2.友链 3.说说" json:"type"`           // 评论类型 1.文章 2.友链 3.说说
 		Status         int64     `gorm:"column:status;type:tinyint;not null;default:0;comment:状态 0.正常 1.已编辑 2.已删除" json:"status"`                                               // 状态 0.正常 1.已编辑 2.已删除
 		IsReview       int64     `gorm:"column:is_review;type:tinyint;not null;index:idx_review_created,priority:1;default:0;comment:审核状态：0-未审核 1-已通过" json:"is_review"`        // 审核状态：0-未审核 1-已通过
-		LikeCount      int64     `gorm:"column:like_count;type:bigint;not null;default:0;comment:评论点赞数量" json:"like_count"`                                                     // 评论点赞数量
 		CreatedAt      time.Time `gorm:"column:created_at;type:datetime;not null;index:idx_review_created,priority:2;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"` // 创建时间
 		UpdatedAt      time.Time `gorm:"column:updated_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                     // 更新时间
 	}

@@ -75,8 +75,13 @@ func (l *ListCommentRepliesByParentsLogic) ListCommentRepliesByParents(in *discu
 	}
 
 	list := make([]*discussionrpc.Comment, 0, len(records))
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetComment, commentIDs(records))
+	if err != nil {
+		return nil, err
+	}
+
 	for _, entity := range records {
-		list = append(list, convertCommentOut(entity))
+		list = append(list, convertCommentOut(entity, lm, lcm))
 	}
 
 	return &discussionrpc.ListCommentRepliesByParentsResponse{

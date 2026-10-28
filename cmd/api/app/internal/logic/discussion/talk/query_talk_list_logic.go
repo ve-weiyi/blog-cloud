@@ -63,6 +63,7 @@ func (l *QueryTalkListLogic) QueryTalkList(req *types.QueryTalkListReq) (resp *t
 			IsTop:        v.IsTop,
 			Status:       v.Status,
 			LikeCount:    v.LikeCount,
+			Liked:        v.Liked,
 			CommentCount: v.CommentCount,
 			CreatedAt:    v.CreatedAt,
 			UpdatedAt:    v.UpdatedAt,

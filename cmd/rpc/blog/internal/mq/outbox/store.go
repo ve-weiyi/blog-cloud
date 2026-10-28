@@ -16,7 +16,10 @@ import (
 
 // Store 是 outbox 的存储契约，便于 relay 用内存实现测试。
 type Store interface {
-	// Enqueue 在调用方事务内写入一条待发布消息。
+	// Enqueue 写入一条待发布消息。
+	//
+	// tx 一般传调用方事务，使业务状态与事件同生共死；本次没有其他写入需要
+	// 原子化时可直接传 db —— 单条 INSERT 本身是原子的。
 	Enqueue(ctx context.Context, tx *gorm.DB, msg mqx.Message) error
 	// Claim 认领一批到期消息，并标记为 publishing。
 	Claim(ctx context.Context, limit int) ([]Record, error)
@@ -47,6 +50,17 @@ func NewGORMStore(db *gorm.DB) *GORMStore {
 	return &GORMStore{db: db}
 }
 
+// Migrate 建立 outbox 表，已存在时按模型补齐缺失的列与索引。
+//
+// 只覆盖本组件自己拥有的表：业务表的 schema 由 SQL 迁移脚本维护，
+// 交给 AutoMigrate 会按模型标签改写线上结构。
+func (s *GORMStore) Migrate(ctx context.Context) error {
+	if err := s.db.WithContext(ctx).AutoMigrate(&Record{}); err != nil {
+		return fmt.Errorf("outbox: migrate: %w", err)
+	}
+	return nil
+}
+
 // Ping 校验 outbox 表可用；失败通常意味着迁移脚本尚未执行。
 func (s *GORMStore) Ping(ctx context.Context) error {
 	if _, err := s.Stats(ctx); err != nil {
@@ -55,7 +69,7 @@ func (s *GORMStore) Ping(ctx context.Context) error {
 	return nil
 }
 
-// Enqueue 在调用方事务内写入 outbox。
+// Enqueue 写入一条待发布消息。
 func (s *GORMStore) Enqueue(ctx context.Context, tx *gorm.DB, msg mqx.Message) error {
 	if tx == nil {
 		return fmt.Errorf("outbox: transaction is required")

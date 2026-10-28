@@ -7,10 +7,9 @@ package server
 import (
 	"context"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/discussionservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/discussionservice"
 )
 
 type DiscussionServiceServer struct {
@@ -132,10 +131,10 @@ func (s *DiscussionServiceServer) LikeComment(ctx context.Context, in *discussio
 	return l.LikeComment(in)
 }
 
-// 查询用户点赞的评论
-func (s *DiscussionServiceServer) GetUserLikeComment(ctx context.Context, in *discussionrpc.GetUserLikeCommentRequest) (*discussionrpc.GetUserLikeCommentResponse, error) {
-	l := discussionservicelogic.NewGetUserLikeCommentLogic(ctx, s.svcCtx)
-	return l.GetUserLikeComment(in)
+// 取消点赞评论
+func (s *DiscussionServiceServer) UnlikeComment(ctx context.Context, in *discussionrpc.LikeCommentRequest) (*discussionrpc.LikeCommentResponse, error) {
+	l := discussionservicelogic.NewUnlikeCommentLogic(ctx, s.svcCtx)
+	return l.UnlikeComment(in)
 }
 
 // 分页查询说说列表
@@ -174,8 +173,8 @@ func (s *DiscussionServiceServer) LikeTalk(ctx context.Context, in *discussionrp
 	return l.LikeTalk(in)
 }
 
-// 查询用户点赞的说说
-func (s *DiscussionServiceServer) GetUserLikeTalk(ctx context.Context, in *discussionrpc.GetUserLikeTalkRequest) (*discussionrpc.GetUserLikeTalkResponse, error) {
-	l := discussionservicelogic.NewGetUserLikeTalkLogic(ctx, s.svcCtx)
-	return l.GetUserLikeTalk(in)
+// 取消点赞说说
+func (s *DiscussionServiceServer) UnlikeTalk(ctx context.Context, in *discussionrpc.LikeTalkRequest) (*discussionrpc.LikeTalkResponse, error) {
+	l := discussionservicelogic.NewUnlikeTalkLogic(ctx, s.svcCtx)
+	return l.UnlikeTalk(in)
 }

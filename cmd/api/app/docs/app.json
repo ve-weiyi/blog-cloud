@@ -571,7 +571,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文章"
+        ],
+        "summary": "取消点赞文章",
+        "operationId": "content/ArticleUnlikeArticle",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -1716,7 +1768,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "评论"
+        ],
+        "summary": "取消点赞评论",
+        "operationId": "discussion/CommentUnlikeComment",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -2158,49 +2262,6 @@
                 },
                 "data": {
                   "$ref": "#/definitions/DeactivateAccountResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/me/likes": {
-      "get": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "个人中心"
-        ],
-        "summary": "获取用户点赞集合",
-        "operationId": "account/MeGetMeLike",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetMeLikeResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -2909,7 +2970,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "说说"
+        ],
+        "summary": "取消点赞说说",
+        "operationId": "discussion/TalkUnlikeTalk",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -3044,6 +3157,7 @@
         "tag_name_list",
         "like_count",
         "view_count",
+        "liked",
         "author",
         "last_article",
         "next_article",
@@ -3111,6 +3225,7 @@
             "article_title",
             "like_count",
             "view_count",
+            "liked",
             "created_at"
           ],
           "properties": {
@@ -3129,6 +3244,10 @@
             "like_count": {
               "type": "integer"
             },
+            "liked": {
+              "description": "当前用户是否已赞",
+              "type": "boolean"
+            },
             "view_count": {
               "type": "integer"
             }
@@ -3137,6 +3256,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "newest_article_list": {
           "type": "array",
@@ -3152,6 +3275,7 @@
             "article_title",
             "like_count",
             "view_count",
+            "liked",
             "created_at"
           ],
           "properties": {
@@ -3169,6 +3293,10 @@
             },
             "like_count": {
               "type": "integer"
+            },
+            "liked": {
+              "description": "当前用户是否已赞",
+              "type": "boolean"
             },
             "view_count": {
               "type": "integer"
@@ -3218,7 +3346,8 @@
         "category_name",
         "tag_name_list",
         "like_count",
-        "view_count"
+        "view_count",
+        "liked"
       ],
       "properties": {
         "article_content": {
@@ -3248,6 +3377,10 @@
         "like_count": {
           "type": "integer"
         },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
+        },
         "original_url": {
           "type": "string"
         },
@@ -3276,6 +3409,7 @@
         "article_title",
         "like_count",
         "view_count",
+        "liked",
         "created_at"
       ],
       "properties": {
@@ -3293,6 +3427,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "view_count": {
           "type": "integer"
@@ -3396,6 +3534,7 @@
         "type",
         "created_at",
         "like_count",
+        "liked",
         "guest_info",
         "user_info",
         "reply_user_info",
@@ -3456,6 +3595,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "parent_id": {
           "type": "integer"
@@ -3677,6 +3820,7 @@
         "type",
         "created_at",
         "like_count",
+        "liked",
         "guest_info",
         "user_info",
         "reply_user_info"
@@ -3729,6 +3873,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "parent_id": {
           "type": "integer"
@@ -4338,40 +4486,6 @@
         }
       }
     },
-    "GetMeLikeReq": {
-      "type": "object"
-    },
-    "GetMeLikeResp": {
-      "type": "object",
-      "required": [
-        "article_like_set",
-        "comment_like_set",
-        "talk_like_set"
-      ],
-      "properties": {
-        "article_like_set": {
-          "description": "文章点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "comment_like_set": {
-          "description": "评论点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "talk_like_set": {
-          "description": "说说点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        }
-      }
-    },
     "GetMeReq": {
       "type": "object"
     },
@@ -4512,6 +4626,21 @@
     },
     "LikeCommentReq": {
       "type": "object"
+    },
+    "LikeResult": {
+      "type": "object",
+      "required": [
+        "liked",
+        "changed"
+      ],
+      "properties": {
+        "changed": {
+          "type": "boolean"
+        },
+        "liked": {
+          "type": "boolean"
+        }
+      }
     },
     "LikeTalkReq": {
       "type": "object"
@@ -5161,6 +5290,7 @@
         "status",
         "like_count",
         "comment_count",
+        "liked",
         "created_at",
         "updated_at",
         "user_info"
@@ -5196,6 +5326,10 @@
         "like_count": {
           "description": "点赞量",
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "status": {
           "description": "状态 1.公开 2.私密",
@@ -5758,7 +5892,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-10-27 10:34:36",
+  "x-date": "2026-10-27 19:02:43",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

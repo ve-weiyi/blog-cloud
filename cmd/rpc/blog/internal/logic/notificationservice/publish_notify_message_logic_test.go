@@ -8,7 +8,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/model"

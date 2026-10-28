@@ -2,89 +2,128 @@ package likes
 
 import (
 	"context"
-	"errors"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/blog-cloud/model"
 )
 
-// fakeLikeModel 只实现 Apply 用到的方法，其余由内嵌接口兜底。
-type fakeLikeModel struct {
-	model.TLikeModel
-	rows map[string]bool
-}
+func newTestDeps(t *testing.T) (Deps, sqlmock.Sqlmock) {
+	t.Helper()
 
-func (f *fakeLikeModel) key(targetType, targetID int64, userID string) string {
-	return string(rune(targetType)) + ":" + string(rune(targetID)) + ":" + userID
-}
-
-func (f *fakeLikeModel) FindOneByTargetTypeTargetIdUserId(_ context.Context, targetType, targetID int64, userID string) (*model.TLike, error) {
-	if f.rows[f.key(targetType, targetID, userID)] {
-		return &model.TLike{}, nil
+	sqlDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("sqlmock: %v", err)
 	}
-	return nil, gorm.ErrRecordNotFound
+	t.Cleanup(func() { _ = sqlDB.Close() })
+
+	db, err := gorm.Open(mysql.New(mysql.Config{Conn: sqlDB, SkipInitializeWithVersion: true}), &gorm.Config{
+		SkipDefaultTransaction: true,
+		TranslateError:         true,
+	})
+	if err != nil {
+		t.Fatalf("gorm.Open: %v", err)
+	}
+	return Deps{DB: db, Likes: model.NewTLikeModel(db)}, mock
 }
 
-func (f *fakeLikeModel) Insert(_ context.Context, in *model.TLike) (int64, error) {
-	f.rows[f.key(in.TargetType, in.TargetId, in.UserId)] = true
-	return 1, nil
-}
-
-func (f *fakeLikeModel) DeleteBatch(_ context.Context, _ string, args ...interface{}) (int64, error) {
-	f.rows[f.key(args[0].(int64), args[1].(int64), args[2].(string))] = false
-	return 1, nil
-}
-
-func TestApplyConverges(t *testing.T) {
-	ctx := context.Background()
+func TestLikeReportsChangeFromAffectedRows(t *testing.T) {
+	const insert = "INSERT INTO `t_like` .* ON DUPLICATE KEY UPDATE"
 
 	cases := []struct {
-		name      string
-		existing  bool
-		wantLike  bool
-		wantDelta int64
+		name        string
+		affected    int64
+		wantChanged bool
 	}{
-		{"未赞时点赞", false, true, 1},
-		{"重复点赞不再计数", true, true, 0},
-		{"已赞时取消", true, false, -1},
-		{"重复取消不再计数", false, false, 0},
+		{"首次点赞", 1, true},
+		{"重复点赞", 0, false},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			m := &fakeLikeModel{rows: map[string]bool{}}
-			if c.existing {
-				m.rows[m.key(1, 10, "u1")] = true
-			}
+			deps, mock := newTestDeps(t)
+			mock.ExpectExec(insert).WillReturnResult(sqlmock.NewResult(1, c.affected))
 
-			delta, err := Apply(ctx, m, 1, 10, "u1", c.wantLike)
+			changed, err := Like(context.Background(), deps, 1, 10, "u1")
 			if err != nil {
-				t.Fatalf("Apply: %v", err)
+				t.Fatalf("Like: %v", err)
 			}
-			if delta != c.wantDelta {
-				t.Fatalf("delta = %d, want %d", delta, c.wantDelta)
+			if changed != c.wantChanged {
+				t.Fatalf("changed = %v, want %v", changed, c.wantChanged)
 			}
-			if got := m.rows[m.key(1, 10, "u1")]; got != c.wantLike {
-				t.Fatalf("最终状态 = %v, want %v", got, c.wantLike)
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}
+}
 
-	// 查询失败不能被当成「不存在」，否则会把重复点赞计成新增
-	broken := &brokenLikeModel{}
-	if _, err := Apply(ctx, broken, 1, 10, "u1", true); !errors.Is(err, errBoom) {
-		t.Fatalf("查询失败时 err = %v, want %v", err, errBoom)
+func TestUnlikeReportsChangeFromAffectedRows(t *testing.T) {
+	const del = "DELETE FROM `t_like` WHERE target_type = \\? AND target_id = \\? AND user_id = \\?"
+
+	cases := []struct {
+		name        string
+		affected    int64
+		wantChanged bool
+	}{
+		{"确实取消", 1, true},
+		{"本来没赞", 0, false},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			deps, mock := newTestDeps(t)
+			mock.ExpectExec(del).WithArgs(1, 10, "u1").WillReturnResult(sqlmock.NewResult(0, c.affected))
+
+			changed, err := Unlike(context.Background(), deps, 1, 10, "u1")
+			if err != nil {
+				t.Fatalf("Unlike: %v", err)
+			}
+			if changed != c.wantChanged {
+				t.Fatalf("changed = %v, want %v", changed, c.wantChanged)
+			}
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
 
-var errBoom = errors.New("boom")
+func TestLikedMapsHitTargets(t *testing.T) {
+	deps, mock := newTestDeps(t)
+	mock.ExpectQuery("SELECT \\* FROM `t_like` WHERE user_id = \\? AND target_type = \\? AND target_id IN").
+		WillReturnRows(sqlmock.NewRows([]string{"id", "target_type", "target_id", "user_id"}).
+			AddRow(1, 1, 10, "u1").
+			AddRow(2, 1, 12, "u1"))
 
-type brokenLikeModel struct {
-	model.TLikeModel
+	got, err := Liked(context.Background(), deps, 1, "u1", []int64{10, 11, 12})
+	if err != nil {
+		t.Fatalf("Liked: %v", err)
+	}
+	if !got[10] || got[11] || !got[12] {
+		t.Fatalf("Liked() = %v, want {10:true, 12:true}", got)
+	}
+
+	// 未登录不查库：再来一次也不会有新的期望被消耗
+	got, err = Liked(context.Background(), deps, 1, "", []int64{10})
+	if err != nil || len(got) != 0 {
+		t.Fatalf("Liked() = %v, %v; want empty", got, err)
+	}
 }
 
-func (b *brokenLikeModel) FindOneByTargetTypeTargetIdUserId(context.Context, int64, int64, string) (*model.TLike, error) {
-	return nil, errBoom
+func TestCountsGroupsByTarget(t *testing.T) {
+	deps, mock := newTestDeps(t)
+	mock.ExpectQuery("SELECT target_id, COUNT\\(\\*\\) AS total FROM `t_like` WHERE target_type = \\? AND target_id IN").
+		WillReturnRows(sqlmock.NewRows([]string{"target_id", "total"}).AddRow(10, 3).AddRow(12, 1))
+
+	got, err := Counts(context.Background(), deps, 1, []int64{10, 11, 12})
+	if err != nil {
+		t.Fatalf("Counts: %v", err)
+	}
+	if got[10] != 3 || got[12] != 1 || got[11] != 0 {
+		t.Fatalf("Counts() = %v, want {10:3, 12:1}", got)
+	}
 }

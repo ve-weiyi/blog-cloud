@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -19,8 +18,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/job"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/mqlogic"
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/consumer"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/accessrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/chatrpc"
@@ -170,14 +169,13 @@ func main() {
 	s.Start()
 }
 
-// startOutboxRelay 构造 outbox relay；发布器缺失或 outbox 表不可用时返回错误。
+// startOutboxRelay 先确保 outbox 表存在，再构造 relay。
 func startOutboxRelay(svcCtx *svc.ServiceContext) (*outbox.Relay, error) {
-	if svcCtx.MQ == nil || svcCtx.MQ.Publisher == nil {
-		return nil, errors.New("mq publisher is unavailable")
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
+	if err := svcCtx.Outbox.Migrate(ctx); err != nil {
+		return nil, err
+	}
 	if err := svcCtx.Outbox.Ping(ctx); err != nil {
 		return nil, err
 	}
@@ -188,17 +186,12 @@ func startOutboxRelay(svcCtx *svc.ServiceContext) (*outbox.Relay, error) {
 // startMQ 注册事件处理器并启动通知域与审计域的订阅。
 // 返回通知域订阅是否全部就绪；未就绪时不启动 outbox relay，避免消息被无绑定的 exchange 丢弃。
 func startMQ(svcCtx *svc.ServiceContext) bool {
-	if svcCtx.MQ == nil || svcCtx.MQ.Runtime == nil {
-		logx.Error("[mq] runtime unavailable, consumers disabled")
-		return false
-	}
-
 	router, err := svcCtx.MQ.Runtime.NewRouter()
 	if err != nil {
 		logx.Errorf("[mq] create router: %v", err)
 		return false
 	}
-	if err := mqlogic.Register(router, svcCtx); err != nil {
+	if err := consumer.Register(router, svcCtx); err != nil {
 		// 注册失败意味着处理器缺失：宁可不启动订阅，也不要让该事件在运行期
 		// 全部按失败策略处理（死信或丢弃）。
 		logx.Errorf("[mq] register handlers: %v", err)

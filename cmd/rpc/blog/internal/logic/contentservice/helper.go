@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/likes"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 	"github.com/ve-weiyi/blog-cloud/infra/store/queryx"
 	"github.com/ve-weiyi/blog-cloud/model"
 
@@ -129,6 +130,10 @@ func (h *ArticleHelper) convertArticleOut(records []*model.TArticle) ([]*content
 	if err != nil {
 		return nil, err
 	}
+	lkm, lcm, err := h.getLikeStats(articleIDs(records))
+	if err != nil {
+		return nil, err
+	}
 
 	var list []*contentrpc.Article
 	for _, entity := range records {
@@ -146,8 +151,9 @@ func (h *ArticleHelper) convertArticleOut(records []*model.TArticle) ([]*content
 			Status:         entity.Status,
 			CreatedAt:      entity.CreatedAt.UnixMilli(),
 			UpdatedAt:      entity.UpdatedAt.UnixMilli(),
-			LikeCount:      entity.LikeCount,
+			LikeCount:      lcm[entity.Id],
 			ViewCount:      vcm[entity.Id],
+			Liked:          lkm[entity.Id],
 		}
 		if v, ok := acm[entity.Id]; ok {
 			m.Category = &contentrpc.ArticleCategory{
@@ -174,6 +180,10 @@ func (h *ArticleHelper) convertArticlePreviewOuts(records []*model.TArticle) ([]
 	if err != nil {
 		return nil, err
 	}
+	lkm, lcm, err := h.getLikeStats(articleIDs(records))
+	if err != nil {
+		return nil, err
+	}
 
 	list := make([]*contentrpc.ArticlePreview, 0, len(records))
 	for _, record := range records {
@@ -182,22 +192,37 @@ func (h *ArticleHelper) convertArticlePreviewOuts(records []*model.TArticle) ([]
 			ArticleCover: record.ArticleCover,
 			ArticleTitle: record.ArticleTitle,
 			CreatedAt:    record.CreatedAt.UnixMilli(),
-			LikeCount:    record.LikeCount,
+			LikeCount:    lcm[record.Id],
 			ViewCount:    vcm[record.Id],
+			Liked:        lkm[record.Id],
 		})
 	}
 	return list, nil
 }
 
-func (h *ArticleHelper) convertArticlePreviewOut(record *model.TArticle) *contentrpc.ArticlePreview {
-	return &contentrpc.ArticlePreview{
-		Id:           record.Id,
-		ArticleCover: record.ArticleCover,
-		ArticleTitle: record.ArticleTitle,
-		CreatedAt:    record.CreatedAt.UnixMilli(),
-		LikeCount:    record.LikeCount,
-		ViewCount:    h.getArticleViewCount(record.Id),
+// articleIDs 提取记录 ID，供批量查询使用。
+func articleIDs(records []*model.TArticle) []int64 {
+	ids := make([]int64, 0, len(records))
+	for _, record := range records {
+		ids = append(ids, record.Id)
 	}
+	return ids
+}
+
+// getLikeStats 批量取当前用户的点赞状态与各文章的点赞数。
+func (h *ArticleHelper) getLikeStats(ids []int64) (liked map[int64]bool, counts map[int64]int64, err error) {
+	uid, _ := metax.GetUserIdFromCtx(h.ctx)
+	deps := h.svcCtx.LikeDeps()
+
+	liked, err = likes.Liked(h.ctx, deps, enums.LikeTargetArticle, uid, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+	counts, err = likes.Counts(h.ctx, deps, enums.LikeTargetArticle, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+	return liked, counts, nil
 }
 
 func (h *ArticleHelper) findCategoryGroupArticle(list []*model.TArticle) (map[int64]*model.TCategory, error) {
@@ -317,27 +342,6 @@ func (h *ArticleHelper) findOrAddTags(tx *gorm.DB, names []string) ([]int64, err
 		ids = append(ids, id)
 	}
 	return ids, nil
-}
-
-func (h *ArticleHelper) getArticleViewCount(articleId int64) int64 {
-	id := cast.ToString(articleId)
-	key := cachekey.ArticleViewCountKey
-	result, err := h.svcCtx.Redis.ZScore(h.ctx, key, id).Result()
-	if err != nil {
-		article, err := h.svcCtx.TArticleModel.FindById(h.ctx, articleId)
-		if err != nil {
-			return 0
-		}
-		// 仅在成员不存在时回种：并发读者各自 ZIncrBy 会把浏览量翻倍
-		if err := h.svcCtx.Redis.ZAddNX(h.ctx, key, redis.Z{
-			Score:  float64(article.ViewCount),
-			Member: id,
-		}).Err(); err != nil {
-			h.Errorf("getArticleViewCount ZAddNX error: %v", err)
-		}
-		return article.ViewCount
-	}
-	return int64(result)
 }
 
 // getArticleViewCounts 批量读取浏览量：Redis pipeline 一次取回，缺失的成员用 DB 值回种。

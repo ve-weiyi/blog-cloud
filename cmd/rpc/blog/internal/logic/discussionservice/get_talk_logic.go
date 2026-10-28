@@ -32,5 +32,10 @@ func (l *GetTalkLogic) GetTalk(in *discussionrpc.GetTalkRequest) (*discussionrpc
 	if err != nil {
 		return nil, err
 	}
-	return &discussionrpc.GetTalkResponse{Talk: convertTalkOut(entity)}, nil
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetTalk, []int64{entity.Id})
+	if err != nil {
+		return nil, err
+	}
+
+	return &discussionrpc.GetTalkResponse{Talk: convertTalkOut(entity, lm, lcm)}, nil
 }

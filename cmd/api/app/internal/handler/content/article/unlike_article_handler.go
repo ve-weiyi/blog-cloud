@@ -1,27 +1,27 @@
-package me
+package article
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/logic/account/me"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/logic/content/article"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/infra/http/responsex"
 )
 
-// 获取用户点赞集合
-func GetMeLikeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// 取消点赞文章
+func UnlikeArticleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GetMeLikeReq
+		var req types.LikeArticleReq
 		if err := httpx.Parse(r, &req); err != nil {
 			responsex.RequestInvalid(r, w, err)
 			return
 		}
 
-		l := me.NewGetMeLikeLogic(r.Context(), svcCtx)
-		resp, err := l.GetMeLike(&req)
+		l := article.NewUnlikeArticleLogic(r.Context(), svcCtx)
+		resp, err := l.UnlikeArticle(&req)
 		responsex.Response(r, w, resp, err)
 	}
 }

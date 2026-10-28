@@ -1,4 +1,4 @@
-package mqlogic
+package consumer
 
 import (
 	"context"

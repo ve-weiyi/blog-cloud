@@ -178,12 +178,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: accountme.DeactivateAccountHandler(serverCtx),
 				},
 				{
-					// 获取用户点赞集合
-					Method:  http.MethodGet,
-					Path:    "/me/likes",
-					Handler: accountme.GetMeLikeHandler(serverCtx),
-				},
-				{
 					// 获取当前用户信息
 					Method:  http.MethodGet,
 					Path:    "/me/profile",
@@ -286,6 +280,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/articles/:id/like",
 					Handler: contentarticle.LikeArticleHandler(serverCtx),
 				},
+				{
+					// 取消点赞文章
+					Method:  http.MethodDelete,
+					Path:    "/articles/:id/like",
+					Handler: contentarticle.UnlikeArticleHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -361,6 +361,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/comments/:id/like",
 					Handler: discussioncomment.LikeCommentHandler(serverCtx),
 				},
+				{
+					// 取消点赞评论
+					Method:  http.MethodDelete,
+					Path:    "/comments/:id/like",
+					Handler: discussioncomment.UnlikeCommentHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -420,6 +426,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/talks/:id/like",
 					Handler: discussiontalk.LikeTalkHandler(serverCtx),
+				},
+				{
+					// 取消点赞说说
+					Method:  http.MethodDelete,
+					Path:    "/talks/:id/like",
+					Handler: discussiontalk.UnlikeTalkHandler(serverCtx),
 				},
 			}...,
 		),

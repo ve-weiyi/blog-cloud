@@ -37,14 +37,14 @@ const (
 	DiscussionService_BatchPatchComments_FullMethodName          = "/blog.discussion.v1.DiscussionService/BatchPatchComments"
 	DiscussionService_GetCommentReplyCount_FullMethodName        = "/blog.discussion.v1.DiscussionService/GetCommentReplyCount"
 	DiscussionService_LikeComment_FullMethodName                 = "/blog.discussion.v1.DiscussionService/LikeComment"
-	DiscussionService_GetUserLikeComment_FullMethodName          = "/blog.discussion.v1.DiscussionService/GetUserLikeComment"
+	DiscussionService_UnlikeComment_FullMethodName               = "/blog.discussion.v1.DiscussionService/UnlikeComment"
 	DiscussionService_ListTalks_FullMethodName                   = "/blog.discussion.v1.DiscussionService/ListTalks"
 	DiscussionService_GetTalk_FullMethodName                     = "/blog.discussion.v1.DiscussionService/GetTalk"
 	DiscussionService_CreateTalk_FullMethodName                  = "/blog.discussion.v1.DiscussionService/CreateTalk"
 	DiscussionService_UpdateTalk_FullMethodName                  = "/blog.discussion.v1.DiscussionService/UpdateTalk"
 	DiscussionService_BatchDeleteTalks_FullMethodName            = "/blog.discussion.v1.DiscussionService/BatchDeleteTalks"
 	DiscussionService_LikeTalk_FullMethodName                    = "/blog.discussion.v1.DiscussionService/LikeTalk"
-	DiscussionService_GetUserLikeTalk_FullMethodName             = "/blog.discussion.v1.DiscussionService/GetUserLikeTalk"
+	DiscussionService_UnlikeTalk_FullMethodName                  = "/blog.discussion.v1.DiscussionService/UnlikeTalk"
 )
 
 // DiscussionServiceClient is the client API for DiscussionService service.
@@ -87,8 +87,8 @@ type DiscussionServiceClient interface {
 	GetCommentReplyCount(ctx context.Context, in *GetCommentReplyCountRequest, opts ...grpc.CallOption) (*GetCommentReplyCountResponse, error)
 	// 点赞评论
 	LikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error)
-	// 查询用户点赞的评论
-	GetUserLikeComment(ctx context.Context, in *GetUserLikeCommentRequest, opts ...grpc.CallOption) (*GetUserLikeCommentResponse, error)
+	// 取消点赞评论
+	UnlikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error)
 	// 分页查询说说列表
 	ListTalks(ctx context.Context, in *ListTalksRequest, opts ...grpc.CallOption) (*ListTalksResponse, error)
 	// 查询说说详情
@@ -101,8 +101,8 @@ type DiscussionServiceClient interface {
 	BatchDeleteTalks(ctx context.Context, in *BatchDeleteTalksRequest, opts ...grpc.CallOption) (*BatchDeleteTalksResponse, error)
 	// 点赞说说
 	LikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error)
-	// 查询用户点赞的说说
-	GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error)
+	// 取消点赞说说
+	UnlikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error)
 }
 
 type discussionServiceClient struct {
@@ -275,9 +275,9 @@ func (c *discussionServiceClient) LikeComment(ctx context.Context, in *LikeComme
 	return out, nil
 }
 
-func (c *discussionServiceClient) GetUserLikeComment(ctx context.Context, in *GetUserLikeCommentRequest, opts ...grpc.CallOption) (*GetUserLikeCommentResponse, error) {
-	out := new(GetUserLikeCommentResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_GetUserLikeComment_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) UnlikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error) {
+	out := new(LikeCommentResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_UnlikeComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -338,9 +338,9 @@ func (c *discussionServiceClient) LikeTalk(ctx context.Context, in *LikeTalkRequ
 	return out, nil
 }
 
-func (c *discussionServiceClient) GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error) {
-	out := new(GetUserLikeTalkResponse)
-	err := c.cc.Invoke(ctx, DiscussionService_GetUserLikeTalk_FullMethodName, in, out, opts...)
+func (c *discussionServiceClient) UnlikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error) {
+	out := new(LikeTalkResponse)
+	err := c.cc.Invoke(ctx, DiscussionService_UnlikeTalk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -387,8 +387,8 @@ type DiscussionServiceServer interface {
 	GetCommentReplyCount(context.Context, *GetCommentReplyCountRequest) (*GetCommentReplyCountResponse, error)
 	// 点赞评论
 	LikeComment(context.Context, *LikeCommentRequest) (*LikeCommentResponse, error)
-	// 查询用户点赞的评论
-	GetUserLikeComment(context.Context, *GetUserLikeCommentRequest) (*GetUserLikeCommentResponse, error)
+	// 取消点赞评论
+	UnlikeComment(context.Context, *LikeCommentRequest) (*LikeCommentResponse, error)
 	// 分页查询说说列表
 	ListTalks(context.Context, *ListTalksRequest) (*ListTalksResponse, error)
 	// 查询说说详情
@@ -401,8 +401,8 @@ type DiscussionServiceServer interface {
 	BatchDeleteTalks(context.Context, *BatchDeleteTalksRequest) (*BatchDeleteTalksResponse, error)
 	// 点赞说说
 	LikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error)
-	// 查询用户点赞的说说
-	GetUserLikeTalk(context.Context, *GetUserLikeTalkRequest) (*GetUserLikeTalkResponse, error)
+	// 取消点赞说说
+	UnlikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error)
 	mustEmbedUnimplementedDiscussionServiceServer()
 }
 
@@ -464,8 +464,8 @@ func (UnimplementedDiscussionServiceServer) GetCommentReplyCount(context.Context
 func (UnimplementedDiscussionServiceServer) LikeComment(context.Context, *LikeCommentRequest) (*LikeCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeComment not implemented")
 }
-func (UnimplementedDiscussionServiceServer) GetUserLikeComment(context.Context, *GetUserLikeCommentRequest) (*GetUserLikeCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserLikeComment not implemented")
+func (UnimplementedDiscussionServiceServer) UnlikeComment(context.Context, *LikeCommentRequest) (*LikeCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeComment not implemented")
 }
 func (UnimplementedDiscussionServiceServer) ListTalks(context.Context, *ListTalksRequest) (*ListTalksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTalks not implemented")
@@ -485,8 +485,8 @@ func (UnimplementedDiscussionServiceServer) BatchDeleteTalks(context.Context, *B
 func (UnimplementedDiscussionServiceServer) LikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeTalk not implemented")
 }
-func (UnimplementedDiscussionServiceServer) GetUserLikeTalk(context.Context, *GetUserLikeTalkRequest) (*GetUserLikeTalkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserLikeTalk not implemented")
+func (UnimplementedDiscussionServiceServer) UnlikeTalk(context.Context, *LikeTalkRequest) (*LikeTalkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeTalk not implemented")
 }
 func (UnimplementedDiscussionServiceServer) mustEmbedUnimplementedDiscussionServiceServer() {}
 
@@ -825,20 +825,20 @@ func _DiscussionService_LikeComment_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_GetUserLikeComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserLikeCommentRequest)
+func _DiscussionService_UnlikeComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).GetUserLikeComment(ctx, in)
+		return srv.(DiscussionServiceServer).UnlikeComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_GetUserLikeComment_FullMethodName,
+		FullMethod: DiscussionService_UnlikeComment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).GetUserLikeComment(ctx, req.(*GetUserLikeCommentRequest))
+		return srv.(DiscussionServiceServer).UnlikeComment(ctx, req.(*LikeCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -951,20 +951,20 @@ func _DiscussionService_LikeTalk_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DiscussionService_GetUserLikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserLikeTalkRequest)
+func _DiscussionService_UnlikeTalk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeTalkRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DiscussionServiceServer).GetUserLikeTalk(ctx, in)
+		return srv.(DiscussionServiceServer).UnlikeTalk(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DiscussionService_GetUserLikeTalk_FullMethodName,
+		FullMethod: DiscussionService_UnlikeTalk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DiscussionServiceServer).GetUserLikeTalk(ctx, req.(*GetUserLikeTalkRequest))
+		return srv.(DiscussionServiceServer).UnlikeTalk(ctx, req.(*LikeTalkRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1049,8 +1049,8 @@ var DiscussionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DiscussionService_LikeComment_Handler,
 		},
 		{
-			MethodName: "GetUserLikeComment",
-			Handler:    _DiscussionService_GetUserLikeComment_Handler,
+			MethodName: "UnlikeComment",
+			Handler:    _DiscussionService_UnlikeComment_Handler,
 		},
 		{
 			MethodName: "ListTalks",
@@ -1077,8 +1077,8 @@ var DiscussionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DiscussionService_LikeTalk_Handler,
 		},
 		{
-			MethodName: "GetUserLikeTalk",
-			Handler:    _DiscussionService_GetUserLikeTalk_Handler,
+			MethodName: "UnlikeTalk",
+			Handler:    _DiscussionService_UnlikeTalk_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

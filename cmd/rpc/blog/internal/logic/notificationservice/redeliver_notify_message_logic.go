@@ -44,6 +44,7 @@ func (l *RedeliverNotifyMessageLogic) RedeliverNotifyMessage(in *notificationrpc
 	if err != nil {
 		return nil, err
 	}
+	// 重投没有其他写入需要原子化，落库本身就是本次动作的全部副作用
 	if err := l.svcCtx.Outbox.Enqueue(l.ctx, l.svcCtx.GormDB, event); err != nil {
 		return nil, err
 	}

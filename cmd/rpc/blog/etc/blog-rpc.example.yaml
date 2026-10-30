@@ -58,3 +58,11 @@ AppOAuthConf:
     client_id: xxx
     client_secret: CHANGE_ME
     redirect_uri: xxx
+
+# 通知配置。退订令牌的签名密钥：至少 32 字节，短于此（含本占位值）按未配置处理，
+# 退订链接不签发、退订接口一律拒绝。生成：openssl rand -base64 48
+# 注意键名是下划线形式，须与结构体的 json tag 一致
+NotifyConf:
+  unsubscribe_secret: CHANGE_ME_RUN_openssl_rand_base64_48
+  # 读者端站点地址（前端页面域名），用于拼退订链接
+  site_url: https://example.com

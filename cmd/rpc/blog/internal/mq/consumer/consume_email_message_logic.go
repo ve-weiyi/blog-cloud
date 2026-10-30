@@ -8,19 +8,18 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/mailtemplate"
 	"github.com/ve-weiyi/vkit/adapter/emailx"
-	eventx "github.com/ve-weiyi/vkit/adapter/mqx/event"
+	mqx "github.com/ve-weiyi/vkit/adapter/mqx"
 )
 
-// ConsumeEmailMessageLogic 邮件消息消费者逻辑
-// 监听邮件消息，发送邮件并记录发送状态
+// ConsumeEmailMessageLogic 邮件消息消费者：无状态发送，不写投递记录。
+//
+// 验证码的权威状态在 Redis，重发由用户触发；这里失败只需按可重试性交给 mqx。
 type ConsumeEmailMessageLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// NewConsumeEmailMessageLogic 创建邮件消息消费者逻辑
 func NewConsumeEmailMessageLogic(svcCtx *svc.ServiceContext) *ConsumeEmailMessageLogic {
 	return &ConsumeEmailMessageLogic{svcCtx: svcCtx}
 }
@@ -29,77 +28,43 @@ func NewConsumeEmailMessageLogic(svcCtx *svc.ServiceContext) *ConsumeEmailMessag
 func (l *ConsumeEmailMessageLogic) Consume(ctx context.Context, event *mq.EmailMessageEvent) error {
 	logx.WithContext(ctx).Infof("收到邮件消息: email=%s, scene=%s", event.Email, event.Scene)
 
-	return (&delivery{
-		records: l.svcCtx.TNotifyRecordModel,
-		ch:      &emailChannel{svcCtx: l.svcCtx, event: event},
-		bizID:   eventx.EventIDFrom(ctx),
-	}).run(ctx)
+	ch := &emailChannel{svcCtx: l.svcCtx, event: event}
+	if err := ch.resolve(ctx); err != nil {
+		return err
+	}
+	if err := ch.send(ctx); err != nil {
+		if !ch.retryable(err) {
+			// 邮箱不存在、服务未开通这类错误重试只会进死信，直接确认
+			return mqx.Permanent(err)
+		}
+		return err
+	}
+	return nil
 }
 
-// emailChannel 把邮件事件适配到统一投递流程。
+// emailChannel 把邮件事件适配到发送流程。
 type emailChannel struct {
 	svcCtx *svc.ServiceContext
 	event  *mq.EmailMessageEvent
 }
 
-func (c *emailChannel) name() string      { return enums.NotifyChannelEmail }
-func (c *emailChannel) recipient() string { return c.event.Email }
-
 // retryable 把厂商文案判定的「不可重试」翻转成「是否值得重试」。
 func (c *emailChannel) retryable(err error) bool { return !isNonRetryableEmailError(err) }
 
-// resolve 优先使用库里的模板，缺失时回落到内置文案。
-func (c *emailChannel) resolve(ctx context.Context) (string, string, error) {
-	logger := logx.WithContext(ctx)
-
-	tmpl, err := c.svcCtx.TNotifyTemplateModel.FindOne(ctx, "",
-		"scene = ? AND channel = ? AND enabled = ?", c.event.Scene, enums.NotifyChannelEmail, 1)
+// resolve 用代码里的模板渲染，模板缺失或渲染失败都回退到内置文案。
+func (c *emailChannel) resolve(ctx context.Context) error {
+	rendered, err := mailtemplate.CodeEmail(c.event.Scene, c.event.Params["code"], c.event.Params["time"])
 	if err != nil {
-		logger.Infof("未找到邮件模板(scene=%s)，使用默认内容", c.event.Scene)
-		rendered, renderErr := mailtemplate.CodeEmail(c.event.Scene, c.event.Params["code"], c.event.Params["time"])
-		if renderErr != nil {
-			return "", "", renderErr
-		}
-		c.event.Title, _ = mailtemplate.CodeSceneText(c.event.Scene)
-		c.event.Content = rendered
-		return "", rendered, nil
+		return err
 	}
-
-	logger.Infof("使用邮件模板: code=%s, scene=%s", tmpl.Code, tmpl.Scene)
-	if tmpl.Title != "" {
-		c.event.Title = tmpl.Title
-	}
-	if tmpl.Content == "" {
-		return tmpl.Code, c.event.Content, nil
-	}
-
-	title, intro := mailtemplate.CodeSceneText(c.event.Scene)
-	if tmpl.Title != "" {
-		title = tmpl.Title
-	}
-	params := make(map[string]string, len(c.event.Params)+2)
-	for key, value := range c.event.Params {
-		params[key] = value
-	}
-	params["title"] = title
-	params["intro"] = intro
-
-	rendered, renderErr := mailtemplate.Render(tmpl.Content, params)
-	if renderErr != nil {
-		logger.Errorf("渲染邮件模板失败: %v", renderErr)
-		rendered, renderErr = mailtemplate.CodeEmail(c.event.Scene, c.event.Params["code"], c.event.Params["time"])
-		if renderErr != nil {
-			return "", "", renderErr
-		}
-		c.event.Title = title
-	}
+	title, _ := mailtemplate.CodeSceneText(c.event.Scene)
+	c.event.Title = title
 	c.event.Content = rendered
-
-	return tmpl.Code, rendered, nil
+	return nil
 }
 
 // send 投递邮件；标题与正文在 resolve 阶段已写回事件。
-func (c *emailChannel) send(_ context.Context, _, _ string) error {
+func (c *emailChannel) send(_ context.Context) error {
 	return c.svcCtx.EmailDeliver.DeliveryEmail(&emailx.EmailMessage{
 		To:      []string{c.event.Email},
 		CC:      []string{},
@@ -109,14 +74,13 @@ func (c *emailChannel) send(_ context.Context, _, _ string) error {
 }
 
 // isNonRetryableEmailError 判断是否为不可重试的错误。
-// 判定依赖厂商文案：适配层改写错误信息会让它静默失效，退化为重试至死信。
+// 依赖厂商文案：适配层改写错误信息会让它静默失效，退化为重试至死信。
 func isNonRetryableEmailError(err error) bool {
 	if err == nil {
 		return false
 	}
 
 	errMsg := err.Error()
-
 	nonRetryableErrors := []string{
 		"Account is abnormal",
 		"service is not open",
@@ -133,6 +97,5 @@ func isNonRetryableEmailError(err error) bool {
 			return true
 		}
 	}
-
 	return false
 }

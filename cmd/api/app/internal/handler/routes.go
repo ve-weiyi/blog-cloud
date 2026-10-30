@@ -19,6 +19,10 @@ import (
 	discussiontalk "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/discussion/talk"
 	mediaalbum "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/media/album"
 	mediaphoto "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/media/photo"
+	notificationnotify "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/notify"
+	notificationnotify_stream "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/notify_stream"
+	notificationpreference "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/preference"
+	notificationunsubscribe "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/unsubscribe"
 	siteconfig "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/config"
 	sitefriend "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/friend"
 	sitehome "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/home"
@@ -463,6 +467,100 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/albums/:album_id/photos",
 				Handler: mediaphoto.QueryAlbumPhotoListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth},
+			[]rest.Route{
+				{
+					// 获取通知列表（按分组分页）
+					Method:  http.MethodGet,
+					Path:    "/notifications",
+					Handler: notificationnotify.QueryNotificationListHandler(serverCtx),
+				},
+				{
+					// 删除通知
+					Method:  http.MethodPost,
+					Path:    "/notifications/delete",
+					Handler: notificationnotify.DeleteNotificationHandler(serverCtx),
+				},
+				{
+					// 标记通知已读
+					Method:  http.MethodPost,
+					Path:    "/notifications/read",
+					Handler: notificationnotify.ReadNotificationHandler(serverCtx),
+				},
+				{
+					// 全部标记已读
+					Method:  http.MethodPost,
+					Path:    "/notifications/read-all",
+					Handler: notificationnotify.ReadAllNotificationHandler(serverCtx),
+				},
+				{
+					// 获取未读分组数
+					Method:  http.MethodGet,
+					Path:    "/notifications/unread-count",
+					Handler: notificationnotify.GetUnreadCountHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth, serverCtx.NotifyStreamLimit},
+			[]rest.Route{
+				{
+					// 通知实时推送流（SSE）
+					Method:  http.MethodGet,
+					Path:    "/notifications/stream",
+					Handler: notificationnotify_stream.NotificationStreamHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+		rest.WithSSE(),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth},
+			[]rest.Route{
+				{
+					// 获取通知偏好
+					Method:  http.MethodGet,
+					Path:    "/notifications/preferences",
+					Handler: notificationpreference.GetNotifyPreferenceHandler(serverCtx),
+				},
+				{
+					// 更新通知偏好
+					Method:  http.MethodPut,
+					Path:    "/notifications/preferences",
+					Handler: notificationpreference.UpdateNotifyPreferenceHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 校验退订令牌
+				Method:  http.MethodGet,
+				Path:    "/notifications/unsubscribe",
+				Handler: notificationunsubscribe.VerifyUnsubscribeHandler(serverCtx),
+			},
+			{
+				// 执行退订
+				Method:  http.MethodPost,
+				Path:    "/notifications/unsubscribe",
+				Handler: notificationunsubscribe.UnsubscribeHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

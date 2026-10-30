@@ -15,6 +15,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
 
+	"github.com/ve-weiyi/blog-cloud/infra/http/headerx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
 )
 
@@ -66,7 +67,7 @@ func main() {
 		c.RestConf,
 		rest.WithCors("*"),
 	)
-	server.Use(middlewarex.NewCtxMetaMiddleware().Handle)
+	server.Use(middlewarex.NewCtxMetaMiddleware(headerx.AppNameBlogWeb).Handle)
 	server.Use(middlewarex.NewDeviceCookieMiddleware().Handle)
 	server.Use(middlewarex.NewAntiReplyMiddleware().Handle)
 	server.Use(middlewarex.NewDeviceTokenMiddleware().Handle)

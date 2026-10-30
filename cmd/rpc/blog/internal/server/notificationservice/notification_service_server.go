@@ -23,124 +23,142 @@ func NewNotificationServiceServer(svcCtx *svc.ServiceContext) *NotificationServi
 	}
 }
 
-// 分页查询通知模板列表
-func (s *NotificationServiceServer) ListNotifyTemplates(ctx context.Context, in *notificationrpc.ListNotifyTemplatesRequest) (*notificationrpc.ListNotifyTemplatesResponse, error) {
-	l := notificationservicelogic.NewListNotifyTemplatesLogic(ctx, s.svcCtx)
-	return l.ListNotifyTemplates(in)
+// 分页查询公告列表
+func (s *NotificationServiceServer) ListAnnouncements(ctx context.Context, in *notificationrpc.ListAnnouncementsRequest) (*notificationrpc.ListAnnouncementsResponse, error) {
+	l := notificationservicelogic.NewListAnnouncementsLogic(ctx, s.svcCtx)
+	return l.ListAnnouncements(in)
 }
 
-// 查询通知模板详情
-func (s *NotificationServiceServer) GetNotifyTemplate(ctx context.Context, in *notificationrpc.GetNotifyTemplateRequest) (*notificationrpc.GetNotifyTemplateResponse, error) {
-	l := notificationservicelogic.NewGetNotifyTemplateLogic(ctx, s.svcCtx)
-	return l.GetNotifyTemplate(in)
+// 查询公告详情
+func (s *NotificationServiceServer) GetAnnouncement(ctx context.Context, in *notificationrpc.GetAnnouncementRequest) (*notificationrpc.GetAnnouncementResponse, error) {
+	l := notificationservicelogic.NewGetAnnouncementLogic(ctx, s.svcCtx)
+	return l.GetAnnouncement(in)
 }
 
-// 创建通知模板
-func (s *NotificationServiceServer) CreateNotifyTemplate(ctx context.Context, in *notificationrpc.CreateNotifyTemplateRequest) (*notificationrpc.CreateNotifyTemplateResponse, error) {
-	l := notificationservicelogic.NewCreateNotifyTemplateLogic(ctx, s.svcCtx)
-	return l.CreateNotifyTemplate(in)
+// 创建公告
+func (s *NotificationServiceServer) CreateAnnouncement(ctx context.Context, in *notificationrpc.CreateAnnouncementRequest) (*notificationrpc.CreateAnnouncementResponse, error) {
+	l := notificationservicelogic.NewCreateAnnouncementLogic(ctx, s.svcCtx)
+	return l.CreateAnnouncement(in)
 }
 
-// 更新通知模板
-func (s *NotificationServiceServer) UpdateNotifyTemplate(ctx context.Context, in *notificationrpc.UpdateNotifyTemplateRequest) (*notificationrpc.UpdateNotifyTemplateResponse, error) {
-	l := notificationservicelogic.NewUpdateNotifyTemplateLogic(ctx, s.svcCtx)
-	return l.UpdateNotifyTemplate(in)
+// 更新公告
+func (s *NotificationServiceServer) UpdateAnnouncement(ctx context.Context, in *notificationrpc.UpdateAnnouncementRequest) (*notificationrpc.UpdateAnnouncementResponse, error) {
+	l := notificationservicelogic.NewUpdateAnnouncementLogic(ctx, s.svcCtx)
+	return l.UpdateAnnouncement(in)
 }
 
-// 批量删除通知模板
-func (s *NotificationServiceServer) BatchDeleteNotifyTemplates(ctx context.Context, in *notificationrpc.BatchDeleteNotifyTemplatesRequest) (*notificationrpc.BatchDeleteNotifyTemplatesResponse, error) {
-	l := notificationservicelogic.NewBatchDeleteNotifyTemplatesLogic(ctx, s.svcCtx)
-	return l.BatchDeleteNotifyTemplates(in)
+// 批量删除公告（连同派生条目与投递记录）
+func (s *NotificationServiceServer) BatchDeleteAnnouncements(ctx context.Context, in *notificationrpc.BatchDeleteAnnouncementsRequest) (*notificationrpc.BatchDeleteAnnouncementsResponse, error) {
+	l := notificationservicelogic.NewBatchDeleteAnnouncementsLogic(ctx, s.svcCtx)
+	return l.BatchDeleteAnnouncements(in)
 }
 
-// 分页查询通知消息列表
-func (s *NotificationServiceServer) ListNotifyMessages(ctx context.Context, in *notificationrpc.ListNotifyMessagesRequest) (*notificationrpc.ListNotifyMessagesResponse, error) {
-	l := notificationservicelogic.NewListNotifyMessagesLogic(ctx, s.svcCtx)
-	return l.ListNotifyMessages(in)
+// 发布公告
+func (s *NotificationServiceServer) PublishAnnouncement(ctx context.Context, in *notificationrpc.PublishAnnouncementRequest) (*notificationrpc.PublishAnnouncementResponse, error) {
+	l := notificationservicelogic.NewPublishAnnouncementLogic(ctx, s.svcCtx)
+	return l.PublishAnnouncement(in)
 }
 
-// 查询通知消息详情
-func (s *NotificationServiceServer) GetNotifyMessage(ctx context.Context, in *notificationrpc.GetNotifyMessageRequest) (*notificationrpc.GetNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewGetNotifyMessageLogic(ctx, s.svcCtx)
-	return l.GetNotifyMessage(in)
+// 撤回公告
+func (s *NotificationServiceServer) RevokeAnnouncement(ctx context.Context, in *notificationrpc.RevokeAnnouncementRequest) (*notificationrpc.RevokeAnnouncementResponse, error) {
+	l := notificationservicelogic.NewRevokeAnnouncementLogic(ctx, s.svcCtx)
+	return l.RevokeAnnouncement(in)
 }
 
-// 创建通知消息
-func (s *NotificationServiceServer) CreateNotifyMessage(ctx context.Context, in *notificationrpc.CreateNotifyMessageRequest) (*notificationrpc.CreateNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewCreateNotifyMessageLogic(ctx, s.svcCtx)
-	return l.CreateNotifyMessage(in)
+// 分页查询通知事件与扇出进度
+func (s *NotificationServiceServer) ListNotificationEvents(ctx context.Context, in *notificationrpc.ListNotificationEventsRequest) (*notificationrpc.ListNotificationEventsResponse, error) {
+	l := notificationservicelogic.NewListNotificationEventsLogic(ctx, s.svcCtx)
+	return l.ListNotificationEvents(in)
 }
 
-// 更新通知消息
-func (s *NotificationServiceServer) UpdateNotifyMessage(ctx context.Context, in *notificationrpc.UpdateNotifyMessageRequest) (*notificationrpc.UpdateNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewUpdateNotifyMessageLogic(ctx, s.svcCtx)
-	return l.UpdateNotifyMessage(in)
+// 查询停滞的通知事件
+func (s *NotificationServiceServer) ListStalledEvents(ctx context.Context, in *notificationrpc.ListStalledEventsRequest) (*notificationrpc.ListStalledEventsResponse, error) {
+	l := notificationservicelogic.NewListStalledEventsLogic(ctx, s.svcCtx)
+	return l.ListStalledEvents(in)
 }
 
-// 批量删除通知消息
-func (s *NotificationServiceServer) BatchDeleteNotifyMessages(ctx context.Context, in *notificationrpc.BatchDeleteNotifyMessagesRequest) (*notificationrpc.BatchDeleteNotifyMessagesResponse, error) {
-	l := notificationservicelogic.NewBatchDeleteNotifyMessagesLogic(ctx, s.svcCtx)
-	return l.BatchDeleteNotifyMessages(in)
+// 重新扇出事件
+func (s *NotificationServiceServer) RedeliverEvent(ctx context.Context, in *notificationrpc.RedeliverEventRequest) (*notificationrpc.RedeliverEventResponse, error) {
+	l := notificationservicelogic.NewRedeliverEventLogic(ctx, s.svcCtx)
+	return l.RedeliverEvent(in)
 }
 
-// 发布通知消息
-func (s *NotificationServiceServer) PublishNotifyMessage(ctx context.Context, in *notificationrpc.PublishNotifyMessageRequest) (*notificationrpc.PublishNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewPublishNotifyMessageLogic(ctx, s.svcCtx)
-	return l.PublishNotifyMessage(in)
-}
-
-// 撤销通知消息
-func (s *NotificationServiceServer) RevokeNotifyMessage(ctx context.Context, in *notificationrpc.RevokeNotifyMessageRequest) (*notificationrpc.RevokeNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewRevokeNotifyMessageLogic(ctx, s.svcCtx)
-	return l.RevokeNotifyMessage(in)
-}
-
-// 分页查询投递记录列表
-func (s *NotificationServiceServer) ListNotifyRecords(ctx context.Context, in *notificationrpc.ListNotifyRecordsRequest) (*notificationrpc.ListNotifyRecordsResponse, error) {
-	l := notificationservicelogic.NewListNotifyRecordsLogic(ctx, s.svcCtx)
-	return l.ListNotifyRecords(in)
+// 分页查询外部渠道投递记录
+func (s *NotificationServiceServer) ListDeliveries(ctx context.Context, in *notificationrpc.ListDeliveriesRequest) (*notificationrpc.ListDeliveriesResponse, error) {
+	l := notificationservicelogic.NewListDeliveriesLogic(ctx, s.svcCtx)
+	return l.ListDeliveries(in)
 }
 
 // 批量删除投递记录
-func (s *NotificationServiceServer) BatchDeleteNotifyRecords(ctx context.Context, in *notificationrpc.BatchDeleteNotifyRecordsRequest) (*notificationrpc.BatchDeleteNotifyRecordsResponse, error) {
-	l := notificationservicelogic.NewBatchDeleteNotifyRecordsLogic(ctx, s.svcCtx)
-	return l.BatchDeleteNotifyRecords(in)
+func (s *NotificationServiceServer) BatchDeleteDeliveries(ctx context.Context, in *notificationrpc.BatchDeleteDeliveriesRequest) (*notificationrpc.BatchDeleteDeliveriesResponse, error) {
+	l := notificationservicelogic.NewBatchDeleteDeliveriesLogic(ctx, s.svcCtx)
+	return l.BatchDeleteDeliveries(in)
 }
 
-// 查询已发布但未生成投递记录的消息
-func (s *NotificationServiceServer) ListUndeliveredNotifyMessages(ctx context.Context, in *notificationrpc.ListUndeliveredNotifyMessagesRequest) (*notificationrpc.ListUndeliveredNotifyMessagesResponse, error) {
-	l := notificationservicelogic.NewListUndeliveredNotifyMessagesLogic(ctx, s.svcCtx)
-	return l.ListUndeliveredNotifyMessages(in)
+// 按投递记录重发
+func (s *NotificationServiceServer) RedeliverDelivery(ctx context.Context, in *notificationrpc.RedeliverDeliveryRequest) (*notificationrpc.RedeliverDeliveryResponse, error) {
+	l := notificationservicelogic.NewRedeliverDeliveryLogic(ctx, s.svcCtx)
+	return l.RedeliverDelivery(in)
 }
 
-// 重新投递指定消息
-func (s *NotificationServiceServer) RedeliverNotifyMessage(ctx context.Context, in *notificationrpc.RedeliverNotifyMessageRequest) (*notificationrpc.RedeliverNotifyMessageResponse, error) {
-	l := notificationservicelogic.NewRedeliverNotifyMessageLogic(ctx, s.svcCtx)
-	return l.RedeliverNotifyMessage(in)
+// 分页查询收件箱（按分组）
+func (s *NotificationServiceServer) ListNotifications(ctx context.Context, in *notificationrpc.ListNotificationsRequest) (*notificationrpc.ListNotificationsResponse, error) {
+	l := notificationservicelogic.NewListNotificationsLogic(ctx, s.svcCtx)
+	return l.ListNotifications(in)
 }
 
-// 查询用户 inbox 投递列表
-func (s *NotificationServiceServer) ListUserInboxRecords(ctx context.Context, in *notificationrpc.ListUserInboxRecordsRequest) (*notificationrpc.ListUserInboxRecordsResponse, error) {
-	l := notificationservicelogic.NewListUserInboxRecordsLogic(ctx, s.svcCtx)
-	return l.ListUserInboxRecords(in)
+// 查询未读分组数
+func (s *NotificationServiceServer) CountUnreadNotifications(ctx context.Context, in *notificationrpc.CountUnreadNotificationsRequest) (*notificationrpc.CountUnreadNotificationsResponse, error) {
+	l := notificationservicelogic.NewCountUnreadNotificationsLogic(ctx, s.svcCtx)
+	return l.CountUnreadNotifications(in)
 }
 
-// 标记单条 inbox 已读
-func (s *NotificationServiceServer) MarkRecordRead(ctx context.Context, in *notificationrpc.MarkRecordReadRequest) (*notificationrpc.MarkRecordReadResponse, error) {
-	l := notificationservicelogic.NewMarkRecordReadLogic(ctx, s.svcCtx)
-	return l.MarkRecordRead(in)
+// 标记通知已读
+func (s *NotificationServiceServer) MarkNotificationsRead(ctx context.Context, in *notificationrpc.MarkNotificationsReadRequest) (*notificationrpc.MarkNotificationsReadResponse, error) {
+	l := notificationservicelogic.NewMarkNotificationsReadLogic(ctx, s.svcCtx)
+	return l.MarkNotificationsRead(in)
 }
 
-// 批量标记 inbox 已读
-func (s *NotificationServiceServer) BatchMarkRecordsRead(ctx context.Context, in *notificationrpc.BatchMarkRecordsReadRequest) (*notificationrpc.BatchMarkRecordsReadResponse, error) {
-	l := notificationservicelogic.NewBatchMarkRecordsReadLogic(ctx, s.svcCtx)
-	return l.BatchMarkRecordsRead(in)
+// 全部标记已读
+func (s *NotificationServiceServer) MarkAllNotificationsRead(ctx context.Context, in *notificationrpc.MarkAllNotificationsReadRequest) (*notificationrpc.MarkAllNotificationsReadResponse, error) {
+	l := notificationservicelogic.NewMarkAllNotificationsReadLogic(ctx, s.svcCtx)
+	return l.MarkAllNotificationsRead(in)
 }
 
-// 全部标记 inbox 已读
-func (s *NotificationServiceServer) MarkAllRecordsRead(ctx context.Context, in *notificationrpc.MarkAllRecordsReadRequest) (*notificationrpc.MarkAllRecordsReadResponse, error) {
-	l := notificationservicelogic.NewMarkAllRecordsReadLogic(ctx, s.svcCtx)
-	return l.MarkAllRecordsRead(in)
+// 删除通知
+func (s *NotificationServiceServer) DeleteNotifications(ctx context.Context, in *notificationrpc.DeleteNotificationsRequest) (*notificationrpc.DeleteNotificationsResponse, error) {
+	l := notificationservicelogic.NewDeleteNotificationsLogic(ctx, s.svcCtx)
+	return l.DeleteNotifications(in)
+}
+
+// 按用户查询收件箱条目
+func (s *NotificationServiceServer) ListUserNotifications(ctx context.Context, in *notificationrpc.ListUserNotificationsRequest) (*notificationrpc.ListUserNotificationsResponse, error) {
+	l := notificationservicelogic.NewListUserNotificationsLogic(ctx, s.svcCtx)
+	return l.ListUserNotifications(in)
+}
+
+// 查询通知偏好
+func (s *NotificationServiceServer) GetNotifyPreferences(ctx context.Context, in *notificationrpc.GetNotifyPreferencesRequest) (*notificationrpc.GetNotifyPreferencesResponse, error) {
+	l := notificationservicelogic.NewGetNotifyPreferencesLogic(ctx, s.svcCtx)
+	return l.GetNotifyPreferences(in)
+}
+
+// 更新通知偏好
+func (s *NotificationServiceServer) UpdateNotifyPreferences(ctx context.Context, in *notificationrpc.UpdateNotifyPreferencesRequest) (*notificationrpc.UpdateNotifyPreferencesResponse, error) {
+	l := notificationservicelogic.NewUpdateNotifyPreferencesLogic(ctx, s.svcCtx)
+	return l.UpdateNotifyPreferences(in)
+}
+
+// 校验退订令牌
+func (s *NotificationServiceServer) VerifyUnsubscribe(ctx context.Context, in *notificationrpc.VerifyUnsubscribeRequest) (*notificationrpc.VerifyUnsubscribeResponse, error) {
+	l := notificationservicelogic.NewVerifyUnsubscribeLogic(ctx, s.svcCtx)
+	return l.VerifyUnsubscribe(in)
+}
+
+// 凭令牌执行退订
+func (s *NotificationServiceServer) Unsubscribe(ctx context.Context, in *notificationrpc.UnsubscribeRequest) (*notificationrpc.UnsubscribeResponse, error) {
+	l := notificationservicelogic.NewUnsubscribeLogic(ctx, s.svcCtx)
+	return l.Unsubscribe(in)
 }
 
 // 发送手机验证码

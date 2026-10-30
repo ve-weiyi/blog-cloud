@@ -34,7 +34,7 @@ func TestPublishReachesSubscriber(t *testing.T) {
 		}
 	}()
 
-	want := Event{Type: EventNotice, MessageId: 42, Title: "维护通知"}
+	want := Event{Type: EventAnnouncementPublished, AnnouncementId: 42, Title: "维护通知"}
 	if err := Publish(context.Background(), rdb, want); err != nil {
 		t.Fatalf("Publish: %v", err)
 	}
@@ -67,7 +67,7 @@ func TestPublishRetriesUntilRedisRecovers(t *testing.T) {
 		mr.SetError("")
 	}()
 
-	if err := Publish(context.Background(), rdb, Event{Type: EventNotice, MessageId: 7}); err != nil {
+	if err := Publish(context.Background(), rdb, Event{Type: EventAnnouncementPublished, AnnouncementId: 7}); err != nil {
 		t.Fatalf("Redis 恢复后应当重试成功, got err=%v", err)
 	}
 }
@@ -79,7 +79,7 @@ func TestPublishGivesUpAndReturnsError(t *testing.T) {
 
 	done := make(chan error, 1)
 	go func() {
-		done <- Publish(context.Background(), rdb, Event{Type: EventNotice})
+		done <- Publish(context.Background(), rdb, Event{Type: EventAnnouncementPublished})
 	}()
 
 	select {

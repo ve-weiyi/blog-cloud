@@ -15,6 +15,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
 
+	"github.com/ve-weiyi/blog-cloud/infra/http/headerx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
 )
 
@@ -68,7 +69,7 @@ func main() {
 	)
 	defer server.Stop()
 
-	server.Use(middlewarex.NewCtxMetaMiddleware().Handle)
+	server.Use(middlewarex.NewCtxMetaMiddleware(headerx.AppNameAdminWeb).Handle)
 	server.Use(middlewarex.NewDeviceCookieMiddleware().Handle)
 	server.Use(middlewarex.NewAntiReplyMiddleware().Handle)
 	server.Use(middlewarex.NewDeviceTokenMiddleware().Handle)

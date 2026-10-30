@@ -51,6 +51,23 @@ type DashboardStats struct {
 	TotalPvCount int64  `json:"total_pv_count"`
 }
 
+type DeliveryVO struct {
+	Id             int64  `json:"id,optional"`
+	NotificationId int64  `json:"notification_id"`
+	Channel        string `json:"channel"`
+	Recipient      string `json:"recipient"`
+	Status         string `json:"status"`
+	TemplateCode   string `json:"template_code"`
+	Content        string `json:"content"`
+	ProviderMsgId  string `json:"provider_msg_id"`
+	ErrorMsg       string `json:"error_msg"`
+	Attempts       int64  `json:"attempts"`
+	NextRetryAt    int64  `json:"next_retry_at"`
+	SentAt         int64  `json:"sent_at"`
+	CreatedAt      int64  `json:"created_at"`
+	UpdatedAt      int64  `json:"updated_at"`
+}
+
 type EmptyReq struct {
 }
 
@@ -150,22 +167,47 @@ type MessageVO struct {
 	GuestInfo      *GuestInfoVO `json:"guest_info"`
 }
 
-type NotifyRecordVO struct {
-	Id           int64  `json:"id,optional"`
-	MessageId    int64  `json:"message_id"`
-	Channel      string `json:"channel"`
-	Recipient    string `json:"recipient"`
-	TemplateCode string `json:"template_code"`
-	Content      string `json:"content"`
-	Status       string `json:"status"`
-	BizId        string `json:"biz_id"`
-	ErrorMsg     string `json:"error_msg"`
-	ReadAt       int64  `json:"read_at"`
-	SentAt       int64  `json:"sent_at"`
-	CreatedAt    int64  `json:"created_at"`
-	Title        string `json:"title"`
-	Category     string `json:"category"`
-	Level        string `json:"level"`
+type NotificationEventVO struct {
+	Id            int64  `json:"id,optional"`
+	Scene         string `json:"scene"`
+	ActorId       string `json:"actor_id"`
+	ObjectType    string `json:"object_type"`
+	ObjectId      int64  `json:"object_id"`
+	AudienceType  string `json:"audience_type"`
+	AudienceTotal int64  `json:"audience_total"` // 进度分母，扇出开始时确定
+	Processed     int64  `json:"processed"`      // 已处理收件人数
+	Status        string `json:"status"`
+	Cursor        int64  `json:"cursor"`
+	CreatedAt     int64  `json:"created_at"`
+	UpdatedAt     int64  `json:"updated_at"`
+}
+
+type NotificationGroupVO struct {
+	GroupKey        string `json:"group_key"` // 不透明键，原样回传用于整组已读 / 删除
+	Scene           string `json:"scene"`     // 用于图标与分类，不用于寻址
+	Title           string `json:"title"`
+	Content         string `json:"content"`
+	Link            string `json:"link"` // 跳转地址，客户端只负责打开
+	Level           string `json:"level"`
+	ActorCount      int64  `json:"actor_count"`
+	LatestActorName string `json:"latest_actor_name"`
+	LatestAt        int64  `json:"latest_at"`
+	Unread          bool   `json:"unread"`
+}
+
+type NotificationItemVO struct {
+	Id         int64  `json:"id,optional"`
+	EventId    int64  `json:"event_id"`
+	Scene      string `json:"scene"`
+	ActorId    string `json:"actor_id"`
+	ActorName  string `json:"actor_name"`
+	ObjectType string `json:"object_type"`
+	ObjectId   int64  `json:"object_id"`
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	Link       string `json:"link"`
+	ReadAt     int64  `json:"read_at"`
+	CreatedAt  int64  `json:"created_at"`
 }
 
 type OnlineUserItem struct {

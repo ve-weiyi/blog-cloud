@@ -15,6 +15,8 @@ type Table[T any] interface {
 	InsertBatch(ctx context.Context, in ...*T) (rows int64, err error)
 	// 插入，唯一键冲突时不修改任何列、返回 0 行
 	InsertIgnore(ctx context.Context, in *T) (rows int64, err error)
+	// 批量插入，唯一键冲突的行跳过，其余照常写入
+	InsertIgnoreBatch(ctx context.Context, in ...*T) (rows int64, err error)
 	// 删除
 	Delete(ctx context.Context, id int64) (rows int64, err error)
 	DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error)
@@ -64,6 +66,20 @@ func (m *baseModel[T]) Insert(ctx context.Context, in *T) (rows int64, err error
 // 插入记录，唯一键冲突时忽略冲突行
 func (m *baseModel[T]) InsertIgnore(ctx context.Context, in *T) (rows int64, err error) {
 	result := m.scope(ctx).Clauses(clause.OnConflict{DoNothing: true}).Create(&in)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return result.RowsAffected, nil
+}
+
+// 批量插入，唯一键冲突的行跳过
+func (m *baseModel[T]) InsertIgnoreBatch(ctx context.Context, in ...*T) (rows int64, err error) {
+	if len(in) == 0 {
+		return 0, nil
+	}
+
+	result := m.scope(ctx).Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(&in, len(in))
 	if result.Error != nil {
 		return 0, result.Error
 	}

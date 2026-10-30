@@ -75,7 +75,6 @@ func (l *SendEmailCodeLogic) SendEmailCode(in *notificationrpc.SendEmailCodeRequ
 		return nil, bizerr.NewBizError(bizcode.CodeServiceUnavailable, "邮件服务暂不可用，请稍后重试")
 	}
 
-	return &notificationrpc.SendEmailCodeResponse{
-		Id: 0, // 消费者会创建记录
-	}, nil
+	// 验证码不产生通知记录，因此没有标识可回传
+	return &notificationrpc.SendEmailCodeResponse{}, nil
 }

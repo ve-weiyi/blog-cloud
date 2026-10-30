@@ -12,7 +12,7 @@ func Register(router *event.Router, svcCtx *svc.ServiceContext) error {
 	for _, err := range []error{
 		event.HandleEvent(router, mq.EmailMessage, NewConsumeEmailMessageLogic(svcCtx).Consume),
 		event.HandleEvent(router, mq.SmsMessage, NewConsumeSmsMessageLogic(svcCtx).Consume),
-		event.HandleEvent(router, mq.InboxMessage, NewConsumeInboxMessageLogic(svcCtx).Consume),
+		event.HandleEvent(router, mq.FanoutMessage, NewConsumeNotificationFanoutLogic(svcCtx).Consume),
 		event.HandleEvent(router, mq.LoginMessage, NewConsumeLoginLogic(svcCtx).Consume),
 		event.HandleEvent(router, mq.LogoutMessage, NewConsumeLogoutLogic(svcCtx).Consume),
 	} {

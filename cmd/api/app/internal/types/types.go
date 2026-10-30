@@ -162,6 +162,26 @@ type NoticeVO struct {
 	PublishTime int64  `json:"publish_time"` // 发布时间
 }
 
+type NotificationGroupVO struct {
+	GroupKey        string `json:"group_key"` // 不透明键，原样回传用于整组已读 / 删除
+	Scene           string `json:"scene"`     // 用于图标与分类，不用于寻址
+	Title           string `json:"title"`
+	Content         string `json:"content"`
+	Link            string `json:"link"` // 跳转地址，客户端只负责打开
+	Level           string `json:"level"`
+	ActorCount      int64  `json:"actor_count"`
+	LatestActorName string `json:"latest_actor_name"`
+	LatestAt        int64  `json:"latest_at"`
+	Unread          bool   `json:"unread"`
+}
+
+type NotificationPreferenceVO struct {
+	Group     string `json:"group"`
+	Channel   string `json:"channel"`
+	Enabled   bool   `json:"enabled"`
+	Mandatory bool   `json:"mandatory"` // 为真表示该分组不可退订
+}
+
 type Page struct {
 	Id         int64  `json:"id"`          // 页面id
 	PageName   string `json:"page_name"`   // 页面名

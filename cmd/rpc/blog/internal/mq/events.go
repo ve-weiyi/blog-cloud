@@ -16,14 +16,14 @@ const (
 
 	EmailRoutingKey  = "notification.email"
 	SmsRoutingKey    = "notification.sms"
-	InboxRoutingKey  = "notification.inbox"
+	FanoutRoutingKey = "notification.event"
 	LoginRoutingKey  = "audit.login"
 	LogoutRoutingKey = "audit.logout"
 
-	EmailQueue = "blog.rpc.notification.email"
-	SmsQueue   = "blog.rpc.notification.sms"
-	InboxQueue = "blog.rpc.notification.inbox"
-	AuditQueue = "blog.rpc.audit"
+	EmailQueue  = "blog.rpc.notification.email"
+	SmsQueue    = "blog.rpc.notification.sms"
+	FanoutQueue = "blog.rpc.notification.event"
+	AuditQueue  = "blog.rpc.audit"
 )
 
 // producerName 写入事件信封，标识事件来源。
@@ -63,9 +63,10 @@ type SmsMessageEvent struct {
 	Params map[string]string `json:"params,omitempty"`
 }
 
-// InboxMessageEvent 站内信投递事件：消费后为每个目标用户创建 delivery 记录。
-type InboxMessageEvent struct {
-	MessageId int64 `json:"message_id"`
+// NotificationFanoutEvent 通知事件已落库的唤醒信号。
+// 载荷与游标都在事件行上，这条消息只负责把扇出消费者叫醒；丢了由兜底扫描补上。
+type NotificationFanoutEvent struct {
+	EventID int64 `json:"event_id"`
 }
 
 // 发布语义：事件按「是否必须与库内状态同生共死」分两类。
@@ -86,8 +87,8 @@ var (
 	SmsMessage = event.NewEventSpec[SmsMessageEvent](
 		NotificationExchange, SmsRoutingKey,
 		event.WithProducer(producerName), event.WithVersion("v1"))
-	InboxMessage = event.NewEventSpec[InboxMessageEvent](
-		NotificationExchange, InboxRoutingKey,
+	FanoutMessage = event.NewEventSpec[NotificationFanoutEvent](
+		NotificationExchange, FanoutRoutingKey,
 		event.WithProducer(producerName), event.WithVersion("v1"))
 	LoginMessage = event.NewEventSpec[LoginEvent](
 		AuditExchange, LoginRoutingKey,
@@ -135,9 +136,10 @@ func NewSmsSubscription() mqx.SubscriptionSpec {
 	return newNotificationSpec(SmsQueue, SmsRoutingKey, 2, 10)
 }
 
-// NewInboxSubscription 返回站内信队列订阅规格。
-func NewInboxSubscription() mqx.SubscriptionSpec {
-	return newNotificationSpec(InboxQueue, InboxRoutingKey, 4, 20)
+// NewFanoutSubscription 返回通知扇出队列订阅规格。
+// 扇出是逐批的数据库写入，单条消息耗时可预期但事件量大，并发高于投递。
+func NewFanoutSubscription() mqx.SubscriptionSpec {
+	return newNotificationSpec(FanoutQueue, FanoutRoutingKey, 4, 20)
 }
 
 // NewAuditSubscription 返回审计域订阅规格。
@@ -168,7 +170,7 @@ func Subscriptions() []mqx.SubscriptionSpec {
 	return []mqx.SubscriptionSpec{
 		NewEmailSubscription(),
 		NewSmsSubscription(),
-		NewInboxSubscription(),
+		NewFanoutSubscription(),
 		NewAuditSubscription(),
 	}
 }

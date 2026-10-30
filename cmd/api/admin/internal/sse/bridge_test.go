@@ -20,23 +20,23 @@ func (f *fakeSource) Subscribe() (<-chan notifyx.Event, func()) {
 
 func TestToStreamEventMapsAllFields(t *testing.T) {
 	in := notifyx.Event{
-		Type:        notifyx.EventNotice,
-		MessageId:   5,
-		Title:       "维护通知",
-		Category:    "maintenance",
-		Level:       "warning",
-		PublishedAt: 1758000000,
+		Type:           notifyx.EventAnnouncementPublished,
+		AnnouncementId: 5,
+		Title:          "维护通知",
+		Category:       "maintenance",
+		Level:          "warning",
+		PublishedAt:    1758000000,
 	}
 
 	got := ToStreamEvent(in)
 
-	want := types.NotifyStreamEvent{
-		Event:       notifyx.EventNotice,
-		MessageId:   5,
-		Title:       "维护通知",
-		Category:    "maintenance",
-		Level:       "warning",
-		PublishedAt: 1758000000,
+	want := types.AnnouncementStreamEvent{
+		Event:          notifyx.EventAnnouncementPublished,
+		AnnouncementId: 5,
+		Title:          "维护通知",
+		Category:       "maintenance",
+		Level:          "warning",
+		PublishedAt:    1758000000,
 	}
 	if *got != want {
 		t.Fatalf("映射不符:\n got=%+v\nwant=%+v", *got, want)
@@ -49,18 +49,18 @@ func TestStreamForwardsEvents(t *testing.T) {
 	defer cancel()
 
 	src := &fakeSource{ch: make(chan notifyx.Event, 1)}
-	client := make(chan *types.NotifyStreamEvent, 4)
+	client := make(chan *types.AnnouncementStreamEvent, 4)
 
 	done := make(chan error, 1)
 	go func() {
 		done <- Bridge(ctx, src, client)
 	}()
 
-	src.ch <- notifyx.Event{Type: notifyx.EventNoticeRevoke, MessageId: 7}
+	src.ch <- notifyx.Event{Type: notifyx.EventAnnouncementRevoked, AnnouncementId: 7}
 
 	select {
 	case frame := <-client:
-		if frame.Event != notifyx.EventNoticeRevoke || frame.MessageId != 7 {
+		if frame.Event != notifyx.EventAnnouncementRevoked || frame.AnnouncementId != 7 {
 			t.Fatalf("推送帧不符: %+v", frame)
 		}
 	case <-time.After(time.Second):
@@ -80,7 +80,7 @@ func TestStreamForwardsBrokerEvents(t *testing.T) {
 
 	broker := NewBroker[notifyx.Event]()
 	defer broker.Close()
-	client := make(chan *types.NotifyStreamEvent, 4)
+	client := make(chan *types.AnnouncementStreamEvent, 4)
 
 	done := make(chan error, 1)
 	go func() {
@@ -89,10 +89,10 @@ func TestStreamForwardsBrokerEvents(t *testing.T) {
 
 	// 订阅建立之前发布的事件会丢（那时广播器还没有订阅者），
 	// 所以周期性重发直到收到帧
-	var frame *types.NotifyStreamEvent
+	var frame *types.AnnouncementStreamEvent
 	deadline := time.After(2 * time.Second)
 	for frame == nil {
-		broker.Publish(notifyx.Event{Type: notifyx.EventNotice, MessageId: 1})
+		broker.Publish(notifyx.Event{Type: notifyx.EventAnnouncementPublished, AnnouncementId: 1})
 		select {
 		case f := <-client:
 			frame = f
@@ -102,7 +102,7 @@ func TestStreamForwardsBrokerEvents(t *testing.T) {
 		}
 	}
 
-	if frame.Event != notifyx.EventNotice || frame.MessageId != 1 {
+	if frame.Event != notifyx.EventAnnouncementPublished || frame.AnnouncementId != 1 {
 		t.Fatalf("推送帧不符: %+v", frame)
 	}
 
@@ -115,7 +115,7 @@ func TestStreamExitsWhenConsumerStops(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	src := &fakeSource{ch: make(chan notifyx.Event, 1)}
-	client := make(chan *types.NotifyStreamEvent) // 无缓冲且无人读取
+	client := make(chan *types.AnnouncementStreamEvent) // 无缓冲且无人读取
 
 	done := make(chan error, 1)
 	go func() {
@@ -123,7 +123,7 @@ func TestStreamExitsWhenConsumerStops(t *testing.T) {
 	}()
 
 	// 让桥接协程阻塞在写通道上
-	src.ch <- notifyx.Event{Type: notifyx.EventNotice}
+	src.ch <- notifyx.Event{Type: notifyx.EventAnnouncementPublished}
 
 	select {
 	case err := <-done:
@@ -149,7 +149,7 @@ func TestStreamEndsWhenSourceCloses(t *testing.T) {
 	defer cancel()
 
 	src := &fakeSource{ch: make(chan notifyx.Event)}
-	client := make(chan *types.NotifyStreamEvent, 4)
+	client := make(chan *types.AnnouncementStreamEvent, 4)
 
 	done := make(chan error, 1)
 	go func() {

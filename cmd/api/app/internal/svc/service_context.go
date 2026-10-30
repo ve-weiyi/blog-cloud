@@ -45,10 +45,11 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	UserAuth  rest.Middleware
-	RateLimit rest.Middleware
-	VisitLog  rest.Middleware
+	Config            config.Config
+	UserAuth          rest.Middleware
+	RateLimit         rest.Middleware
+	VisitLog          rest.Middleware
+	NotifyStreamLimit rest.Middleware
 
 	RedisClient     *redis.Client
 	TokenManager    tokenx.Service
@@ -138,6 +139,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserAuth:            middleware.NewUserAuthMiddleware(tokenManager).Handle,
 		RateLimit:           middlewarex.NewRateLimitMiddleware(limitx.NewPeriodLimit(60, 5, rds, cachekey.RateLimitStrictPrefix)).Handle,
 		VisitLog:            middleware.NewVisitLogMiddleware(visitx.NewVisitEnforcer(), syslogService).Handle,
+		NotifyStreamLimit:   middleware.NewNotifyStreamLimitMiddleware(middleware.DefaultStreamGlobalLimit, middleware.DefaultStreamUserLimit).Handle,
 		RedisClient:         rds,
 		TokenManager:        tokenManager,
 		CaptchaStore:        captchaStore,

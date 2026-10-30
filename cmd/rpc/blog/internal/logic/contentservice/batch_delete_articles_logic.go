@@ -11,6 +11,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/notify"
 )
 
 type BatchDeleteArticlesLogic struct {
@@ -41,7 +42,13 @@ func (l *BatchDeleteArticlesLogic) BatchDeleteArticles(in *contentrpc.BatchDelet
 
 		var err error
 		rows, err = l.svcCtx.TArticleModel.WithTx(tx).DeleteBatch(l.ctx, "id in (?)", in.Ids)
-		return err
+		if err != nil {
+			return err
+		}
+
+		// 对象没了，指向它的收件箱条目就是死链：先终止事件，再删条目与投递。
+		// 文章下的评论仍在库里，挂在它们上面的通知一并回收
+		return l.svcCtx.Notify.TerminateTopic(l.ctx, tx, notify.ObjectArticle, in.Ids)
 	})
 	if err != nil {
 		return nil, err

@@ -23,10 +23,12 @@ import (
 	discussiontalk "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/discussion/talk"
 	mediaalbum "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/media/album"
 	mediaphoto "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/media/photo"
-	notificationnotify_message "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/notify_message"
-	notificationnotify_record "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/notify_record"
+	notificationannouncement "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/announcement"
+	notificationdelivery "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/delivery"
+	notificationevent "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/event"
+	notificationme "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/me"
 	notificationnotify_stream "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/notify_stream"
-	notificationnotify_template "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/notify_template"
+	notificationuser_notification "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/notification/user_notification"
 	siteconfig "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/site/config"
 	sitefriend "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/site/friend"
 	sitepage "github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/handler/site/page"
@@ -824,58 +826,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminAuth, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
-					// 获取统一通知消息列表
+					// 获取公告列表
 					Method:  http.MethodGet,
-					Path:    "/notify-messages",
-					Handler: notificationnotify_message.QueryNotifyMessageListHandler(serverCtx),
+					Path:    "/announcements",
+					Handler: notificationannouncement.QueryAnnouncementListHandler(serverCtx),
 				},
 				{
-					// 创建统一通知消息
+					// 创建公告
 					Method:  http.MethodPost,
-					Path:    "/notify-messages",
-					Handler: notificationnotify_message.CreateNotifyMessageHandler(serverCtx),
+					Path:    "/announcements",
+					Handler: notificationannouncement.CreateAnnouncementHandler(serverCtx),
 				},
 				{
-					// 获取统一通知消息详情
+					// 获取公告详情
 					Method:  http.MethodGet,
-					Path:    "/notify-messages/:id",
-					Handler: notificationnotify_message.GetNotifyMessageHandler(serverCtx),
+					Path:    "/announcements/:id",
+					Handler: notificationannouncement.GetAnnouncementHandler(serverCtx),
 				},
 				{
-					// 更新统一通知消息
+					// 更新公告
 					Method:  http.MethodPut,
-					Path:    "/notify-messages/:id",
-					Handler: notificationnotify_message.UpdateNotifyMessageHandler(serverCtx),
+					Path:    "/announcements/:id",
+					Handler: notificationannouncement.UpdateAnnouncementHandler(serverCtx),
 				},
 				{
-					// 发布统一通知消息
+					// 发布公告
 					Method:  http.MethodPost,
-					Path:    "/notify-messages/:id/publish",
-					Handler: notificationnotify_message.PublishNotifyMessageHandler(serverCtx),
+					Path:    "/announcements/:id/publish",
+					Handler: notificationannouncement.PublishAnnouncementHandler(serverCtx),
 				},
 				{
-					// 重新投递通知消息
+					// 撤回公告
 					Method:  http.MethodPost,
-					Path:    "/notify-messages/:id/redeliver",
-					Handler: notificationnotify_message.RedeliverNotifyMessageHandler(serverCtx),
+					Path:    "/announcements/:id/revoke",
+					Handler: notificationannouncement.RevokeAnnouncementHandler(serverCtx),
 				},
 				{
-					// 撤回统一通知消息
+					// 批量删除公告
 					Method:  http.MethodPost,
-					Path:    "/notify-messages/:id/revoke",
-					Handler: notificationnotify_message.RevokeNotifyMessageHandler(serverCtx),
-				},
-				{
-					// 批量删除统一通知消息
-					Method:  http.MethodPost,
-					Path:    "/notify-messages/batch-delete",
-					Handler: notificationnotify_message.BatchDeleteNotifyMessageHandler(serverCtx),
-				},
-				{
-					// 查询已发布但未投递的通知消息
-					Method:  http.MethodGet,
-					Path:    "/notify-messages/undelivered",
-					Handler: notificationnotify_message.QueryUndeliveredNotifyMessagesHandler(serverCtx),
+					Path:    "/announcements/batch-delete",
+					Handler: notificationannouncement.BatchDeleteAnnouncementHandler(serverCtx),
 				},
 			}...,
 		),
@@ -887,40 +877,88 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminAuth, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
-					// 查询用户 inbox 投递列表
+					// 获取外部渠道投递记录
 					Method:  http.MethodGet,
-					Path:    "/inbox-records",
-					Handler: notificationnotify_record.QueryUserInboxRecordListHandler(serverCtx),
+					Path:    "/notification-deliveries",
+					Handler: notificationdelivery.QueryDeliveryListHandler(serverCtx),
 				},
 				{
-					// 标记单条投递记录为已读
+					// 按投递记录重发
 					Method:  http.MethodPost,
-					Path:    "/inbox-records/:id/mark-read",
-					Handler: notificationnotify_record.MarkRecordReadHandler(serverCtx),
-				},
-				{
-					// 批量标记投递记录为已读
-					Method:  http.MethodPost,
-					Path:    "/inbox-records/batch-mark-read",
-					Handler: notificationnotify_record.BatchMarkRecordsReadHandler(serverCtx),
-				},
-				{
-					// 全部标记投递记录为已读
-					Method:  http.MethodPost,
-					Path:    "/inbox-records/mark-all-read",
-					Handler: notificationnotify_record.MarkAllRecordsReadHandler(serverCtx),
-				},
-				{
-					// 获取统一投递记录列表
-					Method:  http.MethodGet,
-					Path:    "/notify-records",
-					Handler: notificationnotify_record.QueryNotifyRecordListHandler(serverCtx),
+					Path:    "/notification-deliveries/:id/redeliver",
+					Handler: notificationdelivery.RedeliverDeliveryHandler(serverCtx),
 				},
 				{
 					// 批量删除投递记录
 					Method:  http.MethodPost,
-					Path:    "/notify-records/batch-delete",
-					Handler: notificationnotify_record.BatchDeleteNotifyRecordHandler(serverCtx),
+					Path:    "/notification-deliveries/batch-delete",
+					Handler: notificationdelivery.BatchDeleteDeliveryHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/admin-api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AdminAuth, serverCtx.Permission, serverCtx.OperationLog},
+			[]rest.Route{
+				{
+					// 获取通知事件与扇出进度
+					Method:  http.MethodGet,
+					Path:    "/notification-events",
+					Handler: notificationevent.QueryNotificationEventListHandler(serverCtx),
+				},
+				{
+					// 重新扇出事件
+					Method:  http.MethodPost,
+					Path:    "/notification-events/:id/redeliver",
+					Handler: notificationevent.RedeliverEventHandler(serverCtx),
+				},
+				{
+					// 查询停滞的通知事件
+					Method:  http.MethodGet,
+					Path:    "/notification-events/stalled",
+					Handler: notificationevent.QueryStalledEventListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/admin-api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AdminAuth},
+			[]rest.Route{
+				{
+					// 获取我的通知列表（按分组）
+					Method:  http.MethodGet,
+					Path:    "/me/notifications",
+					Handler: notificationme.QueryMeNotificationListHandler(serverCtx),
+				},
+				{
+					// 删除我的通知
+					Method:  http.MethodPost,
+					Path:    "/me/notifications/delete",
+					Handler: notificationme.DeleteMeNotificationHandler(serverCtx),
+				},
+				{
+					// 标记我的通知已读
+					Method:  http.MethodPost,
+					Path:    "/me/notifications/read",
+					Handler: notificationme.ReadMeNotificationHandler(serverCtx),
+				},
+				{
+					// 我的通知全部已读
+					Method:  http.MethodPost,
+					Path:    "/me/notifications/read-all",
+					Handler: notificationme.ReadAllMeNotificationHandler(serverCtx),
+				},
+				{
+					// 获取我的未读分组数
+					Method:  http.MethodGet,
+					Path:    "/me/notifications/unread-count",
+					Handler: notificationme.GetMeUnreadCountHandler(serverCtx),
 				},
 			}...,
 		),
@@ -932,10 +970,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminAuth, serverCtx.NotifyStreamLimit},
 			[]rest.Route{
 				{
-					// 通知消息推送流（SSE）
+					// 公告状态推送流（SSE）
 					Method:  http.MethodGet,
-					Path:    "/notify-messages/stream",
-					Handler: notificationnotify_stream.NotifyStreamHandler(serverCtx),
+					Path:    "/announcements/stream",
+					Handler: notificationnotify_stream.AnnouncementStreamHandler(serverCtx),
 				},
 			}...,
 		),
@@ -948,34 +986,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminAuth, serverCtx.Permission, serverCtx.OperationLog},
 			[]rest.Route{
 				{
-					// 获取通知模板列表
+					// 按用户查看收件箱条目
 					Method:  http.MethodGet,
-					Path:    "/notify-templates",
-					Handler: notificationnotify_template.QueryNotifyTemplateListHandler(serverCtx),
-				},
-				{
-					// 创建通知模板
-					Method:  http.MethodPost,
-					Path:    "/notify-templates",
-					Handler: notificationnotify_template.CreateNotifyTemplateHandler(serverCtx),
-				},
-				{
-					// 获取通知模板详情
-					Method:  http.MethodGet,
-					Path:    "/notify-templates/:id",
-					Handler: notificationnotify_template.GetNotifyTemplateHandler(serverCtx),
-				},
-				{
-					// 更新通知模板
-					Method:  http.MethodPut,
-					Path:    "/notify-templates/:id",
-					Handler: notificationnotify_template.UpdateNotifyTemplateHandler(serverCtx),
-				},
-				{
-					// 批量删除通知模板
-					Method:  http.MethodPost,
-					Path:    "/notify-templates/batch-delete",
-					Handler: notificationnotify_template.BatchDeleteNotifyTemplateHandler(serverCtx),
+					Path:    "/users/:user_id/notifications",
+					Handler: notificationuser_notification.QueryUserNotificationListHandler(serverCtx),
 				},
 			}...,
 		),

@@ -18,6 +18,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/likes"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/notification"
 	"github.com/ve-weiyi/blog-cloud/model"
 
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
@@ -29,6 +30,7 @@ import (
 	"github.com/ve-weiyi/vkit/adapter/smsx"
 
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/dbnotify"
+	"github.com/ve-weiyi/blog-cloud/infra/messaging/notifyx"
 )
 
 type ServiceContext struct {
@@ -46,6 +48,9 @@ type ServiceContext struct {
 	OAuthProviders map[string]oauthx.OAuthProvider
 
 	OTPStore *otpx.Store
+
+	// Notify 通知域服务：生产事件、扇出、读写收件箱
+	Notify *notification.Service
 
 	// account models
 	TUserModel      model.TUserModel
@@ -79,9 +84,12 @@ type ServiceContext struct {
 	TGuestModel  model.TGuestModel
 
 	// notice models
-	TNotifyTemplateModel model.TNotifyTemplateModel
-	TNotifyMessageModel  model.TNotifyMessageModel
-	TNotifyRecordModel   model.TNotifyRecordModel
+	// notification models
+	TNotificationEventModel      model.TNotificationEventModel
+	TNotificationModel           model.TNotificationModel
+	TNotificationDeliveryModel   model.TNotificationDeliveryModel
+	TNotificationPreferenceModel model.TNotificationPreferenceModel
+	TAnnouncementModel           model.TAnnouncementModel
 
 	// stats/log models
 	TDailyStatsModel   model.TDailyStatsModel
@@ -129,7 +137,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 
-	return &ServiceContext{
+	svc := &ServiceContext{
 		Config:         c,
 		GormDB:         db,
 		Redis:          rds,
@@ -167,9 +175,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TPageModel:   model.NewTPageModel(db),
 		TGuestModel:  model.NewTGuestModel(db),
 		// notice models
-		TNotifyTemplateModel: model.NewTNotifyTemplateModel(db),
-		TNotifyMessageModel:  model.NewTNotifyMessageModel(db),
-		TNotifyRecordModel:   model.NewTNotifyRecordModel(db),
+		// notification models
+		TNotificationEventModel:      model.NewTNotificationEventModel(db),
+		TNotificationModel:           model.NewTNotificationModel(db),
+		TNotificationDeliveryModel:   model.NewTNotificationDeliveryModel(db),
+		TNotificationPreferenceModel: model.NewTNotificationPreferenceModel(db),
+		TAnnouncementModel:           model.NewTAnnouncementModel(db),
 		// stats/log models
 		TDailyStatsModel:   model.NewTDailyStatsModel(db),
 		TVisitLogModel:     model.NewTVisitLogModel(db),
@@ -177,15 +188,32 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TOperationLogModel: model.NewTOperationLogModel(db),
 		TUploadLogModel:    model.NewTUploadLogModel(db),
 	}
+
+	svc.Notify = notification.NewService(notification.Deps{
+		DB:                   db,
+		Events:               svc.TNotificationEventModel,
+		Notifications:        svc.TNotificationModel,
+		Deliveries:           svc.TNotificationDeliveryModel,
+		Preferences:          svc.TNotificationPreferenceModel,
+		Announcements:        svc.TAnnouncementModel,
+		Users:                svc.TUserModel,
+		Comments:             svc.TCommentModel,
+		Outbox:               svc.Outbox,
+		Notifier:             notifySignaler{rdb: rds},
+		AnnouncementNotifier: notifySignaler{rdb: rds},
+		UnsubscribeSecret:    c.NotifyConf.UnsubscribeSecret,
+		SiteURL:              c.NotifyConf.SiteURL,
+	})
+	return svc
 }
 
-// Close 按依赖顺序释放资源：先停 MQ（等待在途消费完成），再关 Redis 与数据库。
-// 幂等：重复调用安全。
 // LikeDeps 返回点赞模块的依赖组合。
 func (s *ServiceContext) LikeDeps() likes.Deps {
 	return likes.Deps{DB: s.GormDB, Likes: s.TLikeModel}
 }
 
+// Close 按依赖顺序释放资源：先停 MQ（等待在途消费完成），再关 Redis 与数据库。
+// 幂等：重复调用安全。
 func (s *ServiceContext) Close() {
 	if s == nil {
 		return
@@ -358,13 +386,72 @@ func AutoMigrate(db *gorm.DB) error {
 		&model.TTalk{},
 		&model.TPage{},
 		&model.TGuest{},
-		&model.TNotifyTemplate{},
-		&model.TNotifyMessage{},
-		&model.TNotifyRecord{},
+		&model.TNotificationEvent{},
+		&model.TNotification{},
+		&model.TNotificationDelivery{},
+		&model.TNotificationPreference{},
+		&model.TAnnouncement{},
 		&model.TDailyStats{},
 		&model.TVisitLog{},
 		&model.TLoginLog{},
 		&model.TOperationLog{},
 		&model.TUploadLog{},
 	)
+}
+
+// notifySignaler 把扇出写入的收件人变成实时信号。
+//
+// 按收件人逐条发布：信号只到达持有该用户的实例，不向全站在线连接广播。
+// 发布失败只记日志——推送是加速器，丢了由客户端定时对账兜底。
+type notifySignaler struct {
+	rdb *redis.Client
+}
+
+func (n notifySignaler) NotifyChanged(ctx context.Context, recipients []string) {
+	for _, uid := range recipients {
+		if err := notifyx.PublishToUser(ctx, n.rdb, uid); err != nil {
+			logx.Errorf("通知信号发送失败: user=%s err=%v", uid, err)
+		}
+	}
+}
+
+// NotifyAnnouncement 广播公告状态变化，管理端各实例订阅后刷新列表。
+func (n notifySignaler) NotifyAnnouncement(ctx context.Context, published bool, id int64, title, category, level string, at time.Time) {
+	eventType := notifyx.EventAnnouncementPublished
+	if !published {
+		eventType = notifyx.EventAnnouncementRevoked
+	}
+
+	if err := notifyx.Publish(ctx, n.rdb, notifyx.Event{
+		Type:           eventType,
+		AnnouncementId: id,
+		Title:          title,
+		Category:       category,
+		Level:          level,
+		PublishedAt:    at.Unix(),
+	}); err != nil {
+		logx.Errorf("公告状态广播失败: id=%d published=%v err=%v", id, published, err)
+	}
+}
+
+// notifyEmailSender 把邮件通道适配到通知投递。
+type notifyEmailSender struct {
+	deliver emailx.IEmailDeliver
+}
+
+func (n notifyEmailSender) SendEmail(_ context.Context, to, subject, content string) error {
+	if n.deliver == nil {
+		return fmt.Errorf("notification: email channel is not configured")
+	}
+	return n.deliver.DeliveryEmail(&emailx.EmailMessage{
+		To:      []string{to},
+		CC:      []string{},
+		Subject: subject,
+		Content: content,
+	})
+}
+
+// NotifyEmailSender 返回通知投递使用的邮件通道。
+func (s *ServiceContext) NotifyEmailSender() notification.EmailSender {
+	return notifyEmailSender{deliver: s.EmailDeliver}
 }

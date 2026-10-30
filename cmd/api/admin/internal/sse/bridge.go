@@ -17,7 +17,7 @@ type EventSource interface {
 //
 // 心跳不在这里：它以 SSE 注释行的形式由 handler 层写入（见 handler 的 beat），
 // 注释行不进入这条通道，也就不参与帧的编解码。
-func Bridge(ctx context.Context, src EventSource, client chan<- *types.NotifyStreamEvent) error {
+func Bridge(ctx context.Context, src EventSource, client chan<- *types.AnnouncementStreamEvent) error {
 	events, unsubscribe := src.Subscribe()
 	defer unsubscribe()
 
@@ -39,20 +39,20 @@ func Bridge(ctx context.Context, src EventSource, client chan<- *types.NotifyStr
 }
 
 // ToStreamEvent 把跨进程事件映射成推送帧
-func ToStreamEvent(event notifyx.Event) *types.NotifyStreamEvent {
-	return &types.NotifyStreamEvent{
-		Event:       event.Type,
-		MessageId:   event.MessageId,
-		Title:       event.Title,
-		Category:    event.Category,
-		Level:       event.Level,
-		PublishedAt: event.PublishedAt,
+func ToStreamEvent(event notifyx.Event) *types.AnnouncementStreamEvent {
+	return &types.AnnouncementStreamEvent{
+		Event:          event.Type,
+		AnnouncementId: event.AnnouncementId,
+		Title:          event.Title,
+		Category:       event.Category,
+		Level:          event.Level,
+		PublishedAt:    event.PublishedAt,
 	}
 }
 
 // send 写一帧。发送**必须**纳入 ctx 选择：客户端断开后 handler 不再排空该通道，
 // 直接写会永久阻塞在这里，把桥接 goroutine 泄漏掉。
-func send(ctx context.Context, client chan<- *types.NotifyStreamEvent, frame *types.NotifyStreamEvent) bool {
+func send(ctx context.Context, client chan<- *types.AnnouncementStreamEvent, frame *types.AnnouncementStreamEvent) bool {
 	select {
 	case client <- frame:
 		return true

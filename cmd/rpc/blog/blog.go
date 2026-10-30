@@ -20,6 +20,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/consumer"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/notification"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/accessrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/chatrpc"
@@ -112,6 +113,10 @@ func main() {
 
 	jobs := job.New()
 	jobs.Add(job.Task{Name: "outbox-relay", Start: relay.Start, Stop: relay.Stop})
+
+	// 投递表本身是队列：定时领取待发送记录，重试也由它驱动
+	deliveryWorker := notification.NewDeliveryWorker(svcCtx.Notify, svcCtx.NotifyEmailSender(), time.Minute)
+	jobs.Add(job.Task{Name: "notify-delivery", Start: deliveryWorker.Start, Stop: deliveryWorker.Stop})
 	jobs.Start()
 
 	stopJobs := func() {

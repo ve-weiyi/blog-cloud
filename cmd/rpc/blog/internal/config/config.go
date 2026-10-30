@@ -12,6 +12,17 @@ type Config struct {
 	SmsConf      SmsConf
 
 	AppOAuthConf map[string]OAuthConf // map[platform]conf
+	NotifyConf   NotifyConf
+}
+
+// 通知配置
+type NotifyConf struct {
+	// UnsubscribeSecret 邮件退订令牌的签名密钥。为空时退订接口直接拒绝，
+	// 不给「没有签名也能退订」留后门。
+	UnsubscribeSecret string `json:"unsubscribe_secret,optional"`
+
+	// SiteURL 博客站点根地址，用于拼接邮件里的退订链接；为空时不渲染链接
+	SiteURL string `json:"site_url,optional"`
 }
 
 // mysql数据库配置

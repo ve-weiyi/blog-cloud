@@ -16,9 +16,9 @@ func TestHandleDeliversDecodedEventToBroker(t *testing.T) {
 	defer cancel()
 
 	payload, err := notifyx.Event{
-		Type:      notifyx.EventNotice,
-		MessageId: 9,
-		Title:     "系统维护",
+		Type:           notifyx.EventAnnouncementPublished,
+		AnnouncementId: 9,
+		Title:          "系统维护",
 	}.Encode()
 	if err != nil {
 		t.Fatalf("Encode: %v", err)
@@ -27,7 +27,7 @@ func TestHandleDeliversDecodedEventToBroker(t *testing.T) {
 	sub.handle(payload)
 
 	got, _ := recv(t, ch)
-	if got.MessageId != 9 || got.Type != notifyx.EventNotice || got.Title != "系统维护" {
+	if got.AnnouncementId != 9 || got.Type != notifyx.EventAnnouncementPublished || got.Title != "系统维护" {
 		t.Fatalf("投递的事件不符: %+v", got)
 	}
 }

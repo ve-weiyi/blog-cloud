@@ -14,101 +14,116 @@ import (
 )
 
 type (
-	BatchDeleteNotifyMessagesRequest      = notificationrpc.BatchDeleteNotifyMessagesRequest
-	BatchDeleteNotifyMessagesResponse     = notificationrpc.BatchDeleteNotifyMessagesResponse
-	BatchDeleteNotifyRecordsRequest       = notificationrpc.BatchDeleteNotifyRecordsRequest
-	BatchDeleteNotifyRecordsResponse      = notificationrpc.BatchDeleteNotifyRecordsResponse
-	BatchDeleteNotifyTemplatesRequest     = notificationrpc.BatchDeleteNotifyTemplatesRequest
-	BatchDeleteNotifyTemplatesResponse    = notificationrpc.BatchDeleteNotifyTemplatesResponse
-	BatchMarkRecordsReadRequest           = notificationrpc.BatchMarkRecordsReadRequest
-	BatchMarkRecordsReadResponse          = notificationrpc.BatchMarkRecordsReadResponse
-	CreateNotifyMessageRequest            = notificationrpc.CreateNotifyMessageRequest
-	CreateNotifyMessageResponse           = notificationrpc.CreateNotifyMessageResponse
-	CreateNotifyTemplateRequest           = notificationrpc.CreateNotifyTemplateRequest
-	CreateNotifyTemplateResponse          = notificationrpc.CreateNotifyTemplateResponse
-	GetNotifyMessageRequest               = notificationrpc.GetNotifyMessageRequest
-	GetNotifyMessageResponse              = notificationrpc.GetNotifyMessageResponse
-	GetNotifyTemplateRequest              = notificationrpc.GetNotifyTemplateRequest
-	GetNotifyTemplateResponse             = notificationrpc.GetNotifyTemplateResponse
-	ListNotifyMessagesRequest             = notificationrpc.ListNotifyMessagesRequest
-	ListNotifyMessagesResponse            = notificationrpc.ListNotifyMessagesResponse
-	ListNotifyRecordsRequest              = notificationrpc.ListNotifyRecordsRequest
-	ListNotifyRecordsResponse             = notificationrpc.ListNotifyRecordsResponse
-	ListNotifyTemplatesRequest            = notificationrpc.ListNotifyTemplatesRequest
-	ListNotifyTemplatesResponse           = notificationrpc.ListNotifyTemplatesResponse
-	ListQuery                             = notificationrpc.ListQuery
-	ListResult                            = notificationrpc.ListResult
-	ListUndeliveredNotifyMessagesRequest  = notificationrpc.ListUndeliveredNotifyMessagesRequest
-	ListUndeliveredNotifyMessagesResponse = notificationrpc.ListUndeliveredNotifyMessagesResponse
-	ListUserInboxRecordsRequest           = notificationrpc.ListUserInboxRecordsRequest
-	ListUserInboxRecordsResponse          = notificationrpc.ListUserInboxRecordsResponse
-	MarkAllRecordsReadRequest             = notificationrpc.MarkAllRecordsReadRequest
-	MarkAllRecordsReadResponse            = notificationrpc.MarkAllRecordsReadResponse
-	MarkRecordReadRequest                 = notificationrpc.MarkRecordReadRequest
-	MarkRecordReadResponse                = notificationrpc.MarkRecordReadResponse
-	NotifyMessage                         = notificationrpc.NotifyMessage
-	NotifyRecord                          = notificationrpc.NotifyRecord
-	NotifyTemplate                        = notificationrpc.NotifyTemplate
-	PublishNotifyMessageRequest           = notificationrpc.PublishNotifyMessageRequest
-	PublishNotifyMessageResponse          = notificationrpc.PublishNotifyMessageResponse
-	RedeliverNotifyMessageRequest         = notificationrpc.RedeliverNotifyMessageRequest
-	RedeliverNotifyMessageResponse        = notificationrpc.RedeliverNotifyMessageResponse
-	RevokeNotifyMessageRequest            = notificationrpc.RevokeNotifyMessageRequest
-	RevokeNotifyMessageResponse           = notificationrpc.RevokeNotifyMessageResponse
-	SendEmailCodeRequest                  = notificationrpc.SendEmailCodeRequest
-	SendEmailCodeResponse                 = notificationrpc.SendEmailCodeResponse
-	SendMobileCodeRequest                 = notificationrpc.SendMobileCodeRequest
-	SendMobileCodeResponse                = notificationrpc.SendMobileCodeResponse
-	UpdateNotifyMessageRequest            = notificationrpc.UpdateNotifyMessageRequest
-	UpdateNotifyMessageResponse           = notificationrpc.UpdateNotifyMessageResponse
-	UpdateNotifyTemplateRequest           = notificationrpc.UpdateNotifyTemplateRequest
-	UpdateNotifyTemplateResponse          = notificationrpc.UpdateNotifyTemplateResponse
-	VerifyEmailCodeRequest                = notificationrpc.VerifyEmailCodeRequest
-	VerifyEmailCodeResponse               = notificationrpc.VerifyEmailCodeResponse
-	VerifyMobileCodeRequest               = notificationrpc.VerifyMobileCodeRequest
-	VerifyMobileCodeResponse              = notificationrpc.VerifyMobileCodeResponse
+	Announcement                     = notificationrpc.Announcement
+	BatchDeleteAnnouncementsRequest  = notificationrpc.BatchDeleteAnnouncementsRequest
+	BatchDeleteAnnouncementsResponse = notificationrpc.BatchDeleteAnnouncementsResponse
+	BatchDeleteDeliveriesRequest     = notificationrpc.BatchDeleteDeliveriesRequest
+	BatchDeleteDeliveriesResponse    = notificationrpc.BatchDeleteDeliveriesResponse
+	CountUnreadNotificationsRequest  = notificationrpc.CountUnreadNotificationsRequest
+	CountUnreadNotificationsResponse = notificationrpc.CountUnreadNotificationsResponse
+	CreateAnnouncementRequest        = notificationrpc.CreateAnnouncementRequest
+	CreateAnnouncementResponse       = notificationrpc.CreateAnnouncementResponse
+	DeleteNotificationsRequest       = notificationrpc.DeleteNotificationsRequest
+	DeleteNotificationsResponse      = notificationrpc.DeleteNotificationsResponse
+	Delivery                         = notificationrpc.Delivery
+	GetAnnouncementRequest           = notificationrpc.GetAnnouncementRequest
+	GetAnnouncementResponse          = notificationrpc.GetAnnouncementResponse
+	GetNotifyPreferencesRequest      = notificationrpc.GetNotifyPreferencesRequest
+	GetNotifyPreferencesResponse     = notificationrpc.GetNotifyPreferencesResponse
+	ListAnnouncementsRequest         = notificationrpc.ListAnnouncementsRequest
+	ListAnnouncementsResponse        = notificationrpc.ListAnnouncementsResponse
+	ListDeliveriesRequest            = notificationrpc.ListDeliveriesRequest
+	ListDeliveriesResponse           = notificationrpc.ListDeliveriesResponse
+	ListNotificationEventsRequest    = notificationrpc.ListNotificationEventsRequest
+	ListNotificationEventsResponse   = notificationrpc.ListNotificationEventsResponse
+	ListNotificationsRequest         = notificationrpc.ListNotificationsRequest
+	ListNotificationsResponse        = notificationrpc.ListNotificationsResponse
+	ListQuery                        = notificationrpc.ListQuery
+	ListResult                       = notificationrpc.ListResult
+	ListStalledEventsRequest         = notificationrpc.ListStalledEventsRequest
+	ListStalledEventsResponse        = notificationrpc.ListStalledEventsResponse
+	ListUserNotificationsRequest     = notificationrpc.ListUserNotificationsRequest
+	ListUserNotificationsResponse    = notificationrpc.ListUserNotificationsResponse
+	MarkAllNotificationsReadRequest  = notificationrpc.MarkAllNotificationsReadRequest
+	MarkAllNotificationsReadResponse = notificationrpc.MarkAllNotificationsReadResponse
+	MarkNotificationsReadRequest     = notificationrpc.MarkNotificationsReadRequest
+	MarkNotificationsReadResponse    = notificationrpc.MarkNotificationsReadResponse
+	NotificationEvent                = notificationrpc.NotificationEvent
+	NotificationGroup                = notificationrpc.NotificationGroup
+	NotificationItem                 = notificationrpc.NotificationItem
+	NotificationPreference           = notificationrpc.NotificationPreference
+	PublishAnnouncementRequest       = notificationrpc.PublishAnnouncementRequest
+	PublishAnnouncementResponse      = notificationrpc.PublishAnnouncementResponse
+	RedeliverDeliveryRequest         = notificationrpc.RedeliverDeliveryRequest
+	RedeliverDeliveryResponse        = notificationrpc.RedeliverDeliveryResponse
+	RedeliverEventRequest            = notificationrpc.RedeliverEventRequest
+	RedeliverEventResponse           = notificationrpc.RedeliverEventResponse
+	RevokeAnnouncementRequest        = notificationrpc.RevokeAnnouncementRequest
+	RevokeAnnouncementResponse       = notificationrpc.RevokeAnnouncementResponse
+	SendEmailCodeRequest             = notificationrpc.SendEmailCodeRequest
+	SendEmailCodeResponse            = notificationrpc.SendEmailCodeResponse
+	SendMobileCodeRequest            = notificationrpc.SendMobileCodeRequest
+	SendMobileCodeResponse           = notificationrpc.SendMobileCodeResponse
+	UnsubscribeRequest               = notificationrpc.UnsubscribeRequest
+	UnsubscribeResponse              = notificationrpc.UnsubscribeResponse
+	UpdateAnnouncementRequest        = notificationrpc.UpdateAnnouncementRequest
+	UpdateAnnouncementResponse       = notificationrpc.UpdateAnnouncementResponse
+	UpdateNotifyPreferencesRequest   = notificationrpc.UpdateNotifyPreferencesRequest
+	UpdateNotifyPreferencesResponse  = notificationrpc.UpdateNotifyPreferencesResponse
+	VerifyEmailCodeRequest           = notificationrpc.VerifyEmailCodeRequest
+	VerifyEmailCodeResponse          = notificationrpc.VerifyEmailCodeResponse
+	VerifyMobileCodeRequest          = notificationrpc.VerifyMobileCodeRequest
+	VerifyMobileCodeResponse         = notificationrpc.VerifyMobileCodeResponse
+	VerifyUnsubscribeRequest         = notificationrpc.VerifyUnsubscribeRequest
+	VerifyUnsubscribeResponse        = notificationrpc.VerifyUnsubscribeResponse
 
 	NotificationService interface {
-		// 分页查询通知模板列表
-		ListNotifyTemplates(ctx context.Context, in *ListNotifyTemplatesRequest, opts ...grpc.CallOption) (*ListNotifyTemplatesResponse, error)
-		// 查询通知模板详情
-		GetNotifyTemplate(ctx context.Context, in *GetNotifyTemplateRequest, opts ...grpc.CallOption) (*GetNotifyTemplateResponse, error)
-		// 创建通知模板
-		CreateNotifyTemplate(ctx context.Context, in *CreateNotifyTemplateRequest, opts ...grpc.CallOption) (*CreateNotifyTemplateResponse, error)
-		// 更新通知模板
-		UpdateNotifyTemplate(ctx context.Context, in *UpdateNotifyTemplateRequest, opts ...grpc.CallOption) (*UpdateNotifyTemplateResponse, error)
-		// 批量删除通知模板
-		BatchDeleteNotifyTemplates(ctx context.Context, in *BatchDeleteNotifyTemplatesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyTemplatesResponse, error)
-		// 分页查询通知消息列表
-		ListNotifyMessages(ctx context.Context, in *ListNotifyMessagesRequest, opts ...grpc.CallOption) (*ListNotifyMessagesResponse, error)
-		// 查询通知消息详情
-		GetNotifyMessage(ctx context.Context, in *GetNotifyMessageRequest, opts ...grpc.CallOption) (*GetNotifyMessageResponse, error)
-		// 创建通知消息
-		CreateNotifyMessage(ctx context.Context, in *CreateNotifyMessageRequest, opts ...grpc.CallOption) (*CreateNotifyMessageResponse, error)
-		// 更新通知消息
-		UpdateNotifyMessage(ctx context.Context, in *UpdateNotifyMessageRequest, opts ...grpc.CallOption) (*UpdateNotifyMessageResponse, error)
-		// 批量删除通知消息
-		BatchDeleteNotifyMessages(ctx context.Context, in *BatchDeleteNotifyMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyMessagesResponse, error)
-		// 发布通知消息
-		PublishNotifyMessage(ctx context.Context, in *PublishNotifyMessageRequest, opts ...grpc.CallOption) (*PublishNotifyMessageResponse, error)
-		// 撤销通知消息
-		RevokeNotifyMessage(ctx context.Context, in *RevokeNotifyMessageRequest, opts ...grpc.CallOption) (*RevokeNotifyMessageResponse, error)
-		// 分页查询投递记录列表
-		ListNotifyRecords(ctx context.Context, in *ListNotifyRecordsRequest, opts ...grpc.CallOption) (*ListNotifyRecordsResponse, error)
+		// 分页查询公告列表
+		ListAnnouncements(ctx context.Context, in *ListAnnouncementsRequest, opts ...grpc.CallOption) (*ListAnnouncementsResponse, error)
+		// 查询公告详情
+		GetAnnouncement(ctx context.Context, in *GetAnnouncementRequest, opts ...grpc.CallOption) (*GetAnnouncementResponse, error)
+		// 创建公告
+		CreateAnnouncement(ctx context.Context, in *CreateAnnouncementRequest, opts ...grpc.CallOption) (*CreateAnnouncementResponse, error)
+		// 更新公告
+		UpdateAnnouncement(ctx context.Context, in *UpdateAnnouncementRequest, opts ...grpc.CallOption) (*UpdateAnnouncementResponse, error)
+		// 批量删除公告（连同派生条目与投递记录）
+		BatchDeleteAnnouncements(ctx context.Context, in *BatchDeleteAnnouncementsRequest, opts ...grpc.CallOption) (*BatchDeleteAnnouncementsResponse, error)
+		// 发布公告
+		PublishAnnouncement(ctx context.Context, in *PublishAnnouncementRequest, opts ...grpc.CallOption) (*PublishAnnouncementResponse, error)
+		// 撤回公告
+		RevokeAnnouncement(ctx context.Context, in *RevokeAnnouncementRequest, opts ...grpc.CallOption) (*RevokeAnnouncementResponse, error)
+		// 分页查询通知事件与扇出进度
+		ListNotificationEvents(ctx context.Context, in *ListNotificationEventsRequest, opts ...grpc.CallOption) (*ListNotificationEventsResponse, error)
+		// 查询停滞的通知事件
+		ListStalledEvents(ctx context.Context, in *ListStalledEventsRequest, opts ...grpc.CallOption) (*ListStalledEventsResponse, error)
+		// 重新扇出事件
+		RedeliverEvent(ctx context.Context, in *RedeliverEventRequest, opts ...grpc.CallOption) (*RedeliverEventResponse, error)
+		// 分页查询外部渠道投递记录
+		ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error)
 		// 批量删除投递记录
-		BatchDeleteNotifyRecords(ctx context.Context, in *BatchDeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyRecordsResponse, error)
-		// 查询已发布但未生成投递记录的消息
-		ListUndeliveredNotifyMessages(ctx context.Context, in *ListUndeliveredNotifyMessagesRequest, opts ...grpc.CallOption) (*ListUndeliveredNotifyMessagesResponse, error)
-		// 重新投递指定消息
-		RedeliverNotifyMessage(ctx context.Context, in *RedeliverNotifyMessageRequest, opts ...grpc.CallOption) (*RedeliverNotifyMessageResponse, error)
-		// 查询用户 inbox 投递列表
-		ListUserInboxRecords(ctx context.Context, in *ListUserInboxRecordsRequest, opts ...grpc.CallOption) (*ListUserInboxRecordsResponse, error)
-		// 标记单条 inbox 已读
-		MarkRecordRead(ctx context.Context, in *MarkRecordReadRequest, opts ...grpc.CallOption) (*MarkRecordReadResponse, error)
-		// 批量标记 inbox 已读
-		BatchMarkRecordsRead(ctx context.Context, in *BatchMarkRecordsReadRequest, opts ...grpc.CallOption) (*BatchMarkRecordsReadResponse, error)
-		// 全部标记 inbox 已读
-		MarkAllRecordsRead(ctx context.Context, in *MarkAllRecordsReadRequest, opts ...grpc.CallOption) (*MarkAllRecordsReadResponse, error)
+		BatchDeleteDeliveries(ctx context.Context, in *BatchDeleteDeliveriesRequest, opts ...grpc.CallOption) (*BatchDeleteDeliveriesResponse, error)
+		// 按投递记录重发
+		RedeliverDelivery(ctx context.Context, in *RedeliverDeliveryRequest, opts ...grpc.CallOption) (*RedeliverDeliveryResponse, error)
+		// 分页查询收件箱（按分组）
+		ListNotifications(ctx context.Context, in *ListNotificationsRequest, opts ...grpc.CallOption) (*ListNotificationsResponse, error)
+		// 查询未读分组数
+		CountUnreadNotifications(ctx context.Context, in *CountUnreadNotificationsRequest, opts ...grpc.CallOption) (*CountUnreadNotificationsResponse, error)
+		// 标记通知已读
+		MarkNotificationsRead(ctx context.Context, in *MarkNotificationsReadRequest, opts ...grpc.CallOption) (*MarkNotificationsReadResponse, error)
+		// 全部标记已读
+		MarkAllNotificationsRead(ctx context.Context, in *MarkAllNotificationsReadRequest, opts ...grpc.CallOption) (*MarkAllNotificationsReadResponse, error)
+		// 删除通知
+		DeleteNotifications(ctx context.Context, in *DeleteNotificationsRequest, opts ...grpc.CallOption) (*DeleteNotificationsResponse, error)
+		// 按用户查询收件箱条目
+		ListUserNotifications(ctx context.Context, in *ListUserNotificationsRequest, opts ...grpc.CallOption) (*ListUserNotificationsResponse, error)
+		// 查询通知偏好
+		GetNotifyPreferences(ctx context.Context, in *GetNotifyPreferencesRequest, opts ...grpc.CallOption) (*GetNotifyPreferencesResponse, error)
+		// 更新通知偏好
+		UpdateNotifyPreferences(ctx context.Context, in *UpdateNotifyPreferencesRequest, opts ...grpc.CallOption) (*UpdateNotifyPreferencesResponse, error)
+		// 校验退订令牌
+		VerifyUnsubscribe(ctx context.Context, in *VerifyUnsubscribeRequest, opts ...grpc.CallOption) (*VerifyUnsubscribeResponse, error)
+		// 凭令牌执行退订
+		Unsubscribe(ctx context.Context, in *UnsubscribeRequest, opts ...grpc.CallOption) (*UnsubscribeResponse, error)
 		// 发送手机验证码
 		SendMobileCode(ctx context.Context, in *SendMobileCodeRequest, opts ...grpc.CallOption) (*SendMobileCodeResponse, error)
 		// 校验手机验证码
@@ -130,124 +145,142 @@ func NewNotificationService(cli zrpc.Client) NotificationService {
 	}
 }
 
-// 分页查询通知模板列表
-func (m *defaultNotificationService) ListNotifyTemplates(ctx context.Context, in *ListNotifyTemplatesRequest, opts ...grpc.CallOption) (*ListNotifyTemplatesResponse, error) {
+// 分页查询公告列表
+func (m *defaultNotificationService) ListAnnouncements(ctx context.Context, in *ListAnnouncementsRequest, opts ...grpc.CallOption) (*ListAnnouncementsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.ListNotifyTemplates(ctx, in, opts...)
+	return client.ListAnnouncements(ctx, in, opts...)
 }
 
-// 查询通知模板详情
-func (m *defaultNotificationService) GetNotifyTemplate(ctx context.Context, in *GetNotifyTemplateRequest, opts ...grpc.CallOption) (*GetNotifyTemplateResponse, error) {
+// 查询公告详情
+func (m *defaultNotificationService) GetAnnouncement(ctx context.Context, in *GetAnnouncementRequest, opts ...grpc.CallOption) (*GetAnnouncementResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.GetNotifyTemplate(ctx, in, opts...)
+	return client.GetAnnouncement(ctx, in, opts...)
 }
 
-// 创建通知模板
-func (m *defaultNotificationService) CreateNotifyTemplate(ctx context.Context, in *CreateNotifyTemplateRequest, opts ...grpc.CallOption) (*CreateNotifyTemplateResponse, error) {
+// 创建公告
+func (m *defaultNotificationService) CreateAnnouncement(ctx context.Context, in *CreateAnnouncementRequest, opts ...grpc.CallOption) (*CreateAnnouncementResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.CreateNotifyTemplate(ctx, in, opts...)
+	return client.CreateAnnouncement(ctx, in, opts...)
 }
 
-// 更新通知模板
-func (m *defaultNotificationService) UpdateNotifyTemplate(ctx context.Context, in *UpdateNotifyTemplateRequest, opts ...grpc.CallOption) (*UpdateNotifyTemplateResponse, error) {
+// 更新公告
+func (m *defaultNotificationService) UpdateAnnouncement(ctx context.Context, in *UpdateAnnouncementRequest, opts ...grpc.CallOption) (*UpdateAnnouncementResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.UpdateNotifyTemplate(ctx, in, opts...)
+	return client.UpdateAnnouncement(ctx, in, opts...)
 }
 
-// 批量删除通知模板
-func (m *defaultNotificationService) BatchDeleteNotifyTemplates(ctx context.Context, in *BatchDeleteNotifyTemplatesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyTemplatesResponse, error) {
+// 批量删除公告（连同派生条目与投递记录）
+func (m *defaultNotificationService) BatchDeleteAnnouncements(ctx context.Context, in *BatchDeleteAnnouncementsRequest, opts ...grpc.CallOption) (*BatchDeleteAnnouncementsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.BatchDeleteNotifyTemplates(ctx, in, opts...)
+	return client.BatchDeleteAnnouncements(ctx, in, opts...)
 }
 
-// 分页查询通知消息列表
-func (m *defaultNotificationService) ListNotifyMessages(ctx context.Context, in *ListNotifyMessagesRequest, opts ...grpc.CallOption) (*ListNotifyMessagesResponse, error) {
+// 发布公告
+func (m *defaultNotificationService) PublishAnnouncement(ctx context.Context, in *PublishAnnouncementRequest, opts ...grpc.CallOption) (*PublishAnnouncementResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.ListNotifyMessages(ctx, in, opts...)
+	return client.PublishAnnouncement(ctx, in, opts...)
 }
 
-// 查询通知消息详情
-func (m *defaultNotificationService) GetNotifyMessage(ctx context.Context, in *GetNotifyMessageRequest, opts ...grpc.CallOption) (*GetNotifyMessageResponse, error) {
+// 撤回公告
+func (m *defaultNotificationService) RevokeAnnouncement(ctx context.Context, in *RevokeAnnouncementRequest, opts ...grpc.CallOption) (*RevokeAnnouncementResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.GetNotifyMessage(ctx, in, opts...)
+	return client.RevokeAnnouncement(ctx, in, opts...)
 }
 
-// 创建通知消息
-func (m *defaultNotificationService) CreateNotifyMessage(ctx context.Context, in *CreateNotifyMessageRequest, opts ...grpc.CallOption) (*CreateNotifyMessageResponse, error) {
+// 分页查询通知事件与扇出进度
+func (m *defaultNotificationService) ListNotificationEvents(ctx context.Context, in *ListNotificationEventsRequest, opts ...grpc.CallOption) (*ListNotificationEventsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.CreateNotifyMessage(ctx, in, opts...)
+	return client.ListNotificationEvents(ctx, in, opts...)
 }
 
-// 更新通知消息
-func (m *defaultNotificationService) UpdateNotifyMessage(ctx context.Context, in *UpdateNotifyMessageRequest, opts ...grpc.CallOption) (*UpdateNotifyMessageResponse, error) {
+// 查询停滞的通知事件
+func (m *defaultNotificationService) ListStalledEvents(ctx context.Context, in *ListStalledEventsRequest, opts ...grpc.CallOption) (*ListStalledEventsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.UpdateNotifyMessage(ctx, in, opts...)
+	return client.ListStalledEvents(ctx, in, opts...)
 }
 
-// 批量删除通知消息
-func (m *defaultNotificationService) BatchDeleteNotifyMessages(ctx context.Context, in *BatchDeleteNotifyMessagesRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyMessagesResponse, error) {
+// 重新扇出事件
+func (m *defaultNotificationService) RedeliverEvent(ctx context.Context, in *RedeliverEventRequest, opts ...grpc.CallOption) (*RedeliverEventResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.BatchDeleteNotifyMessages(ctx, in, opts...)
+	return client.RedeliverEvent(ctx, in, opts...)
 }
 
-// 发布通知消息
-func (m *defaultNotificationService) PublishNotifyMessage(ctx context.Context, in *PublishNotifyMessageRequest, opts ...grpc.CallOption) (*PublishNotifyMessageResponse, error) {
+// 分页查询外部渠道投递记录
+func (m *defaultNotificationService) ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.PublishNotifyMessage(ctx, in, opts...)
-}
-
-// 撤销通知消息
-func (m *defaultNotificationService) RevokeNotifyMessage(ctx context.Context, in *RevokeNotifyMessageRequest, opts ...grpc.CallOption) (*RevokeNotifyMessageResponse, error) {
-	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.RevokeNotifyMessage(ctx, in, opts...)
-}
-
-// 分页查询投递记录列表
-func (m *defaultNotificationService) ListNotifyRecords(ctx context.Context, in *ListNotifyRecordsRequest, opts ...grpc.CallOption) (*ListNotifyRecordsResponse, error) {
-	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.ListNotifyRecords(ctx, in, opts...)
+	return client.ListDeliveries(ctx, in, opts...)
 }
 
 // 批量删除投递记录
-func (m *defaultNotificationService) BatchDeleteNotifyRecords(ctx context.Context, in *BatchDeleteNotifyRecordsRequest, opts ...grpc.CallOption) (*BatchDeleteNotifyRecordsResponse, error) {
+func (m *defaultNotificationService) BatchDeleteDeliveries(ctx context.Context, in *BatchDeleteDeliveriesRequest, opts ...grpc.CallOption) (*BatchDeleteDeliveriesResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.BatchDeleteNotifyRecords(ctx, in, opts...)
+	return client.BatchDeleteDeliveries(ctx, in, opts...)
 }
 
-// 查询已发布但未生成投递记录的消息
-func (m *defaultNotificationService) ListUndeliveredNotifyMessages(ctx context.Context, in *ListUndeliveredNotifyMessagesRequest, opts ...grpc.CallOption) (*ListUndeliveredNotifyMessagesResponse, error) {
+// 按投递记录重发
+func (m *defaultNotificationService) RedeliverDelivery(ctx context.Context, in *RedeliverDeliveryRequest, opts ...grpc.CallOption) (*RedeliverDeliveryResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.ListUndeliveredNotifyMessages(ctx, in, opts...)
+	return client.RedeliverDelivery(ctx, in, opts...)
 }
 
-// 重新投递指定消息
-func (m *defaultNotificationService) RedeliverNotifyMessage(ctx context.Context, in *RedeliverNotifyMessageRequest, opts ...grpc.CallOption) (*RedeliverNotifyMessageResponse, error) {
+// 分页查询收件箱（按分组）
+func (m *defaultNotificationService) ListNotifications(ctx context.Context, in *ListNotificationsRequest, opts ...grpc.CallOption) (*ListNotificationsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.RedeliverNotifyMessage(ctx, in, opts...)
+	return client.ListNotifications(ctx, in, opts...)
 }
 
-// 查询用户 inbox 投递列表
-func (m *defaultNotificationService) ListUserInboxRecords(ctx context.Context, in *ListUserInboxRecordsRequest, opts ...grpc.CallOption) (*ListUserInboxRecordsResponse, error) {
+// 查询未读分组数
+func (m *defaultNotificationService) CountUnreadNotifications(ctx context.Context, in *CountUnreadNotificationsRequest, opts ...grpc.CallOption) (*CountUnreadNotificationsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.ListUserInboxRecords(ctx, in, opts...)
+	return client.CountUnreadNotifications(ctx, in, opts...)
 }
 
-// 标记单条 inbox 已读
-func (m *defaultNotificationService) MarkRecordRead(ctx context.Context, in *MarkRecordReadRequest, opts ...grpc.CallOption) (*MarkRecordReadResponse, error) {
+// 标记通知已读
+func (m *defaultNotificationService) MarkNotificationsRead(ctx context.Context, in *MarkNotificationsReadRequest, opts ...grpc.CallOption) (*MarkNotificationsReadResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.MarkRecordRead(ctx, in, opts...)
+	return client.MarkNotificationsRead(ctx, in, opts...)
 }
 
-// 批量标记 inbox 已读
-func (m *defaultNotificationService) BatchMarkRecordsRead(ctx context.Context, in *BatchMarkRecordsReadRequest, opts ...grpc.CallOption) (*BatchMarkRecordsReadResponse, error) {
+// 全部标记已读
+func (m *defaultNotificationService) MarkAllNotificationsRead(ctx context.Context, in *MarkAllNotificationsReadRequest, opts ...grpc.CallOption) (*MarkAllNotificationsReadResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.BatchMarkRecordsRead(ctx, in, opts...)
+	return client.MarkAllNotificationsRead(ctx, in, opts...)
 }
 
-// 全部标记 inbox 已读
-func (m *defaultNotificationService) MarkAllRecordsRead(ctx context.Context, in *MarkAllRecordsReadRequest, opts ...grpc.CallOption) (*MarkAllRecordsReadResponse, error) {
+// 删除通知
+func (m *defaultNotificationService) DeleteNotifications(ctx context.Context, in *DeleteNotificationsRequest, opts ...grpc.CallOption) (*DeleteNotificationsResponse, error) {
 	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
-	return client.MarkAllRecordsRead(ctx, in, opts...)
+	return client.DeleteNotifications(ctx, in, opts...)
+}
+
+// 按用户查询收件箱条目
+func (m *defaultNotificationService) ListUserNotifications(ctx context.Context, in *ListUserNotificationsRequest, opts ...grpc.CallOption) (*ListUserNotificationsResponse, error) {
+	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
+	return client.ListUserNotifications(ctx, in, opts...)
+}
+
+// 查询通知偏好
+func (m *defaultNotificationService) GetNotifyPreferences(ctx context.Context, in *GetNotifyPreferencesRequest, opts ...grpc.CallOption) (*GetNotifyPreferencesResponse, error) {
+	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
+	return client.GetNotifyPreferences(ctx, in, opts...)
+}
+
+// 更新通知偏好
+func (m *defaultNotificationService) UpdateNotifyPreferences(ctx context.Context, in *UpdateNotifyPreferencesRequest, opts ...grpc.CallOption) (*UpdateNotifyPreferencesResponse, error) {
+	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
+	return client.UpdateNotifyPreferences(ctx, in, opts...)
+}
+
+// 校验退订令牌
+func (m *defaultNotificationService) VerifyUnsubscribe(ctx context.Context, in *VerifyUnsubscribeRequest, opts ...grpc.CallOption) (*VerifyUnsubscribeResponse, error) {
+	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
+	return client.VerifyUnsubscribe(ctx, in, opts...)
+}
+
+// 凭令牌执行退订
+func (m *defaultNotificationService) Unsubscribe(ctx context.Context, in *UnsubscribeRequest, opts ...grpc.CallOption) (*UnsubscribeResponse, error) {
+	client := notificationrpc.NewNotificationServiceClient(m.cli.Conn())
+	return client.Unsubscribe(ctx, in, opts...)
 }
 
 // 发送手机验证码

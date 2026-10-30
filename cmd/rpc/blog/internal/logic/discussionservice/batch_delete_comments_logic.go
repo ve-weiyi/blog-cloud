@@ -9,6 +9,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/notify"
 )
 
 type BatchDeleteCommentsLogic struct {
@@ -37,7 +38,12 @@ func (l *BatchDeleteCommentsLogic) BatchDeleteComments(in *discussionrpc.BatchDe
 
 		var err error
 		rows, err = l.svcCtx.TCommentModel.WithTx(tx).DeleteBatch(l.ctx, "id in (?)", in.Ids)
-		return err
+		if err != nil {
+			return err
+		}
+
+		// 对象没了，指向它的收件箱条目就是死链：先终止事件，再删条目与投递
+		return l.svcCtx.Notify.TerminateObject(l.ctx, tx, notify.ObjectComment, in.Ids)
 	})
 	if err != nil {
 		return nil, err

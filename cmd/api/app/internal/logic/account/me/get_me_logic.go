@@ -6,10 +6,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
 )
 
 type GetMeLogic struct {

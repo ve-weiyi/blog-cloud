@@ -38,7 +38,7 @@ func (l *ListMenusLogic) ListMenus(in *accessrpc.ListMenusRequest) (*accessrpc.L
 
 	_, _, _, conditions, params := queryx.NewQueryBuilder(opts...).Build()
 
-	result, err := l.svcCtx.TMenuModel.FindALL(l.ctx, conditions, params...)
+	result, err := l.svcCtx.TMenuModel.FindAll(l.ctx, conditions, params...)
 	if err != nil {
 		return nil, err
 	}

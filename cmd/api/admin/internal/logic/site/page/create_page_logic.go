@@ -38,11 +38,13 @@ func (l *CreatePageLogic) CreatePage(req *types.CreatePageReq) (resp *types.Page
 	}
 
 	return &types.PageVO{
-		Id:             out.Id,
-		PageName:       req.PageName,
-		PageLabel:      req.PageLabel,
-		PageCover:      req.PageCover,
-		IsCarousel:     req.IsCarousel,
-		CarouselCovers: req.CarouselCovers,
+		Id:             out.Page.Id,
+		PageName:       out.Page.PageName,
+		PageLabel:      out.Page.PageLabel,
+		PageCover:      out.Page.PageCover,
+		IsCarousel:     out.Page.IsCarousel,
+		CarouselCovers: out.Page.CarouselCovers,
+		CreatedAt:      out.Page.CreatedAt,
+		UpdatedAt:      out.Page.UpdatedAt,
 	}, nil
 }

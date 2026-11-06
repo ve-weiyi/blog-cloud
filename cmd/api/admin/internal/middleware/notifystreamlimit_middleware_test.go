@@ -6,15 +6,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/sse"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/notifyx"
+	"github.com/ve-weiyi/blog-cloud/infra/messaging/ssex"
 )
 
 // 达到上限时必须拒绝，且返回信封错误——这只能在中间件里做：
 // SSE handler 一旦开始写流就已接管响应头，之后发不出信封。
 func TestStreamLimitRejectsWhenFull(t *testing.T) {
-	broker := sse.NewBroker[notifyx.Event]()
+	broker := ssex.NewBroker[notifyx.Event]()
 	defer broker.Close()
 
 	m := NewNotifyStreamLimitMiddleware(broker, 2)
@@ -54,7 +54,7 @@ func TestStreamLimitRejectsWhenFull(t *testing.T) {
 
 // 未达上限时放行
 func TestStreamLimitAllowsWhenBelowCapacity(t *testing.T) {
-	broker := sse.NewBroker[notifyx.Event]()
+	broker := ssex.NewBroker[notifyx.Event]()
 	defer broker.Close()
 
 	m := NewNotifyStreamLimitMiddleware(broker, 2)
@@ -76,7 +76,7 @@ func TestStreamLimitAllowsWhenBelowCapacity(t *testing.T) {
 
 // 上限非法时回落到默认值，不能变成"全拒"
 func TestStreamLimitFallsBackToDefault(t *testing.T) {
-	broker := sse.NewBroker[notifyx.Event]()
+	broker := ssex.NewBroker[notifyx.Event]()
 	defer broker.Close()
 
 	m := NewNotifyStreamLimitMiddleware(broker, 0)

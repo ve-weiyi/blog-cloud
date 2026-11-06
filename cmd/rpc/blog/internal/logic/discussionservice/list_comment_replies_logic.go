@@ -59,8 +59,13 @@ func (l *ListCommentRepliesLogic) ListCommentReplies(in *discussionrpc.ListComme
 	}
 
 	var list []*discussionrpc.Comment
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetComment, commentIDs(records))
+	if err != nil {
+		return nil, err
+	}
+
 	for _, entity := range records {
-		list = append(list, convertCommentOut(entity))
+		list = append(list, convertCommentOut(entity, lm, lcm))
 	}
 
 	return &discussionrpc.ListCommentRepliesResponse{

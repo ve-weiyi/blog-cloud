@@ -8,7 +8,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/notificationservice"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
 )
 

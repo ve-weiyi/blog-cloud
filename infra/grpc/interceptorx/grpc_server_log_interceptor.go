@@ -7,7 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 
-	"github.com/ve-weiyi/blog-cloud/infra/redactx"
+	"github.com/ve-weiyi/vkit/x/redactx"
 )
 
 func ServerLogInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {

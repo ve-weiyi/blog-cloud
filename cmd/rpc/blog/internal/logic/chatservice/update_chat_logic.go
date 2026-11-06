@@ -7,6 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/chatrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/chat"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
@@ -35,8 +36,22 @@ func (l *UpdateChatLogic) UpdateChat(in *chatrpc.UpdateChatRequest) (*chatrpc.Up
 		return nil, bizerr.NewBizError(bizcode.CodeUnauthenticated, "缺少用户身份")
 	}
 
+	content := in.Content
+	messageType := in.Type
 	switch in.Status {
-	case enums.ChatStatusNormal, enums.ChatStatusEdited, enums.ChatStatusRecall:
+	case enums.ChatStatusRecall:
+		// 撤回文案由服务端固定，客户端不能把它替换成任意内容
+		content = "[消息已撤回]"
+		messageType = chat.TypeText
+	case enums.ChatStatusNormal, enums.ChatStatusEdited:
+		if !chat.ValidType(messageType) {
+			return nil, bizerr.NewBizError(bizcode.CodeParamValueInvalid, "不支持的消息类型")
+		}
+		normalized, err := chat.NormalizeContent(content)
+		if err != nil {
+			return nil, bizerr.NewBizError(bizcode.CodeParamValueInvalid, "消息内容不合法")
+		}
+		content = normalized
 	default:
 		return nil, bizerr.NewBizError(bizcode.CodeParamValueInvalid, "聊天状态不合法")
 	}
@@ -52,8 +67,8 @@ func (l *UpdateChatLogic) UpdateChat(in *chatrpc.UpdateChatRequest) (*chatrpc.Up
 	}
 
 	rows, err := l.svcCtx.TChatModel.UpdateFields(l.ctx, map[string]interface{}{
-		"type":    in.Type,
-		"content": in.Content,
+		"type":    messageType,
+		"content": content,
 		"status":  in.Status,
 	}, conditions, args...)
 	if err != nil {

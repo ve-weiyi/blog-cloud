@@ -15,7 +15,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
-	"github.com/ve-weiyi/vkit/x/patternx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type BindMeMobileLogic struct {
@@ -38,7 +38,7 @@ func (l *BindMeMobileLogic) BindMeMobile(in *userrpc.BindMeMobileRequest) (*user
 	if err != nil || userID == "" {
 		return nil, bizerr.NewBizError(bizcode.CodeUnauthenticated, "缺少用户身份")
 	}
-	if !patternx.IsValidMobile(in.Mobile) {
+	if !validatex.IsMobile(in.Mobile) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "手机号格式不正确")
 	}
 

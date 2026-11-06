@@ -5,10 +5,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/types"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
 )
 
 type ResetUserPasswordLogic struct {
@@ -26,7 +25,7 @@ func NewResetUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordReq) (resp *types.EmptyResp, err error) {
+func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordReq) (resp *types.ResetUserPasswordResp, err error) {
 	_, err = l.svcCtx.UserService.ResetUserPassword(l.ctx, &userservice.ResetUserPasswordRequest{
 		UserId:      req.UserId,
 		NewPassword: req.NewPassword,
@@ -39,5 +38,5 @@ func (l *ResetUserPasswordLogic) ResetUserPassword(req *types.ResetUserPasswordR
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return &types.ResetUserPasswordResp{}, nil
 }

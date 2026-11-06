@@ -5,10 +5,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/types"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 )
 
@@ -27,7 +26,7 @@ func NewUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq) (resp *types.EmptyResp, err error) {
+func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq) (resp *types.UpdateUserStatusResp, err error) {
 	_, err = l.svcCtx.UserService.PatchUser(l.ctx, &userservice.PatchUserRequest{
 		UserId: req.UserId,
 		Status: req.Status,
@@ -42,5 +41,5 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq)
 		}
 	}
 
-	return &types.EmptyResp{}, nil
+	return &types.UpdateUserStatusResp{}, nil
 }

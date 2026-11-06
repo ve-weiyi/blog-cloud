@@ -41,7 +41,7 @@ func (l *ListApisLogic) ListApis(in *accessrpc.ListApisRequest) (*accessrpc.List
 	}
 
 	_, _, _, conditions, params := queryx.NewQueryBuilder(opts...).Build()
-	result, err := l.svcCtx.TApiModel.FindALL(l.ctx, conditions, params...)
+	result, err := l.svcCtx.TApiModel.FindAll(l.ctx, conditions, params...)
 	if err != nil {
 		return nil, err
 	}

@@ -34,8 +34,10 @@ func (l *CreateTagLogic) CreateTag(req *types.CreateTagReq) (resp *types.TagVO, 
 	}
 
 	return &types.TagVO{
-		Id:           out.Id,
-		TagName:      req.TagName,
+		Id:           out.Tag.Id,
+		TagName:      out.Tag.TagName,
 		ArticleCount: 0,
+		CreatedAt:    out.Tag.CreatedAt,
+		UpdatedAt:    out.Tag.UpdatedAt,
 	}, nil
 }

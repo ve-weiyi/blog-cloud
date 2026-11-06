@@ -12,26 +12,9 @@ var _ TMenuModel = (*defaultTMenuModel)(nil)
 type (
 	// 接口定义
 	TMenuModel interface {
-		TableName() string
+		Table[TMenu]
 		// 在事务中操作
 		WithTx(tx *gorm.DB) (out TMenuModel)
-		// 插入
-		Insert(ctx context.Context, in *TMenu) (rows int64, err error)
-		InsertBatch(ctx context.Context, in ...*TMenu) (rows int64, err error)
-		// 删除
-		Delete(ctx context.Context, id int64) (rows int64, err error)
-		DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error)
-		// 整行更新（含零值，按主键）
-		Update(ctx context.Context, in *TMenu) (rows int64, err error)
-		UpdateFields(ctx context.Context, fields map[string]interface{}, conditions string, args ...interface{}) (rows int64, err error)
-		// 插入或整行更新（按主键）
-		Upsert(ctx context.Context, in *TMenu) (rows int64, err error)
-		// 查询
-		FindById(ctx context.Context, id int64) (out *TMenu, err error)
-		FindOne(ctx context.Context, sorts string, conditions string, args ...interface{}) (out *TMenu, err error)
-		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TMenu, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
-		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TMenu, total int64, err error)
 		// add extra method in here
 		FindOneByPathPerm(ctx context.Context, path string, perm string) (out *TMenu, err error)
 	}
@@ -47,7 +30,7 @@ type (
 		Type       string    `gorm:"column:type;type:varchar(64);not null;default:'';comment:菜单类型" json:"type"`                                     // 菜单类型
 		Title      string    `gorm:"column:title;type:varchar(64);not null;default:'';comment:菜单标题" json:"title"`                                   // 菜单标题
 		Icon       string    `gorm:"column:icon;type:varchar(64);not null;default:'';comment:菜单图标" json:"icon"`                                     // 菜单图标
-		Rank       int64     `gorm:"column:rank;type:bigint;not null;default:0;comment:排序" json:"rank"`                                             // 排序
+		Rank       int64     `gorm:"column:rank;type:int;not null;default:0;comment:排序" json:"rank"`                                                // 排序
 		Perm       string    `gorm:"column:perm;type:varchar(64);not null;uniqueIndex:uk_path_perm,priority:2;default:'';comment:权限标识" json:"perm"` // 权限标识
 		Params     string    `gorm:"column:params;type:varchar(256);not null;default:'';comment:路由参数" json:"params"`                                // 路由参数
 		KeepAlive  int64     `gorm:"column:keep_alive;type:tinyint;not null;default:0;comment:是否缓存" json:"keep_alive"`                              // 是否缓存
@@ -61,223 +44,22 @@ type (
 
 	// 接口实现
 	defaultTMenuModel struct {
-		DbEngin *gorm.DB
-		table   string
+		baseModel[TMenu]
 	}
 )
 
 func NewTMenuModel(db *gorm.DB) TMenuModel {
-	return &defaultTMenuModel{
-		DbEngin: db,
-		table:   "`t_menu`",
-	}
-}
-
-func (m *defaultTMenuModel) TableName() string {
-	return m.table
+	return &defaultTMenuModel{newBaseModel[TMenu](db, "`t_menu`")}
 }
 
 // 在事务中操作
 func (m *defaultTMenuModel) WithTx(tx *gorm.DB) (out TMenuModel) {
-	return NewTMenuModel(tx)
-}
-
-// 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
-func (m *defaultTMenuModel) Insert(ctx context.Context, in *TMenu) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Create(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 插入记录（批量操作）
-func (m *defaultTMenuModel) InsertBatch(ctx context.Context, in ...*TMenu) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.CreateInBatches(&in, len(in))
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 删除记录
-func (m *defaultTMenuModel) Delete(ctx context.Context, id int64) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	db = db.Where("id = ?", id)
-
-	result := db.Delete(&TMenu{})
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 删除记录（批量操作）
-func (m *defaultTMenuModel) DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	result := db.Delete(&TMenu{})
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 整行更新（含零值，按主键）
-func (m *defaultTMenuModel) Update(ctx context.Context, in *TMenu) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Omit("id", "created_at", "updated_at").Select("*").Updates(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 部分更新
-func (m *defaultTMenuModel) UpdateFields(ctx context.Context, feilds map[string]interface{}, conditions string, args ...interface{}) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Where(conditions, args...).Updates(feilds)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 插入或整行更新（按主键）
-func (m *defaultTMenuModel) Upsert(ctx context.Context, in *TMenu) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Omit("created_at").Save(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 查询记录
-func (m *defaultTMenuModel) FindById(ctx context.Context, id int64) (out *TMenu, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	err = db.Where("`id` = ?", id).First(&out).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return out, err
-}
-
-// 查询记录
-func (m *defaultTMenuModel) FindOne(ctx context.Context, sorts string, conditions string, args ...interface{}) (out *TMenu, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	// 如果有排序参数
-	if len(sorts) != 0 {
-		db = db.Order(sorts)
-	}
-
-	err = db.First(&out).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return out, err
-}
-
-// 查询列表
-func (m *defaultTMenuModel) FindALL(ctx context.Context, conditions string, args ...interface{}) (out []*TMenu, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Find(&out).Error
-	if err != nil {
-		return nil, err
-	}
-	return out, err
-}
-
-// 查询总数
-func (m *defaultTMenuModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
-
-// 分页查询记录
-func (m *defaultTMenuModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TMenu, total int64, err error) {
-	// 插入db
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有搜索条件
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	// 如果有排序参数
-	if len(sorts) != 0 {
-		db = db.Order(sorts)
-	}
-
-	err = db.Count(&total).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// 如果有分页参数
-	if page > 0 && size > 0 {
-		limit := size
-		offset := (page - 1) * limit
-		db = db.Limit(limit).Offset(offset)
-	}
-
-	// 查询数据
-	err = db.Find(&list).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return list, total, nil
+	return &defaultTMenuModel{newBaseModel[TMenu](tx, m.table)}
 }
 
 // add extra method in here
 func (m *defaultTMenuModel) FindOneByPathPerm(ctx context.Context, path string, perm string) (out *TMenu, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
+	db := m.scope(ctx)
 
 	err = db.Where("`path` = ? and `perm` = ?", path, perm).First(&out).Error
 	if err != nil {

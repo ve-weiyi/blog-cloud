@@ -38,7 +38,7 @@ const (
 	HeaderXRealIP       = "x-real-ip"
 
 	// 自定义请求头部
-	HeaderAppName    = "app-name"
+	HeaderAppName    = "app-name" // 平台标识，由网关转发时固定写入，不采信客户端声明
 	HeaderAppVersion = "app-version"
 	HeaderOsType     = "os-type"
 	HeaderOsVersion  = "os-version"
@@ -90,6 +90,12 @@ func Token(header http.Header, name string) string {
 
 	return value
 }
+
+// 各网关的平台标识，由网关在转发时写入 metadata。
+const (
+	AppNameAdminWeb = "admin-web"
+	AppNameBlogWeb  = "blog-web"
+)
 
 var HeaderFields = []string{
 	HeaderRemoteAddr,

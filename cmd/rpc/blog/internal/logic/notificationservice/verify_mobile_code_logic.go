@@ -9,11 +9,10 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/x/patternx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type VerifyMobileCodeLogic struct {
@@ -33,7 +32,7 @@ func NewVerifyMobileCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 // 校验短信验证码
 func (l *VerifyMobileCodeLogic) VerifyMobileCode(in *notificationrpc.VerifyMobileCodeRequest) (*notificationrpc.VerifyMobileCodeResponse, error) {
 	// 校验手机号格式
-	if !patternx.IsValidMobile(in.Mobile) {
+	if !validatex.IsMobile(in.Mobile) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "手机号格式不正确")
 	}
 

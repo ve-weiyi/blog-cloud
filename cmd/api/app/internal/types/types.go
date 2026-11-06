@@ -3,6 +3,49 @@
 
 package types
 
+type AiChatMessage struct {
+	Role    string `json:"role"` // user / assistant
+	Content string `json:"content"`
+}
+
+type AiCitation struct {
+	ArticleId int64  `json:"article_id"`
+	Title     string `json:"title"`
+	Url       string `json:"url"`               // 由网关按站点地址与文章路由拼装
+	Summary   string `json:"summary,omitempty"` // 片段摘要，用于引用卡片
+}
+
+type AiMessageVO struct {
+	Id        int64  `json:"id"`
+	SessionId int64  `json:"session_id"`
+	Role      string `json:"role"`
+	Content   string `json:"content"`
+	CreatedAt int64  `json:"created_at"`
+}
+
+type AiSessionVO struct {
+	Id            int64  `json:"id"`
+	Title         string `json:"title"`
+	Model         string `json:"model"`
+	MessageCount  int64  `json:"message_count"`
+	CreatedAt     int64  `json:"created_at"`
+	UpdatedAt     int64  `json:"updated_at"`
+	LastMessageAt int64  `json:"last_message_at"`
+}
+
+type AiToolEvent struct {
+	Name     string        `json:"name"`               // 工具名，P0 只有 search_articles
+	Phase    string        `json:"phase"`              // started / completed / failed
+	Label    string        `json:"label,omitempty"`    // 展示文案
+	Summary  string        `json:"summary,omitempty"`  // 结果摘要
+	Articles []*AiCitation `json:"articles,omitempty"` // 引用列表，完成事件下发
+}
+
+type AiUsage struct {
+	PromptTokens     int64 `json:"prompt_tokens"`
+	CompletionTokens int64 `json:"completion_tokens"`
+}
+
 type ArticleHome struct {
 	Id             int64    `json:"id"`
 	ArticleCover   string   `json:"article_cover"`
@@ -18,6 +61,7 @@ type ArticleHome struct {
 	TagNameList    []string `json:"tag_name_list"`
 	LikeCount      int64    `json:"like_count"`
 	ViewCount      int64    `json:"view_count"`
+	Liked          bool     `json:"liked"` // 当前用户是否已赞
 }
 
 type ArticlePreview struct {
@@ -26,6 +70,7 @@ type ArticlePreview struct {
 	ArticleTitle string `json:"article_title"`
 	LikeCount    int64  `json:"like_count"`
 	ViewCount    int64  `json:"view_count"`
+	Liked        bool   `json:"liked"` // 当前用户是否已赞
 	CreatedAt    int64  `json:"created_at"`
 }
 
@@ -50,6 +95,7 @@ type Comment struct {
 	Type             int64           `json:"type"`
 	CreatedAt        int64           `json:"created_at"`
 	LikeCount        int64           `json:"like_count"`
+	Liked            bool            `json:"liked"` // 当前用户是否已赞
 	GuestInfo        *GuestInfoVO    `json:"guest_info"`
 	UserInfo         *UserInfoVO     `json:"user_info"`
 	ReplyUserInfo    *UserInfoVO     `json:"reply_user_info"`
@@ -82,6 +128,7 @@ type CommentReply struct {
 	Type           int64        `json:"type"`
 	CreatedAt      int64        `json:"created_at"`
 	LikeCount      int64        `json:"like_count"`
+	Liked          bool         `json:"liked"` // 当前用户是否已赞
 	GuestInfo      *GuestInfoVO `json:"guest_info"`
 	UserInfo       *UserInfoVO  `json:"user_info"`
 	ReplyUserInfo  *UserInfoVO  `json:"reply_user_info"`
@@ -120,6 +167,11 @@ type GuestInfoVO struct {
 	IpSource  string `json:"ip_source"`  // IP归属地
 }
 
+type LikeResult struct {
+	Liked   bool `json:"liked"`
+	Changed bool `json:"changed"`
+}
+
 type ListQuery struct {
 	Page     int64    `form:"page,optional,default=1" json:"page,optional"`            // 当前页码
 	PageSize int64    `form:"page_size,optional,default=20" json:"page_size,optional"` // 每页数量
@@ -151,6 +203,26 @@ type NoticeVO struct {
 	Type        string `json:"type"`         // 通知类型
 	Level       string `json:"level"`        // 通知等级
 	PublishTime int64  `json:"publish_time"` // 发布时间
+}
+
+type NotificationGroupVO struct {
+	GroupKey        string `json:"group_key"` // 不透明键，原样回传用于整组已读 / 删除
+	Scene           string `json:"scene"`     // 用于图标与分类，不用于寻址
+	Title           string `json:"title"`
+	Content         string `json:"content"`
+	Link            string `json:"link"` // 跳转地址，客户端只负责打开
+	Level           string `json:"level"`
+	ActorCount      int64  `json:"actor_count"`
+	LatestActorName string `json:"latest_actor_name"`
+	LatestAt        int64  `json:"latest_at"`
+	Unread          bool   `json:"unread"`
+}
+
+type NotificationPreferenceVO struct {
+	Group     string `json:"group"`
+	Channel   string `json:"channel"`
+	Enabled   bool   `json:"enabled"`
+	Mandatory bool   `json:"mandatory"` // 为真表示该分组不可退订
 }
 
 type Page struct {

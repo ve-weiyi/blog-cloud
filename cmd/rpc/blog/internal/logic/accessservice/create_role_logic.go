@@ -54,6 +54,7 @@ func (l *CreateRoleLogic) CreateRole(in *accessrpc.CreateRoleRequest) (*accessrp
 	}
 
 	return &accessrpc.CreateRoleResponse{
-		Id: role.Id,
+		Id:   role.Id,
+		Role: convertRoleOut(role),
 	}, nil
 }

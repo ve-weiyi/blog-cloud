@@ -7,7 +7,7 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/types"
-	contentservice "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
 )
 
 type CreateCategoryLogic struct {
@@ -34,8 +34,10 @@ func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp
 	}
 
 	return &types.CategoryVO{
-		Id:           out.Id,
-		CategoryName: req.CategoryName,
+		Id:           out.Category.Id,
+		CategoryName: out.Category.CategoryName,
 		ArticleCount: 0,
+		CreatedAt:    out.Category.CreatedAt,
+		UpdatedAt:    out.Category.UpdatedAt,
 	}, nil
 }

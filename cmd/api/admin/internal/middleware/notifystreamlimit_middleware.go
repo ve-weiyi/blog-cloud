@@ -6,11 +6,11 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/sse"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/http/responsex"
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/notifyx"
+	"github.com/ve-weiyi/blog-cloud/infra/messaging/ssex"
 )
 
 // DefaultStreamLimit 单实例 SSE 连接上限。后台管理端的并发连接是个位数，
@@ -22,12 +22,12 @@ const DefaultStreamLimit = 200
 // 必须在**中间件**里拒绝：SSE handler 一旦开始写流就已接管响应头，
 // 之后再也发不出信封错误，客户端只会看到一个立刻关闭的空流。
 type NotifyStreamLimitMiddleware struct {
-	broker *sse.Broker[notifyx.Event]
+	broker *ssex.Broker[notifyx.Event]
 	limit  int
 }
 
 // NewNotifyStreamLimitMiddleware 创建限流中间件；limit <= 0 时取 DefaultStreamLimit
-func NewNotifyStreamLimitMiddleware(broker *sse.Broker[notifyx.Event], limit int) *NotifyStreamLimitMiddleware {
+func NewNotifyStreamLimitMiddleware(broker *ssex.Broker[notifyx.Event], limit int) *NotifyStreamLimitMiddleware {
 	if limit <= 0 {
 		limit = DefaultStreamLimit
 	}

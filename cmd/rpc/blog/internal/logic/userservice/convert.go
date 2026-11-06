@@ -47,12 +47,12 @@ func stringPtr(s *string) string {
 	return *s
 }
 
-func convertUserInfo(raw string) *userrpc.UserInfo {
+func convertUserInfo(raw *string) *userrpc.UserInfo {
 	info := &userrpc.UserInfo{}
-	if raw == "" {
+	if raw == nil || *raw == "" {
 		return info
 	}
-	if err := json.Unmarshal([]byte(raw), info); err != nil {
+	if err := json.Unmarshal([]byte(*raw), info); err != nil {
 		return info
 	}
 	return info
@@ -64,7 +64,7 @@ func convertTUserToMeInfo(ctx context.Context, svcCtx *svc.ServiceContext, user 
 	}
 
 	var thirdParties []*userrpc.ThirdPartyInfo
-	oauthList, _ := svcCtx.TUserOauthModel.FindALL(ctx, "user_id = ?", user.UserId)
+	oauthList, _ := svcCtx.TUserOauthModel.FindAll(ctx, "user_id = ?", user.UserId)
 	for _, oa := range oauthList {
 		thirdParties = append(thirdParties, &userrpc.ThirdPartyInfo{
 			Platform:  oa.Platform,

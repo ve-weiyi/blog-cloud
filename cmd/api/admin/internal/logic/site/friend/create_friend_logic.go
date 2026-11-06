@@ -37,10 +37,12 @@ func (l *CreateFriendLogic) CreateFriend(req *types.CreateFriendReq) (resp *type
 	}
 
 	return &types.FriendVO{
-		Id:          out.Id,
-		LinkName:    req.LinkName,
-		LinkAvatar:  req.LinkAvatar,
-		LinkAddress: req.LinkAddress,
-		LinkIntro:   req.LinkIntro,
+		Id:          out.Friend.Id,
+		LinkName:    out.Friend.LinkName,
+		LinkAvatar:  out.Friend.LinkAvatar,
+		LinkAddress: out.Friend.LinkAddress,
+		LinkIntro:   out.Friend.LinkIntro,
+		CreatedAt:   out.Friend.CreatedAt,
+		UpdatedAt:   out.Friend.UpdatedAt,
 	}, nil
 }

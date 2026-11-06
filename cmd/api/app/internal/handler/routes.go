@@ -5,10 +5,14 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	accountauth "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/account/auth"
 	accountguest "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/account/guest"
 	accountme "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/account/me"
+	aichat_stream "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/ai/chat_stream"
+	aiquota "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/ai/quota"
+	aisession "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/ai/session"
 	commonupload "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/common/upload"
 	commonwebsocket "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/common/websocket"
 	contentarticle "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/content/article"
@@ -19,6 +23,10 @@ import (
 	discussiontalk "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/discussion/talk"
 	mediaalbum "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/media/album"
 	mediaphoto "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/media/photo"
+	notificationnotify "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/notify"
+	notificationnotify_stream "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/notify_stream"
+	notificationpreference "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/preference"
+	notificationunsubscribe "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/notification/unsubscribe"
 	siteconfig "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/config"
 	sitefriend "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/friend"
 	sitehome "github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/handler/site/home"
@@ -178,12 +186,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: accountme.DeactivateAccountHandler(serverCtx),
 				},
 				{
-					// 获取用户点赞集合
-					Method:  http.MethodGet,
-					Path:    "/me/likes",
-					Handler: accountme.GetMeLikeHandler(serverCtx),
-				},
-				{
 					// 获取当前用户信息
 					Method:  http.MethodGet,
 					Path:    "/me/profile",
@@ -206,6 +208,65 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/me/unbind-third-party",
 					Handler: accountme.UnbindMeThirdPartyHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AiSwitch, serverCtx.OptionalUserAuth, serverCtx.AiRateLimit},
+			[]rest.Route{
+				{
+					// AI 助手问答流（SSE）
+					Method:  http.MethodPost,
+					Path:    "/ai/chat/stream",
+					Handler: aichat_stream.AiChatStreamHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+		rest.WithTimeout(300000*time.Millisecond),
+		rest.WithSSE(),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AiSwitch, serverCtx.OptionalUserAuth},
+			[]rest.Route{
+				{
+					// 查询今日剩余额度
+					Method:  http.MethodGet,
+					Path:    "/ai/quota",
+					Handler: aiquota.GetAiQuotaHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth},
+			[]rest.Route{
+				{
+					// 分页查询我的会话
+					Method:  http.MethodGet,
+					Path:    "/ai/sessions",
+					Handler: aisession.QueryAiSessionListHandler(serverCtx),
+				},
+				{
+					// 删除会话
+					Method:  http.MethodDelete,
+					Path:    "/ai/sessions/:session_id",
+					Handler: aisession.DeleteAiSessionHandler(serverCtx),
+				},
+				{
+					// 查询会话消息
+					Method:  http.MethodGet,
+					Path:    "/ai/sessions/:session_id/messages",
+					Handler: aisession.QueryAiMessageListHandler(serverCtx),
 				},
 			}...,
 		),
@@ -239,7 +300,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// WebSocket消息
 				Method:  http.MethodGet,
-				Path:    "/ws",
+				Path:    "/websocket",
 				Handler: commonwebsocket.WebsocketHandler(serverCtx),
 			},
 		},
@@ -285,6 +346,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/articles/:id/like",
 					Handler: contentarticle.LikeArticleHandler(serverCtx),
+				},
+				{
+					// 取消点赞文章
+					Method:  http.MethodDelete,
+					Path:    "/articles/:id/like",
+					Handler: contentarticle.UnlikeArticleHandler(serverCtx),
 				},
 			}...,
 		),
@@ -361,6 +428,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/comments/:id/like",
 					Handler: discussioncomment.LikeCommentHandler(serverCtx),
 				},
+				{
+					// 取消点赞评论
+					Method:  http.MethodDelete,
+					Path:    "/comments/:id/like",
+					Handler: discussioncomment.UnlikeCommentHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -421,6 +494,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/talks/:id/like",
 					Handler: discussiontalk.LikeTalkHandler(serverCtx),
 				},
+				{
+					// 取消点赞说说
+					Method:  http.MethodDelete,
+					Path:    "/talks/:id/like",
+					Handler: discussiontalk.UnlikeTalkHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -451,6 +530,100 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/albums/:album_id/photos",
 				Handler: mediaphoto.QueryAlbumPhotoListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth},
+			[]rest.Route{
+				{
+					// 获取通知列表（按分组分页）
+					Method:  http.MethodGet,
+					Path:    "/notifications",
+					Handler: notificationnotify.QueryNotificationListHandler(serverCtx),
+				},
+				{
+					// 删除通知
+					Method:  http.MethodPost,
+					Path:    "/notifications/delete",
+					Handler: notificationnotify.DeleteNotificationHandler(serverCtx),
+				},
+				{
+					// 标记通知已读
+					Method:  http.MethodPost,
+					Path:    "/notifications/read",
+					Handler: notificationnotify.ReadNotificationHandler(serverCtx),
+				},
+				{
+					// 全部标记已读
+					Method:  http.MethodPost,
+					Path:    "/notifications/read-all",
+					Handler: notificationnotify.ReadAllNotificationHandler(serverCtx),
+				},
+				{
+					// 获取未读分组数
+					Method:  http.MethodGet,
+					Path:    "/notifications/unread-count",
+					Handler: notificationnotify.GetUnreadCountHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth, serverCtx.NotifyStreamLimit},
+			[]rest.Route{
+				{
+					// 通知实时推送流（SSE）
+					Method:  http.MethodGet,
+					Path:    "/notifications/stream",
+					Handler: notificationnotify_stream.NotificationStreamHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+		rest.WithSSE(),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserAuth},
+			[]rest.Route{
+				{
+					// 获取通知偏好
+					Method:  http.MethodGet,
+					Path:    "/notifications/preferences",
+					Handler: notificationpreference.GetNotifyPreferenceHandler(serverCtx),
+				},
+				{
+					// 更新通知偏好
+					Method:  http.MethodPut,
+					Path:    "/notifications/preferences",
+					Handler: notificationpreference.UpdateNotifyPreferenceHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 校验退订令牌
+				Method:  http.MethodGet,
+				Path:    "/notifications/unsubscribe",
+				Handler: notificationunsubscribe.VerifyUnsubscribeHandler(serverCtx),
+			},
+			{
+				// 执行退订
+				Method:  http.MethodPost,
+				Path:    "/notifications/unsubscribe",
+				Handler: notificationunsubscribe.UnsubscribeHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

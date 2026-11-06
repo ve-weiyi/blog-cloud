@@ -9,11 +9,10 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/notificationrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/x/patternx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/store/otpx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type VerifyEmailCodeLogic struct {
@@ -33,7 +32,7 @@ func NewVerifyEmailCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *V
 // 校验邮件验证码
 func (l *VerifyEmailCodeLogic) VerifyEmailCode(in *notificationrpc.VerifyEmailCodeRequest) (*notificationrpc.VerifyEmailCodeResponse, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 

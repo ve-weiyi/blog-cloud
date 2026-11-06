@@ -10,6 +10,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/notify"
 )
 
 type BatchDeleteArticlesLogic struct {
@@ -34,21 +36,33 @@ func (l *BatchDeleteArticlesLogic) BatchDeleteArticles(in *contentrpc.BatchDelet
 			return err
 		}
 
+		if _, err := l.svcCtx.TLikeModel.WithTx(tx).DeleteBatch(l.ctx, "target_type = ? AND target_id in (?)", enums.LikeTargetArticle, in.Ids); err != nil {
+			return err
+		}
+
+		// 文章硬删除时同事务删分块，避免检索命中已不存在的文章
+		if _, err := l.svcCtx.TArticleChunkModel.WithTx(tx).DeleteBatch(l.ctx, "article_id in (?)", in.Ids); err != nil {
+			return err
+		}
+
 		var err error
 		rows, err = l.svcCtx.TArticleModel.WithTx(tx).DeleteBatch(l.ctx, "id in (?)", in.Ids)
-		return err
+		if err != nil {
+			return err
+		}
+
+		// 对象没了，指向它的收件箱条目就是死链：先终止事件，再删条目与投递。
+		// 文章下的评论仍在库里，挂在它们上面的通知一并回收
+		return l.svcCtx.Notify.TerminateTopic(l.ctx, tx, notify.ObjectArticle, in.Ids)
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	// 计数缓存是派生数据，清理失败只记录日志
+	// 浏览量缓存是派生数据，清理失败只记录日志
 	members := make([]interface{}, 0, len(in.Ids))
 	for _, id := range in.Ids {
 		members = append(members, fmt.Sprintf("%d", id))
-	}
-	if err := l.svcCtx.Redis.ZRem(l.ctx, cachekey.ArticleLikeCountKey, members...).Err(); err != nil {
-		l.Errorf("清理文章点赞计数缓存失败: %v", err)
 	}
 	if err := l.svcCtx.Redis.ZRem(l.ctx, cachekey.ArticleViewCountKey, members...).Err(); err != nil {
 		l.Errorf("清理文章浏览量缓存失败: %v", err)

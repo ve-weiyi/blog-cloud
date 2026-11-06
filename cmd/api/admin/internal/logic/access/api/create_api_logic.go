@@ -38,13 +38,5 @@ func (l *CreateApiLogic) CreateApi(req *types.CreateApiReq) (resp *types.ApiVO, 
 		return nil, err
 	}
 
-	return &types.ApiVO{
-		Id:        out.Id,
-		ParentId:  req.ParentId,
-		Name:      req.Name,
-		Path:      req.Path,
-		Method:    req.Method,
-		Traceable: req.Traceable,
-		Status:    req.Status,
-	}, nil
+	return convertApiVO(out.Api), nil
 }

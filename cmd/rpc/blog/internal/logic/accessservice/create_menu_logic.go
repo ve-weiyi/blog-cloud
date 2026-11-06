@@ -33,6 +33,7 @@ func (l *CreateMenuLogic) CreateMenu(in *accessrpc.CreateMenuRequest) (*accessrp
 	}
 
 	return &accessrpc.CreateMenuResponse{
-		Id: menu.Id,
+		Id:   menu.Id,
+		Menu: convertMenuOut(menu),
 	}, nil
 }

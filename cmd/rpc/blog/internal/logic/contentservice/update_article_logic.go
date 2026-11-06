@@ -36,8 +36,10 @@ func (l *UpdateArticleLogic) UpdateArticle(in *contentrpc.UpdateArticleRequest) 
 
 	helper := NewArticleHelper(l.ctx, l.svcCtx)
 
+	var entity *model.TArticle
 	err := l.svcCtx.GormDB.Transaction(func(tx *gorm.DB) error {
-		entity, err := l.svcCtx.TArticleModel.WithTx(tx).FindById(l.ctx, in.Id)
+		var err error
+		entity, err = l.svcCtx.TArticleModel.WithTx(tx).FindById(l.ctx, in.Id)
 		if err != nil {
 			return err
 		}
@@ -83,7 +85,13 @@ func (l *UpdateArticleLogic) UpdateArticle(in *contentrpc.UpdateArticleRequest) 
 		return nil, err
 	}
 
+	list, err := helper.convertArticleOut([]*model.TArticle{entity})
+	if err != nil {
+		return nil, err
+	}
+
 	return &contentrpc.UpdateArticleResponse{
 		Success: true,
+		Article: list[0],
 	}, nil
 }

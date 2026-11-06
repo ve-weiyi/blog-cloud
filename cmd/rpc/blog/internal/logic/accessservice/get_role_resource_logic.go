@@ -25,11 +25,11 @@ func NewGetRoleResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 查询角色资源
 func (l *GetRoleResourceLogic) GetRoleResource(in *accessrpc.GetRoleResourceRequest) (*accessrpc.GetRoleResourceResponse, error) {
-	apiLinks, err := l.svcCtx.TRoleApiModel.FindALL(l.ctx, "role_id = ?", in.RoleId)
+	apiLinks, err := l.svcCtx.TRoleApiModel.FindAll(l.ctx, "role_id = ?", in.RoleId)
 	if err != nil {
 		return nil, err
 	}
-	menuLinks, err := l.svcCtx.TRoleMenuModel.FindALL(l.ctx, "role_id = ?", in.RoleId)
+	menuLinks, err := l.svcCtx.TRoleMenuModel.FindAll(l.ctx, "role_id = ?", in.RoleId)
 	if err != nil {
 		return nil, err
 	}

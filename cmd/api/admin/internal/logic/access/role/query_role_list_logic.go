@@ -33,17 +33,7 @@ func (l *QueryRoleListLogic) QueryRoleList(req *types.QueryRoleListReq) (resp *t
 
 	var list []*types.RoleVO
 	for _, v := range out.List {
-		list = append(list, &types.RoleVO{
-			Id:          v.Id,
-			ParentId:    v.ParentId,
-			RoleKey:     v.RoleKey,
-			RoleLabel:   v.RoleLabel,
-			RoleComment: v.RoleComment,
-			IsDefault:   v.IsDefault,
-			Status:      v.Status,
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-		})
+		list = append(list, convertRoleVO(v))
 	}
 
 	return &types.ListResult{

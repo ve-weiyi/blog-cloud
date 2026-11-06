@@ -52,3 +52,32 @@ AppRpcConf:
   Endpoints:
     - blog-rpc:9120
   Timeout: 5000
+
+# ============================================================
+# AI 助手
+# api_key 由环境变量 AI_API_KEY 注入（go-zero 会展开 ${...}），不要写真实值。
+# 未配置 base_url 或 api_key 时助手不可用，其他功能不受影响。
+# SiteURL 是读者端站点根地址，用于拼 AI 引用链接与通知退订链接。
+# ============================================================
+AiConf:
+  base_url: https://api.deepseek.com/v1
+  api_key: "${AI_API_KEY}"
+  model: deepseek-chat
+  temperature: 0.3
+  max_tokens: 800
+  timeout: 2m
+  max_history_turns: 6
+  max_history_chars: 4000
+  max_prompt_chars: 12000
+  switch_ttl: 60s
+  retrieval:
+    top_k: 5
+    max_chars_total: 4000
+  quota:
+    guest_daily: 20
+    user_daily: 100
+    ip_daily: 200
+    max_concurrent: 32
+    lease: 5m
+
+site_url: https://example.com

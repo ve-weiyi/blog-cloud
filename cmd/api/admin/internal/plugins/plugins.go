@@ -8,9 +8,8 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/docs"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
-	"github.com/ve-weiyi/vkit/plugins/knife4j"
-
 	"github.com/ve-weiyi/blog-cloud/infra/http/staticfile"
+	"github.com/ve-weiyi/vkit/plugins/knife4j"
 )
 
 func RegisterPluginHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {

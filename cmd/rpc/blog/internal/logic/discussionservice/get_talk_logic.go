@@ -6,9 +6,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
-	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 )
 
 type GetTalkLogic struct {
@@ -32,5 +31,10 @@ func (l *GetTalkLogic) GetTalk(in *discussionrpc.GetTalkRequest) (*discussionrpc
 	if err != nil {
 		return nil, err
 	}
-	return &discussionrpc.GetTalkResponse{Talk: convertTalkOut(entity)}, nil
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetTalk, []int64{entity.Id})
+	if err != nil {
+		return nil, err
+	}
+
+	return &discussionrpc.GetTalkResponse{Talk: convertTalkOut(entity, lm, lcm)}, nil
 }

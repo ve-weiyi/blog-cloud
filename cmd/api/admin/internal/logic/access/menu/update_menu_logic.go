@@ -25,8 +25,8 @@ func NewUpdateMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateMenuLogic) UpdateMenu(req *types.UpdateMenuReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.AccessService.UpdateMenu(l.ctx, &accessservice.UpdateMenuRequest{
+func (l *UpdateMenuLogic) UpdateMenu(req *types.UpdateMenuReq) (resp *types.MenuVO, err error) {
+	out, err := l.svcCtx.AccessService.UpdateMenu(l.ctx, &accessservice.UpdateMenuRequest{
 		Id:        req.Id,
 		ParentId:  req.ParentId,
 		Path:      req.Path,
@@ -49,5 +49,5 @@ func (l *UpdateMenuLogic) UpdateMenu(req *types.UpdateMenuReq) (resp *types.Empt
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return convertMenuVO(out.Menu), nil
 }

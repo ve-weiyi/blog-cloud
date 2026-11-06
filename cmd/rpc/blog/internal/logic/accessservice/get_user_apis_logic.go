@@ -26,7 +26,7 @@ func NewGetUserApisLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 
 // 查询用户 API 权限
 func (l *GetUserApisLogic) GetUserApis(in *accessrpc.GetUserApisRequest) (*accessrpc.GetUserApisResponse, error) {
-	urs, err := l.svcCtx.TUserRoleModel.FindALL(l.ctx, "user_id = ?", in.UserId)
+	urs, err := l.svcCtx.TUserRoleModel.FindAll(l.ctx, "user_id = ?", in.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (l *GetUserApisLogic) GetUserApis(in *accessrpc.GetUserApisRequest) (*acces
 		return &accessrpc.GetUserApisResponse{}, nil
 	}
 
-	rLinks, err := l.svcCtx.TRoleApiModel.FindALL(l.ctx, "role_id in (?)", roleIds)
+	rLinks, err := l.svcCtx.TRoleApiModel.FindAll(l.ctx, "role_id in (?)", roleIds)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (l *GetUserApisLogic) GetUserApis(in *accessrpc.GetUserApisRequest) (*acces
 		return &accessrpc.GetUserApisResponse{}, nil
 	}
 
-	apis, err := l.svcCtx.TApiModel.FindALL(l.ctx, "id in (?)", apiIds)
+	apis, err := l.svcCtx.TApiModel.FindAll(l.ctx, "id in (?)", apiIds)
 	if err != nil {
 		return nil, err
 	}

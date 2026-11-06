@@ -33,6 +33,7 @@ func (l *CreateApiLogic) CreateApi(in *accessrpc.CreateApiRequest) (*accessrpc.C
 	}
 
 	return &accessrpc.CreateApiResponse{
-		Id: api.Id,
+		Id:  api.Id,
+		Api: convertApiOut(api),
 	}, nil
 }

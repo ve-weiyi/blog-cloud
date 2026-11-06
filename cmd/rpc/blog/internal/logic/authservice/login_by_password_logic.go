@@ -10,14 +10,13 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/model"
-	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/patternx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
+	"github.com/ve-weiyi/blog-cloud/model"
+	"github.com/ve-weiyi/vkit/x/cryptox"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type LoginByPasswordLogic struct {
@@ -39,9 +38,9 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *authrpc.LoginByPasswordReques
 	var user *model.TUser
 	var err error
 	switch {
-	case patternx.IsValidEmail(in.Account):
+	case validatex.IsEmail(in.Account):
 		user, err = l.svcCtx.TUserModel.FindOneByEmail(l.ctx, in.Account)
-	case patternx.IsValidMobile(in.Account):
+	case validatex.IsMobile(in.Account):
 		user, err = l.svcCtx.TUserModel.FindOneByMobile(l.ctx, in.Account)
 	default:
 		user, err = l.svcCtx.TUserModel.FindOneByUsername(l.ctx, in.Account)
@@ -68,7 +67,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *authrpc.LoginByPasswordReques
 
 // publishLoginEvent 发布登录日志事件；失败只记录日志，不影响登录流程。
 func publishLoginEvent(ctx context.Context, svcCtx *svc.ServiceContext, userId, deviceId, loginType string, status int64, reason string) {
-	if err := svcCtx.MQ.Login.Publish(ctx, &mq.LoginEvent{
+	if _, err := mq.LoginMessage.Publish(ctx, svcCtx.MQ.Publisher, &mq.LoginEvent{
 		UserId:     userId,
 		DeviceId:   deviceId,
 		LoginType:  loginType,

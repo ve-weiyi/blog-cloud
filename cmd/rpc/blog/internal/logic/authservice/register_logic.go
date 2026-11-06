@@ -11,18 +11,17 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/model"
-	"github.com/ve-weiyi/vkit/adapter/iplocx"
-	"github.com/ve-weiyi/vkit/x/cryptox"
-	"github.com/ve-weiyi/vkit/x/patternx"
-	"github.com/ve-weiyi/vkit/x/randomx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/passwordx"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
+	"github.com/ve-weiyi/blog-cloud/model"
+	"github.com/ve-weiyi/vkit/adapter/iplocx"
+	"github.com/ve-weiyi/vkit/x/cryptox"
+	"github.com/ve-weiyi/vkit/x/randomx"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type RegisterLogic struct {
@@ -42,7 +41,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 用户注册
 func (l *RegisterLogic) Register(in *authrpc.RegisterRequest) (*authrpc.RegisterResponse, error) {
 	// 校验邮箱格式
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 	if err := passwordx.ValidatePassword(in.Password); err != nil {
@@ -100,7 +99,7 @@ func (l *RegisterLogic) Register(in *authrpc.RegisterRequest) (*authrpc.Register
 			Email:        &in.Email,
 			Mobile:       nil,
 			Status:       enums.UserStatusNormal,
-			Info:         "",
+			Info:         nil,
 			RegisterType: enums.LoginTypeEmail,
 			IpAddress:    ip,
 			IpSource:     ipSource,

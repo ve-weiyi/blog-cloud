@@ -7,10 +7,9 @@ package server
 import (
 	"context"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/mediaservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/mediarpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/logic/mediaservice"
 )
 
 type MediaServiceServer struct {

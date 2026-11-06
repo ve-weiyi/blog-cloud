@@ -5,10 +5,10 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/x/jsonv"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/vkit/x/jsonv"
 )
 
 type UpdateTalkLogic struct {
@@ -27,7 +27,8 @@ func (l *UpdateTalkLogic) UpdateTalk(in *discussionrpc.UpdateTalkRequest) (*disc
 		return nil, err
 	}
 	entity.Content = in.Content
-	entity.Images = jsonv.AnyToJsonNE(in.Images)
+	images := jsonv.AnyToJsonNE(in.Images)
+	entity.Images = &images
 	entity.IsTop = in.IsTop
 	entity.Status = in.Status
 
@@ -35,5 +36,11 @@ func (l *UpdateTalkLogic) UpdateTalk(in *discussionrpc.UpdateTalkRequest) (*disc
 	if err != nil {
 		return nil, err
 	}
-	return &discussionrpc.UpdateTalkResponse{Success: true}, nil
+
+	lm, lcm, err := likeStats(l.ctx, l.svcCtx, enums.LikeTargetTalk, []int64{entity.Id})
+	if err != nil {
+		return nil, err
+	}
+
+	return &discussionrpc.UpdateTalkResponse{Success: true, Talk: convertTalkOut(entity, lm, lcm)}, nil
 }

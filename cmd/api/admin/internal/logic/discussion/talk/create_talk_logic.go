@@ -5,6 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/enrich"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/types"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
@@ -36,11 +37,10 @@ func (l *CreateTalkLogic) CreateTalk(req *types.CreateTalkReq) (resp *types.Talk
 		return nil, err
 	}
 
-	return &types.TalkVO{
-		Id:      out.Id,
-		Content: req.Content,
-		ImgList: req.ImgList,
-		IsTop:   req.IsTop,
-		Status:  req.Status,
-	}, nil
+	usm, err := enrich.GetUserInfos(l.ctx, l.svcCtx, []string{out.Talk.UserId})
+	if err != nil {
+		return nil, err
+	}
+
+	return convertTalkVO(out.Talk, usm), nil
 }

@@ -37,10 +37,12 @@ func (l *CreatePhotoLogic) CreatePhoto(req *types.CreatePhotoReq) (resp *types.P
 	}
 
 	return &types.PhotoVO{
-		Id:        out.Id,
-		AlbumId:   req.AlbumId,
-		PhotoName: req.PhotoName,
-		PhotoDesc: req.PhotoDesc,
-		PhotoSrc:  req.PhotoSrc,
+		Id:        out.Photo.Id,
+		AlbumId:   out.Photo.AlbumId,
+		PhotoName: out.Photo.PhotoName,
+		PhotoDesc: out.Photo.PhotoDesc,
+		PhotoSrc:  out.Photo.PhotoSrc,
+		CreatedAt: out.Photo.CreatedAt,
+		UpdatedAt: out.Photo.UpdatedAt,
 	}, nil
 }

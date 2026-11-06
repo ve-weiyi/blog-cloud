@@ -3,11 +3,11 @@
 
 package types
 
-type NotifyStreamEvent struct {
-	Event       string `json:"event"`
-	MessageId   int64  `json:"message_id,optional"`
-	Title       string `json:"title,optional"`
-	Category    string `json:"category,optional"`
-	Level       string `json:"level,optional"`
-	PublishedAt int64  `json:"published_at,optional"`
+type AnnouncementStreamEvent struct {
+	Event          string `json:"event"` // announcement-published | announcement-revoked
+	AnnouncementId int64  `json:"announcement_id,optional"`
+	Title          string `json:"title,optional"`
+	Category       string `json:"category,optional"`
+	Level          string `json:"level,optional"`
+	PublishedAt    int64  `json:"published_at,optional"`
 }

@@ -1,50 +1,62 @@
+// Package mq 是消息队列的传输层与事件契约。
 package mq
 
 import (
-	"net"
-	"net/url"
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
+	"github.com/ve-weiyi/blog-cloud/infra/metrics"
+	"github.com/ve-weiyi/vkit/adapter/mqx"
+	"github.com/ve-weiyi/vkit/adapter/mqx/event"
+	"github.com/ve-weiyi/vkit/adapter/mqx/impl/rabbitmqx"
 )
 
-// Client 持有各交换机的通道，由 ServiceContext 注入使用。
+// Client 持有事件运行时与共享发布器。
+//
+// 构造成功即保证 Runtime 与 Publisher 非 nil。运行期的 broker 抖动不在这里兜底：
+// 发布返回 ErrUnavailable，订阅断开由 Runtime 自行重建。
 type Client struct {
-	Email  *Channel[EmailMessageEvent]
-	Sms    *Channel[SmsMessageEvent]
-	Inbox  *Channel[InboxMessageEvent]
-	Login  *Channel[LoginEvent]
-	Logout *Channel[LogoutEvent]
+	Runtime   *event.Runtime
+	Publisher mqx.Publisher
 }
 
-// NewClient 建立各交换机的连接与收发器。
-// RabbitMQ 不可用时只记录错误并降级：发布返回 ErrUnavailable，订阅直接退出，不阻断服务启动。
-func NewClient(c config.RabbitMQConf) *Client {
-	amqpURL := buildAMQPURL(c)
-
-	return &Client{
-		Email:  newChannel[EmailMessageEvent](amqpURL, EmailExchange, EmailRoutingKey, EmailQueue),
-		Sms:    newChannel[SmsMessageEvent](amqpURL, SmsExchange, SmsRoutingKey, SmsQueue),
-		Inbox:  newChannel[InboxMessageEvent](amqpURL, InboxExchange, InboxRoutingKey, InboxQueue),
-		Login:  newChannel[LoginEvent](amqpURL, LoginExchange, LoginRoutingKey, LoginQueue),
-		Logout: newChannel[LogoutEvent](amqpURL, LogoutExchange, LogoutRoutingKey, LogoutQueue),
+// NewClient 建立 RabbitMQ 连接与事件运行时。
+func NewClient(c config.RabbitMQConf) (*Client, error) {
+	logger := newSlogLogger()
+	broker, err := rabbitmqx.NewBroker(&rabbitmqx.Config{
+		URL:          rabbitmqx.BuildAMQPURL(c.Host, c.Port, c.Username, c.Password),
+		ExchangeType: rabbitmqx.ExchangeTopic,
+		LazyConnect:  true,
+		Logger:       logger,
+		Metrics:      metrics.NewMQX(),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("mq: create broker: %w", err)
 	}
+
+	runtime := event.NewRuntime(broker, logger, event.WithMessagingSystem("rabbitmq"))
+	publisher, err := runtime.NewPublisher()
+	if err != nil {
+		closeCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = runtime.Close(closeCtx)
+		return nil, fmt.Errorf("mq: create publisher: %w", err)
+	}
+	return &Client{Runtime: runtime, Publisher: publisher}, nil
 }
 
-// Close 关闭全部订阅器、发布器与连接。
+// Close 先停止订阅、等待在途处理，再关闭连接。
 func (c *Client) Close() {
-	for _, ch := range []closer{c.Email, c.Sms, c.Inbox, c.Login, c.Logout} {
-		ch.close()
+	if c == nil {
+		return
 	}
-}
-
-// buildAMQPURL 拼装 AMQP 连接串。口令经 url.UserPassword 转义，
-// 含 @、:、/ 时不会破坏 URL 解析。
-func buildAMQPURL(c config.RabbitMQConf) string {
-	u := url.URL{
-		Scheme: "amqp",
-		User:   url.UserPassword(c.Username, c.Password),
-		Host:   net.JoinHostPort(c.Host, c.Port),
-		Path:   "/",
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := c.Runtime.Close(ctx); err != nil {
+		logx.Errorf("[mq] close: %v", err)
 	}
-	return u.String()
 }

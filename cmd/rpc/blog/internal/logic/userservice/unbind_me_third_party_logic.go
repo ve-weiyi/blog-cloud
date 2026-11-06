@@ -44,7 +44,7 @@ func (l *UnbindMeThirdPartyLogic) UnbindMeThirdParty(in *userrpc.UnbindMeThirdPa
 	if err != nil {
 		return nil, err
 	}
-	others, err := l.svcCtx.TUserOauthModel.FindALL(l.ctx, "user_id = ? AND platform != ?", userId, in.Platform)
+	others, err := l.svcCtx.TUserOauthModel.FindAll(l.ctx, "user_id = ? AND platform != ?", userId, in.Platform)
 	if err != nil {
 		return nil, err
 	}

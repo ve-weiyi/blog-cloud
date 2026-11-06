@@ -10,6 +10,8 @@ func GetDailyUserVisitKey(day string) string {
 const (
 	// 文章访问量排行
 	ArticleViewCountKey = "blog:article:view_count"
+	// 文章分块重建的增量水位（updated_at 秒 + id）
+	ArticleChunkWatermarkKey = "blog:article:chunk:watermark"
 	// 网站日 UV
 	DailyUserViewCountKey = "blog:visit:daily_uv"
 	// 网站日 PV

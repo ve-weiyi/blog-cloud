@@ -5,15 +5,13 @@ import (
 	"errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
 	"gorm.io/gorm"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/mediarpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/model"
-
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
+	"github.com/ve-weiyi/blog-cloud/model"
 )
 
 type CreatePhotoLogic struct {
@@ -51,5 +49,5 @@ func (l *CreatePhotoLogic) CreatePhoto(in *mediarpc.CreatePhotoRequest) (*mediar
 		return nil, err
 	}
 
-	return &mediarpc.CreatePhotoResponse{Id: entity.Id}, nil
+	return &mediarpc.CreatePhotoResponse{Id: entity.Id, Photo: convertPhotoOut(entity)}, nil
 }

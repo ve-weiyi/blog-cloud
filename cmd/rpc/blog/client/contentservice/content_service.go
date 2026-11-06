@@ -16,6 +16,7 @@ import (
 type (
 	Article                       = contentrpc.Article
 	ArticleCategory               = contentrpc.ArticleCategory
+	ArticleChunk                  = contentrpc.ArticleChunk
 	ArticlePreview                = contentrpc.ArticlePreview
 	ArticleTag                    = contentrpc.ArticleTag
 	BatchDeleteArticlesRequest    = contentrpc.BatchDeleteArticlesRequest
@@ -39,8 +40,6 @@ type (
 	GetCategoryResponse           = contentrpc.GetCategoryResponse
 	GetTagRequest                 = contentrpc.GetTagRequest
 	GetTagResponse                = contentrpc.GetTagResponse
-	GetUserLikeArticleRequest     = contentrpc.GetUserLikeArticleRequest
-	GetUserLikeArticleResponse    = contentrpc.GetUserLikeArticleResponse
 	IncrementArticleViewRequest   = contentrpc.IncrementArticleViewRequest
 	IncrementArticleViewResponse  = contentrpc.IncrementArticleViewResponse
 	LikeArticleRequest            = contentrpc.LikeArticleRequest
@@ -57,6 +56,8 @@ type (
 	ListTagsResponse              = contentrpc.ListTagsResponse
 	PatchArticleRequest           = contentrpc.PatchArticleRequest
 	PatchArticleResponse          = contentrpc.PatchArticleResponse
+	SearchArticlesRequest         = contentrpc.SearchArticlesRequest
+	SearchArticlesResponse        = contentrpc.SearchArticlesResponse
 	Tag                           = contentrpc.Tag
 	UpdateArticleRequest          = contentrpc.UpdateArticleRequest
 	UpdateArticleResponse         = contentrpc.UpdateArticleResponse
@@ -86,8 +87,10 @@ type (
 		IncrementArticleView(ctx context.Context, in *IncrementArticleViewRequest, opts ...grpc.CallOption) (*IncrementArticleViewResponse, error)
 		// 点赞文章
 		LikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error)
-		// 查询用户点赞的文章
-		GetUserLikeArticle(ctx context.Context, in *GetUserLikeArticleRequest, opts ...grpc.CallOption) (*GetUserLikeArticleResponse, error)
+		// 取消点赞文章
+		UnlikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error)
+		// 检索公开文章分块（供 AI 助手使用）
+		SearchArticles(ctx context.Context, in *SearchArticlesRequest, opts ...grpc.CallOption) (*SearchArticlesResponse, error)
 		// 分页查询分类列表
 		ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
 		// 查询分类详情
@@ -181,10 +184,16 @@ func (m *defaultContentService) LikeArticle(ctx context.Context, in *LikeArticle
 	return client.LikeArticle(ctx, in, opts...)
 }
 
-// 查询用户点赞的文章
-func (m *defaultContentService) GetUserLikeArticle(ctx context.Context, in *GetUserLikeArticleRequest, opts ...grpc.CallOption) (*GetUserLikeArticleResponse, error) {
+// 取消点赞文章
+func (m *defaultContentService) UnlikeArticle(ctx context.Context, in *LikeArticleRequest, opts ...grpc.CallOption) (*LikeArticleResponse, error) {
 	client := contentrpc.NewContentServiceClient(m.cli.Conn())
-	return client.GetUserLikeArticle(ctx, in, opts...)
+	return client.UnlikeArticle(ctx, in, opts...)
+}
+
+// 检索公开文章分块（供 AI 助手使用）
+func (m *defaultContentService) SearchArticles(ctx context.Context, in *SearchArticlesRequest, opts ...grpc.CallOption) (*SearchArticlesResponse, error) {
+	client := contentrpc.NewContentServiceClient(m.cli.Conn())
+	return client.SearchArticles(ctx, in, opts...)
 }
 
 // 分页查询分类列表

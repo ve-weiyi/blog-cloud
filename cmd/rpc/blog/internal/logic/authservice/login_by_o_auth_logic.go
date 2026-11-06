@@ -11,17 +11,16 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/infra/auth/oauthstate"
-	"github.com/ve-weiyi/blog-cloud/model"
-	"github.com/ve-weiyi/vkit/adapter/iplocx"
-	"github.com/ve-weiyi/vkit/adapter/oauthx"
-	"github.com/ve-weiyi/vkit/x/randomx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/auth/identityx"
+	"github.com/ve-weiyi/blog-cloud/infra/auth/oauthstate"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
+	"github.com/ve-weiyi/blog-cloud/model"
+	"github.com/ve-weiyi/vkit/adapter/iplocx"
+	"github.com/ve-weiyi/vkit/adapter/oauthx"
+	"github.com/ve-weiyi/vkit/x/randomx"
 )
 
 type LoginByOAuthLogic struct {
@@ -59,7 +58,7 @@ func (l *LoginByOAuthLogic) LoginByOAuth(in *authrpc.LoginByOAuthRequest) (*auth
 		return nil, fmt.Errorf("open_id is empty")
 	}
 
-	userOauth, err := l.svcCtx.TUserOauthModel.FindOneByPlatformOpenId(l.ctx, in.Platform, info.OpenId)
+	userOauth, err := l.svcCtx.TUserOauthModel.FindOneByOpenIdPlatform(l.ctx, info.OpenId, in.Platform)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

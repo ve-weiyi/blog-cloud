@@ -12,37 +12,20 @@ var _ TUserOauthModel = (*defaultTUserOauthModel)(nil)
 type (
 	// 接口定义
 	TUserOauthModel interface {
-		TableName() string
+		Table[TUserOauth]
 		// 在事务中操作
 		WithTx(tx *gorm.DB) (out TUserOauthModel)
-		// 插入
-		Insert(ctx context.Context, in *TUserOauth) (rows int64, err error)
-		InsertBatch(ctx context.Context, in ...*TUserOauth) (rows int64, err error)
-		// 删除
-		Delete(ctx context.Context, id int64) (rows int64, err error)
-		DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error)
-		// 整行更新（含零值，按主键）
-		Update(ctx context.Context, in *TUserOauth) (rows int64, err error)
-		UpdateFields(ctx context.Context, fields map[string]interface{}, conditions string, args ...interface{}) (rows int64, err error)
-		// 插入或整行更新（按主键）
-		Upsert(ctx context.Context, in *TUserOauth) (rows int64, err error)
-		// 查询
-		FindById(ctx context.Context, id int64) (out *TUserOauth, err error)
-		FindOne(ctx context.Context, sorts string, conditions string, args ...interface{}) (out *TUserOauth, err error)
-		FindALL(ctx context.Context, conditions string, args ...interface{}) (list []*TUserOauth, err error)
-		FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error)
-		FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TUserOauth, total int64, err error)
 		// add extra method in here
-		FindOneByPlatformOpenId(ctx context.Context, platform string, open_id string) (out *TUserOauth, err error)
-		FindOneByUserIdPlatform(ctx context.Context, user_id string, platform string) (out *TUserOauth, err error)
+		FindOneByOpenIdPlatform(ctx context.Context, openId string, platform string) (out *TUserOauth, err error)
+		FindOneByUserIdPlatform(ctx context.Context, userId string, platform string) (out *TUserOauth, err error)
 	}
 
 	// 表字段定义
 	TUserOauth struct {
 		Id        int64     `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:id" json:"id"`                                                                                           // id
 		UserId    string    `gorm:"column:user_id;type:varchar(64);not null;uniqueIndex:uk_uid_plat,priority:1;default:'';comment:用户id" json:"user_id"`                                                 // 用户id
-		Platform  string    `gorm:"column:platform;type:varchar(64);not null;uniqueIndex:uk_plat_oid,priority:1;uniqueIndex:uk_uid_plat,priority:2;default:'';comment:平台:手机号、邮箱、微信、飞书" json:"platform"` // 平台:手机号、邮箱、微信、飞书
-		OpenId    string    `gorm:"column:open_id;type:varchar(128);not null;uniqueIndex:uk_plat_oid,priority:2;default:'';comment:第三方平台id，标识唯一用户" json:"open_id"`                                      // 第三方平台id，标识唯一用户
+		Platform  string    `gorm:"column:platform;type:varchar(64);not null;uniqueIndex:uk_uid_plat,priority:2;uniqueIndex:uk_oid_plat,priority:2;default:'';comment:平台:手机号、邮箱、微信、飞书" json:"platform"` // 平台:手机号、邮箱、微信、飞书
+		OpenId    string    `gorm:"column:open_id;type:varchar(128);not null;uniqueIndex:uk_oid_plat,priority:1;default:'';comment:第三方平台id，标识唯一用户" json:"open_id"`                                      // 第三方平台id，标识唯一用户
 		Nickname  string    `gorm:"column:nickname;type:varchar(128);not null;default:'';comment:第三方平台昵称" json:"nickname"`                                                                              // 第三方平台昵称
 		Avatar    string    `gorm:"column:avatar;type:varchar(256);not null;default:'';comment:第三方平台头像" json:"avatar"`                                                                                  // 第三方平台头像
 		CreatedAt time.Time `gorm:"column:created_at;type:datetime;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"`                                                                  // 创建时间
@@ -51,235 +34,35 @@ type (
 
 	// 接口实现
 	defaultTUserOauthModel struct {
-		DbEngin *gorm.DB
-		table   string
+		baseModel[TUserOauth]
 	}
 )
 
 func NewTUserOauthModel(db *gorm.DB) TUserOauthModel {
-	return &defaultTUserOauthModel{
-		DbEngin: db,
-		table:   "`t_user_oauth`",
-	}
-}
-
-func (m *defaultTUserOauthModel) TableName() string {
-	return m.table
+	return &defaultTUserOauthModel{newBaseModel[TUserOauth](db, "`t_user_oauth`")}
 }
 
 // 在事务中操作
 func (m *defaultTUserOauthModel) WithTx(tx *gorm.DB) (out TUserOauthModel) {
-	return NewTUserOauthModel(tx)
-}
-
-// 插入记录 (返回的是受影响行数，如需获取自增id，请通过data参数获取)
-func (m *defaultTUserOauthModel) Insert(ctx context.Context, in *TUserOauth) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Create(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 插入记录（批量操作）
-func (m *defaultTUserOauthModel) InsertBatch(ctx context.Context, in ...*TUserOauth) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.CreateInBatches(&in, len(in))
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 删除记录
-func (m *defaultTUserOauthModel) Delete(ctx context.Context, id int64) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	db = db.Where("id = ?", id)
-
-	result := db.Delete(&TUserOauth{})
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 删除记录（批量操作）
-func (m *defaultTUserOauthModel) DeleteBatch(ctx context.Context, conditions string, args ...interface{}) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	result := db.Delete(&TUserOauth{})
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 整行更新（含零值，按主键）
-func (m *defaultTUserOauthModel) Update(ctx context.Context, in *TUserOauth) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Omit("id", "created_at", "updated_at").Select("*").Updates(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 部分更新
-func (m *defaultTUserOauthModel) UpdateFields(ctx context.Context, feilds map[string]interface{}, conditions string, args ...interface{}) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Where(conditions, args...).Updates(feilds)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 插入或整行更新（按主键）
-func (m *defaultTUserOauthModel) Upsert(ctx context.Context, in *TUserOauth) (rows int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	result := db.Omit("created_at").Save(&in)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-
-	return result.RowsAffected, err
-}
-
-// 查询记录
-func (m *defaultTUserOauthModel) FindById(ctx context.Context, id int64) (out *TUserOauth, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	err = db.Where("`id` = ?", id).First(&out).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return out, err
-}
-
-// 查询记录
-func (m *defaultTUserOauthModel) FindOne(ctx context.Context, sorts string, conditions string, args ...interface{}) (out *TUserOauth, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	// 如果有排序参数
-	if len(sorts) != 0 {
-		db = db.Order(sorts)
-	}
-
-	err = db.First(&out).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return out, err
-}
-
-// 查询列表
-func (m *defaultTUserOauthModel) FindALL(ctx context.Context, conditions string, args ...interface{}) (out []*TUserOauth, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Find(&out).Error
-	if err != nil {
-		return nil, err
-	}
-	return out, err
-}
-
-// 查询总数
-func (m *defaultTUserOauthModel) FindCount(ctx context.Context, conditions string, args ...interface{}) (count int64, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有条件语句
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	err = db.Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
-
-// 分页查询记录
-func (m *defaultTUserOauthModel) FindListAndTotal(ctx context.Context, page int, size int, sorts string, conditions string, args ...interface{}) (list []*TUserOauth, total int64, err error) {
-	// 插入db
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
-
-	// 如果有搜索条件
-	if len(conditions) != 0 {
-		db = db.Where(conditions, args...)
-	}
-
-	// 如果有排序参数
-	if len(sorts) != 0 {
-		db = db.Order(sorts)
-	}
-
-	err = db.Count(&total).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// 如果有分页参数
-	if page > 0 && size > 0 {
-		limit := size
-		offset := (page - 1) * limit
-		db = db.Limit(limit).Offset(offset)
-	}
-
-	// 查询数据
-	err = db.Find(&list).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return list, total, nil
+	return &defaultTUserOauthModel{newBaseModel[TUserOauth](tx, m.table)}
 }
 
 // add extra method in here
-func (m *defaultTUserOauthModel) FindOneByPlatformOpenId(ctx context.Context, platform string, open_id string) (out *TUserOauth, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
+func (m *defaultTUserOauthModel) FindOneByOpenIdPlatform(ctx context.Context, openId string, platform string) (out *TUserOauth, err error) {
+	db := m.scope(ctx)
 
-	err = db.Where("`platform` = ? and `open_id` = ?", platform, open_id).First(&out).Error
+	err = db.Where("`open_id` = ? and `platform` = ?", openId, platform).First(&out).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return out, nil
 }
-func (m *defaultTUserOauthModel) FindOneByUserIdPlatform(ctx context.Context, user_id string, platform string) (out *TUserOauth, err error) {
-	db := m.DbEngin.WithContext(ctx).Table(m.table)
 
-	err = db.Where("`user_id` = ? and `platform` = ?", user_id, platform).First(&out).Error
+func (m *defaultTUserOauthModel) FindOneByUserIdPlatform(ctx context.Context, userId string, platform string) (out *TUserOauth, err error) {
+	db := m.scope(ctx)
+
+	err = db.Where("`user_id` = ? and `platform` = ?", userId, platform).First(&out).Error
 	if err != nil {
 		return nil, err
 	}

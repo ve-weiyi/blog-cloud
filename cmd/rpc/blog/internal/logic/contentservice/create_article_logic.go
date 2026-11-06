@@ -83,7 +83,13 @@ func (l *CreateArticleLogic) CreateArticle(in *contentrpc.CreateArticleRequest) 
 		return nil, err
 	}
 
+	list, err := helper.convertArticleOut([]*model.TArticle{entity})
+	if err != nil {
+		return nil, err
+	}
+
 	return &contentrpc.CreateArticleResponse{
-		Id: entity.Id,
+		Id:      entity.Id,
+		Article: list[0],
 	}, nil
 }

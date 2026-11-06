@@ -29,7 +29,7 @@ func (l *BatchGetUserRolesLogic) BatchGetUserRoles(in *accessrpc.BatchGetUserRol
 		return &accessrpc.BatchGetUserRolesResponse{}, nil
 	}
 
-	userRoles, err := l.svcCtx.TUserRoleModel.FindALL(l.ctx, "user_id IN (?)", in.UserIds)
+	userRoles, err := l.svcCtx.TUserRoleModel.FindAll(l.ctx, "user_id IN (?)", in.UserIds)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (l *BatchGetUserRolesLogic) BatchGetUserRoles(in *accessrpc.BatchGetUserRol
 		}
 	}
 
-	roles, err := l.svcCtx.TRoleModel.FindALL(l.ctx, "id IN (?)", roleIds)
+	roles, err := l.svcCtx.TRoleModel.FindAll(l.ctx, "id IN (?)", roleIds)
 	if err != nil {
 		return nil, err
 	}

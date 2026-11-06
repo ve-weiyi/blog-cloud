@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -10,8 +11,14 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/chat"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/config"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/middleware"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/middleware/visitx"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/aiservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/authservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/chatservice"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/guestservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/mediaservice"
@@ -19,37 +26,37 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/siteservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/statsservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/syslogservice"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/config"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/middleware"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/middleware/visitx"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/stomphook"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
+	"github.com/ve-weiyi/blog-cloud/infra/ai"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx/codec/opaque"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx/store/redisstore"
-	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex/limitx"
-	"github.com/ve-weiyi/blog-cloud/infra/store/captchax"
-	"github.com/ve-weiyi/blog-cloud/infra/store/presencex"
-	"github.com/ve-weiyi/stompws/logws"
-	"github.com/ve-weiyi/stompws/server"
-	"github.com/ve-weiyi/vkit/adapter/storagex"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/interceptorx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
+	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex/limitx"
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/stompwsx"
+	"github.com/ve-weiyi/blog-cloud/infra/store/captchax"
+	"github.com/ve-weiyi/blog-cloud/infra/store/presencex"
 	"github.com/ve-weiyi/blog-cloud/infra/store/storex"
+	"github.com/ve-weiyi/stompws/logws"
+	"github.com/ve-weiyi/stompws/server"
+	"github.com/ve-weiyi/vkit/adapter/storagex"
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	UserAuth  rest.Middleware
-	RateLimit rest.Middleware
-	VisitLog  rest.Middleware
+	Config            config.Config
+	UserAuth          rest.Middleware
+	RateLimit         rest.Middleware
+	MusicRateLimit    rest.Middleware
+	VisitLog          rest.Middleware
+	NotifyStreamLimit rest.Middleware
+	AiSwitch          rest.Middleware
+	OptionalUserAuth  rest.Middleware
+	AiRateLimit       rest.Middleware
 
+	AiClient        *ai.Client
+	AiService       aiservice.AiService
 	RedisClient     *redis.Client
 	TokenManager    tokenx.Service
 	CaptchaStore    *captchax.Store
@@ -114,9 +121,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	syslogService := syslogservice.NewSyslogService(rpcClient)
 	guestService := guestservice.NewGuestService(rpcClient)
 	contentService := contentservice.NewContentService(rpcClient)
+	aiService := aiservice.NewAiService(rpcClient)
 	discussionService := discussionservice.NewDiscussionService(rpcClient)
 	mediaService := mediaservice.NewMediaService(rpcClient)
 	siteService := siteservice.NewSiteService(rpcClient)
+
+	// 模型客户端惰性可用：没配端点时服务照常启动，请求期再报明确错误
+	aiClient := newAiClient(c.AiConf)
 
 	// 博客前台的在线名册：只有本服务（前台的 hub）往里写。
 	presence := presencex.NewStore(storex.NewRedisMemberStore(rds), cachekey.OnlineUserKey, presencex.DefaultTTL)
@@ -125,7 +136,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		server.WithPresenceManager(presence),
 		server.WithPresenceTTL(presence.TTL()),
 		server.WithEventHooks(
-			stomphook.NewChatRoomEventHook(userService, chatService),
+			chat.NewChatRoomEventHook(userService, chatService),
 			stompwsx.NewOnlineBroadcastHook(),
 			stompwsx.NewOnlineCatchupHook(),
 		),
@@ -137,7 +148,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:              c,
 		UserAuth:            middleware.NewUserAuthMiddleware(tokenManager).Handle,
 		RateLimit:           middlewarex.NewRateLimitMiddleware(limitx.NewPeriodLimit(60, 5, rds, cachekey.RateLimitStrictPrefix)).Handle,
+		MusicRateLimit:      middlewarex.NewRateLimitMiddleware(limitx.NewPeriodLimit(60, 60, rds, cachekey.RateLimitMusicPrefix)).Handle,
 		VisitLog:            middleware.NewVisitLogMiddleware(visitx.NewVisitEnforcer(), syslogService).Handle,
+		NotifyStreamLimit:   middleware.NewNotifyStreamLimitMiddleware(middleware.DefaultStreamGlobalLimit, middleware.DefaultStreamUserLimit).Handle,
+		AiClient:            aiClient,
+		AiService:           aiService,
+		AiSwitch:            middleware.NewAiSwitchMiddleware(siteService, c.AiConf.SwitchTTL).Handle,
+		OptionalUserAuth:    middleware.NewOptionalUserAuthMiddleware(tokenManager).Handle,
+		AiRateLimit:         middleware.NewAiRateLimitMiddleware(rds, c.AiConf.Quota).Handle,
 		RedisClient:         rds,
 		TokenManager:        tokenManager,
 		CaptchaStore:        captchaStore,
@@ -165,6 +183,28 @@ func (s *ServiceContext) Shutdown() {
 			logx.Errorf("stop stomp hub: %v", err)
 		}
 	}
+}
+
+// newAiClient 构造模型客户端；没配端点时返回 nil，由请求路径给出明确错误。
+func newAiClient(conf config.AiConf) *ai.Client {
+	if conf.BaseURL == "" {
+		return nil
+	}
+	apiKey := conf.APIKey
+	if apiKey == "" {
+		apiKey = os.Getenv("AI_API_KEY")
+	}
+	if apiKey == "" {
+		return nil
+	}
+	return ai.NewClient(ai.Config{
+		BaseURL:     conf.BaseURL,
+		APIKey:      apiKey,
+		Model:       conf.Model,
+		Temperature: conf.Temperature,
+		MaxTokens:   conf.MaxTokens,
+		Timeout:     conf.Timeout,
+	})
 }
 
 func ConnectRedis(c config.RedisConf) (*redis.Client, error) {

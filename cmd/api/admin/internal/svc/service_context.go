@@ -12,9 +12,16 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/docs"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/chat"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/config"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware/permissionx"
+	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware/tracelogx"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/accessservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/authservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/chatservice"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/guestservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/mediaservice"
@@ -23,32 +30,23 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/statsservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/syslogservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/userservice"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/docs"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/config"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware/permissionx"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/middleware/tracelogx"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/sse"
-	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/stomphook"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx/codec/jwtcodec"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx/codec/opaque"
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx/store/redisstore"
-	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex/limitx"
-	"github.com/ve-weiyi/blog-cloud/infra/store/captchax"
-	"github.com/ve-weiyi/blog-cloud/infra/store/presencex"
-	"github.com/ve-weiyi/stompws/logws"
-	"github.com/ve-weiyi/stompws/server"
-	"github.com/ve-weiyi/vkit/adapter/storagex"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/contentservice"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/interceptorx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
+	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex/limitx"
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/notifyx"
+	"github.com/ve-weiyi/blog-cloud/infra/messaging/ssex"
 	"github.com/ve-weiyi/blog-cloud/infra/messaging/stompwsx"
+	"github.com/ve-weiyi/blog-cloud/infra/store/captchax"
+	"github.com/ve-weiyi/blog-cloud/infra/store/presencex"
 	"github.com/ve-weiyi/blog-cloud/infra/store/storex"
+	"github.com/ve-weiyi/stompws/logws"
+	"github.com/ve-weiyi/stompws/server"
+	"github.com/ve-weiyi/vkit/adapter/storagex"
 )
 
 type ServiceContext struct {
@@ -71,7 +69,7 @@ type ServiceContext struct {
 	SitePresence *presencex.Store
 
 	// NotifyBroker 通知事件广播器（每频道一个 Broker，各 SSE 连接从它分食）
-	NotifyBroker *sse.Broker[notifyx.Event]
+	NotifyBroker *ssex.Broker[notifyx.Event]
 
 	// stopNotify 停止通知事件订阅，由 Shutdown 调用
 	stopNotify context.CancelFunc
@@ -136,7 +134,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		server.WithPresenceManager(presence),
 		server.WithPresenceTTL(presence.TTL()),
 		server.WithEventHooks(
-			stomphook.NewChatRoomEventHook(),
+			chat.NewChatRoomEventHook(),
 			stompwsx.NewOnlineBroadcastHook(),
 			stompwsx.NewOnlineCatchupHook(),
 		),
@@ -146,8 +144,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	// 通知事件扇出：Redis 订阅是进程级一份，各 SSE 连接从广播器分食
 	notifyCtx, stopNotify := context.WithCancel(context.Background())
-	notifyBroker := sse.NewBroker[notifyx.Event]()
-	sse.NewSubscriber(rds, notifyBroker).Start(notifyCtx)
+	notifyBroker := ssex.NewBroker[notifyx.Event]()
+	ssex.NewSubscriber(rds, notifyBroker).Start(notifyCtx)
 
 	doc, err := loads.Analyzed(json.RawMessage(docs.Docs), "")
 	if err != nil {

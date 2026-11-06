@@ -3,13 +3,14 @@ package discussionservicelogic
 import (
 	"context"
 
-	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/notification"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/discussionrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/blog-cloud/infra/domain/cachekey"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/infra/domain/notify"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/metax"
 )
 
@@ -33,51 +34,45 @@ func (l *LikeTalkLogic) LikeTalk(in *discussionrpc.LikeTalkRequest) (*discussion
 	if err != nil {
 		return nil, err
 	}
-	id := cast.ToString(in.Id)
 
-	if _, err := l.svcCtx.TTalkModel.FindById(l.ctx, in.Id); err != nil {
-		return nil, err
-	}
-
-	likeKey := cachekey.GetUserLikeTalkKey(uid)
-	countKey := cachekey.TalkLikeCountKey
-
-	// 点赞状态以 Redis 集合为准；读取失败时不能猜，否则会把取消点赞做成再次点赞
-	liked, err := l.svcCtx.Redis.SIsMember(l.ctx, likeKey, id).Result()
+	talk, err := l.svcCtx.TTalkModel.FindById(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	delta := int64(1)
-	if liked {
-		delta = -1
-		if err := l.svcCtx.Redis.SRem(l.ctx, likeKey, id).Err(); err != nil {
-			return nil, err
-		}
-	} else {
-		if err := l.svcCtx.Redis.SAdd(l.ctx, likeKey, id).Err(); err != nil {
-			return nil, err
-		}
-	}
+	actorName := l.svcCtx.Notify.ResolveActorName(l.ctx, uid)
 
-	// 展示用的计数缓存失败不影响点赞结果，数据库计数是真相
-	if err := l.svcCtx.Redis.ZIncrBy(l.ctx, countKey, float64(delta), id).Err(); err != nil {
-		l.Errorf("LikeTalk ZIncrBy error: %v", err)
-	}
-
-	// 字段级原子增减：整行更新会覆盖并发写入的其它字段
-	if _, err := l.svcCtx.TTalkModel.UpdateFields(l.ctx,
-		map[string]interface{}{"like_count": gorm.Expr("like_count + ?", delta)},
-		"id = ?", in.Id); err != nil {
-		// 数据库失败时回滚点赞状态，避免 Redis 与数据库分叉
-		if liked {
-			_ = l.svcCtx.Redis.SAdd(l.ctx, likeKey, id).Err()
-		} else {
-			_ = l.svcCtx.Redis.SRem(l.ctx, likeKey, id).Err()
+	var changed bool
+	err = l.svcCtx.GormDB.WithContext(l.ctx).Transaction(func(tx *gorm.DB) error {
+		ok, err := l.svcCtx.TLikeModel.WithTx(tx).Like(l.ctx, enums.LikeTargetTalk, in.Id, uid)
+		if err != nil {
+			return err
 		}
-		_ = l.svcCtx.Redis.ZIncrBy(l.ctx, countKey, float64(-delta), id).Err()
+		changed = ok
+		if !ok {
+			return nil
+		}
+		if talk.UserId == "" || talk.UserId == uid {
+			return nil
+		}
+
+		return l.svcCtx.Notify.Emit(l.ctx, tx, notification.Request{
+			Scene:       notify.SceneTalkLiked,
+			ActorID:     uid,
+			ObjectType:  notify.ObjectTalk,
+			ObjectID:    in.Id,
+			Audience:    notification.AudienceUserIDs,
+			AudienceIDs: []string{talk.UserId},
+			Payload: notify.Payload{
+				ActorName: actorName,
+				TopicType: notify.ObjectTalk,
+				TopicID:   in.Id,
+			},
+		})
+	})
+	if err != nil {
 		return nil, err
 	}
 
-	return &discussionrpc.LikeTalkResponse{Success: true}, nil
+	return &discussionrpc.LikeTalkResponse{Liked: true, Changed: changed}, nil
 }

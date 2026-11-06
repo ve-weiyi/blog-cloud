@@ -9,11 +9,10 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
-	"github.com/ve-weiyi/vkit/x/patternx"
-
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizerr"
+	"github.com/ve-weiyi/vkit/x/validatex"
 )
 
 type LoginByEmailLogic struct {
@@ -32,7 +31,7 @@ func NewLoginByEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 
 // 邮箱验证码登录
 func (l *LoginByEmailLogic) LoginByEmail(in *authrpc.LoginByEmailRequest) (*authrpc.LoginResponse, error) {
-	if !patternx.IsValidEmail(in.Email) {
+	if !validatex.IsEmail(in.Email) {
 		return nil, bizerr.NewBizError(bizcode.CodeInvalidParam, "邮箱格式不正确")
 	}
 

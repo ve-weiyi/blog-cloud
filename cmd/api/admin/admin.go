@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/proc"
@@ -13,9 +14,9 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/job"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/plugins"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/admin/internal/svc"
-	"github.com/ve-weiyi/vkit/adapter/nacosx"
-
+	"github.com/ve-weiyi/blog-cloud/infra/http/headerx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
+	"github.com/ve-weiyi/vkit/adapter/nacosx"
 )
 
 var (
@@ -35,7 +36,7 @@ func main() {
 
 	var c config.Config
 	if *configFile != "" {
-		conf.MustLoad(*configFile, &c)
+		conf.MustLoad(*configFile, &c, conf.UseEnv())
 	} else {
 		fmt.Println("load config from nacos:", *nacosHost, *nacosPort, *nacosNamespace, *nacosGroup, *nacosDataID)
 		nacosCloser, err := nacosx.LoadConfigFromNacos(
@@ -50,7 +51,7 @@ func main() {
 				NacosRuntimeDir: "runtime/admin-api/nacos",
 			},
 			func(content string) {
-				err := conf.LoadFromYamlBytes([]byte(content), &c)
+				err := conf.LoadFromYamlBytes([]byte(os.ExpandEnv(content)), &c)
 				if err != nil {
 					fmt.Printf("nacos config content changed, but failed to load: %v\n", err)
 					return
@@ -68,7 +69,7 @@ func main() {
 	)
 	defer server.Stop()
 
-	server.Use(middlewarex.NewCtxMetaMiddleware().Handle)
+	server.Use(middlewarex.NewCtxMetaMiddleware(headerx.AppNameAdminWeb).Handle)
 	server.Use(middlewarex.NewDeviceCookieMiddleware().Handle)
 	server.Use(middlewarex.NewAntiReplyMiddleware().Handle)
 	server.Use(middlewarex.NewDeviceTokenMiddleware().Handle)

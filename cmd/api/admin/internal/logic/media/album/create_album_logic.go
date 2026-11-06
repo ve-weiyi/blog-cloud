@@ -37,11 +37,13 @@ func (l *CreateAlbumLogic) CreateAlbum(req *types.CreateAlbumReq) (resp *types.A
 	}
 
 	return &types.AlbumVO{
-		Id:         out.Id,
-		AlbumName:  req.AlbumName,
-		AlbumDesc:  req.AlbumDesc,
-		AlbumCover: req.AlbumCover,
-		Status:     req.Status,
-		PhotoCount: 0,
+		Id:         out.Album.Id,
+		AlbumName:  out.Album.AlbumName,
+		AlbumDesc:  out.Album.AlbumDesc,
+		AlbumCover: out.Album.AlbumCover,
+		Status:     out.Album.Status,
+		PhotoCount: out.Album.PhotoCount,
+		CreatedAt:  out.Album.CreatedAt,
+		UpdatedAt:  out.Album.UpdatedAt,
 	}, nil
 }

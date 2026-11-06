@@ -9,8 +9,8 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/types"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/client/discussionservice"
-	"github.com/ve-weiyi/blog-cloud/infra/collectx"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/vkit/x/collectx"
 )
 
 type QueryCommentListLogic struct {
@@ -76,25 +76,19 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 	allComments = append(allComments, out.List...)
 	allComments = append(allComments, replyList...)
 
-	usm, err := collectx.BatchQueryMulti(allComments,
-		func(v *discussionservice.Comment) []string {
+	usm, err := enrich.GetUserInfos(l.ctx, l.svcCtx,
+		collectx.DistinctMany(allComments, func(v *discussionservice.Comment) []string {
 			return []string{v.UserId, v.ReplyUserId}
-		},
-		func(ids []string) (map[string]*types.UserInfoVO, error) {
-			return enrich.GetUserInfos(l.ctx, l.svcCtx, ids)
-		},
+		}),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	vsm, err := collectx.BatchQuery(allComments,
-		func(v *discussionservice.Comment) string {
+	vsm, err := enrich.GetGuests(l.ctx, l.svcCtx,
+		collectx.Distinct(allComments, func(v *discussionservice.Comment) string {
 			return v.DeviceId
-		},
-		func(ids []string) (map[string]*types.GuestInfoVO, error) {
-			return enrich.GetGuests(l.ctx, l.svcCtx, ids)
-		},
+		}),
 	)
 	if err != nil {
 		return nil, err
@@ -115,6 +109,7 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 			Type:           r.Type,
 			CreatedAt:      r.CreatedAt,
 			LikeCount:      r.LikeCount,
+			Liked:          r.Liked,
 			GuestInfo:      vsm[r.DeviceId],
 			UserInfo:       usm[r.UserId],
 			ReplyUserInfo:  usm[r.ReplyUserId],
@@ -136,6 +131,7 @@ func (l *QueryCommentListLogic) QueryCommentList(req *types.QueryCommentListReq)
 			Type:             v.Type,
 			CreatedAt:        v.CreatedAt,
 			LikeCount:        v.LikeCount,
+			Liked:            v.Liked,
 			GuestInfo:        vsm[v.DeviceId],
 			UserInfo:         usm[v.UserId],
 			ReplyUserInfo:    usm[v.ReplyUserId],

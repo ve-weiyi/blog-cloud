@@ -74,7 +74,7 @@ func (l *GetBlogHomeInfoLogic) GetBlogHomeInfo(req *types.GetBlogHomeInfoReq) (r
 	}
 
 	// 查询已发布的全局通知；定向通知只出现在目标用户的通知列表里
-	noticeResp, err := l.svcCtx.NotificationService.ListNotifyMessages(l.ctx, &notificationservice.ListNotifyMessagesRequest{
+	noticeResp, err := l.svcCtx.NotificationService.ListAnnouncements(l.ctx, &notificationservice.ListAnnouncementsRequest{
 		ListQuery:  &notificationservice.ListQuery{Page: 1, PageSize: 5},
 		Status:     stringPtr(enums.NoticeStatusPublished),
 		TargetType: stringPtr(enums.NotifyTargetTypeAll),

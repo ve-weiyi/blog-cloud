@@ -29,15 +29,6 @@ type DeactivateAccountResp struct {
 	CanReactivateUntil int64 `json:"can_reactivate_until"` // 可恢复截止时间（时间戳，毫秒）
 }
 
-type GetMeLikeReq struct {
-}
-
-type GetMeLikeResp struct {
-	ArticleLikeSet []int64 `json:"article_like_set"` // 文章点赞集合
-	CommentLikeSet []int64 `json:"comment_like_set"` // 评论点赞集合
-	TalkLikeSet    []int64 `json:"talk_like_set"`    // 说说点赞集合
-}
-
 type GetMeReq struct {
 }
 

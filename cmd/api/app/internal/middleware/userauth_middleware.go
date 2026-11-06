@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/ve-weiyi/blog-cloud/infra/auth/tokenx"
 	"github.com/ve-weiyi/blog-cloud/infra/errors/bizcode"
@@ -14,8 +15,6 @@ import (
 	"github.com/ve-weiyi/blog-cloud/infra/http/cookiex"
 	"github.com/ve-weiyi/blog-cloud/infra/http/headerx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/responsex"
-
-	"google.golang.org/grpc/metadata"
 )
 
 type UserAuthMiddleware struct {

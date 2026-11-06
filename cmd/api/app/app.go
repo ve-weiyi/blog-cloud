@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/proc"
@@ -13,9 +14,9 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/job"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/plugins"
 	"github.com/ve-weiyi/blog-cloud/cmd/api/app/internal/svc"
-	"github.com/ve-weiyi/vkit/adapter/nacosx"
-
+	"github.com/ve-weiyi/blog-cloud/infra/http/headerx"
 	"github.com/ve-weiyi/blog-cloud/infra/http/middlewarex"
+	"github.com/ve-weiyi/vkit/adapter/nacosx"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 	nacosPassword  = flag.String("nacos-password", "nacos", "Input Your Nacos Password")
 	nacosNamespace = flag.String("nacos-namespace", "test", "Input Your Nacos NameSpaceId")
 	nacosGroup     = flag.String("nacos-group", "veweiyi.cn", "nacos group")
-	nacosDataID    = flag.String("nacos-data-id", "blog-api", "Input Your Nacos DataId")
+	nacosDataID    = flag.String("nacos-data-id", "app-api", "Input Your Nacos DataId")
 )
 
 var configFile = flag.String("f", "", "the config file")
@@ -35,7 +36,7 @@ func main() {
 
 	var c config.Config
 	if *configFile != "" {
-		conf.MustLoad(*configFile, &c)
+		conf.MustLoad(*configFile, &c, conf.UseEnv())
 	} else {
 		fmt.Println("load config from nacos:", *nacosHost, *nacosPort, *nacosNamespace, *nacosGroup, *nacosDataID)
 		nacosCloser, err := nacosx.LoadConfigFromNacos(
@@ -50,7 +51,7 @@ func main() {
 				NacosRuntimeDir: "runtime/blog-api/nacos",
 			},
 			func(content string) {
-				err := conf.LoadFromYamlBytes([]byte(content), &c)
+				err := conf.LoadFromYamlBytes([]byte(os.ExpandEnv(content)), &c)
 				if err != nil {
 					fmt.Printf("nacos config content changed, but failed to load: %v\n", err)
 					return
@@ -66,7 +67,7 @@ func main() {
 		c.RestConf,
 		rest.WithCors("*"),
 	)
-	server.Use(middlewarex.NewCtxMetaMiddleware().Handle)
+	server.Use(middlewarex.NewCtxMetaMiddleware(headerx.AppNameBlogWeb).Handle)
 	server.Use(middlewarex.NewDeviceCookieMiddleware().Handle)
 	server.Use(middlewarex.NewAntiReplyMiddleware().Handle)
 	server.Use(middlewarex.NewDeviceTokenMiddleware().Handle)

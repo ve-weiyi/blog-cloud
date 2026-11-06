@@ -72,6 +72,274 @@
         }
       }
     },
+    "/api/v1/ai/chat/stream": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "AI 助手"
+        ],
+        "summary": "AI 助手问答流（SSE）",
+        "operationId": "ai/ChatStreamAiChatStream",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AiChatStreamReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AiStreamEvent"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/quota": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "AI 助手"
+        ],
+        "summary": "查询今日剩余额度",
+        "operationId": "ai/QuotaGetAiQuota",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AiQuotaResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/sessions": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "AI 助手"
+        ],
+        "summary": "分页查询我的会话",
+        "operationId": "ai/SessionQueryAiSessionList",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "example": 1,
+            "description": "当前页码",
+            "name": "page",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "example": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": "[]",
+            "example": "[]",
+            "description": "排序",
+            "name": "sorts",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/sessions/{session_id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "AI 助手"
+        ],
+        "summary": "删除会话",
+        "operationId": "ai/SessionDeleteAiSession",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AiSessionDeleteResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/sessions/{session_id}/messages": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "AI 助手"
+        ],
+        "summary": "查询会话消息",
+        "operationId": "ai/SessionQueryAiMessageList",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "只取该时间之后的消息（毫秒）",
+            "name": "after",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "数量上限",
+            "name": "limit",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AiMessageListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/albums": {
       "get": {
         "security": [
@@ -571,7 +839,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "文章"
+        ],
+        "summary": "取消点赞文章",
+        "operationId": "content/ArticleUnlikeArticle",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -1716,7 +2036,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "评论"
+        ],
+        "summary": "取消点赞评论",
+        "operationId": "discussion/CommentUnlikeComment",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -2170,49 +2542,6 @@
         }
       }
     },
-    "/api/v1/me/likes": {
-      "get": {
-        "security": [
-          {
-            "apiKey": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "个人中心"
-        ],
-        "summary": "获取用户点赞集合",
-        "operationId": "account/MeGetMeLike",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/GetMeLikeResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/me/profile": {
       "get": {
         "security": [
@@ -2523,6 +2852,555 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/CreateMessageReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/EmptyResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知"
+        ],
+        "summary": "获取通知列表（按分组分页）",
+        "operationId": "notification/NotifyQueryNotificationList",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "example": 1,
+            "description": "当前页码",
+            "name": "page",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "example": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": "[]",
+            "example": "[]",
+            "description": "排序",
+            "name": "sorts",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "偏好分组，可多选，缺省为全部",
+            "name": "groups",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "boolean",
+            "name": "unread_only",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ListResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/delete": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知"
+        ],
+        "summary": "删除通知",
+        "operationId": "notification/NotifyDeleteNotification",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteNotificationReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AffectedResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/preferences": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知偏好"
+        ],
+        "summary": "获取通知偏好",
+        "operationId": "notification/PreferenceGetNotifyPreference",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/NotifyPreferenceListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知偏好"
+        ],
+        "summary": "更新通知偏好",
+        "operationId": "notification/PreferenceUpdateNotifyPreference",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateNotifyPreferenceReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/NotifyPreferenceListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/read": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知"
+        ],
+        "summary": "标记通知已读",
+        "operationId": "notification/NotifyReadNotification",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadNotificationReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AffectedResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/read-all": {
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知"
+        ],
+        "summary": "全部标记已读",
+        "operationId": "notification/NotifyReadAllNotification",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/AffectedResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/stream": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知实时推送"
+        ],
+        "summary": "通知实时推送流（SSE）",
+        "operationId": "notification/NotifyStreamNotificationStream",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/NotificationStreamEvent"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/unread-count": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "通知"
+        ],
+        "summary": "获取未读分组数",
+        "operationId": "notification/NotifyGetUnreadCount",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "偏好分组，可多选，缺省为全部",
+            "name": "groups",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/UnreadCountResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/unsubscribe": {
+      "get": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "邮件退订"
+        ],
+        "summary": "校验退订令牌",
+        "operationId": "notification/UnsubscribeVerifyUnsubscribe",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/UnsubscribeVerifyResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "邮件退订"
+        ],
+        "summary": "执行退订",
+        "operationId": "notification/UnsubscribeUnsubscribe",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UnsubscribeReq"
             }
           }
         ],
@@ -2909,7 +3787,59 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResp"
+                  "$ref": "#/definitions/LikeResult"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "说说"
+        ],
+        "summary": "取消点赞说说",
+        "operationId": "discussion/TalkUnlikeTalk",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "4100-未登录\u003cbr\u003e4200-无操作权限",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/LikeResult"
                 },
                 "msg": {
                   "description": "business message",
@@ -2978,7 +3908,7 @@
         }
       }
     },
-    "/api/v1/ws": {
+    "/api/v1/websocket": {
       "get": {
         "produces": [
           "application/json"
@@ -3000,6 +3930,332 @@
     }
   },
   "definitions": {
+    "AffectedResp": {
+      "type": "object",
+      "required": [
+        "success_count"
+      ],
+      "properties": {
+        "success_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "AiChatMessage": {
+      "type": "object",
+      "required": [
+        "role",
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "role": {
+          "description": "user / assistant",
+          "type": "string"
+        }
+      }
+    },
+    "AiChatStreamReq": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "history": {
+          "description": "游客携带的历史，服务端会再次裁剪",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AiChatMessage"
+          }
+        },
+        "message": {
+          "description": "本轮问题",
+          "type": "string"
+        },
+        "session_id": {
+          "description": "会话ID，登录用户续聊时传入",
+          "type": "integer"
+        }
+      }
+    },
+    "AiCitation": {
+      "type": "object",
+      "required": [
+        "article_id",
+        "title",
+        "url",
+        "summary"
+      ],
+      "properties": {
+        "article_id": {
+          "type": "integer"
+        },
+        "summary": {
+          "description": "片段摘要，用于引用卡片",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "description": "由网关按站点地址与文章路由拼装",
+          "type": "string"
+        }
+      }
+    },
+    "AiMessageListResp": {
+      "type": "object",
+      "required": [
+        "list"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AiMessageVO"
+          }
+        }
+      }
+    },
+    "AiMessageVO": {
+      "type": "object",
+      "required": [
+        "id",
+        "session_id",
+        "role",
+        "content",
+        "created_at"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "role": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "AiQuotaResp": {
+      "type": "object",
+      "required": [
+        "daily_quota",
+        "used",
+        "remaining"
+      ],
+      "properties": {
+        "daily_quota": {
+          "description": "当日额度，0 表示不限",
+          "type": "integer"
+        },
+        "remaining": {
+          "description": "剩余，-1 表示不限",
+          "type": "integer"
+        },
+        "used": {
+          "description": "已用",
+          "type": "integer"
+        }
+      }
+    },
+    "AiSessionDeleteResp": {
+      "type": "object",
+      "required": [
+        "success_count"
+      ],
+      "properties": {
+        "success_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "AiSessionVO": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "model",
+        "message_count",
+        "created_at",
+        "updated_at",
+        "last_message_at"
+      ],
+      "properties": {
+        "created_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "last_message_at": {
+          "type": "integer"
+        },
+        "message_count": {
+          "type": "integer"
+        },
+        "model": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "AiStreamEvent": {
+      "type": "object",
+      "required": [
+        "type",
+        "session_id",
+        "guest",
+        "quota_left",
+        "content",
+        "tool",
+        "usage",
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "guest": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "quota_left": {
+          "description": "剩余额度，-1 表示不限",
+          "type": "integer"
+        },
+        "session_id": {
+          "description": "游客为 0",
+          "type": "integer"
+        },
+        "tool": {
+          "type": "object",
+          "required": [
+            "name",
+            "phase",
+            "label",
+            "summary",
+            "articles"
+          ],
+          "properties": {
+            "articles": {
+              "description": "引用列表，完成事件下发",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AiCitation"
+              }
+            },
+            "label": {
+              "description": "展示文案",
+              "type": "string"
+            },
+            "name": {
+              "description": "工具名，P0 只有 search_articles",
+              "type": "string"
+            },
+            "phase": {
+              "description": "started / completed / failed",
+              "type": "string"
+            },
+            "summary": {
+              "description": "结果摘要",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/AiToolEvent"
+        },
+        "type": {
+          "description": "meta / tool / delta / done / error",
+          "type": "string"
+        },
+        "usage": {
+          "type": "object",
+          "required": [
+            "prompt_tokens",
+            "completion_tokens"
+          ],
+          "properties": {
+            "completion_tokens": {
+              "type": "integer"
+            },
+            "prompt_tokens": {
+              "type": "integer"
+            }
+          },
+          "$ref": "#/definitions/AiUsage"
+        }
+      }
+    },
+    "AiToolEvent": {
+      "type": "object",
+      "required": [
+        "name",
+        "phase",
+        "label",
+        "summary",
+        "articles"
+      ],
+      "properties": {
+        "articles": {
+          "description": "引用列表，完成事件下发",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AiCitation"
+          }
+        },
+        "label": {
+          "description": "展示文案",
+          "type": "string"
+        },
+        "name": {
+          "description": "工具名，P0 只有 search_articles",
+          "type": "string"
+        },
+        "phase": {
+          "description": "started / completed / failed",
+          "type": "string"
+        },
+        "summary": {
+          "description": "结果摘要",
+          "type": "string"
+        }
+      }
+    },
+    "AiUsage": {
+      "type": "object",
+      "required": [
+        "prompt_tokens",
+        "completion_tokens"
+      ],
+      "properties": {
+        "completion_tokens": {
+          "type": "integer"
+        },
+        "prompt_tokens": {
+          "type": "integer"
+        }
+      }
+    },
     "Album": {
       "type": "object",
       "required": [
@@ -3044,6 +4300,7 @@
         "tag_name_list",
         "like_count",
         "view_count",
+        "liked",
         "author",
         "last_article",
         "next_article",
@@ -3111,6 +4368,7 @@
             "article_title",
             "like_count",
             "view_count",
+            "liked",
             "created_at"
           ],
           "properties": {
@@ -3129,6 +4387,10 @@
             "like_count": {
               "type": "integer"
             },
+            "liked": {
+              "description": "当前用户是否已赞",
+              "type": "boolean"
+            },
             "view_count": {
               "type": "integer"
             }
@@ -3137,6 +4399,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "newest_article_list": {
           "type": "array",
@@ -3152,6 +4418,7 @@
             "article_title",
             "like_count",
             "view_count",
+            "liked",
             "created_at"
           ],
           "properties": {
@@ -3169,6 +4436,10 @@
             },
             "like_count": {
               "type": "integer"
+            },
+            "liked": {
+              "description": "当前用户是否已赞",
+              "type": "boolean"
             },
             "view_count": {
               "type": "integer"
@@ -3218,7 +4489,8 @@
         "category_name",
         "tag_name_list",
         "like_count",
-        "view_count"
+        "view_count",
+        "liked"
       ],
       "properties": {
         "article_content": {
@@ -3248,6 +4520,10 @@
         "like_count": {
           "type": "integer"
         },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
+        },
         "original_url": {
           "type": "string"
         },
@@ -3276,6 +4552,7 @@
         "article_title",
         "like_count",
         "view_count",
+        "liked",
         "created_at"
       ],
       "properties": {
@@ -3293,6 +4570,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "view_count": {
           "type": "integer"
@@ -3396,6 +4677,7 @@
         "type",
         "created_at",
         "like_count",
+        "liked",
         "guest_info",
         "user_info",
         "reply_user_info",
@@ -3456,6 +4738,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "parent_id": {
           "type": "integer"
@@ -3677,6 +4963,7 @@
         "type",
         "created_at",
         "like_count",
+        "liked",
         "guest_info",
         "user_info",
         "reply_user_info"
@@ -3729,6 +5016,10 @@
         },
         "like_count": {
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "parent_id": {
           "type": "integer"
@@ -3953,6 +5244,21 @@
         "cooling_period_days": {
           "description": "冷静期天数",
           "type": "integer"
+        }
+      }
+    },
+    "DeleteAiSessionReq": {
+      "type": "object"
+    },
+    "DeleteNotificationReq": {
+      "type": "object",
+      "required": [
+        "group_key"
+      ],
+      "properties": {
+        "group_key": {
+          "description": "列表下发的不透明键",
+          "type": "string"
         }
       }
     },
@@ -4338,40 +5644,6 @@
         }
       }
     },
-    "GetMeLikeReq": {
-      "type": "object"
-    },
-    "GetMeLikeResp": {
-      "type": "object",
-      "required": [
-        "article_like_set",
-        "comment_like_set",
-        "talk_like_set"
-      ],
-      "properties": {
-        "article_like_set": {
-          "description": "文章点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "comment_like_set": {
-          "description": "评论点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "talk_like_set": {
-          "description": "说说点赞集合",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        }
-      }
-    },
     "GetMeReq": {
       "type": "object"
     },
@@ -4512,6 +5784,21 @@
     },
     "LikeCommentReq": {
       "type": "object"
+    },
+    "LikeResult": {
+      "type": "object",
+      "required": [
+        "liked",
+        "changed"
+      ],
+      "properties": {
+        "changed": {
+          "type": "boolean"
+        },
+        "liked": {
+          "type": "boolean"
+        }
+      }
     },
     "LikeTalkReq": {
       "type": "object"
@@ -4724,6 +6011,106 @@
         }
       }
     },
+    "NotificationGroupVO": {
+      "type": "object",
+      "required": [
+        "group_key",
+        "scene",
+        "title",
+        "content",
+        "link",
+        "level",
+        "actor_count",
+        "latest_actor_name",
+        "latest_at",
+        "unread"
+      ],
+      "properties": {
+        "actor_count": {
+          "type": "integer"
+        },
+        "content": {
+          "type": "string"
+        },
+        "group_key": {
+          "description": "不透明键，原样回传用于整组已读 / 删除",
+          "type": "string"
+        },
+        "latest_actor_name": {
+          "type": "string"
+        },
+        "latest_at": {
+          "type": "integer"
+        },
+        "level": {
+          "type": "string"
+        },
+        "link": {
+          "description": "跳转地址，客户端只负责打开",
+          "type": "string"
+        },
+        "scene": {
+          "description": "用于图标与分类，不用于寻址",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "unread": {
+          "type": "boolean"
+        }
+      }
+    },
+    "NotificationPreferenceVO": {
+      "type": "object",
+      "required": [
+        "group",
+        "channel",
+        "enabled",
+        "mandatory"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "group": {
+          "type": "string"
+        },
+        "mandatory": {
+          "description": "为真表示该分组不可退订",
+          "type": "boolean"
+        }
+      }
+    },
+    "NotificationStreamEvent": {
+      "type": "object",
+      "required": [
+        "event"
+      ],
+      "properties": {
+        "event": {
+          "description": "notify",
+          "type": "string"
+        }
+      }
+    },
+    "NotifyPreferenceListResp": {
+      "type": "object",
+      "required": [
+        "list"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NotificationPreferenceVO"
+          }
+        }
+      }
+    },
     "OauthLoginReq": {
       "type": "object",
       "required": [
@@ -4886,6 +6273,12 @@
         }
       }
     },
+    "QueryAiMessageListReq": {
+      "type": "object"
+    },
+    "QueryAiSessionListReq": {
+      "type": "object"
+    },
     "QueryAlbumListReq": {
       "type": "object"
     },
@@ -4911,6 +6304,9 @@
       "type": "object"
     },
     "QueryMessageListReq": {
+      "type": "object"
+    },
+    "QueryNotificationListReq": {
       "type": "object"
     },
     "QueryPageListReq": {
@@ -4951,6 +6347,18 @@
         "success": {
           "description": "是否恢复成功",
           "type": "boolean"
+        }
+      }
+    },
+    "ReadNotificationReq": {
+      "type": "object",
+      "required": [
+        "group_key"
+      ],
+      "properties": {
+        "group_key": {
+          "description": "列表下发的不透明键",
+          "type": "string"
         }
       }
     },
@@ -5161,6 +6569,7 @@
         "status",
         "like_count",
         "comment_count",
+        "liked",
         "created_at",
         "updated_at",
         "user_info"
@@ -5196,6 +6605,10 @@
         "like_count": {
           "description": "点赞量",
           "type": "integer"
+        },
+        "liked": {
+          "description": "当前用户是否已赞",
+          "type": "boolean"
         },
         "status": {
           "description": "状态 1.公开 2.私密",
@@ -5311,6 +6724,56 @@
         }
       }
     },
+    "UnreadCountReq": {
+      "type": "object"
+    },
+    "UnreadCountResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "group_counts"
+      ],
+      "properties": {
+        "group_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "UnsubscribeReq": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "UnsubscribeVerifyReq": {
+      "type": "object"
+    },
+    "UnsubscribeVerifyResp": {
+      "type": "object",
+      "required": [
+        "group",
+        "channel"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        }
+      }
+    },
     "UpdateCommentReq": {
       "type": "object",
       "required": [
@@ -5355,6 +6818,20 @@
     },
     "UpdateMeResp": {
       "type": "object"
+    },
+    "UpdateNotifyPreferenceReq": {
+      "type": "object",
+      "required": [
+        "list"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NotificationPreferenceVO"
+          }
+        }
+      }
     },
     "UploadFileReq": {
       "type": "object"
@@ -5758,7 +7235,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-10-19 18:09:30",
+  "x-date": "2026-11-05 17:56:47",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -48,6 +48,7 @@ func (l *GetTalkLogic) GetTalk(req *types.GetTalkReq) (resp *types.Talk, err err
 		IsTop:        out.Talk.IsTop,
 		Status:       out.Talk.Status,
 		LikeCount:    out.Talk.LikeCount,
+		Liked:        out.Talk.Liked,
 		CommentCount: out.Talk.CommentCount,
 		CreatedAt:    out.Talk.CreatedAt,
 		UpdatedAt:    out.Talk.UpdatedAt,

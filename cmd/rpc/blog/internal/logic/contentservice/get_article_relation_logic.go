@@ -8,6 +8,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/domain/enums"
+	"github.com/ve-weiyi/blog-cloud/model"
 )
 
 type GetArticleRelationLogic struct {
@@ -50,18 +51,33 @@ func (l *GetArticleRelationLogic) GetArticleRelation(in *contentrpc.GetArticleRe
 		return nil, err
 	}
 
+	// 四组预览一次性转换：浏览量走同一条 pipeline，点赞状态只查一次
+	all := make([]*model.TArticle, 0, len(last)+len(next)+len(recommend)+len(newest))
+	all = append(all, last...)
+	all = append(all, next...)
+	all = append(all, recommend...)
+	all = append(all, newest...)
+	previews, err := helper.convertArticlePreviewOuts(all)
+	if err != nil {
+		return nil, err
+	}
+	pm := make(map[int64]*contentrpc.ArticlePreview, len(previews))
+	for _, v := range previews {
+		pm[v.Id] = v
+	}
+
 	resp := &contentrpc.GetArticleRelationResponse{}
 	if len(last) > 0 {
-		resp.Last = helper.convertArticlePreviewOut(last[0])
+		resp.Last = pm[last[0].Id]
 	}
 	if len(next) > 0 {
-		resp.Next = helper.convertArticlePreviewOut(next[0])
+		resp.Next = pm[next[0].Id]
 	}
 	for _, v := range recommend {
-		resp.Recommends = append(resp.Recommends, helper.convertArticlePreviewOut(v))
+		resp.Recommends = append(resp.Recommends, pm[v.Id])
 	}
 	for _, v := range newest {
-		resp.Latest = append(resp.Latest, helper.convertArticlePreviewOut(v))
+		resp.Latest = append(resp.Latest, pm[v.Id])
 	}
 
 	return resp, nil

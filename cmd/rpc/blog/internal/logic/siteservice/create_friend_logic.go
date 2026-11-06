@@ -6,7 +6,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/siterpc"
-
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/model"
 )
@@ -32,5 +31,5 @@ func (l *CreateFriendLogic) CreateFriend(in *siterpc.CreateFriendRequest) (*site
 	if err != nil {
 		return nil, err
 	}
-	return &siterpc.CreateFriendResponse{Id: entity.Id}, nil
+	return &siterpc.CreateFriendResponse{Id: entity.Id, Friend: convertFriendOut(entity)}, nil
 }

@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/proc"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -14,8 +18,12 @@ import (
 
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/config"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/job"
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/mqlogic"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/consumer"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/mq/outbox"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/notification"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/accessrpc"
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/airpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/authrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/chatrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/contentrpc"
@@ -28,6 +36,7 @@ import (
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/syslogrpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/userrpc"
 	accessserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/accessservice"
+	aiserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/aiservice"
 	authserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/authservice"
 	chatserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/chatservice"
 	contentserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/contentservice"
@@ -41,6 +50,7 @@ import (
 	userserviceServer "github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/server/userservice"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/grpc/interceptorx"
+	"github.com/ve-weiyi/blog-cloud/infra/metrics"
 	"github.com/ve-weiyi/vkit/adapter/nacosx"
 )
 
@@ -63,7 +73,7 @@ func main() {
 	var c config.Config
 	if *configFile != "" {
 		fmt.Println("load config from file:", *configFile)
-		conf.MustLoad(*configFile, &c)
+		conf.MustLoad(*configFile, &c, conf.UseEnv())
 	} else {
 		fmt.Println("load config from nacos:", *nacosHost, *nacosPort, *nacosNamespace, *nacosGroup, *nacosDataID)
 		nacosCloser, err := nacosx.LoadConfigFromNacos(
@@ -78,7 +88,7 @@ func main() {
 				NacosRuntimeDir: "runtime/blog-rpc/nacos",
 			},
 			func(content string) {
-				err := conf.LoadFromYamlBytes([]byte(content), &c)
+				err := conf.LoadFromYamlBytes([]byte(os.ExpandEnv(content)), &c)
 				if err != nil {
 					fmt.Printf("nacos config content changed, but failed to load: %v\n", err)
 					return
@@ -92,18 +102,59 @@ func main() {
 
 	svcCtx := svc.NewServiceContext(c)
 
-	// 启动定时任务
-	job.Init(svcCtx)
-	defer job.Stop()
+	// 先声明消费拓扑，再启动 outbox relay：relay 可能立刻发布积压事件，
+	// 队列尚未绑定时消息会被 exchange 直接丢弃。
+	// 两者失败都属于「不修就不会好」的部署错误，启动即失败；
+	// broker 抖动由懒连接与 relay 退避重试兜底，不受影响。
+	if !startMQ(svcCtx) {
+		panic("mq: notification subscriptions unavailable")
+	}
+	relay, err := startOutboxRelay(svcCtx)
+	if err != nil {
+		panic(fmt.Errorf("outbox relay: %w", err))
+	}
 
-	// 启动消息消费者。MQ 关闭必须注册为关闭监听：go-zero 收到信号后会直接杀进程，
-	// main 不返回，defer 不会执行。
-	svcCtx.MQ.Email.Subscribe(mqlogic.NewConsumeEmailMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Sms.Subscribe(mqlogic.NewConsumeSmsMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Inbox.Subscribe(mqlogic.NewConsumeInboxMessageLogic(svcCtx).Consume)
-	svcCtx.MQ.Login.Subscribe(mqlogic.NewConsumeLoginLogic(svcCtx).Consume)
-	svcCtx.MQ.Logout.Subscribe(mqlogic.NewConsumeLogoutLogic(svcCtx).Consume)
-	proc.AddShutdownListener(svcCtx.MQ.Close)
+	jobs := job.New()
+	jobs.Add(job.Task{Name: "outbox-relay", Start: relay.Start, Stop: relay.Stop})
+
+	// 投递表本身是队列：定时领取待发送记录，重试也由它驱动
+	deliveryWorker := notification.NewDeliveryWorker(svcCtx.Notify, svcCtx.NotifyEmailSender(), time.Minute)
+	jobs.Add(job.Task{Name: "notify-delivery", Start: deliveryWorker.Start, Stop: deliveryWorker.Stop})
+
+	// 扇出唤醒可能丢失：补发停在 pending/fanning 的事件，避免通知断在半路
+	reconcileWorker := notification.NewReconcileWorker(svcCtx.Notify, time.Minute)
+	jobs.Add(job.Task{Name: "notify-reconcile", Start: reconcileWorker.Start, Stop: reconcileWorker.Stop})
+
+	// 保留期由场景目录声明，清理按场景分批执行
+	retentionWorker := notification.NewRetentionWorker(svcCtx.Notify, 24*time.Hour)
+	jobs.Add(job.Task{Name: "notify-retention", Start: retentionWorker.Start, Stop: retentionWorker.Stop})
+
+	// 日志表只增不减：按保留窗口分批清理，操作日志保留最久
+	logRetention := job.NewLogRetention(svcCtx.GormDB, 24*time.Hour)
+	jobs.Add(job.Task{Name: "log-retention", Start: logRetention.Start, Stop: logRetention.Stop})
+
+	// UV/PV 由访问日志实时累加，用户指标按天聚合补齐
+	dailyStats := job.NewDailyStats(svcCtx.GormDB)
+	jobs.Add(job.Task{Name: "daily-stats", Start: dailyStats.Start, Stop: dailyStats.Stop})
+
+	// 公开文章切分成检索分块，供 AI 助手使用
+	jobs.Add(job.NewArticleChunkIndexer(svcCtx.GormDB, svcCtx.Redis).Task())
+	jobs.Start()
+
+	stopJobs := func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		jobs.Stop(ctx)
+	}
+
+	// 关闭顺序：先停后台任务（relay 可能正在发布），再释放 MQ/Redis/DB。
+	// go-zero 的多个 shutdown listener 是并发执行的，顺序只能靠合并成一个来保证。
+	shutdown := func() {
+		stopJobs()
+		svcCtx.Close()
+	}
+	defer shutdown()
+	proc.AddShutdownListener(shutdown)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		// 用户
@@ -130,6 +181,8 @@ func main() {
 		syslogrpc.RegisterSyslogServiceServer(grpcServer, syslogserviceServer.NewSyslogServiceServer(svcCtx))
 		// 统计
 		statsrpc.RegisterStatsServiceServer(grpcServer, statsserviceServer.NewStatsServiceServer(svcCtx))
+		// AI 助手
+		airpc.RegisterAiServiceServer(grpcServer, aiserviceServer.NewAiServiceServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
@@ -143,4 +196,44 @@ func main() {
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
+}
+
+// startOutboxRelay 先确保 outbox 表存在，再构造 relay。
+func startOutboxRelay(svcCtx *svc.ServiceContext) (*outbox.Relay, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := svcCtx.Outbox.Migrate(ctx); err != nil {
+		return nil, err
+	}
+	if err := svcCtx.Outbox.Ping(ctx); err != nil {
+		return nil, err
+	}
+	return outbox.NewRelay(svcCtx.Outbox, svcCtx.MQ.Publisher,
+		outbox.WithMetrics(metrics.NewOutbox())), nil
+}
+
+// startMQ 注册事件处理器并启动通知域与审计域的订阅。
+// 返回通知域订阅是否全部就绪；未就绪时不启动 outbox relay，避免消息被无绑定的 exchange 丢弃。
+func startMQ(svcCtx *svc.ServiceContext) bool {
+	router, err := svcCtx.MQ.Runtime.NewRouter()
+	if err != nil {
+		logx.Errorf("[mq] create router: %v", err)
+		return false
+	}
+	if err := consumer.Register(router, svcCtx); err != nil {
+		// 注册失败意味着处理器缺失：宁可不启动订阅，也不要让该事件在运行期
+		// 全部按失败策略处理（死信或丢弃）。
+		logx.Errorf("[mq] register handlers: %v", err)
+		return false
+	}
+
+	// 任一订阅未就绪都不启动 relay：没有绑定的 exchange 会静默丢消息。
+	allReady := true
+	for _, spec := range mq.Subscriptions() {
+		if err := svcCtx.MQ.Runtime.Start(router, spec); err != nil {
+			logx.Errorf("[mq] start subscription %s: %v", spec.Group, err)
+			allReady = false
+		}
+	}
+	return allReady
 }

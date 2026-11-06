@@ -5,10 +5,9 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/siterpc"
 	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/svc"
 	"github.com/ve-weiyi/blog-cloud/infra/store/queryx"
-
-	"github.com/ve-weiyi/blog-cloud/cmd/rpc/blog/internal/pb/siterpc"
 )
 
 type ListFriendsLogic struct {

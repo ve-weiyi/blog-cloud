@@ -25,8 +25,8 @@ func NewUpdateApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 	}
 }
 
-func (l *UpdateApiLogic) UpdateApi(req *types.UpdateApiReq) (resp *types.EmptyResp, err error) {
-	_, err = l.svcCtx.AccessService.UpdateApi(l.ctx, &accessservice.UpdateApiRequest{
+func (l *UpdateApiLogic) UpdateApi(req *types.UpdateApiReq) (resp *types.ApiVO, err error) {
+	out, err := l.svcCtx.AccessService.UpdateApi(l.ctx, &accessservice.UpdateApiRequest{
 		Id:        req.Id,
 		ParentId:  req.ParentId,
 		Name:      req.Name,
@@ -39,5 +39,5 @@ func (l *UpdateApiLogic) UpdateApi(req *types.UpdateApiReq) (resp *types.EmptyRe
 		return nil, err
 	}
 
-	return &types.EmptyResp{}, nil
+	return convertApiVO(out.Api), nil
 }

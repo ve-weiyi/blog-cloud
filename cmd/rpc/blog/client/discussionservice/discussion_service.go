@@ -41,10 +41,6 @@ type (
 	GetMessageResponse                  = discussionrpc.GetMessageResponse
 	GetTalkRequest                      = discussionrpc.GetTalkRequest
 	GetTalkResponse                     = discussionrpc.GetTalkResponse
-	GetUserLikeCommentRequest           = discussionrpc.GetUserLikeCommentRequest
-	GetUserLikeCommentResponse          = discussionrpc.GetUserLikeCommentResponse
-	GetUserLikeTalkRequest              = discussionrpc.GetUserLikeTalkRequest
-	GetUserLikeTalkResponse             = discussionrpc.GetUserLikeTalkResponse
 	LikeCommentRequest                  = discussionrpc.LikeCommentRequest
 	LikeCommentResponse                 = discussionrpc.LikeCommentResponse
 	LikeTalkRequest                     = discussionrpc.LikeTalkRequest
@@ -109,8 +105,8 @@ type (
 		GetCommentReplyCount(ctx context.Context, in *GetCommentReplyCountRequest, opts ...grpc.CallOption) (*GetCommentReplyCountResponse, error)
 		// 点赞评论
 		LikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error)
-		// 查询用户点赞的评论
-		GetUserLikeComment(ctx context.Context, in *GetUserLikeCommentRequest, opts ...grpc.CallOption) (*GetUserLikeCommentResponse, error)
+		// 取消点赞评论
+		UnlikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error)
 		// 分页查询说说列表
 		ListTalks(ctx context.Context, in *ListTalksRequest, opts ...grpc.CallOption) (*ListTalksResponse, error)
 		// 查询说说详情
@@ -123,8 +119,8 @@ type (
 		BatchDeleteTalks(ctx context.Context, in *BatchDeleteTalksRequest, opts ...grpc.CallOption) (*BatchDeleteTalksResponse, error)
 		// 点赞说说
 		LikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error)
-		// 查询用户点赞的说说
-		GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error)
+		// 取消点赞说说
+		UnlikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error)
 	}
 
 	defaultDiscussionService struct {
@@ -246,10 +242,10 @@ func (m *defaultDiscussionService) LikeComment(ctx context.Context, in *LikeComm
 	return client.LikeComment(ctx, in, opts...)
 }
 
-// 查询用户点赞的评论
-func (m *defaultDiscussionService) GetUserLikeComment(ctx context.Context, in *GetUserLikeCommentRequest, opts ...grpc.CallOption) (*GetUserLikeCommentResponse, error) {
+// 取消点赞评论
+func (m *defaultDiscussionService) UnlikeComment(ctx context.Context, in *LikeCommentRequest, opts ...grpc.CallOption) (*LikeCommentResponse, error) {
 	client := discussionrpc.NewDiscussionServiceClient(m.cli.Conn())
-	return client.GetUserLikeComment(ctx, in, opts...)
+	return client.UnlikeComment(ctx, in, opts...)
 }
 
 // 分页查询说说列表
@@ -288,8 +284,8 @@ func (m *defaultDiscussionService) LikeTalk(ctx context.Context, in *LikeTalkReq
 	return client.LikeTalk(ctx, in, opts...)
 }
 
-// 查询用户点赞的说说
-func (m *defaultDiscussionService) GetUserLikeTalk(ctx context.Context, in *GetUserLikeTalkRequest, opts ...grpc.CallOption) (*GetUserLikeTalkResponse, error) {
+// 取消点赞说说
+func (m *defaultDiscussionService) UnlikeTalk(ctx context.Context, in *LikeTalkRequest, opts ...grpc.CallOption) (*LikeTalkResponse, error) {
 	client := discussionrpc.NewDiscussionServiceClient(m.cli.Conn())
-	return client.GetUserLikeTalk(ctx, in, opts...)
+	return client.UnlikeTalk(ctx, in, opts...)
 }

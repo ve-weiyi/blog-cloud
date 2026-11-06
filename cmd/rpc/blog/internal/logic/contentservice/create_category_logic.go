@@ -32,5 +32,8 @@ func (l *CreateCategoryLogic) CreateCategory(in *contentrpc.CreateCategoryReques
 		return nil, err
 	}
 
-	return &contentrpc.CreateCategoryResponse{Id: entity.Id}, nil
+	return &contentrpc.CreateCategoryResponse{
+		Id:       entity.Id,
+		Category: convertCategoryOut(entity),
+	}, nil
 }
